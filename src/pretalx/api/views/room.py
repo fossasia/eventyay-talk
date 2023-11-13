@@ -1,5 +1,6 @@
 from rest_framework import pagination, viewsets
 
+from pretalx.api.mixins import PretalxViewSetMixin
 from pretalx.api.serializers.room import RoomOrgaSerializer, RoomSerializer
 from pretalx.schedule.models import Room
 
@@ -8,7 +9,7 @@ class RoomPagination(pagination.LimitOffsetPagination):
     default_limit = 100
 
 
-class RoomViewSet(viewsets.ReadOnlyModelViewSet):
+class RoomViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     queryset = Room.objects.none()
     pagination_class = RoomPagination
 
@@ -17,7 +18,7 @@ class RoomViewSet(viewsets.ReadOnlyModelViewSet):
             return self.request.event.rooms.all()
         return self.request.event.rooms.none()
 
-    def get_serializer_class(self):
+    def get_unversioned_serializer_class(self):
         if self.request.user.has_perm("orga.edit_room", self.request.event):
             return RoomOrgaSerializer
         return RoomSerializer

@@ -7,6 +7,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from pretalx.api.mixins import PretalxViewSetMixin
 from pretalx.api.serializers.submission import (
     ScheduleListSerializer,
     ScheduleSerializer,
@@ -28,7 +29,7 @@ with scopes_disabled():
             fields = ("state", "content_locale", "submission_type", "is_featured")
 
 
-class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
+class SubmissionViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = SubmissionSerializer
     queryset = Submission.objects.none()
     lookup_field = "code__iexact"
@@ -64,7 +65,7 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
             )
         return base_qs
 
-    def get_serializer_class(self):
+    def get_unversioned_serializer_class(self):
         if self.request.user.has_perm("orga.change_submissions", self.request.event):
             return SubmissionOrgaSerializer
         if self.request.user.has_perm("orga.view_submissions", self.request.event):
@@ -117,12 +118,12 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({})
 
 
-class ScheduleViewSet(viewsets.ReadOnlyModelViewSet):
+class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = ScheduleSerializer
     queryset = Schedule.objects.none()
     lookup_value_regex = "[^/]+"
 
-    def get_serializer_class(self):
+    def get_unversioned_serializer_class(self):
         if self.action == "list":
             return ScheduleListSerializer
         return ScheduleSerializer  # self.action == 'retrieve'
@@ -158,7 +159,7 @@ class ScheduleViewSet(viewsets.ReadOnlyModelViewSet):
         return qs
 
 
-class TagViewSet(viewsets.ReadOnlyModelViewSet):
+class TagViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.none()
     lookup_field = "tag__iexact"

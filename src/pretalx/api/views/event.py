@@ -1,11 +1,12 @@
 from django.http import Http404
 from rest_framework import viewsets
 
+from pretalx.api.mixins import PretalxViewSetMixin
 from pretalx.api.serializers.event import EventSerializer
 from pretalx.event.models import Event
 
 
-class EventViewSet(viewsets.ReadOnlyModelViewSet):
+class EventViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = EventSerializer
     queryset = Event.objects.none()
     lookup_field = "slug"
