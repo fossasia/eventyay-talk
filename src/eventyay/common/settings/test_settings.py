@@ -8,7 +8,7 @@ tmpdir = tempfile.TemporaryDirectory()
 os.environ.setdefault("DATA_DIR", tmpdir.name)
 config_path = Path("test/sqlite.cfg")
 if config_path.exists():
-    os.environ.setdefault("PRETALX_CONFIG_FILE", str(config_path))
+    os.environ.setdefault("EVENTYAY_CONFIG_FILE", str(config_path))
 
 from eventyay.settings import *  # NOQA
 

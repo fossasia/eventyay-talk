@@ -1,11 +1,11 @@
 #!/bin/bash
 cd /eventyay/src || exit 1
-export PRETALX_DATA_DIR="${PRETALX_DATA_DIR:-/data}"
+export EVENTYAY_DATA_DIR="${EVENTYAY_DATA_DIR:-/data}"
 export HOME=/eventyay
 
-PRETALX_FILESYSTEM_LOGS="${PRETALX_FILESYSTEM_LOGS:-/data/logs}"
-PRETALX_FILESYSTEM_MEDIA="${PRETALX_FILESYSTEM_MEDIA:-/data/media}"
-PRETALX_FILESYSTEM_STATIC="${PRETALX_FILESYSTEM_STATIC:-/eventyay/src/static.dist}"
+EVENTYAY_FILESYSTEM_LOGS="${EVENTYAY_FILESYSTEM_LOGS:-/data/logs}"
+EVENTYAY_FILESYSTEM_MEDIA="${EVENTYAY_FILESYSTEM_MEDIA:-/data/media}"
+EVENTYAY_FILESYSTEM_STATIC="${EVENTYAY_FILESYSTEM_STATIC:-/eventyay/src/static.dist}"
 
 GUNICORN_WORKERS="${GUNICORN_WORKERS:-${WEB_CONCURRENCY:-$((2 * $(nproc)))}}"
 GUNICORN_MAX_REQUESTS="${GUNICORN_MAX_REQUESTS:-1200}"
@@ -15,26 +15,26 @@ GUNICORN_FORWARDED_ALLOW_IPS="${GUNICORN_FORWARDED_ALLOW_IPS:-127.0.0.1}"
 AUTOMIGRATE="${AUTOMIGRATE:-yes}"
 AUTOREBUILD="${AUTOREBUILD:-yes}"
 
-if [ "$PRETALX_FILESYSTEM_LOGS" != "/data/logs" ]; then
-    export PRETALX_FILESYSTEM_LOGS
+if [ "$EVENTYAY_FILESYSTEM_LOGS" != "/data/logs" ]; then
+    export EVENTYAY_FILESYSTEM_LOGS
 fi
-if [ "$PRETALX_FILESYSTEM_MEDIA" != "/data/media" ]; then
-    export PRETALX_FILESYSTEM_MEDIA
+if [ "$EVENTYAY_FILESYSTEM_MEDIA" != "/data/media" ]; then
+    export EVENTYAY_FILESYSTEM_MEDIA
 fi
-if [ "$PRETALX_FILESYSTEM_STATIC" != "/eventyay/src/static.dist" ]; then
-    export PRETALX_FILESYSTEM_STATIC
+if [ "$EVENTYAY_FILESYSTEM_STATIC" != "/eventyay/src/static.dist" ]; then
+    export EVENTYAY_FILESYSTEM_STATIC
 fi
 
-if [ ! -d "$PRETALX_FILESYSTEM_LOGS" ]; then
-    mkdir "$PRETALX_FILESYSTEM_LOGS";
+if [ ! -d "$EVENTYAY_FILESYSTEM_LOGS" ]; then
+    mkdir "$EVENTYAY_FILESYSTEM_LOGS";
 fi
-if [ ! -d "$PRETALX_FILESYSTEM_MEDIA" ]; then
-    mkdir "$PRETALX_FILESYSTEM_MEDIA";
+if [ ! -d "$EVENTYAY_FILESYSTEM_MEDIA" ]; then
+    mkdir "$EVENTYAY_FILESYSTEM_MEDIA";
 fi
-if [ "$PRETALX_FILESYSTEM_STATIC" != "/eventyay/src/static.dist" ] &&
-   [ ! -d "$PRETALX_FILESYSTEM_STATIC" ] &&
+if [ "$EVENTYAY_FILESYSTEM_STATIC" != "/eventyay/src/static.dist" ] &&
+   [ ! -d "$EVENTYAY_FILESYSTEM_STATIC" ] &&
    [ "$AUTOREBUILD" = "yes" ]; then
-    mkdir -p "$PRETALX_FILESYSTEM_STATIC"
+    mkdir -p "$EVENTYAY_FILESYSTEM_STATIC"
     flock --nonblock /eventyay/.lockfile python3 -m eventyay rebuild
 fi
 

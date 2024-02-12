@@ -563,7 +563,7 @@ Release Notes
 - :announcement:`admin` Provide better upgrade documentation for administrators.
 - :announcement:`-` Add clever release notes.
 - :bug:`443` (UI) The button colours when changing submission states were not intuitive.
-- :feature:`-` You can now configure the configuration file with the ``PRETALX_CONFIG_FILE`` environment variable.
+- :feature:`-` You can now configure the configuration file with the ``EVENTYAY_CONFIG_FILE`` environment variable.
 - :feature:`-` Some more context sensitive dashboard tiles include for example a countdown to the CfP end.
 - :feature:`-` A navigation search allows you to go directly to a range of useful pages.
 - :bug:`444` If two organisers set a submission to 'accepted' at the same time, two acceptance emails would show up in the outbox.
@@ -608,7 +608,7 @@ Release Notes
 - :bug:`341` The "save" button was missing on the mail settings page.
 - :bug:`333` Users could not see (instead not change) their submissions after CfP end, until they were either rejected or accepted.
 - :bug:`-` In the <title> tag, the event showed up twice, once properly and once in a technical representation.
-- :bug:`-` Documentation fix: The environment variable for database passwords is ``PRETALX_DB_PASS``, not ``PRETALX_DB_PASSWORD``.
+- :bug:`-` Documentation fix: The environment variable for database passwords is ``EVENTYAY_DB_PASS``, not ``EVENTYAY_DB_PASSWORD``.
 - :bug:`-` Unconfirmed talks showed up as empty boxes in the schedule editor.
 - :bug:`-` Upgrading the privileges of an existing user did not result in an email, since it required no new account.
 - :bug:`300` The Docker setup was non-functional. The documentation includes a notice of limited support.
@@ -632,7 +632,7 @@ Release Notes
 - :bug:`329` Users always saw the default submission type instead of their chosen one.
 - :release:`0.3.1 <2018-01-18>`
 - :bug:`-` Make 404 errors more helpful.
-- :bug:`-` Re-introduce support for the documented ``PRETALX_DATA_DIR`` environment variable.
+- :bug:`-` Re-introduce support for the documented ``EVENTYAY_DATA_DIR`` environment variable.
 - :bug:`-` Leaving an optional choice question empty resulted in a server error.
 - :release:`0.3.0 <2018-01-17>`
 - :feature:`243` Organisers can mark speakers as "arrived".

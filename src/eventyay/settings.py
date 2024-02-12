@@ -33,7 +33,7 @@ DATA_DIR = Path(
     config.get(
         "filesystem",
         "data",
-        fallback=os.environ.get("PRETALX_DATA_DIR", BASE_DIR / "data"),
+        fallback=os.environ.get("EVENTYAY_DATA_DIR", BASE_DIR / "data"),
     )
 )
 LOG_DIR = Path(config.get("filesystem", "logs", fallback=DATA_DIR / "logs"))
@@ -297,12 +297,12 @@ CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
 REAL_CACHE_USED = False
 SESSION_ENGINE = None
 
-HAS_MEMCACHED = bool(os.getenv("PRETALX_MEMCACHE", ""))
+HAS_MEMCACHED = bool(os.getenv("EVENTYAY_MEMCACHE", ""))
 if HAS_MEMCACHED:
     REAL_CACHE_USED = True
     CACHES["default"] = {
         "BACKEND": "django.core.cache.backends.memcached.PyLibMCCache",
-        "LOCATION": os.getenv("PRETALX_MEMCACHE"),
+        "LOCATION": os.getenv("EVENTYAY_MEMCACHE"),
     }
 
 HAS_REDIS = config.get("redis", "location") != "False"
@@ -634,12 +634,12 @@ if DEBUG:
 
 WSGI_APPLICATION = "eventyay.wsgi.application"
 
-PRETALX_VERSION = __version__
+EVENTYAY_VERSION = __version__
 if DEBUG:
     with suppress(Exception):
         import subprocess
 
-        PRETALX_VERSION = (
+        EVENTYAY_VERSION = (
             subprocess.check_output(["/usr/bin/git", "describe", "--always", "--tags"])
             .decode()
             .strip()

@@ -11,7 +11,7 @@ from django.urls import reverse
 from eventyay.event.utils import create_organiser_with_team
 from eventyay.person.models import User
 
-env_prefix = "PRETALX_INIT_ORGANISER_"
+env_prefix = "EVENTYAY_INIT_ORGANISER_"
 organiser_name_env = f"{env_prefix}NAME"
 organiser_name_default = "The Conference Organiser"
 organiser_slug_env = f"{env_prefix}SLUG"

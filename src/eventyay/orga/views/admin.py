@@ -35,7 +35,7 @@ class AdminDashboard(PermissionRequired, TemplateView):
 
     @context
     def pretalx_version(self):
-        return settings.PRETALX_VERSION
+        return settings.EVENTYAY_VERSION
 
 
 class UpdateCheckView(PermissionRequired, FormView):

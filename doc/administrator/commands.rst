@@ -117,7 +117,7 @@ For the first phase (creation of a superuser), set the environment variables
 Django command
 <https://docs.djangoproject.com/en/4.2/ref/django-admin/#createsuperuser>`_).
 For the second phase (creation of an organiser), set the environment variables
-``PRETALX_INIT_ORGANISER_NAME`` and ``PRETALX_INIT_ORGANISER_SLUG``.
+``EVENTYAY_INIT_ORGANISER_NAME`` and ``EVENTYAY_INIT_ORGANISER_SLUG``.
 
 ``python -m pretalx createsuperuser``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

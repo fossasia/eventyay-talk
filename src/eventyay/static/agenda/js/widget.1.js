@@ -1,4 +1,4 @@
-/* PRETALX SCHEDULE WIDGET BEGINS HERE */
+/* EVENTYAY SCHEDULE WIDGET BEGINS HERE */
 
 Vue.component('eventyay-schedule-talk', {
     template: `
