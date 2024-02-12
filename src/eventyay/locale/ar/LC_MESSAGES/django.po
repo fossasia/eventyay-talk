@@ -2272,7 +2272,7 @@ msgstr ""
 "   https://pretalx.com/p/news\n"
 "\n"
 "أفضل الامنيلت،\n"
-"مطوري برنامج Pretalx الخاص بك"
+"مطوري برنامج Eventyay الخاص بك"
 
 #: pretalx/common/update_check.py:143 pretalx/common/update_check.py:150
 msgid "Plugin: {}"
@@ -3170,7 +3170,7 @@ msgid ""
 "any IP addresses and we will not know who you are or where to find your "
 "instance. You can disable this behavior here at any time."
 msgstr ""
-"خلال عملية التحقق من التحديثات ، ستقدم خدمة Pretalx تقريرًا مجهولاً ومعرف "
+"خلال عملية التحقق من التحديثات ، ستقدم خدمة Eventyay تقريرًا مجهولاً ومعرف "
 "تثبيت فريدًا، والإصدار الحالي من برنامج بريتالكس والمكونات الإضافية المثبتة "
 "وعدد الأحداث النشطة وغير النشطة في التثبيت الخاص بك إلى الخوادم التي يديرها "
 "مطورو بريتالكس. سنقوم بتخزين البيانات مجهولة المصدر فقط ، ولن نقوم بتخزين أي "
@@ -3188,7 +3188,7 @@ msgid ""
 "will be sent by your server locally."
 msgstr ""
 "سنقوم بإخطارك على هذا العنوان إذا اكتشفنا توفر تحديثات جديدة. لن يتم إرسال "
-"هذا الايميل إلى موقع Pretalx.com ، وسيتم إرسال رسائل البريد الإلكتروني من "
+"هذا الايميل إلى موقع Eventyay.com ، وسيتم إرسال رسائل البريد الإلكتروني من "
 "خلال الخادم الخاص بك محليًا."
 
 #: pretalx/orga/forms/cfp.py:25
@@ -4345,7 +4345,7 @@ msgid ""
 "disable this feature or enter your email address to get notified via email "
 "if a new update arrives. This message will disappear once you clicked it."
 msgstr ""
-"بدءًا من الإصدار 1.1.0 ، يقوم برنامج Pretalx تلقائيًا بالبحث عن التحديثات في "
+"بدءًا من الإصدار 1.1.0 ، يقوم برنامج Eventyay تلقائيًا بالبحث عن التحديثات في "
 "الخلفية. أثناء هذا الفحص ، يتم إرسال البيانات المجهولة إلى الخوادم التي "
 "يديرها مطورو pretalx. يمكنك النقر فوق هذه الرسالة لمعرفة المزيد ، أو قم "
 "بتعطيل هذه الميزة أو أدخل عنوان بريدك الإلكتروني ليتم إعلامك عبر الايميل في "
@@ -6859,11 +6859,11 @@ msgstr "لم يكن التحقق من التحديث الأخير ناجحًا."
 
 #: pretalx/orga/templates/orga/update.html:30
 msgid "The pretalx.com server returned an error code."
-msgstr "أشار خادم Pretalx.com الى رمز الخطأ."
+msgstr "أشار خادم Eventyay.com الى رمز الخطأ."
 
 #: pretalx/orga/templates/orga/update.html:32
 msgid "The pretalx.com server could not be reached."
-msgstr "تعذر الوصول إلى خادم Pretalx.com."
+msgstr "تعذر الوصول إلى خادم Eventyay.com."
 
 #: pretalx/orga/templates/orga/update.html:34
 msgid "This installation appears to be a development installation."

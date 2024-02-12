@@ -72,7 +72,7 @@ export default {
 		},
 		style () {
 			return {
-				'--track-color': this.session.track?.color || 'var(--pretalx-clr-primary)'
+				'--track-color': this.session.track?.color || 'var(--eventyay-clr-primary)'
 			}
 		},
 		startTime () {
@@ -166,7 +166,7 @@ export default {
 				border: 1px solid var(--track-color)
 				border-left: none
 				.title
-					color: var(--pretalx-clr-primary)
+					color: var(--eventyay-clr-primary)
 	.time-box
 		width: 69px
 		box-sizing: border-box

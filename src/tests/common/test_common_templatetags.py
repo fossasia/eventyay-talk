@@ -1,12 +1,12 @@
 import pytest
 from django_scopes import scope
 
-from pretalx.common.templatetags.copyable import copyable
-from pretalx.common.templatetags.html_signal import html_signal
-from pretalx.common.templatetags.rich_text import rich_text
-from pretalx.common.templatetags.times import times
-from pretalx.common.templatetags.url_replace import url_replace
-from pretalx.common.templatetags.xmlescape import xmlescape
+from eventyay.common.templatetags.copyable import copyable
+from eventyay.common.templatetags.html_signal import html_signal
+from eventyay.common.templatetags.rich_text import rich_text
+from eventyay.common.templatetags.times import times
+from eventyay.common.templatetags.url_replace import url_replace
+from eventyay.common.templatetags.xmlescape import xmlescape
 
 
 @pytest.mark.parametrize(
@@ -94,7 +94,7 @@ def test_html_signal(event, slug, signal):
         event.plugins = "tests"
         event.save()
         result = html_signal(
-            f"pretalx.cfp.signals.{signal}", sender=event, request=None
+            f"eventyay.cfp.signals.{signal}", sender=event, request=None
         )
         assert bool(result) is not slug
 

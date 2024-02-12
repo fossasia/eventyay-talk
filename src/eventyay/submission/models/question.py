@@ -83,8 +83,8 @@ class QuestionRequired(Choices):
 class Question(OrderedModel, PretalxModel):
     """Questions can be asked per.
 
-    :class:`~pretalx.submission.models.submission.Submission`, per speaker, or
-    of reviewers per :class:`~pretalx.submission.models.review.Review`.
+    :class:`~eventyay.submission.models.submission.Submission`, per speaker, or
+    of reviewers per :class:`~eventyay.submission.models.review.Review`.
 
     Questions can have many types, which offers a flexible framework to give organisers
     the opportunity to get all the information they need.
@@ -325,7 +325,7 @@ class Question(OrderedModel, PretalxModel):
 class AnswerOption(PretalxModel):
     """Provides the possible answers for.
 
-    :class:`~pretalx.submission.models.question.Question` objects of variant
+    :class:`~eventyay.submission.models.question.Question` objects of variant
     'choice' or 'multiple_choice'.
     """
 
@@ -348,10 +348,10 @@ class AnswerOption(PretalxModel):
 class Answer(PretalxModel):
     """Answers are connected to a.
 
-    :class:`~pretalx.submission.models.question.Question`, and, depending on
-    type, a :class:`~pretalx.person.models.user.User`, a
-    :class:`~pretalx.submission.models.submission.Submission`, or a
-    :class:`~pretalx.submission.models.review.Review`.
+    :class:`~eventyay.submission.models.question.Question`, and, depending on
+    type, a :class:`~eventyay.person.models.user.User`, a
+    :class:`~eventyay.submission.models.submission.Submission`, or a
+    :class:`~eventyay.submission.models.review.Review`.
     """
 
     question = models.ForeignKey(

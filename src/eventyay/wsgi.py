@@ -1,11 +1,11 @@
-"""WSGI config for pretalx.
+"""WSGI config for eventyay.
 
 Use with gunicorn or uwsgi.
 """
 
 import os
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pretalx.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "eventyay.settings")
 
 from django.core.wsgi import get_wsgi_application  # NOQA
 

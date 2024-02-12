@@ -4,7 +4,7 @@ import pytest
 from django.utils import translation
 from i18nfield.strings import LazyI18nString
 
-from pretalx.common.utils import I18nStrJSONEncoder, daterange, safe_filename
+from eventyay.common.utils import I18nStrJSONEncoder, daterange, safe_filename
 
 
 @pytest.mark.parametrize(
@@ -49,8 +49,8 @@ def test_daterange(locale, start, end, result):
     ),
 )
 def test_path_with_hash(path, expected, monkeypatch):
-    monkeypatch.setattr("pretalx.common.utils.get_random_string", lambda x: "aaaaaaa")
-    from pretalx.common.utils import path_with_hash
+    monkeypatch.setattr("eventyay.common.utils.get_random_string", lambda x: "aaaaaaa")
+    from eventyay.common.utils import path_with_hash
 
     assert path_with_hash(path) == expected
 

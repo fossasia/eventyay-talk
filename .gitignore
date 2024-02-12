@@ -11,7 +11,7 @@ __pycache__/
 build/
 develop-eggs/
 dist/
-!src/pretalx/static/vendored/**/dist
+!src/eventyay/static/vendored/**/dist
 downloads/
 eggs/
 .eggs/
@@ -86,7 +86,7 @@ atlassian-ide-plugin.xml
 # generic local files
 local/
 *.xml
-pretalx.cfg
+eventyay.cfg
 override_settings.py
 
 # OS X

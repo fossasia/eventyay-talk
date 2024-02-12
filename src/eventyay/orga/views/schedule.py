@@ -601,11 +601,11 @@ class RoomDetail(EventPermissionRequired, ActionFromUrl, CreateOrUpdateView):
         messages.success(self.request, _("Saved!"))
         if created:
             form.instance.log_action(
-                "pretalx.room.create", person=self.request.user, orga=True
+                "eventyay.room.create", person=self.request.user, orga=True
             )
         else:
             form.instance.log_action(
-                "pretalx.event.update", person=self.request.user, orga=True
+                "eventyay.event.update", person=self.request.user, orga=True
             )
         return result
 

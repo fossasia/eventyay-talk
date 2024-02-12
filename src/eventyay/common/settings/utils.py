@@ -12,10 +12,10 @@ def log_initial(*, debug, config_files, db_name, db_backend, LOG_DIR, plugins):
 
     with suppress(Exception):  # geteuid is not available on all OS
         if os.geteuid() == 0:
-            print_line("You are running pretalx as root, why?", bold=True)
+            print_line("You are running eventyay as root, why?", bold=True)
 
     lines = [
-        (f"pretalx v{__version__}", True),
+        (f"eventyay v{__version__}", True),
         (f'Settings:  {", ".join(config_files)}', False),
         (f"Database:  {db_name} ({db_backend})", False),
         (f"Logging:   {LOG_DIR}", False),

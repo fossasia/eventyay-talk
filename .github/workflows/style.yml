@@ -4,14 +4,14 @@ on:
   push:
     branches: [ main ]
     paths-ignore:
-      - 'src/pretalx/locale/**'
-      - 'src/pretalx/static/**'
+      - 'src/eventyay/locale/**'
+      - 'src/eventyay/static/**'
       - 'doc/**'
   pull_request:
     branches: [ main ]
     paths-ignore:
-      - 'src/pretalx/locale/**'
-      - 'src/pretalx/static/**'
+      - 'src/eventyay/locale/**'
+      - 'src/eventyay/static/**'
       - 'doc/**'
 
 concurrency:
@@ -73,7 +73,7 @@ jobs:
       - name: Install Dependencies
         run: python -m pip install -Ue ".[dev]"
       - name: Run djhtml
-        run: 'djhtml pretalx/'
+        run: 'djhtml eventyay/'
         working-directory: ./src
       - name: Make sure we always use trimmed translation strings
         run: "! git grep ' blocktranslate ' | grep -v trimmed"

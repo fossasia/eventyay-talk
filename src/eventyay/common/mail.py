@@ -25,7 +25,7 @@ class CustomSMTPBackend(EmailBackend):
                     f"Error testing mail settings, code {code}, resp: {resp}"
                 )
                 raise SMTPSenderRefused(code, resp, sender=from_addr)
-            (code, resp) = self.connection.rcpt("testdummy@pretalx.com")
+            (code, resp) = self.connection.rcpt("testdummy@eventyay.com")
             if code not in (250, 251):
                 logger.warning(
                     f"Error testing mail settings, code {code}, resp: {resp}"
@@ -91,7 +91,7 @@ def mail_send_task(
         sender = formataddr((str(event.name), sender or settings.MAIL_FROM))
 
     else:
-        sender = formataddr(("pretalx", settings.MAIL_FROM))
+        sender = formataddr(("eventyay", settings.MAIL_FROM))
         backend = get_connection(fail_silently=False)
 
     email = EmailMultiAlternatives(

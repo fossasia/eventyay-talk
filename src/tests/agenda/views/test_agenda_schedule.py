@@ -28,7 +28,7 @@ def test_can_see_schedule(
     assert response.status_code == 200
     with scope(event=event):
         assert event.schedules.count() == 2
-        test_string = "<pretalx-schedule" if version == "js" else slot.submission.title
+        test_string = "<eventyay-schedule" if version == "js" else slot.submission.title
         assert test_string in response.content.decode()
 
 
@@ -44,7 +44,7 @@ def test_orga_can_see_wip_schedule(
     response = orga_client.get(url, follow=True, HTTP_ACCEPT="text/html")
     assert response.status_code == 200
     with scope(event=event):
-        test_string = "<pretalx-schedule" if version == "js" else slot.submission.title
+        test_string = "<eventyay-schedule" if version == "js" else slot.submission.title
         assert test_string in response.content.decode()
 
 
@@ -65,7 +65,7 @@ def test_can_see_schedule_with_broken_accept_header(
     response = client.get(event.urls.schedule, follow=True, HTTP_ACCEPT="foo/bar")
     assert response.status_code == 200
     with scope(event=event):
-        assert "<pretalx-schedule" in response.content.decode()
+        assert "<eventyay-schedule" in response.content.decode()
 
 
 @pytest.mark.django_db
@@ -299,7 +299,7 @@ def test_versioned_schedule_page(
     with scope(event=event):
         event.release_schedule("new schedule")
         event.current_schedule.talks.update(is_visible=False)
-        test_string = "<pretalx-schedule" if version == "js" else slot.submission.title
+        test_string = "<eventyay-schedule" if version == "js" else slot.submission.title
 
     url = event.urls.schedule if version == "js" else event.urls.schedule_nojs
     with django_assert_num_queries(queries_main):

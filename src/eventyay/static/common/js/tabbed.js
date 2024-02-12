@@ -19,11 +19,11 @@ const initTabs = () => {
     selectedTab = document.querySelector("input[name=tabs][id='" + fragment + "']") || selectedTab
   }
   selectedTab.checked = true
-  document.querySelector("label.pretalx-tab-label[for='" + selectedTab.id + "']").parentElement.classList.add("active")
+  document.querySelector("label.eventyay-tab-label[for='" + selectedTab.id + "']").parentElement.classList.add("active")
 
-  document.querySelectorAll("label.pretalx-tab-label").forEach((element) => {
+  document.querySelectorAll("label.eventyay-tab-label").forEach((element) => {
     element.addEventListener('click', (event) => {
-      document.querySelectorAll(".pretalx-tab").forEach((element) => {
+      document.querySelectorAll(".eventyay-tab").forEach((element) => {
         element.classList.remove("active")
       })
       event.target.parentElement.classList.add("active")

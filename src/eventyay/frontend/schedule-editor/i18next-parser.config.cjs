@@ -1,6 +1,6 @@
 const VueLexer = require('./i18next-parser-vue-lexer.cjs')
 
-// Used via the pretalx makemessages command
+// Used via the eventyay makemessages command
 
 module.exports = {
   locales: ['en'],

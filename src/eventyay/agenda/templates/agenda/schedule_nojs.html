@@ -34,12 +34,12 @@
         {% endif %}
 
         {% include "agenda/header_row.html" with with_margin=True with_extra=True %}
-        <div class="pretalx-tabbed"><div class="pretalx-tabbed-content">
+        <div class="eventyay-tabbed"><div class="eventyay-tabbed-content">
             {% if day_count > 1 %}
-                <div class="pretalx-tabs">
+                <div class="eventyay-tabs">
                     {% for day in data %}
-                        <div class="pretalx-tab">
-                            <label class="pretalx-tab-label" for="{{ day.start|date:"Y-m-d" }}">
+                        <div class="eventyay-tab">
+                            <label class="eventyay-tab-label" for="{{ day.start|date:"Y-m-d" }}">
                                 {{ day.start|date:"l" }}, {{ day.start|date:"DATE_FORMAT" }}
                             </label>
                         </div>
@@ -50,7 +50,7 @@
                 {% if day_count > 1 %}
                     <input name="tabs" id="{{ day.start|date:"Y-m-d" }}" type="radio" {% if forloop.first %}checked{% endif %}>
                 {% endif %}
-                <div class="pretalx-list-day pretalx-tab-content" data-start="{{ day.display_start|date:"c" }}">
+                <div class="eventyay-list-day eventyay-tab-content" data-start="{{ day.display_start|date:"c" }}">
                     {% if day.first_start %}
                         {% for session in day.talks %}
                             <div class="bucket-time">{% ifchanged session.start %}{{ session.start|date:"TIME_FORMAT" }}{% endifchanged %}</div>

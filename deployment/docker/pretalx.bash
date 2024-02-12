@@ -1,11 +1,11 @@
 #!/bin/bash
-cd /pretalx/src || exit 1
+cd /eventyay/src || exit 1
 export PRETALX_DATA_DIR="${PRETALX_DATA_DIR:-/data}"
-export HOME=/pretalx
+export HOME=/eventyay
 
 PRETALX_FILESYSTEM_LOGS="${PRETALX_FILESYSTEM_LOGS:-/data/logs}"
 PRETALX_FILESYSTEM_MEDIA="${PRETALX_FILESYSTEM_MEDIA:-/data/media}"
-PRETALX_FILESYSTEM_STATIC="${PRETALX_FILESYSTEM_STATIC:-/pretalx/src/static.dist}"
+PRETALX_FILESYSTEM_STATIC="${PRETALX_FILESYSTEM_STATIC:-/eventyay/src/static.dist}"
 
 GUNICORN_WORKERS="${GUNICORN_WORKERS:-${WEB_CONCURRENCY:-$((2 * $(nproc)))}}"
 GUNICORN_MAX_REQUESTS="${GUNICORN_MAX_REQUESTS:-1200}"
@@ -21,7 +21,7 @@ fi
 if [ "$PRETALX_FILESYSTEM_MEDIA" != "/data/media" ]; then
     export PRETALX_FILESYSTEM_MEDIA
 fi
-if [ "$PRETALX_FILESYSTEM_STATIC" != "/pretalx/src/static.dist" ]; then
+if [ "$PRETALX_FILESYSTEM_STATIC" != "/eventyay/src/static.dist" ]; then
     export PRETALX_FILESYSTEM_STATIC
 fi
 
@@ -31,19 +31,19 @@ fi
 if [ ! -d "$PRETALX_FILESYSTEM_MEDIA" ]; then
     mkdir "$PRETALX_FILESYSTEM_MEDIA";
 fi
-if [ "$PRETALX_FILESYSTEM_STATIC" != "/pretalx/src/static.dist" ] &&
+if [ "$PRETALX_FILESYSTEM_STATIC" != "/eventyay/src/static.dist" ] &&
    [ ! -d "$PRETALX_FILESYSTEM_STATIC" ] &&
    [ "$AUTOREBUILD" = "yes" ]; then
     mkdir -p "$PRETALX_FILESYSTEM_STATIC"
-    flock --nonblock /pretalx/.lockfile python3 -m pretalx rebuild
+    flock --nonblock /eventyay/.lockfile python3 -m eventyay rebuild
 fi
 
 if [ "$1" == "cron" ]; then
-    exec python3 -m pretalx runperiodic
+    exec python3 -m eventyay runperiodic
 fi
 
 if [ "$AUTOMIGRATE" = "yes" ]; then
-    python3 -m pretalx migrate --noinput
+    python3 -m eventyay migrate --noinput
 fi
 
 if [ "$1" == "all" ]; then
@@ -51,8 +51,8 @@ if [ "$1" == "all" ]; then
 fi
 
 if [ "$1" == "webworker" ]; then
-    exec gunicorn pretalx.wsgi \
-        --name pretalx \
+    exec gunicorn eventyay.wsgi \
+        --name eventyay \
         --workers "${GUNICORN_WORKERS}" \
         --max-requests "${GUNICORN_MAX_REQUESTS}" \
         --max-requests-jitter "${GUNICORN_MAX_REQUESTS_JITTER}" \
@@ -62,16 +62,16 @@ if [ "$1" == "webworker" ]; then
 fi
 
 if [ "$1" == "taskworker" ]; then
-    exec celery -A pretalx.celery_app worker -l info
+    exec celery -A eventyay.celery_app worker -l info
 fi
 
 if [ "$1" == "shell" ]; then
-    exec python3 -m pretalx shell
+    exec python3 -m eventyay shell
 fi
 
 if [ "$1" == "upgrade" ]; then
-    python3 -m pretalx rebuild
-    exec python3 -m pretalx regenerate_css
+    python3 -m eventyay rebuild
+    exec python3 -m eventyay regenerate_css
 fi
 
-exec python3 -m pretalx "$@"
+exec python3 -m eventyay "$@"

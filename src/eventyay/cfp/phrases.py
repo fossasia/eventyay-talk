@@ -16,7 +16,7 @@ class CfPPhrases(Phrases, app="cfp"):
 
     locale_change_success = _(
         "Your locale preferences have been saved. We like to think that we have excellent support "
-        "for English in pretalx, but if you encounter issues or errors, please contact us!"
+        "for English in eventyay, but if you encounter issues or errors, please contact us!"
     )
 
     submission_withdrawn = _("Your proposal has been withdrawn.")

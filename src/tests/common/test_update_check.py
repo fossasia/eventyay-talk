@@ -6,9 +6,9 @@ import responses
 from django.core import mail as djmail
 from django.utils.timezone import now
 
-from pretalx import __version__
-from pretalx.common.models.settings import GlobalSettings
-from pretalx.common.update_check import (
+from eventyay import __version__
+from eventyay.common.models.settings import GlobalSettings
+from eventyay.common.update_check import (
     check_result_table,
     run_update_check,
     update_check,
@@ -69,7 +69,7 @@ def test_update_check_disabled():
 
     responses.add_callback(
         responses.POST,
-        "https://pretalx.com/.update_check/",
+        "https://eventyay.com/.update_check/",
         callback=request_callback_disallowed,
         content_type="application/json",
     )
@@ -82,7 +82,7 @@ def test_update_check_disabled():
 def test_update_check_sent_no_updates():
     responses.add_callback(
         responses.POST,
-        "https://pretalx.com/.update_check/",
+        "https://eventyay.com/.update_check/",
         callback=request_callback_not_updatable,
         content_type="application/json",
     )
@@ -98,7 +98,7 @@ def test_update_check_sent_no_updates():
 def test_update_check_sent_updates():
     responses.add_callback(
         responses.POST,
-        "https://pretalx.com/.update_check/",
+        "https://eventyay.com/.update_check/",
         callback=request_callback_updatable,
         content_type="application/json",
     )
@@ -117,7 +117,7 @@ def test_update_check_mail_sent():
 
     responses.add_callback(
         responses.POST,
-        "https://pretalx.com/.update_check/",
+        "https://eventyay.com/.update_check/",
         callback=request_callback_updatable,
         content_type="application/json",
     )
@@ -137,7 +137,7 @@ def test_update_check_mail_sent_only_after_change():
     with responses.RequestsMock() as rsps:
         rsps.add_callback(
             responses.POST,
-            "https://pretalx.com/.update_check/",
+            "https://eventyay.com/.update_check/",
             callback=request_callback_updatable,
             content_type="application/json",
         )
@@ -151,7 +151,7 @@ def test_update_check_mail_sent_only_after_change():
     with responses.RequestsMock() as rsps:
         rsps.add_callback(
             responses.POST,
-            "https://pretalx.com/.update_check/",
+            "https://eventyay.com/.update_check/",
             callback=request_callback_not_updatable,
             content_type="application/json",
         )
@@ -162,7 +162,7 @@ def test_update_check_mail_sent_only_after_change():
     with responses.RequestsMock() as rsps:
         rsps.add_callback(
             responses.POST,
-            "https://pretalx.com/.update_check/",
+            "https://eventyay.com/.update_check/",
             callback=request_callback_updatable,
             content_type="application/json",
         )
@@ -210,14 +210,14 @@ def test_result_table_with_error():
 def test_result_table_up2date():
     responses.add_callback(
         responses.POST,
-        "https://pretalx.com/.update_check/",
+        "https://eventyay.com/.update_check/",
         callback=request_callback_not_updatable,
         content_type="application/json",
     )
     update_check.apply(throw=True)
     tbl = check_result_table()
-    assert tbl[0] == ("pretalx", __version__, "1.0.0", False)
-    plugin = [e for e in tbl if e[0] == "Plugin: test plugin for pretalx"][0]
+    assert tbl[0] == ("eventyay", __version__, "1.0.0", False)
+    plugin = [e for e in tbl if e[0] == "Plugin: test plugin for eventyay"][0]
     assert plugin
     assert plugin[2] == "?"
 
@@ -227,16 +227,16 @@ def test_result_table_up2date():
 def test_result_table_up2date_with_plugins():
     responses.add_callback(
         responses.POST,
-        "https://pretalx.com/.update_check/",
+        "https://eventyay.com/.update_check/",
         callback=request_callback_with_plugin,
         content_type="application/json",
     )
     update_check.apply(throw=True)
     tbl = check_result_table()
-    assert tbl[0] == ("pretalx", __version__, "1.0.0", True)
+    assert tbl[0] == ("eventyay", __version__, "1.0.0", True)
     line = [
         e
         for e in tbl
-        if e == ("Plugin: test plugin for pretalx", "0.0.0", "1.1.1", True)
+        if e == ("Plugin: test plugin for eventyay", "0.0.0", "1.1.1", True)
     ]
     assert line

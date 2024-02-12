@@ -7,9 +7,9 @@ from django.forms import ModelForm, ValidationError
 from django.utils import timezone
 from django_scopes import scope
 
-from pretalx.person.models import SpeakerProfile
-from pretalx.schedule.forms import AvailabilitiesFormMixin
-from pretalx.schedule.models import Availability, Room
+from eventyay.person.models import SpeakerProfile
+from eventyay.schedule.forms import AvailabilitiesFormMixin
+from eventyay.schedule.models import Availability, Room
 
 timezone.activate(ZoneInfo("UTC"))
 
@@ -144,7 +144,7 @@ def test_validate_availability_tz_success(availabilitiesform, avail):
 
 @pytest.mark.django_db
 def test_validate_availability_daylightsaving(availabilitiesform):
-    # https://github.com/pretalx/pretalx/issues/460
+    # https://github.com/eventyay/eventyay/issues/460
     availabilitiesform.event.timezone = "Europe/Berlin"
     availabilitiesform.event.date_from = dt.date(2018, 10, 22)
     availabilitiesform.event.date_to = dt.date(2018, 10, 28)

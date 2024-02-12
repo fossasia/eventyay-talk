@@ -157,9 +157,9 @@ def read_config_files(config):
     else:
         config_files = config.read(
             [
-                "/etc/pretalx/pretalx.cfg",
-                Path.home() / ".pretalx.cfg",
-                "pretalx.cfg",
+                "/etc/eventyay/eventyay.cfg",
+                Path.home() / ".eventyay.cfg",
+                "eventyay.cfg",
             ],
             encoding="utf-8",
         )

@@ -16,7 +16,7 @@ def resource_path(instance, filename):
 
 
 class Resource(PretalxModel):
-    """Resources are file uploads belonging to a :class:`~pretalx.submission.models.submission.Submission`."""
+    """Resources are file uploads belonging to a :class:`~eventyay.submission.models.submission.Submission`."""
 
     submission = models.ForeignKey(
         to="submission.Submission", related_name="resources", on_delete=models.PROTECT

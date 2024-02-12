@@ -99,14 +99,14 @@ class AllSubmissionManager(models.Manager):
 
 
 class Submission(GenerateCode, PretalxModel):
-    """Submissions are, next to :class:`~pretalx.event.models.event.Event`, the
-    central model in pretalx.
+    """Submissions are, next to :class:`~eventyay.event.models.event.Event`, the
+    central model in eventyay.
 
     A submission, which belongs to exactly one event, can have multiple
     speakers and a lot of other related data, such as a
-    :class:`~pretalx.submission.models.type.SubmissionType`, a
-    :class:`~pretalx.submission.models.track.Track`, multiple
-    :class:`~pretalx.submission.models.question.Answer` objects, and so on.
+    :class:`~eventyay.submission.models.type.SubmissionType`, a
+    :class:`~eventyay.submission.models.track.Track`, multiple
+    :class:`~eventyay.submission.models.question.Answer` objects, and so on.
 
     :param code: The unique alphanumeric identifier used to refer to a
         submission.
@@ -325,7 +325,7 @@ class Submission(GenerateCode, PretalxModel):
         """Returns this submission's duration in minutes.
 
         Falls back to the
-        :class:`~pretalx.submission.models.type.SubmissionType`'s default
+        :class:`~eventyay.submission.models.type.SubmissionType`'s default
         duration if none is set on the submission.
         """
         if self.duration is None:
@@ -335,7 +335,7 @@ class Submission(GenerateCode, PretalxModel):
     def update_duration(self):
         """Apply the submission's duration to its currently scheduled.
 
-        :class:`~pretalx.schedule.models.slot.TalkSlot`.
+        :class:`~eventyay.schedule.models.slot.TalkSlot`.
 
         Should be called whenever the duration changes.
         """
@@ -412,7 +412,7 @@ class Submission(GenerateCode, PretalxModel):
     def update_talk_slots(self):
         """Makes sure the correct amount of.
 
-        :class:`~pretalx.schedule.models.slot.TalkSlot` objects exists.
+        :class:`~eventyay.schedule.models.slot.TalkSlot` objects exists.
 
         After an update or state change, talk slots should either be all
         deleted, or all created, or the number of talk slots might need
@@ -501,7 +501,7 @@ class Submission(GenerateCode, PretalxModel):
             self.send_initial_mails(person=person)
         else:
             self.log_action(
-                "pretalx.submission.make_submitted",
+                "eventyay.submission.make_submitted",
                 person=person,
                 orga=orga,
                 data={"previous": previous, "from_pending": from_pending},
@@ -520,7 +520,7 @@ class Submission(GenerateCode, PretalxModel):
         previous = self.state
         self._set_state(SubmissionStates.CONFIRMED, force, person=person)
         self.log_action(
-            "pretalx.submission.confirm",
+            "eventyay.submission.confirm",
             person=person,
             orga=orga,
             data={"previous": previous, "from_pending": from_pending},
@@ -537,13 +537,13 @@ class Submission(GenerateCode, PretalxModel):
     ):
         """Sets the submission's state to 'accepted'.
 
-        Creates an acceptance :class:`~pretalx.mail.models.QueuedMail`
+        Creates an acceptance :class:`~eventyay.mail.models.QueuedMail`
         unless the submission was previously confirmed.
         """
         previous = self.state
         self._set_state(SubmissionStates.ACCEPTED, force, person=person)
         self.log_action(
-            "pretalx.submission.accept",
+            "eventyay.submission.accept",
             person=person,
             orga=True,
             data={"previous": previous, "from_pending": from_pending},
@@ -563,12 +563,12 @@ class Submission(GenerateCode, PretalxModel):
     ):
         """Sets the submission's state to 'rejected' and creates a rejection.
 
-        :class:`~pretalx.mail.models.QueuedMail`.
+        :class:`~eventyay.mail.models.QueuedMail`.
         """
         previous = self.state
         self._set_state(SubmissionStates.REJECTED, force, person=person)
         self.log_action(
-            "pretalx.submission.reject",
+            "eventyay.submission.reject",
             person=person,
             orga=True,
             data={"previous": previous, "from_pending": from_pending},
@@ -633,7 +633,7 @@ class Submission(GenerateCode, PretalxModel):
         previous = self.state
         self._set_state(SubmissionStates.CANCELED, force, person=person)
         self.log_action(
-            "pretalx.submission.cancel",
+            "eventyay.submission.cancel",
             person=person,
             orga=True,
             data={"previous": previous, "from_pending": from_pending},
@@ -652,7 +652,7 @@ class Submission(GenerateCode, PretalxModel):
         previous = self.state
         self._set_state(SubmissionStates.WITHDRAWN, force, person=person)
         self.log_action(
-            "pretalx.submission.withdraw",
+            "eventyay.submission.withdraw",
             person=person,
             orga=orga,
             data={"previous": previous, "from_pending": from_pending},
@@ -673,7 +673,7 @@ class Submission(GenerateCode, PretalxModel):
         for answer in self.answers.all():
             answer.remove(person=person, force=force)
         self.log_action(
-            "pretalx.submission.deleted",
+            "eventyay.submission.deleted",
             person=person,
             orga=True,
             data={"previous": previous, "from_pending": from_pending},
@@ -715,10 +715,10 @@ class Submission(GenerateCode, PretalxModel):
 
     @cached_property
     def slot(self):
-        """The first scheduled :class:`~pretalx.schedule.models.slot.TalkSlot`
+        """The first scheduled :class:`~eventyay.schedule.models.slot.TalkSlot`
         of this submission in the current.
 
-        :class:`~pretalx.schedule.models.schedule.Schedule`.
+        :class:`~eventyay.schedule.models.schedule.Schedule`.
 
         Note that this slot is not guaranteed to be visible.
         """
@@ -738,10 +738,10 @@ class Submission(GenerateCode, PretalxModel):
 
     @cached_property
     def public_slots(self):
-        """All publicly visible :class:`~pretalx.schedule.models.slot.TalkSlot`
+        """All publicly visible :class:`~eventyay.schedule.models.slot.TalkSlot`
         objects of this submission in the current.
 
-        :class:`~pretalx.schedule.models.schedule.Schedule`.
+        :class:`~eventyay.schedule.models.schedule.Schedule`.
         """
         from eventyay.agenda.permissions import is_agenda_visible
 
@@ -826,7 +826,7 @@ class Submission(GenerateCode, PretalxModel):
     def availabilities(self):
         """The intersection of all.
 
-        :class:`~pretalx.schedule.models.availability.Availability` objects of
+        :class:`~eventyay.schedule.models.availability.Availability` objects of
         all speakers of this submission.
         """
         from eventyay.schedule.models.availability import Availability

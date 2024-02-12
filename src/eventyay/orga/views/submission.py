@@ -301,7 +301,7 @@ class SubmissionSpeakersAdd(SubmissionViewMixin, View):
             if submission not in speaker.submissions.all():
                 speaker.submissions.add(submission)
                 submission.log_action(
-                    "pretalx.submission.speakers.add", person=request.user, orga=True
+                    "eventyay.submission.speakers.add", person=request.user, orga=True
                 )
                 messages.success(
                     request, _("The speaker has been added to the proposal.")
@@ -326,7 +326,7 @@ class SubmissionSpeakersDelete(SubmissionViewMixin, View):
         if submission in speaker.submissions.all():
             speaker.submissions.remove(submission)
             submission.log_action(
-                "pretalx.submission.speakers.remove", person=request.user, orga=True
+                "eventyay.submission.speakers.remove", person=request.user, orga=True
             )
             messages.success(
                 request, _("The speaker has been removed from the proposal.")
@@ -443,7 +443,7 @@ class SubmissionContent(
                 if not form.instance.pk:
                     continue
                 obj.log_action(
-                    "pretalx.submission.resource.delete",
+                    "eventyay.submission.resource.delete",
                     person=self.request.user,
                     data={"id": form.instance.pk},
                 )
@@ -455,7 +455,7 @@ class SubmissionContent(
                 change_data = {k: form.cleaned_data.get(k) for k in form.changed_data}
                 change_data["id"] = form.instance.pk
                 obj.log_action(
-                    "pretalx.submission.resource.update", person=self.request.user
+                    "eventyay.submission.resource.update", person=self.request.user
                 )
 
         extra_forms = [
@@ -469,7 +469,7 @@ class SubmissionContent(
             form.instance.submission = obj
             form.save()
             obj.log_action(
-                "pretalx.submission.resource.create",
+                "eventyay.submission.resource.create",
                 person=self.request.user,
                 orga=True,
                 data={"id": form.instance.pk},
@@ -534,7 +534,7 @@ class SubmissionContent(
                 return self.get(self.request, *self.args, **self.kwargs)
             messages.success(self.request, _("The proposal has been updated!"))
         if form.has_changed():
-            action = "pretalx.submission." + ("create" if created else "update")
+            action = "eventyay.submission." + ("create" if created else "update")
             form.instance.log_action(action, person=self.request.user, orga=True)
             self.request.event.cache.set("rebuild_schedule_export", True, None)
         return redirect(self.get_success_url())
@@ -782,7 +782,7 @@ class SubmissionStats(PermissionRequired, TemplateView):
             log.timestamp.astimezone(self.request.event.tz).date()
             for log in ActivityLog.objects.filter(
                 event=self.request.event,
-                action_type="pretalx.submission.create",
+                action_type="eventyay.submission.create",
                 content_type=ContentType.objects.get_for_model(Submission),
                 object_id__in=talk_ids,
             )
@@ -881,7 +881,7 @@ class SubmissionStats(PermissionRequired, TemplateView):
             log.timestamp.astimezone(self.request.event.tz).date().isoformat()
             for log in ActivityLog.objects.filter(
                 event=self.request.event,
-                action_type="pretalx.submission.create",
+                action_type="eventyay.submission.create",
                 content_type=ContentType.objects.get_for_model(Submission),
                 object_id__in=talk_ids,
             )
@@ -1003,7 +1003,7 @@ class TagDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
         result = super().form_valid(form)
         messages.success(self.request, _("The tag has been saved."))
         if form.has_changed():
-            action = "pretalx.tag." + ("update" if self.object else "create")
+            action = "eventyay.tag." + ("update" if self.object else "create")
             form.instance.log_action(action, person=self.request.user, orga=True)
         return result
 
@@ -1020,7 +1020,7 @@ class TagDelete(PermissionRequired, DetailView):
 
         tag.delete()
         request.event.log_action(
-            "pretalx.tag.delete", person=self.request.user, orga=True
+            "eventyay.tag.delete", person=self.request.user, orga=True
         )
         messages.success(request, _("The tag has been deleted."))
         return redirect(self.request.event.orga_urls.tags)

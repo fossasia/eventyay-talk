@@ -80,7 +80,7 @@ class FileCleanupMixin:
 
 class PretalxModel(LogMixin, TimestampedModel, FileCleanupMixin, models.Model):
     """
-    Base model for most pretalx models. Suitable for plugins.
+    Base model for most eventyay models. Suitable for plugins.
     """
 
     objects = ScopedManager(event="event")

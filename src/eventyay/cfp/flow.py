@@ -356,7 +356,7 @@ class InfoStep(GenericFlowStep, FormFlowStep):
                 ),
             )
         else:
-            submission.log_action("pretalx.submission.create", person=request.user)
+            submission.log_action("eventyay.submission.create", person=request.user)
             messages.success(
                 self.request,
                 _(

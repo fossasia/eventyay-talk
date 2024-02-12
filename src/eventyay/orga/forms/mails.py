@@ -79,7 +79,7 @@ class MailTemplateForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
                     "url",
                     ["event", "user"],
                     None,
-                    "https://pretalx.example.com/democon/me/submissions/",
+                    "https://eventyay.example.com/democon/me/submissions/",
                     is_visible=False,
                 )
                 kwargs = ["event", "user"]

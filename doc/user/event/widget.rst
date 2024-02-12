@@ -15,16 +15,16 @@ You will obtain two code snippets that look *roughly* like the following. The
 first should be embedded into the ``<head>`` part of your website, if possible.
 If this is inconvenient, you can put it in the ``<body>`` part as well::
 
-    <script type="text/javascript" src="https://pretalx.com/democon/schedule/widget/v2.en.js"></script>
+    <script type="text/javascript" src="https://eventyay.com/democon/schedule/widget/v2.en.js"></script>
 
 The second snippet should be embedded at the position where the widget should show up::
 
-    <pretalx-schedule event-url="https://pretalx.com/democon/" locale="en" style="--pretalx-clr-primary: #3aa57c"></pretalx-schedule>
+    <eventyay-schedule event-url="https://eventyay.com/democon/" locale="en" style="--eventyay-clr-primary: #3aa57c"></eventyay-schedule>
     <noscript>
-       <div class="pretalx-widget">
-            <div class="pretalx-widget-info-message">
+       <div class="eventyay-widget">
+            <div class="eventyay-widget-info-message">
                 JavaScript is disabled in your browser. To access our schedule without JavaScript,
-                please <a target="_blank" href="https://pretalx.com/democon/schedule/">click here</a>.
+                please <a target="_blank" href="https://eventyay.com/democon/schedule/">click here</a>.
             </div>
         </div>
     </noscript>
@@ -49,18 +49,18 @@ Your embedded widget could look like the following:
     </div>
     </div>
     </div>
-    <script type="text/javascript" src="https://pretalx.com/democon/schedule/widget/v2.en.js" async></script>
+    <script type="text/javascript" src="https://eventyay.com/democon/schedule/widget/v2.en.js" async></script>
 
     <div class="nav-content" style="max-width: 100%; display: block; position: relative;">
     <div>
-    <pretalx-schedule event-url="https://pretalx.com/democon/" locale="en" style="--pretalx-clr-primary: #3aa57c; --pretalx-sticky-top-offset: 70px"></pretalx-schedule>
+    <eventyay-schedule event-url="https://eventyay.com/democon/" locale="en" style="--eventyay-clr-primary: #3aa57c; --eventyay-sticky-top-offset: 70px"></eventyay-schedule>
     </div>
     </div>
     <noscript>
-       <div class="pretalx-widget">
-            <div class="pretalx-widget-info-message">
+       <div class="eventyay-widget">
+            <div class="eventyay-widget-info-message">
                 JavaScript is disabled in your browser. To access our schedule without JavaScript,
-                please <a target="_blank" href="https://pretalx.com/democon/schedule/">click here</a>.
+                please <a target="_blank" href="https://eventyay.com/democon/schedule/">click here</a>.
             </div>
         </div>
     </noscript>

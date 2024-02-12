@@ -76,16 +76,16 @@ EXTERNAL_APPS = [
     "rules",
 ]
 LOCAL_APPS = [
-    "pretalx.api",
-    "pretalx.common",
-    "pretalx.event",
-    "pretalx.mail",
-    "pretalx.person",
-    "pretalx.schedule",
-    "pretalx.submission",
-    "pretalx.agenda",
-    "pretalx.cfp",
-    "pretalx.orga",
+    "eventyay.api",
+    "eventyay.common",
+    "eventyay.event",
+    "eventyay.mail",
+    "eventyay.person",
+    "eventyay.schedule",
+    "eventyay.submission",
+    "eventyay.agenda",
+    "eventyay.cfp",
+    "eventyay.orga",
 ]
 FALLBACK_APPS = [
     "bootstrap4",
@@ -95,7 +95,7 @@ FALLBACK_APPS = [
 INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + LOCAL_APPS + FALLBACK_APPS
 
 PLUGINS = []
-for entry_point in iter_entry_points(group="pretalx.plugin", name=None):
+for entry_point in iter_entry_points(group="eventyay.plugin", name=None):
     PLUGINS.append(entry_point.module_name)
     INSTALLED_APPS.append(entry_point.module_name)
 
@@ -118,7 +118,7 @@ ALLOWED_HOSTS = [
     "*"
 ]  # We have our own security middleware to allow for custom event URLs
 
-ROOT_URLCONF = "pretalx.urls"
+ROOT_URLCONF = "eventyay.urls"
 STATIC_URL = config.get("site", "static")
 MEDIA_URL = config.get("site", "media")
 FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755
@@ -236,7 +236,7 @@ LOGGING = {
         "file": {
             "level": loglevel,
             "class": "logging.FileHandler",
-            "filename": LOG_DIR / "pretalx.log",
+            "filename": LOG_DIR / "eventyay.log",
             "formatter": "default",
         },
         "null": {
@@ -269,12 +269,12 @@ LOGGING = {
 
 email_level = config.get("logging", "email_level", fallback="ERROR") or "ERROR"
 emails = config.get("logging", "email", fallback="").split(",")
-DEFAULT_EXCEPTION_REPORTER = "pretalx.common.exceptions.PretalxExceptionReporter"
+DEFAULT_EXCEPTION_REPORTER = "eventyay.common.exceptions.PretalxExceptionReporter"
 MANAGERS = ADMINS = [(email, email) for email in emails if email]
 if ADMINS:
     LOGGING["handlers"]["mail_admins"] = {
         "level": email_level,
-        "class": "pretalx.common.exceptions.PretalxAdminEmailHandler",
+        "class": "eventyay.common.exceptions.PretalxAdminEmailHandler",
     }
     LOGGING["loggers"]["django.request"]["handlers"].append("mail_admins")
 
@@ -344,7 +344,7 @@ USE_I18N = True
 USE_TZ = True
 TIME_ZONE = config.get("locale", "time_zone")
 LOCALE_PATHS = (Path(__file__).resolve().parent / "locale",)
-FORMAT_MODULE_PATH = ["pretalx.common.formats"]
+FORMAT_MODULE_PATH = ["eventyay.common.formats"]
 
 LANGUAGE_CODE = config.get("locale", "language_code")
 LANGUAGE_COOKIE_NAME = "pretalx_language"
@@ -475,7 +475,7 @@ LOGIN_URL = "/orga/login"
 AUTHENTICATION_BACKENDS = (
     "rules.permissions.ObjectPermissionBackend",
     "django.contrib.auth.backends.ModelBackend",
-    "pretalx.common.auth.AuthenticationTokenBackend",
+    "eventyay.common.auth.AuthenticationTokenBackend",
 )
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -492,12 +492,12 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",  # Security first
     "whitenoise.middleware.WhiteNoiseMiddleware",  # Next up: static files
     "django.middleware.common.CommonMiddleware",  # Set some sensible defaults, now, before responses are modified
-    "pretalx.common.middleware.SessionMiddleware",  # Add session handling
+    "eventyay.common.middleware.SessionMiddleware",  # Add session handling
     "django.contrib.auth.middleware.AuthenticationMiddleware",  # Uses sessions
-    "pretalx.common.auth.AuthenticationTokenMiddleware",  # Make auth tokens work
-    "pretalx.common.middleware.MultiDomainMiddleware",  # Check which host is used and if it is valid
-    "pretalx.common.middleware.EventPermissionMiddleware",  # Sets locales, request.event, available events, etc.
-    "pretalx.common.middleware.CsrfViewMiddleware",  # Protect against CSRF attacks before forms/data are processed
+    "eventyay.common.auth.AuthenticationTokenMiddleware",  # Make auth tokens work
+    "eventyay.common.middleware.MultiDomainMiddleware",  # Check which host is used and if it is valid
+    "eventyay.common.middleware.EventPermissionMiddleware",  # Sets locales, request.event, available events, etc.
+    "eventyay.common.middleware.CsrfViewMiddleware",  # Protect against CSRF attacks before forms/data are processed
     "django.contrib.messages.middleware.MessageMiddleware",  # Uses sessions
     "django.middleware.clickjacking.XFrameOptionsMiddleware",  # Protects against clickjacking
     "csp.middleware.CSPMiddleware",  # Modifies/sets CSP headers
@@ -530,12 +530,12 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "pretalx.agenda.context_processors.is_html_export",
-                "pretalx.common.context_processors.add_events",
-                "pretalx.common.context_processors.locale_context",
-                "pretalx.common.context_processors.messages",
-                "pretalx.common.context_processors.system_information",
-                "pretalx.orga.context_processors.orga_events",
+                "eventyay.agenda.context_processors.is_html_export",
+                "eventyay.common.context_processors.add_events",
+                "eventyay.common.context_processors.locale_context",
+                "eventyay.common.context_processors.messages",
+                "eventyay.common.context_processors.system_information",
+                "eventyay.orga.context_processors.orga_events",
             ],
             "loaders": template_loaders,
         },
@@ -547,7 +547,7 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     "compressor.finders.CompressorFinder",
 )
-static_path = BASE_DIR / "pretalx" / "static"
+static_path = BASE_DIR / "eventyay" / "static"
 STATICFILES_DIRS = [static_path] if static_path.exists() else []
 
 STORAGES = {
@@ -592,8 +592,8 @@ BOOTSTRAP4 = {
     "field_renderers": {
         "default": "bootstrap4.renderers.FieldRenderer",
         "inline": "bootstrap4.renderers.InlineFieldRenderer",
-        "event": "pretalx.common.forms.renderers.EventFieldRenderer",
-        "event-inline": "pretalx.common.forms.renderers.EventInlineFieldRenderer",
+        "event": "eventyay.common.forms.renderers.EventFieldRenderer",
+        "event-inline": "eventyay.common.forms.renderers.EventInlineFieldRenderer",
     }
 }
 COMPRESS_ENABLED = COMPRESS_OFFLINE = not DEBUG
@@ -617,7 +617,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": ("pretalx.api.permissions.ApiPermission",),
+    "DEFAULT_PERMISSION_CLASSES": ("eventyay.api.permissions.ApiPermission",),
     "DEFAULT_FILTER_BACKENDS": (
         "rest_framework.filters.SearchFilter",
         "django_filters.rest_framework.DjangoFilterBackend",
@@ -632,7 +632,7 @@ REST_FRAMEWORK = {
 if DEBUG:
     REST_FRAMEWORK["COMPACT_JSON"] = False
 
-WSGI_APPLICATION = "pretalx.wsgi.application"
+WSGI_APPLICATION = "eventyay.wsgi.application"
 
 PRETALX_VERSION = __version__
 if DEBUG:
@@ -648,8 +648,8 @@ if DEBUG:
 with suppress(ImportError):
     from .override_settings import *  # noqa
 
-if "--no-pretalx-information" in sys.argv:
-    sys.argv.remove("--no-pretalx-information")
+if "--no-eventyay-information" in sys.argv:
+    sys.argv.remove("--no-eventyay-information")
 else:
     log_initial(
         debug=DEBUG,

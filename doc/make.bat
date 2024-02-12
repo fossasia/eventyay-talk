@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
-set SPHINXPROJ=pretalx
+set SPHINXPROJ=eventyay
 
 if "%1" == "" goto help
 

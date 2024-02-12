@@ -1,6 +1,6 @@
 import pytest
 
-from pretalx.common.plugins import get_all_plugins
+from eventyay.common.plugins import get_all_plugins
 from tests.dummy_app import PluginApp
 
 

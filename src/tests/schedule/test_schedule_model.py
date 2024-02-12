@@ -5,9 +5,9 @@ from django.core import mail as djmail
 from django.utils.timezone import now
 from django_scopes import scope
 
-from pretalx.mail.models import QueuedMail
-from pretalx.schedule.models import Schedule, TalkSlot
-from pretalx.submission.models import Submission
+from eventyay.mail.models import QueuedMail
+from eventyay.schedule.models import Schedule, TalkSlot
+from eventyay.submission.models import Submission
 
 
 @pytest.mark.django_db
@@ -105,7 +105,7 @@ def test_unfreeze(slot):
 
 @pytest.mark.django_db
 def test_unfreeze_bug72(slot):
-    # https://github.com/pretalx/pretalx/issues/72
+    # https://github.com/eventyay/eventyay/issues/72
     event = slot.event
 
     with scope(event=event):

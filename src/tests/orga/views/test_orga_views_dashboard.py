@@ -46,13 +46,13 @@ def test_dashboard_event_list(
 def test_event_dashboard(
     orga_user, orga_client, review_user, speaker, event, test_user, slot, query
 ):
-    from pretalx.common.models.log import ActivityLog
+    from eventyay.common.models.log import ActivityLog
 
     ActivityLog.objects.create(
         event=event,
         person=speaker,
         content_object=slot.submission,
-        action_type="pretalx.submission.create",
+        action_type="eventyay.submission.create",
     )
     if test_user == "speaker":
         orga_client.force_login(speaker)

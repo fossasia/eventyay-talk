@@ -28,7 +28,7 @@
 
 {% block agenda_content %}
     <article>
-        {% html_signal "pretalx.agenda.signals.html_above_session_pages" sender=request.event request=request submission=submission %}
+        {% html_signal "eventyay.agenda.signals.html_above_session_pages" sender=request.event request=request submission=submission %}
         <h3 class="talk-title">
             <div class="heading-with-buttons">
                 <span>
@@ -141,14 +141,14 @@
                 </section>
             {% endif %}
             <section>
-                {% html_signal "pretalx.agenda.signals.html_below_session_pages" sender=request.event request=request submission=submission %}
+                {% html_signal "eventyay.agenda.signals.html_below_session_pages" sender=request.event request=request submission=submission %}
             </section>
         </div>
     </div>
     {% if not hide_speaker_links %}
         {% for speaker in speakers %}
-            <div class="pretalx-session">
-                <div class="pretalx-session-time-box avatar">
+            <div class="eventyay-session">
+                <div class="eventyay-session-time-box avatar">
                     <a href="{{ speaker.talk_profile.urls.public }}">
                         <div class="avatar-wrapper">
                             {% if speaker.avatar_url and request.event.cfp.request_avatar %}
@@ -159,7 +159,7 @@
                         </div>
                     </a>
                 </div>
-                <div class="pretalx-session-info">
+                <div class="eventyay-session-info">
                     <div class="title">
                         <a href="{{ speaker.talk_profile.urls.public }}">{{ speaker.get_display_name }}</a>
                     </div>

@@ -50,7 +50,7 @@ def get_static(request, path, content_type):  # pragma: no cover
     """TODO: move to staticfiles usage as per https://gist.github.com/SmileyChris/8d472f2a67526e36f39f3c33520182bc
     This would avoid potential directory traversal by … a malicious urlconfig, so not a huge attack vector.
     """
-    path = settings.BASE_DIR / "pretalx/static" / path
+    path = settings.BASE_DIR / "eventyay/static" / path
     if not path.exists():
         raise Http404()
     return FileResponse(
@@ -128,7 +128,7 @@ class GenericResetView(FormView):
             return self.get(self.request, *self.args, **self.kwargs)
 
         messages.success(self.request, phrases.cfp.auth_password_reset)
-        user.log_action("pretalx.user.password.reset")
+        user.log_action("eventyay.user.password.reset")
 
         return redirect(self.get_success_url())
 

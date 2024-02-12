@@ -177,7 +177,7 @@ class MailDelete(PermissionRequired, TemplateView):
             )
             return redirect(self.request.event.orga_urls.outbox)
         for mail in mails:
-            mail.log_action("pretalx.mail.delete", person=self.request.user, orga=True)
+            mail.log_action("eventyay.mail.delete", person=self.request.user, orga=True)
             mail.delete()
 
         messages.success(
@@ -239,7 +239,7 @@ class MailDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
         form.instance.event = self.request.event
         result = super().form_valid(form)
         if form.has_changed():
-            action = "pretalx.mail." + ("update" if self.object else "create")
+            action = "eventyay.mail." + ("update" if self.object else "create")
             form.instance.log_action(action, person=self.request.user, orga=True)
         action = form.data.get("form", "save")
         if action == "send":
@@ -506,7 +506,7 @@ class TemplateDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
     def form_valid(self, form):
         form.instance.event = self.request.event
         if form.has_changed():
-            action = "pretalx.mail_template." + ("update" if self.object else "create")
+            action = "eventyay.mail_template." + ("update" if self.object else "create")
             form.instance.log_action(action, person=self.request.user, orga=True)
         messages.success(
             self.request,
@@ -529,7 +529,7 @@ class TemplateDelete(PermissionRequired, View):
         super().dispatch(request, *args, **kwargs)
         template = self.get_object()
         template.log_action(
-            "pretalx.mail_template.delete", person=self.request.user, orga=True
+            "eventyay.mail_template.delete", person=self.request.user, orga=True
         )
         template.delete()
         messages.success(request, "The template has been deleted.")

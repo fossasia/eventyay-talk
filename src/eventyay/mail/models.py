@@ -21,7 +21,7 @@ from eventyay.mail.signals import queuedmail_post_send
 class MailTemplate(PretalxModel):
     """MailTemplates can be used to create.
 
-    :class:`~pretalx.mail.models.QueuedMail` objects.
+    :class:`~eventyay.mail.models.QueuedMail` objects.
 
     The process does not come with variable substitution except for
     special cases, for now.
@@ -82,10 +82,10 @@ class MailTemplate(PretalxModel):
         allow_empty_address: bool = False,
         attachments: list = False,
     ):
-        """Creates a :class:`~pretalx.mail.models.QueuedMail` object from a
+        """Creates a :class:`~eventyay.mail.models.QueuedMail` object from a
         MailTemplate.
 
-        :param user: Either a :class:`~pretalx.person.models.user.User` or an
+        :param user: Either a :class:`~eventyay.person.models.user.User` or an
             email address as a string.
         :param event: The event to which this email belongs. May be ``None``.
         :param locale: The locale will be set via the event and the recipient,
@@ -165,7 +165,7 @@ class MailTemplate(PretalxModel):
 
 
 class QueuedMail(PretalxModel):
-    """Emails in pretalx are rarely sent directly, hence the name QueuedMail.
+    """Emails in eventyay are rarely sent directly, hence the name QueuedMail.
 
     This mechanism allows organisers to make sure they send out the right
     content, and to include personal changes in emails.
@@ -286,7 +286,7 @@ class QueuedMail(PretalxModel):
         """Sends an email.
 
         :param requestor: The user issuing the command. Used for logging.
-        :type requestor: :class:`~pretalx.person.models.user.User`
+        :type requestor: :class:`~eventyay.person.models.user.User`
         :param orga: Was this email sent as by a privileged user?
         """
         if self.sent:
@@ -320,7 +320,7 @@ class QueuedMail(PretalxModel):
         self.sent = now()
         if self.pk:
             self.log_action(
-                "pretalx.mail.sent",
+                "eventyay.mail.sent",
                 person=requestor,
                 orga=orga,
                 data={

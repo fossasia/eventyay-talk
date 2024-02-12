@@ -22,10 +22,10 @@ answers                               list                       The question an
 ===================================== ========================== =======================================================
 
 .. versionadded:: 1.1.0
-   The ``availabilities`` field for organisers was added in pretalx v1.1.0.
+   The ``availabilities`` field for organisers was added in eventyay v1.1.0.
 
 .. versionadded:: 3.0.0
-   The ``answers`` field for organisers was added in pretalx v3.0.0. You need to pass the ``questions`` query parameter to populate this field. You can set it to ``all`` to retrieve answers to all speaker questions.
+   The ``answers`` field for organisers was added in eventyay v3.0.0. You need to pass the ``questions`` query parameter to populate this field. You can set it to ``all`` to retrieve answers to all speaker questions.
 
 Endpoints
 ---------

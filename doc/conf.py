@@ -10,7 +10,7 @@ from datetime import date
 sys.path.insert(0, os.path.abspath('../src'))
 sys.path.insert(0, os.path.abspath('./_extensions'))
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pretalx.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "eventyay.settings")
 import django
 django.setup()
 
@@ -54,7 +54,7 @@ source_suffix = '.rst'
 master_doc = 'contents'
 
 # General information about the project.
-project = 'pretalx'
+project = 'eventyay'
 copyright = '2017-{}, Tobias Kunze'.format(date.today().year)
 author = 'Tobias Kunze'
 
@@ -63,9 +63,9 @@ author = 'Tobias Kunze'
 # built documents.
 #
 # The short X.Y version.
-# from pretalx import __version__  # TODO
+# from eventyay import __version__  # TODO
 # The full version, including alpha/beta/rc tags.
-from pretalx import __version__
+from eventyay import __version__
 version = '.'.join(__version__.split('.')[:2])
 release = __version__
 
@@ -96,7 +96,7 @@ todo_include_todos = False
 html_static_path = [
     '_static',
     '_themes/pretalx_theme/static',
-    os.path.abspath('../src/pretalx/static/vendored/forkawesome/fonts/'),
+    os.path.abspath('../src/eventyay/static/vendored/forkawesome/fonts/'),
 ]
 html_additional_pages = {
     'index': 'index.html'
@@ -108,7 +108,7 @@ html_theme_options = {
     'display_version': False,
 }
 html_logo = 'images/logo.svg'
-html_favicon = os.path.abspath('../src/pretalx/static/common/img/favicon-32x32.png')
+html_favicon = os.path.abspath('../src/eventyay/static/common/img/favicon-32x32.png')
 # html_link_suffix = ''
 
 # -- Options for HTMLHelp output ------------------------------------------
@@ -120,18 +120,18 @@ htmlhelp_basename = 'pretalxdoc'
 intersphinx_mapping = {'https://docs.python.org/': None}
 
 linkcheck_ignore = [
-    'https://pretalx.yourdomain.com',
+    'https://eventyay.yourdomain.com',
     'http://localhost',
     'http://127.0.0.1',
-    r'https://github.com/pretalx/pretalx/issues/\d+',  # The release notes are auto generated and contain a LOT of issue links
-    "https://translate.pretalx.com/projects/pretalx/pretalx/#repository",  # Only accessible by admins
+    r'https://github.com/eventyay/eventyay/issues/\d+',  # The release notes are auto generated and contain a LOT of issue links
+    "https://translate.eventyay.com/projects/eventyay/eventyay/#repository",  # Only accessible by admins
 ]
 
 # GitHub integration
 html_context = {
     "display_github": True, # Integrate GitHub
-    "github_user": "pretalx", # Username
-    "github_repo": "pretalx", # Repo name
+    "github_user": "eventyay", # Username
+    "github_repo": "eventyay", # Repo name
     "github_version": "main", # Version
     "conf_py_path": "/doc/", # Path in the checkout to the docs root
 }

@@ -106,7 +106,7 @@ class EventDetail(EventSettingsPermission, ActionFromUrl, UpdateView):
         result = super().form_valid(form)
 
         form.instance.log_action(
-            "pretalx.event.update", person=self.request.user, orga=True
+            "eventyay.event.update", person=self.request.user, orga=True
         )
         messages.success(self.request, _("The event settings have been saved."))
         regenerate_css.apply_async(args=(form.instance.pk,))
@@ -196,7 +196,7 @@ class EventLive(EventSettingsPermission, TemplateView):
                     event.is_public = True
                     event.save()
                     event.log_action(
-                        "pretalx.event.activate",
+                        "eventyay.event.activate",
                         person=self.request.user,
                         orga=True,
                         data={},
@@ -212,7 +212,7 @@ class EventLive(EventSettingsPermission, TemplateView):
                 event.is_public = False
                 event.save()
                 event.log_action(
-                    "pretalx.event.deactivate",
+                    "eventyay.event.deactivate",
                     person=self.request.user,
                     orga=True,
                     data={},
@@ -494,7 +494,7 @@ class InvitationView(FormView):
         invite.team.members.add(user)
         invite.team.save()
         invite.team.organiser.log_action(
-            "pretalx.invite.orga.accept", person=user, orga=True
+            "eventyay.invite.orga.accept", person=user, orga=True
         )
         messages.info(self.request, _("You are now part of the team!"))
         invite.delete()
@@ -533,11 +533,11 @@ class UserSettings(TemplateView):
         if self.login_form.is_bound and self.login_form.is_valid():
             self.login_form.save()
             messages.success(request, _("Your changes have been saved."))
-            request.user.log_action("pretalx.user.password.update")
+            request.user.log_action("eventyay.user.password.update")
         elif self.profile_form.is_bound and self.profile_form.is_valid():
             self.profile_form.save()
             messages.success(request, _("Your changes have been saved."))
-            request.user.log_action("pretalx.user.profile.update")
+            request.user.log_action("eventyay.user.profile.update")
         elif request.POST.get("form") == "token":
             request.user.regenerate_token()
             messages.success(
@@ -682,7 +682,7 @@ class EventWizard(PermissionRequired, SensibleBackWizardMixin, SessionWizardView
             logdata.update({k: v for k, v in f.cleaned_data.items()})
         with scope(event=event):
             event.log_action(
-                "pretalx.event.create",
+                "eventyay.event.create",
                 person=self.request.user,
                 data=logdata,
                 orga=True,

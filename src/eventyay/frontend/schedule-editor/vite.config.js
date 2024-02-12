@@ -35,7 +35,7 @@ export default {
 	build: {
 		outDir: process.env.OUT_DIR,
 		emptyOutDir: false,
-		manifest: 'pretalx-manifest.json',
+		manifest: 'eventyay-manifest.json',
 		assetsDir: '',
 		rollupOptions: {input: 'src/main.js', output: {manualChunks: {moment: ['moment-timezone', 'moment']}}},
 		target: 'es2022',

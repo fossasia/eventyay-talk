@@ -1,7 +1,7 @@
 import pytest
 from django_scopes import scope
 
-from pretalx.agenda.permissions import (
+from eventyay.agenda.permissions import (
     is_agenda_visible,
     is_feedback_ready,
     is_speaker_viewable,
@@ -45,10 +45,10 @@ def test_agenda_permission_is_feedback_ready(
     slot_visible, accept_feedback, result, slot, monkeypatch
 ):
     monkeypatch.setattr(
-        "pretalx.agenda.permissions.is_submission_visible", lambda x, y: slot_visible
+        "eventyay.agenda.permissions.is_submission_visible", lambda x, y: slot_visible
     )
     monkeypatch.setattr(
-        "pretalx.submission.models.submission.Submission.does_accept_feedback",
+        "eventyay.submission.models.submission.Submission.does_accept_feedback",
         accept_feedback,
     )
     assert is_feedback_ready(None, slot.submission) is result
@@ -66,7 +66,7 @@ def test_agenda_permission_is_speaker_viewable(
     agenda_visible, result, speaker, slot, schedule, monkeypatch
 ):
     monkeypatch.setattr(
-        "pretalx.agenda.permissions.is_agenda_visible", lambda x, y: agenda_visible
+        "eventyay.agenda.permissions.is_agenda_visible", lambda x, y: agenda_visible
     )
     with scope(event=schedule.event):
         assert is_speaker_viewable(None, speaker.profiles.first()) is result

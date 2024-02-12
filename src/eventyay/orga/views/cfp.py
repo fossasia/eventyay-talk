@@ -90,7 +90,7 @@ class CfPTextDetail(PermissionRequired, ActionFromUrl, UpdateView):
         result = super().form_valid(form)
         if form.has_changed():
             form.instance.log_action(
-                "pretalx.cfp.update", person=self.request.user, orga=True
+                "eventyay.cfp.update", person=self.request.user, orga=True
             )
         self.sform.save()
         return result
@@ -188,7 +188,7 @@ class CfPQuestionDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
                 if not form.instance.pk:
                     continue
                 obj.log_action(
-                    "pretalx.question.option.delete",
+                    "eventyay.question.option.delete",
                     person=self.request.user,
                     orga=True,
                     data={"id": form.instance.pk},
@@ -201,7 +201,7 @@ class CfPQuestionDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
                 change_data = {k: form.cleaned_data.get(k) for k in form.changed_data}
                 change_data["id"] = form.instance.pk
                 obj.log_action(
-                    "pretalx.question.option.update",
+                    "eventyay.question.option.update",
                     person=self.request.user,
                     orga=True,
                     data=change_data,
@@ -218,7 +218,7 @@ class CfPQuestionDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
             change_data = {k: form.cleaned_data.get(k) for k in form.changed_data}
             change_data["id"] = form.instance.pk
             obj.log_action(
-                "pretalx.question.option.create",
+                "eventyay.question.option.create",
                 person=self.request.user,
                 orga=True,
                 data=change_data,
@@ -266,7 +266,7 @@ class CfPQuestionDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
             if not formset:
                 return self.get(self.request, *self.args, **self.kwargs)
         if form.has_changed():
-            action = "pretalx.question." + (
+            action = "eventyay.question." + (
                 "update" if "pk" in self.kwargs else "create"
             )
             form.instance.log_action(action, person=self.request.user, orga=True)
@@ -292,7 +292,7 @@ class CfPQuestionDelete(PermissionRequired, DetailView):
                 question.logged_actions().delete()
                 question.delete()
                 request.event.log_action(
-                    "pretalx.question.delete", person=self.request.user, orga=True
+                    "eventyay.question.delete", person=self.request.user, orga=True
                 )
                 messages.success(request, _("The question has been deleted."))
         except ProtectedError:
@@ -428,7 +428,7 @@ class SubmissionTypeDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView
         form.instance.event = self.request.event
         result = super().form_valid(form)
         if form.has_changed():
-            action = "pretalx.submission_type." + (
+            action = "eventyay.submission_type." + (
                 "update" if self.object else "create"
             )
             form.instance.log_action(action, person=self.request.user, orga=True)
@@ -449,7 +449,7 @@ class SubmissionTypeDefault(PermissionRequired, View):
         self.request.event.cfp.default_type = submission_type
         self.request.event.cfp.save(update_fields=["default_type"])
         submission_type.log_action(
-            "pretalx.submission_type.make_default", person=self.request.user, orga=True
+            "eventyay.submission_type.make_default", person=self.request.user, orga=True
         )
         messages.success(request, _("The Session Type has been made default."))
         return redirect(self.request.event.cfp.urls.types)
@@ -485,7 +485,7 @@ class SubmissionTypeDelete(PermissionRequired, DetailView):
             try:
                 submission_type.delete()
                 request.event.log_action(
-                    "pretalx.submission_type.delete",
+                    "eventyay.submission_type.delete",
                     person=self.request.user,
                     orga=True,
                 )
@@ -537,7 +537,7 @@ class TrackDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
         result = super().form_valid(form)
         messages.success(self.request, _("The track has been saved."))
         if form.has_changed():
-            action = "pretalx.track." + ("update" if self.object else "create")
+            action = "eventyay.track." + ("update" if self.object else "create")
             form.instance.log_action(action, person=self.request.user, orga=True)
         return result
 
@@ -555,7 +555,7 @@ class TrackDelete(PermissionRequired, DetailView):
         try:
             track.delete()
             request.event.log_action(
-                "pretalx.track.delete", person=self.request.user, orga=True
+                "eventyay.track.delete", person=self.request.user, orga=True
             )
             messages.success(request, _("The track has been deleted."))
         except ProtectedError:  # TODO: show which/how many submissions are concerned
@@ -602,7 +602,7 @@ class AccessCodeDetail(PermissionRequired, CreateOrUpdateView):
         form.instance.event = self.request.event
         result = super().form_valid(form)
         if form.has_changed():
-            action = "pretalx.access_code." + ("update" if self.object else "create")
+            action = "eventyay.access_code." + ("update" if self.object else "create")
             form.instance.log_action(action, person=self.request.user, orga=True)
         messages.success(self.request, _("The access code has been saved."))
         return result
@@ -636,7 +636,7 @@ class AccessCodeSend(PermissionRequired, UpdateView):
         messages.success(self.request, _("The access code has been sent."))
         code = self.get_object()
         code.log_action(
-            "pretalx.access_code.send",
+            "eventyay.access_code.send",
             person=self.request.user,
             orga=True,
             data={"email": form.cleaned_data["to"]},
@@ -660,7 +660,7 @@ class AccessCodeDelete(PermissionRequired, DetailView):
         try:
             access_code.delete()
             request.event.log_action(
-                "pretalx.access_code.delete", person=self.request.user, orga=True
+                "eventyay.access_code.delete", person=self.request.user, orga=True
             )
             messages.success(request, _("The access code has been deleted."))
         except ProtectedError:

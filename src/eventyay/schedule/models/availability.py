@@ -12,7 +12,7 @@ zerotime = dt.time(0, 0)
 class Availability(PretalxModel):
     """The Availability class models when people or rooms are available for.
 
-    :class:`~pretalx.schedule.models.slot.TalkSlot` objects.
+    :class:`~eventyay.schedule.models.slot.TalkSlot` objects.
 
     The power of this class is not within its rather simple data model,
     but with the operations available on it. An availability object can

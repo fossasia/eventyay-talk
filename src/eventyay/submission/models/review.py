@@ -112,7 +112,7 @@ class AllReviewManager(models.Manager):
 class Review(PretalxModel):
     """Reviews model the opinion of reviewers of a.
 
-    :class:`~pretalx.submission.models.submission.Submission`.
+    :class:`~eventyay.submission.models.submission.Submission`.
 
     They can, but don't have to, include a score and a text.
 
@@ -149,18 +149,18 @@ class Review(PretalxModel):
     def find_missing_reviews(cls, event, user, ignore=None):
         """Returns all.
 
-        :class:`~pretalx.submission.models.submission.Submission` objects this
-        :class:`~pretalx.person.models.user.User` still has to review for the
-        given :class:`~pretalx.event.models.event.Event`.
+        :class:`~eventyay.submission.models.submission.Submission` objects this
+        :class:`~eventyay.person.models.user.User` still has to review for the
+        given :class:`~eventyay.event.models.event.Event`.
 
         Excludes submissions this user has submitted, and takes track
-        :class:`~pretalx.event.models.organiser.Team` permissions into account,
+        :class:`~eventyay.event.models.organiser.Team` permissions into account,
         as well as assignments if the current review phase is limited to assigned
         proposals. The result is ordered by review count.
 
-        :type event: :class:`~pretalx.event.models.event.Event`
-        :type user: :class:`~pretalx.person.models.user.User`
-        :rtype: Queryset of :class:`~pretalx.submission.models.submission.Submission` objects
+        :type event: :class:`~eventyay.event.models.event.Event`
+        :type user: :class:`~eventyay.person.models.user.User`
+        :rtype: Queryset of :class:`~eventyay.submission.models.submission.Submission` objects
         """
         from eventyay.submission.models import SubmissionStates
 

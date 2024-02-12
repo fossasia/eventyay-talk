@@ -3,10 +3,10 @@
 The development setup
 =====================
 
-To contribute to pretalx, it's useful to run pretalx locally on your device so you can test your
+To contribute to eventyay, it's useful to run eventyay locally on your device so you can test your
 changes. First of all, you need install some packages on your operating system:
 
-If you want to install pretalx on a server for actual usage, go to the :ref:`administrator-index`
+If you want to install eventyay on a server for actual usage, go to the :ref:`administrator-index`
 instead.
 
 External dependencies
@@ -52,7 +52,7 @@ environment and activate it for your current session::
     source env/bin/activate
 
 You should now see a (env) prepended to your shell prompt. **You have to do
-this in every shell you use to work with pretalx** (or configure your shell to
+this in every shell you use to work with eventyay** (or configure your shell to
 do so automatically).
 
 If you are working on Ubuntu or Debian, we strongly recommend upgrading your pip and setuptools
@@ -65,8 +65,8 @@ Get a copy of the source code
 -----------------------------
 You can clone our git repository::
 
-    git clone https://github.com/pretalx/pretalx.git
-    cd pretalx/
+    git clone https://github.com/eventyay/eventyay.git
+    cd eventyay/
 
 
 Working with the code
@@ -99,7 +99,7 @@ stage the event in question should be in. The available choices are ``cfp``
 a schedule and the event is currently running), and ``over``. ``schedule`` is
 the default value.
 
-If you want to see pretalx in a different language than English, you have to compile our language
+If you want to see eventyay in a different language than English, you have to compile our language
 files::
 
     (env)$ python manage.py compilemessages
@@ -157,7 +157,7 @@ afterwards to format that file.
 Working with mails
 ^^^^^^^^^^^^^^^^^^
 
-When running in development mode, Pretalx uses Django's console email backend.
+When running in development mode, Eventyay uses Django's console email backend.
 This means the development server will print any emails to its stdout, instead
 of sending them via SMTP.
 
@@ -177,13 +177,13 @@ the following command to scan the source code for strings we want to translate a
 
     (env)$ python manage.py makemessages
 
-To actually see pretalx in your language, you have to compile the ``*.po`` files to their optimised
+To actually see eventyay in your language, you have to compile the ``*.po`` files to their optimised
 binary ``*.mo`` counterparts::
 
     (env)$ python manage.py compilemessages
 
-pretalx by default supports events in English, German, or French, or all three. To translate
-pretalx to a new language, add the language code and natural name to the ``LANGUAGES`` variable in
+eventyay by default supports events in English, German, or French, or all three. To translate
+eventyay to a new language, add the language code and natural name to the ``LANGUAGES`` variable in
 the ``settings.py``. Depending on the completeness of your changes, and your commitment to maintain
 them in the future, we can talk about merging them into core.
 

@@ -7,11 +7,11 @@
 <html lang="{{ html_locale }}"{% if rtl %} dir="rtl" class="rtl"{% endif %}>
     <head>
         <meta charset="utf-8">
-        <title>{% block title %}{% if request.event %}{{ request.event.name }}{% endif %}{% endblock %} :: pretalx</title>
-        <meta name="title" content="{% block meta_title %}{% endblock %} {% if request.event %} - {{ request.event.name }} {% endif %}pretalx">
-        <meta name="description" content="{% block meta_description %}{% if request.event %}Schedule, talks and talk submissions for {{ reqeuest.event.name }}{% else %}Talks and talk submissions by pretalx{% endif %}{% endblock %}">
-        <meta name="application-name" content="pretalx">
-        <meta name="generator" content="pretalx">
+        <title>{% block title %}{% if request.event %}{{ request.event.name }}{% endif %}{% endblock %} :: eventyay</title>
+        <meta name="title" content="{% block meta_title %}{% endblock %} {% if request.event %} - {{ request.event.name }} {% endif %}eventyay">
+        <meta name="description" content="{% block meta_description %}{% if request.event %}Schedule, talks and talk submissions for {{ reqeuest.event.name }}{% else %}Talks and talk submissions by eventyay{% endif %}{% endblock %}">
+        <meta name="application-name" content="eventyay">
+        <meta name="generator" content="eventyay">
         <meta name="keywords" content="{% if request.event %}{{ request.event.name }}, {{ request.event.slug }}, {% if request.event.date_from %}{{ request.event.date_from.year }}, {% endif %}{% endif %}schedule, talks, cfp, call for papers, conference, submissions, organizer">
         <meta name="robots" content="nofollow">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -54,7 +54,7 @@
                 </li>
             </ul>
             <a class="navbar-brand d-none d-md-block" href="/orga/">
-                <img loading="lazy" src="{% static "common/img/icons/icon.svg" %}" alt="{% translate "The pretalx logo" %}"> pretalx
+                <img loading="lazy" src="{% static "common/img/icons/icon.svg" %}" alt="{% translate "The eventyay logo" %}"> eventyay
             </a>
             <div class="navbar-collapse event-dropdown" id="navbartoggle">
                 <ul class="navbar-nav mr-auto flip">
@@ -144,7 +144,7 @@
             <div class="superuser-warning">
                 <i class="fa fa-exclamation-triangle"></i>
                 {% blocktranslate with link=link trimmed %}
-                    You're using pretalx as a superuser. This is not recommended.
+                    You're using eventyay as a superuser. This is not recommended.
                 {% endblocktranslate %}
                 <a href="{% url "orga:user.subuser" %}?next={{ request.path|urlencode }}">
                     {% translate "Please click here to switch to an administrator account." %}
@@ -155,8 +155,8 @@
             <div class="superuser-warning">
                 <a href="{% url "orga:admin.update" %}">
                     {% blocktranslate trimmed %}
-                        Starting with version 1.1.0, pretalx automatically checks for updates in the background.
-                        During this check, anonymous data is transmitted to servers operated by the pretalx
+                        Starting with version 1.1.0, eventyay automatically checks for updates in the background.
+                        During this check, anonymous data is transmitted to servers operated by the eventyay
                         developers. Click on this message to find out more, disable this feature or enter your
                         email address to get notified via email if a new update arrives. This message will
                         disappear once you clicked it.
@@ -441,7 +441,7 @@
                     {% endif %}
                     {% if pretalx_version %}
                         <span>·
-                            {% if development_mode %}<a href="https://github.com/pretalx/pretalx/tree/{{ pretalx_version }}/">{{ pretalx_version }}</a>
+                            {% if development_mode %}<a href="https://github.com/eventyay/eventyay/tree/{{ pretalx_version }}/">{{ pretalx_version }}</a>
                             {% else %}v{{ pretalx_version }}{% endif %}
                         </span>
                     {% endif %}

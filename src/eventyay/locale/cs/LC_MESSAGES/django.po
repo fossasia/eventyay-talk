@@ -7594,7 +7594,7 @@ msgstr ""
 "Pokud jste o obnovení nežádali, považujte tento e-mail za bezpředmětný.\n"
 "\n"
 "S pozdravem\n"
-"Pretalx robot"
+"Eventyay robot"
 
 #: pretalx/person/models/user.py:413
 msgid "Password recovery"

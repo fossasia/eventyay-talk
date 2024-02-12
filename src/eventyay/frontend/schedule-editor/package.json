@@ -1,5 +1,5 @@
 {
-  "name": "@pretalx/schedule-editor",
+  "name": "@eventyay/schedule-editor",
   "version": "0.0.0",
   "description": "",
   "author": "",
@@ -44,13 +44,13 @@
     "vite-bundle-visualizer": "^0.10.0"
   },
   "bugs": {
-    "url": "https://github.com/pretalx/schedule-editor/issues"
+    "url": "https://github.com/eventyay/schedule-editor/issues"
   },
-  "homepage": "https://github.com/pretalx/schedule-editor#readme",
+  "homepage": "https://github.com/eventyay/schedule-editor#readme",
   "license": "ISC",
   "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pretalx/schedule-editor.git"
+    "url": "git+https://github.com/eventyay/schedule-editor.git"
   }
 }

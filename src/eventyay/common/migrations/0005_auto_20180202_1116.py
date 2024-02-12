@@ -6,7 +6,7 @@ from django.db import migrations
 def fix_log_action(apps, schema_editor):
     ActivityLog = apps.get_model("common", "ActivityLog")
     ActivityLog.objects.all().filter(action_type="update").update(
-        action_type="pretalx.submission.update"
+        action_type="eventyay.submission.update"
     )
 
 

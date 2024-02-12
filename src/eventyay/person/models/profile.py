@@ -8,10 +8,10 @@ from eventyay.common.urls import EventUrls
 
 
 class SpeakerProfile(PretalxModel):
-    """All :class:`~pretalx.event.models.event.Event` related data concerning
+    """All :class:`~eventyay.event.models.event.Event` related data concerning
     a.
 
-    :class:`~pretalx.person.models.user.User` is stored here.
+    :class:`~eventyay.person.models.user.User` is stored here.
 
     :param has_arrived: Can be set to track speaker arrival. Will be used in
         warnings about missing speakers.
@@ -62,7 +62,7 @@ class SpeakerProfile(PretalxModel):
     def submissions(self):
         """All non-deleted.
 
-        :class:`~pretalx.submission.models.submission.Submission` objects by
+        :class:`~eventyay.submission.models.submission.Submission` objects by
         this user on this event.
         """
         return self.user.submissions.filter(event=self.event)
@@ -71,7 +71,7 @@ class SpeakerProfile(PretalxModel):
     def talks(self):
         """A queryset of.
 
-        :class:`~pretalx.submission.models.submission.Submission` objects.
+        :class:`~eventyay.submission.models.submission.Submission` objects.
 
         Contains all visible talks by this user on this event.
         """
@@ -79,7 +79,7 @@ class SpeakerProfile(PretalxModel):
 
     @cached_property
     def answers(self):
-        """A queryset of :class:`~pretalx.submission.models.question.Answer`
+        """A queryset of :class:`~eventyay.submission.models.question.Answer`
         objects.
 
         Includes all answers the user has given either for themselves or

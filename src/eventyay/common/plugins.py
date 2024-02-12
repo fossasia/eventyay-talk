@@ -35,8 +35,8 @@ def get_all_plugins(event=None):
     return sorted(
         plugins,
         key=lambda m: (
-            0 if m.module.startswith("pretalx.") else 1,
-            str(m.name).lower().replace("pretalx ", ""),
+            0 if m.module.startswith("eventyay.") else 1,
+            str(m.name).lower().replace("eventyay ", ""),
         ),
     )
 
@@ -60,7 +60,7 @@ def get_all_plugins_grouped(event=None, filter_visible=True):
     # Only keep categories with at least one plugin and sort the plugins by name.
     plugins_grouped = {
         category: sorted(
-            plugins, key=lambda p: str(p.name).lower().replace("pretalx ", "")
+            plugins, key=lambda p: str(p.name).lower().replace("eventyay ", "")
         )
         for category, plugins in plugins_grouped
         if plugins

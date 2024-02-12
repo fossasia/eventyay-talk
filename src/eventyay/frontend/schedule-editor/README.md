@@ -1,4 +1,4 @@
-# pretalx-schedule-editor
+# eventyay-schedule-editor
 
 ## Project setup
 ```
@@ -15,12 +15,12 @@ npm start
 npm run build
 ```
 
-### Build for pretalx (web component)
+### Build for eventyay (web component)
 ```
 npm run build:wc
 ```
 
-Then copy ``dist/*js`` to ``src/pretalx/static/orga/js/`` in pretalx.
+Then copy ``dist/*js`` to ``src/eventyay/static/orga/js/`` in eventyay.
 
 ### Release library to npm
 

@@ -10,7 +10,7 @@ body:
     attributes:
       label: Problem and impact
       description: What problem you're running into? What impact does it have on you / your event?
-      placeholder: When trying to do ____, pretalx suddenly shows me an error saying "...".
+      placeholder: When trying to do ____, eventyay suddenly shows me an error saying "...".
   - type: textarea
     id: expected
     attributes:
@@ -50,4 +50,4 @@ body:
     id: version
     attributes:
       label: Version
-      description: The pretalx version in use. (Leave empty if unknown.)
+      description: The eventyay version in use. (Leave empty if unknown.)

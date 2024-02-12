@@ -3,7 +3,7 @@
 User Guide
 ==========
 
-This section of the documentation will help you configure and use pretalx. It
+This section of the documentation will help you configure and use eventyay. It
 is focused on instructions for organisers and reviewers, but there will be some
 sections relevant to speakers and submitters, too.
 

@@ -1,29 +1,29 @@
 include _build/backend.py
 include LICENSE
 include README.rst
-include src/pretalx.example.cfg
+include src/eventyay.example.cfg
 
-exclude src/pretalx/override_settings.py
-exclude src/pretalx.cfg
+exclude src/eventyay/override_settings.py
+exclude src/eventyay.cfg
 
 recursive-exclude doc *
 recursive-exclude src/data *
 recursive-exclude src/local *
 recursive-exclude src/static.dist *
 
-recursive-include src/pretalx/frontend *
-recursive-exclude src/pretalx/frontend/schedule-editor/dist *
-recursive-exclude src/pretalx/frontend/schedule-editor/node_modules *
+recursive-include src/eventyay/frontend *
+recursive-exclude src/eventyay/frontend/schedule-editor/dist *
+recursive-exclude src/eventyay/frontend/schedule-editor/node_modules *
 
-recursive-include src/pretalx/static *
-recursive-include src/pretalx/locale *
-recursive-include src/pretalx/agenda/templates *
-recursive-include src/pretalx/api/templates *
-recursive-include src/pretalx/common/templates *
-recursive-include src/pretalx/cfp/templates *
-recursive-include src/pretalx/mail/templates *
-recursive-include src/pretalx/orga/templates *
-recursive-include src/pretalx/schedule/templates *
+recursive-include src/eventyay/static *
+recursive-include src/eventyay/locale *
+recursive-include src/eventyay/agenda/templates *
+recursive-include src/eventyay/api/templates *
+recursive-include src/eventyay/common/templates *
+recursive-include src/eventyay/cfp/templates *
+recursive-include src/eventyay/mail/templates *
+recursive-include src/eventyay/orga/templates *
+recursive-include src/eventyay/schedule/templates *
 recursive-exclude src/tests *
 recursive-include src *.py
 

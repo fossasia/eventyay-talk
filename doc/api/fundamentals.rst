@@ -2,7 +2,7 @@ Basic concepts
 ==============
 
 This page describes basic concepts and definition that you need to know to
-interact with the pretalx REST API, such as authentication, pagination and
+interact with the eventyay REST API, such as authentication, pagination and
 similar definitions.
 
 .. _`rest-auth`:
@@ -32,7 +32,7 @@ You can use the ``/api/me`` endpoint afterwards to see who you are logged in as.
 It returns an object with your ``name``, ``email``, ``locale`` and ``timezone``.
 
 .. note:: The API also supports authentication via browser sessions,
-          the same way that you authenticate with pretalx when using the
+          the same way that you authenticate with eventyay when using the
           browser interface.  Using this authentication is *not*
           officially supported for use by third-party clients and we may change
           or remove it at any time. If you want to use session authentication,
@@ -62,7 +62,7 @@ of:
 
     {
         "count": 117,
-        "next": "https://pretalx.yourdomain.com/api/v1/organisers/?limit=20&offset=40",
+        "next": "https://eventyay.yourdomain.com/api/v1/organisers/?limit=20&offset=40",
         "previous": null,
         "results": []
     }

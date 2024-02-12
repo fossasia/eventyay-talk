@@ -194,9 +194,9 @@ def widget_script(request, event):
         raise Http404()
 
     if settings.DEBUG:
-        widget_file = "agenda/js/pretalx-schedule.js"
+        widget_file = "agenda/js/eventyay-schedule.js"
     else:
-        widget_file = "agenda/js/pretalx-schedule.min.js"
+        widget_file = "agenda/js/eventyay-schedule.min.js"
     f = finders.find(widget_file)
     with open(f, encoding="utf-8") as fp:
         code = fp.read()

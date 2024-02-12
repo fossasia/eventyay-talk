@@ -4,12 +4,12 @@ on:
   push:
     branches: [ main ]
     paths-ignore:
-      - 'src/pretalx/locale/**'
+      - 'src/eventyay/locale/**'
       - 'doc/**'
   pull_request:
     branches: [ main ]
     paths-ignore:
-      - 'src/pretalx/locale/**'
+      - 'src/eventyay/locale/**'
       - 'doc/**'
 
 permissions:
@@ -42,7 +42,7 @@ jobs:
           node-version: 'latest'
       - name: Install frontend dependencies
         run: npm ci
-        working-directory: ./src/pretalx/frontend/schedule-editor
+        working-directory: ./src/eventyay/frontend/schedule-editor
       - name: Install system dependencies
         run: sudo apt update && sudo apt install gettext unzip
       - name: Install Python dependencies
@@ -54,9 +54,9 @@ jobs:
       - name: Check package
         run: twine check dist/*
       - name: Check files to make sure we ship our frontend
-        run: unzip -l dist/pretalx*whl | grep frontend || exit 1
+        run: unzip -l dist/eventyay*whl | grep frontend || exit 1
       - name: Check files to make sure we ship our frontend but not our node_modules
-        run: unzip -l dist/pretalx*whl | grep node_modules && exit 1 || exit 0
+        run: unzip -l dist/eventyay*whl | grep node_modules && exit 1 || exit 0
       - name: Install the created wheel package with pip
         run: |
           # Switch to a new virtualenv
@@ -64,8 +64,8 @@ jobs:
           python -m venv test_venv
           . test_venv/bin/activate
 
-          python -m pip install dist/pretalx*whl
-      - name: Make sure we can run pretalx commands
-        run: python -m pretalx help
+          python -m pip install dist/eventyay*whl
+      - name: Make sure we can run eventyay commands
+        run: python -m eventyay help
       - name: Make sure we can run through all migrations
-        run: python -m pretalx migrate
+        run: python -m eventyay migrate

@@ -34,11 +34,11 @@ class PretalxExceptionReporter(ExceptionReporter):
             user = f"{self.request.user.name} <{self.request.user.email}>"
 
         intro = f"""
-You are receiving this email because an error occurred in your pretalx installation at {settings.SITE_URL}.
+You are receiving this email because an error occurred in your eventyay installation at {settings.SITE_URL}.
 You can find the technical details below – if you find that the problem was not due to a configuration error,
 please report this issue at
 
-    https://github.com/pretalx/pretalx/issues/new/choose
+    https://github.com/eventyay/eventyay/issues/new/choose
 
 The error was {exception} at {location}.
 It occurred when {user} accessed {self.request.path}.

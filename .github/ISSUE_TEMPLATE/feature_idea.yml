@@ -1,5 +1,5 @@
 name: Feature idea
-description: Suggest a new pretalx feature.
+description: Suggest a new eventyay feature.
 labels: ["type: feature"]
 body:
   - type: markdown
@@ -15,10 +15,10 @@ body:
     id: solution
     attributes:
       label: Proposed solution / feature
-      description: How would pretalx behave in an ideal world? What would make your life easier?
+      description: How would eventyay behave in an ideal world? What would make your life easier?
       placeholder: Ideally, I could do ____ directly from page ____, with helpful suggestions drawing from my recent search.
   - type: textarea
     id: context
     attributes:
       label: Context or examples
-      description: Providing context helps us choose a solution that is the most useful to all events using pretalx while also being maintainable. Examples from other projects, or screenshots, or rough drafts are also great to start a discussion.
+      description: Providing context helps us choose a solution that is the most useful to all events using eventyay while also being maintainable. Examples from other projects, or screenshots, or rough drafts are also great to start a discussion.

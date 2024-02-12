@@ -6,12 +6,12 @@
 Creating a plugin
 =================
 
-You can extend pretalx with custom Python code using the official plugin API.
+You can extend eventyay with custom Python code using the official plugin API.
 Think of every plugin as an independent Django application living in its own
 python package installed like any other python module.
 
-The communication between pretalx and the plugins happens using Django's
-`signal dispatcher`_ feature. The core modules of pretalx expose signals which
+The communication between eventyay and the plugins happens using Django's
+`signal dispatcher`_ feature. The core modules of eventyay expose signals which
 you can read about on the next pages.
 
 To create a new plugin, create a new python package which must be a valid
@@ -20,15 +20,15 @@ You will need some boilerplate for every plugin to get started. To save your
 time, we created a `cookiecutter`_ template that you can use like this::
 
    (env)$ pip install cookiecutter
-   (env)$ cookiecutter https://github.com/pretalx/pretalx-plugin-cookiecutter
+   (env)$ cookiecutter https://github.com/eventyay/eventyay-plugin-cookiecutter
 
 This will ask you some questions and then create a project folder for your plugin.
-Afterwards install your plugin into pretalx:
+Afterwards install your plugin into eventyay:
 
-   (env)$ cd pretalx-pluginname
+   (env)$ cd eventyay-pluginname
    (env)$ python setup.py develop
 
-If you already had it running, you'll now have to restart your pretalx dev-server
+If you already had it running, you'll now have to restart your eventyay dev-server
 for it to recognize the new plugin.
 
 About this Documentation
@@ -36,7 +36,7 @@ About this Documentation
 
 The following pages go into detail about the types of plugins
 supported. While these instructions don't assume that you know a lot about
-pretalx, they do assume that you have prior knowledge about Django (e.g. its
+eventyay, they do assume that you have prior knowledge about Django (e.g. its
 view layer, how its ORM works, topics covered in the Django tutorial.).
 
 Plugin meta-data
@@ -71,7 +71,7 @@ A working example would be::
 
         class PretalxPluginMeta:
             name = _("Facebook")
-            author = _("the pretalx team")
+            author = _("the eventyay team")
             version = '1.0.0'
             visible = True
             restricted = False
@@ -84,23 +84,23 @@ A working example would be::
 Plugin registration
 -------------------
 
-Somehow, pretalx needs to know that your plugin exists at all. For this purpose, we
+Somehow, eventyay needs to know that your plugin exists at all. For this purpose, we
 make use of the `entry point`_ feature of setuptools. To register a plugin that lives
 in a separate python package, your ``pyproject.toml`` should contain something like this::
 
 
-    [project.entry-points."pretalx.plugin"]
+    [project.entry-points."eventyay.plugin"]
     pretalx_facebook = "pretalx_facebook:PretalxPluginMeta"
 
 
-This will automatically make pretalx discover this plugin as soon as you have
+This will automatically make eventyay discover this plugin as soon as you have
 installed it e.g.  through ``pip``. During development, you can run ``pip
 install -e .`` inside your plugin source directory to make it discoverable.
 
 Signals
 -------
 
-pretalx defines signals which your plugin can listen for. We will go into the
+eventyay defines signals which your plugin can listen for. We will go into the
 details of the different signals in the following pages. We suggest that you
 put your signal receivers into a ``signals`` submodule of your plugin. You
 should extend your ``AppConfig`` (see above) by the following method to make
@@ -133,7 +133,7 @@ Views
 -----
 
 Your plugin may define custom views. If you put an ``urls`` submodule into your
-plugin module, pretalx will automatically import it and include it into the root
+plugin module, eventyay will automatically import it and include it into the root
 URL configuration with the namespace ``plugins:<label>:``, where ``<label>`` is
 your Django application label.
 
@@ -149,8 +149,8 @@ Configuration
 
 Occasionally, your plugin may need system-level configuration that doesn't need
 its own API. In this case, you can ask users to provide this configuration via
-their ``pretalx.cfg`` file. Ask them to put their configuration in a section
-with the title ``[plugin:your_plugin_name]``, which pretalx will then provide
+their ``eventyay.cfg`` file. Ask them to put their configuration in a section
+with the title ``[plugin:your_plugin_name]``, which eventyay will then provide
 in ``settings.PLUGIN_SETTINGS[your_plugin_name]``, like this::
 
    [plugin:pretalx_soap]
@@ -163,7 +163,7 @@ Which you can use in your code like this::
    assert settings.PLUGIN_SETTINGS["pretalx_soap"]["endpoint"] == "https://example.com"
 
 .. versionadded:: 1.1
-   The ``PLUGIN_SETTINGS`` configuration was added in pretalx 1.1.
+   The ``PLUGIN_SETTINGS`` configuration was added in eventyay 1.1.
 
 .. _Django application: https://docs.djangoproject.com/en/dev/ref/applications/
 .. _signal dispatcher: https://docs.djangoproject.com/en/dev/topics/signals/

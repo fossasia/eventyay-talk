@@ -3,7 +3,7 @@ from django.apps import AppConfig
 
 class PluginApp(AppConfig):
     name = "tests"
-    verbose_name = "test app for pretalx"
+    verbose_name = "test app for eventyay"
 
     def ready(self):
         from .dummy_signals import footer_link_test  # noqa
@@ -12,8 +12,8 @@ class PluginApp(AppConfig):
         return event != "totally hidden"
 
     class PretalxPluginMeta:
-        name = "test plugin for pretalx"
+        name = "test plugin for eventyay"
         author = "Tobias Kunze"
-        description = "Helps to test plugin related things for pretalx"
+        description = "Helps to test plugin related things for eventyay"
         visible = True
         version = "0.0.0"

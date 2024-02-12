@@ -54,7 +54,7 @@ class EventPluginSignal(django.dispatch.Signal):
         plugins enabled for the given Event.
 
         sender is required to be an instance of
-        ``pretalx.event.models.Event``.
+        ``eventyay.event.models.Event``.
         """
         if sender and not isinstance(sender, Event):
             raise ValueError("Sender needs to be an event.")
@@ -84,7 +84,7 @@ class EventPluginSignal(django.dispatch.Signal):
         it is returned as the response instead of propagating.
 
         sender is required to be an instance of
-        ``pretalx.event.models.Event``.
+        ``eventyay.event.models.Event``.
         """
         if sender and not isinstance(sender, Event):
             raise ValueError("Sender needs to be an event.")
@@ -121,7 +121,7 @@ class EventPluginSignal(django.dispatch.Signal):
         return value of the last receiver is returned by this method.
 
         sender is required to be an instance of
-        ``pretalx.event.models.Event``.
+        ``eventyay.event.models.Event``.
         """
         if sender and not isinstance(sender, Event):
             raise ValueError("Sender needs to be an event.")
@@ -194,7 +194,7 @@ def minimum_interval(
 
 periodic_task = django.dispatch.Signal()
 """
-This is a regular django signal (no pretalx event signal) that we send out every
+This is a regular django signal (no eventyay event signal) that we send out every
 time the periodic task cronjob runs. This interval is not sharply defined, it can
 be everything between a minute and a day. The actions you perform should be
 idempotent, meaning it should not make a difference if this is sent out more often
@@ -204,14 +204,14 @@ than expected.
 register_data_exporters = EventPluginSignal()
 """
 This signal is sent out to get all known data exporters. Receivers should return a
-subclass of pretalx.common.exporter.BaseExporter
+subclass of eventyay.common.exporter.BaseExporter
 
 As with all event plugin signals, the ``sender`` keyword argument will contain the event.
 """
 activitylog_display = EventPluginSignal()
 """
 To display an instance of the ``ActivityLog`` model to a human user,
-``pretalx.common.signals.activitylog_display`` will be sent out with an ``activitylog``
+``eventyay.common.signals.activitylog_display`` will be sent out with an ``activitylog``
 argument.
 
 The first received response that is not ``None`` will be used to display the log entry
@@ -222,7 +222,7 @@ As with all event plugin signals, the ``sender`` keyword argument will contain t
 activitylog_object_link = EventPluginSignal()
 """
 To display the relationship of an instance of the ``ActivityLog`` model to another model
-to a human user, ``pretalx.common.signals.activitylog_object_link`` will be sent out
+to a human user, ``eventyay.common.signals.activitylog_object_link`` will be sent out
 with an ``activitylog`` argument.
 
 The first received response that is not ``None`` will be used to display the related object
@@ -234,9 +234,9 @@ As with all event-plugin signals, the ``sender`` keyword argument will contain t
 register_locales = django.dispatch.Signal()
 """
 To provide additional languages via plugins, you will have to provide some settings in
-the pretalx settings file, and return a list of the registered locales as response
+the eventyay settings file, and return a list of the registered locales as response
 to this plugin signal. Every entry should be a tuple of two strings, the first being
-the locale code, the second being the display name of the locale. (Though pretalx will
+the locale code, the second being the display name of the locale. (Though eventyay will
 also accept just a locale code.)
 
 You should always return your locale when no ``sender`` keyword argument is given to

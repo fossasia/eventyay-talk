@@ -15,7 +15,7 @@ key is present, the entries will be rendered as a dropdown menu.
 The ``request`` object will have an attribute ``event``.
 
 If you use this, you should read the documentation on :ref:`how to deal with URLs <urlconf>`
-in pretalx.
+in eventyay.
 
 As with all plugin signals, the ``sender`` keyword argument will contain the event.
 """
@@ -31,7 +31,7 @@ set to ``True``, when this item should be marked as active. If the ``children``
 key is present, the entries will be rendered as a dropdown menu.
 
 If you use this, you should read the documentation on :ref:`how to deal with URLs <urlconf>`
-in pretalx.
+in eventyay.
 
 This is no ``EventPluginSignal``, so you do not get the event in the ``sender`` argument
 and you may get the signal regardless of whether your plugin is active.
@@ -40,7 +40,7 @@ activate_event = EventPluginSignal()
 """
 This signal is sent out before an event goes live. It allows any installed
 plugin to raise an Exception to prevent the event from going live. The
-exception message will be exposed to the user. If a string value is returned, pretalx
+exception message will be exposed to the user. If a string value is returned, eventyay
 will show it as a success message.
 You will get the request as a keyword argument ``request``.
 Receivers are not expected to return a response.

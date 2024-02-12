@@ -14,13 +14,13 @@ def pleasing_number(number):
 
 
 class SubmissionType(PretalxModel):
-    """Each :class:`~pretalx.submission.models.submission.Submission` has one
+    """Each :class:`~eventyay.submission.models.submission.Submission` has one
     SubmissionType.
 
     SubmissionTypes are used to group submissions by default duration (which
     can be overridden on a per-submission basis), and to be able to offer
     different deadlines for some parts of the
-    :class:`~pretalx.event.models.event.Event`.
+    :class:`~eventyay.event.models.event.Event`.
     """
 
     event = models.ForeignKey(
@@ -84,8 +84,8 @@ class SubmissionType(PretalxModel):
     def update_duration(self):
         """Updates the duration of all.
 
-        :class:`~pretalx.schedule.models.slot.TalkSlot` objects of
-        :class:`~pretalx.submission.models.submission.Submission` objects of
+        :class:`~eventyay.schedule.models.slot.TalkSlot` objects of
+        :class:`~eventyay.submission.models.submission.Submission` objects of
         this type.
 
         Runs only for submissions that do not override their default

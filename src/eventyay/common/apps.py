@@ -4,7 +4,7 @@ from django.apps import AppConfig
 
 
 class CommonConfig(AppConfig):
-    name = "pretalx.common"
+    name = "eventyay.common"
 
     def ready(self):
         from . import log_display  # noqa

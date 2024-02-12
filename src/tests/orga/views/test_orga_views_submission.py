@@ -5,9 +5,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.timezone import now
 from django_scopes import scope
 
-from pretalx.common.models.log import ActivityLog
-from pretalx.submission.models import Submission, SubmissionStates
-from pretalx.submission.models.question import QuestionRequired, QuestionVariant
+from eventyay.common.models.log import ActivityLog
+from eventyay.submission.models import Submission, SubmissionStates
+from eventyay.submission.models.question import QuestionRequired, QuestionVariant
 
 
 @pytest.mark.django_db
@@ -734,7 +734,7 @@ def test_submission_statistics(use_tracks, slot, other_slot, orga_client):
         logs = []
         subs = [slot.submission, other_slot.submission]
         for i in range(2):
-            logs.append(subs[i].log_action("pretalx.submission.create"))
+            logs.append(subs[i].log_action("eventyay.submission.create"))
         ActivityLog.objects.filter(pk=logs[0].pk).update(
             timestamp=logs[0].timestamp - dt.timedelta(days=2)
         )

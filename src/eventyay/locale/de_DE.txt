@@ -64,7 +64,7 @@ Plugin
 Plugins
 Präsentationsformate
 Präsentationsstil
-pretalx
+eventyay
 Primärfarbe
 rausgebracht
 Registrierungsformulars

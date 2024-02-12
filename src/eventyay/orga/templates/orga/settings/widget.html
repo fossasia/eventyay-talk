@@ -14,7 +14,7 @@
         <h2>{% translate "Widget settings" %}</h2>
         <div class="alert alert-info col-md-9 flip ml-auto">
             {% blocktranslate trimmed %}
-                You can configure a pretalx schedule widget to show your event schedule
+                You can configure a eventyay schedule widget to show your event schedule
                 on your homepage, instead of using this page. If you want to disable the
                 schedule on here entirely, please activate the setting below.
             {% endblocktranslate %}
@@ -31,7 +31,7 @@
     <h2>{% translate "Widget generation" %}</h2>
     <p>
         {% blocktranslate trimmed %}
-            The pretalx schedule widget is a way to embed your schedule into your event website. This way, your attendees can see your schedule without leaving your website, and you can style the schedule to fit right in with your website.
+            The eventyay schedule widget is a way to embed your schedule into your event website. This way, your attendees can see your schedule without leaving your website, and you can style the schedule to fit right in with your website.
         {% endblocktranslate %}
     </p>
 
@@ -65,10 +65,10 @@
             {% endblocktranslate %}
         </p>
         <pre id="widget-body">
-&lt;pretalx-schedule event-url="{{ request.event.urls.base.full }}" locale="LOCALE" format="FORMAT" style="--pretalx-clr-primary: {{ request.event.get_primary_color }}">&lt;/pretalx-schedule>
+&lt;eventyay-schedule event-url="{{ request.event.urls.base.full }}" locale="LOCALE" format="FORMAT" style="--eventyay-clr-primary: {{ request.event.get_primary_color }}">&lt;/eventyay-schedule>
 &lt;noscript>
-   &lt;div class="pretalx-widget">
-        &lt;div class="pretalx-widget-info-message">
+   &lt;div class="eventyay-widget">
+        &lt;div class="eventyay-widget-info-message">
             JavaScript is disabled in your browser. To access our schedule without JavaScript,
             please &lt;a target="_blank" href="{{ request.event.urls.schedule.full }}">click here&lt;/a>.
         &lt;/div>
@@ -78,7 +78,7 @@
             <span class="text-success">
                 <i class="fa fa-info-circle"></i>
             </span>
-            {% blocktranslate trimmed with link='https://docs.pretalx.org/user/event/widget.html' %}
+            {% blocktranslate trimmed with link='https://docs.eventyay.org/user/event/widget.html' %}
 
                 Please look at <a href="{{ link }}">our documentation</a> for more information.
             {% endblocktranslate %}
@@ -93,12 +93,12 @@
                     This is roughly what your widget will look like if you choose the grid format:
                 {% endblocktranslate %}
             </p>
-            <pretalx-schedule event-url="{{ request.event.urls.base }}" locale="{{ request.event.locale }}" style="--pretalx-clr-primary: {{ request.event.primary_color|default:'#3aa57c' }}"></pretalx-schedule>
+            <eventyay-schedule event-url="{{ request.event.urls.base }}" locale="{{ request.event.locale }}" style="--eventyay-clr-primary: {{ request.event.primary_color|default:'#3aa57c' }}"></eventyay-schedule>
       </div>
    <script type="text/javascript" src="{{ request.event.urls.schedule_widget_script }}" async></script>
         <noscript>
-           <div class="pretalx-widget">
-                <div class="pretalx-widget-info-message">
+           <div class="eventyay-widget">
+                <div class="eventyay-widget-info-message">
                     JavaScript is disabled in your browser. To access our schedule without JavaScript,
                     please <a target="_blank" href="{{ request.event.urls.schedule.full }}">click here</a>.
                 </div>

@@ -3,8 +3,8 @@ import json
 import pytest
 import responses
 
-from pretalx.common.models.settings import GlobalSettings
-from pretalx.person.models import User
+from eventyay.common.models.settings import GlobalSettings
+from eventyay.person.models import User
 
 
 @pytest.mark.django_db
@@ -45,7 +45,7 @@ def test_update_notice_displayed(client, user):
 
     r = client.get("/orga/", follow=True)
     assert (
-        "pretalx automatically checks for updates in the background"
+        "eventyay automatically checks for updates in the background"
         not in r.content.decode()
     )
 
@@ -53,14 +53,14 @@ def test_update_notice_displayed(client, user):
     user.save()
     r = client.get("/orga/", follow=True)
     assert (
-        "pretalx automatically checks for updates in the background"
+        "eventyay automatically checks for updates in the background"
         in r.content.decode()
     )
 
     client.get("/orga/admin/update/")  # Click it
     r = client.get("/orga/", follow=True)
     assert (
-        "pretalx automatically checks for updates in the background"
+        "eventyay automatically checks for updates in the background"
         not in r.content.decode()
     )
 
@@ -93,7 +93,7 @@ def test_settings(client, user):
 def test_trigger(client, user):
     responses.add_callback(
         responses.POST,
-        "https://pretalx.com/.update_check/",
+        "https://eventyay.com/.update_check/",
         callback=request_callback_updatable,
         content_type="application/json",
     )

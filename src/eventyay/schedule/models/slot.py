@@ -26,9 +26,9 @@ with suppress(Exception):
 class TalkSlot(PretalxModel):
     """The TalkSlot object is the scheduled version of a.
 
-    :class:`~pretalx.submission.models.submission.Submission`.
+    :class:`~eventyay.submission.models.submission.Submission`.
 
-    TalkSlots always belong to one submission and one :class:`~pretalx.schedule.models.schedule.Schedule`.
+    TalkSlots always belong to one submission and one :class:`~eventyay.schedule.models.schedule.Schedule`.
 
     :param is_visible: This parameter is set on schedule release. Only confirmed talks will be visible.
     """
@@ -114,7 +114,7 @@ class TalkSlot(PretalxModel):
     def as_availability(self):
         """'Casts' a slot as.
 
-        :class:`~pretalx.schedule.models.availability.Availability`, useful for
+        :class:`~eventyay.schedule.models.availability.Availability`, useful for
         availability arithmetic.
         """
         from eventyay.schedule.models import Availability
@@ -127,7 +127,7 @@ class TalkSlot(PretalxModel):
     def copy_to_schedule(self, new_schedule, save=True):
         """Create a new slot for the given.
 
-        :class:`~pretalx.schedule.models.schedule.Schedule` with all other
+        :class:`~eventyay.schedule.models.schedule.Schedule` with all other
         fields identical to this one.
         """
         new_slot = TalkSlot(schedule=new_schedule)
@@ -191,7 +191,7 @@ class TalkSlot(PretalxModel):
         ).value = f"{self.submission.title} - {self.submission.display_speaker_names}"
         vevent.add("dtstamp").value = creation_time
         vevent.add("location").value = str(self.room.name)
-        vevent.add("uid").value = "pretalx-{}-{}{}@{}".format(
+        vevent.add("uid").value = "eventyay-{}-{}{}@{}".format(
             self.submission.event.slug, self.submission.code, self.id_suffix, netloc
         )
 
@@ -203,7 +203,7 @@ class TalkSlot(PretalxModel):
     def full_ical(self):
         netloc = urlparse(settings.SITE_URL).netloc
         cal = vobject.iCalendar()
-        cal.add("prodid").value = "-//pretalx//{}//{}".format(
+        cal.add("prodid").value = "-//eventyay//{}//{}".format(
             netloc, self.submission.code
         )
         self.build_ical(cal)

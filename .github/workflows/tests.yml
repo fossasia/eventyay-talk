@@ -5,12 +5,12 @@ on:
     branches: [ main ]
     paths-ignore:
       - 'doc/**'
-      - 'src/pretalx/locale/**'
+      - 'src/eventyay/locale/**'
   pull_request:
     branches: [ main ]
     paths-ignore:
       - 'doc/**'
-      - 'src/pretalx/locale/**'
+      - 'src/eventyay/locale/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -42,13 +42,13 @@ jobs:
       - uses: getong/mariadb-action@v1.1
         with:
           mariadb version: '10.7'
-          mysql database: 'pretalx'
+          mysql database: 'eventyay'
           mysql root password: ''
         if: matrix.database == 'mysql'
       - uses: harmon758/postgresql-action@v1
         with:
           postgresql version: '14'
-          postgresql db: 'pretalx'
+          postgresql db: 'eventyay'
           postgresql user: 'postgres'
           postgresql password: 'postgres'
         if: matrix.database == 'postgres'
@@ -78,7 +78,7 @@ jobs:
         if: matrix.database == 'postgres'
       - name: Install frontend dependencies
         run: npm ci
-        working-directory: ./src/pretalx/frontend/schedule-editor
+        working-directory: ./src/eventyay/frontend/schedule-editor
       - name: Run checks
         run: python manage.py check --deploy
         working-directory: ./src

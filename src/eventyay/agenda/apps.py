@@ -4,7 +4,7 @@ from django.apps import AppConfig
 
 
 class AgendaConfig(AppConfig):
-    name = "pretalx.agenda"
+    name = "eventyay.agenda"
 
     def ready(self):
         from . import permissions  # noqa

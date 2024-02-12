@@ -4,7 +4,7 @@
 Writing an exporter plugin
 ==========================
 
-An Exporter is a method to export the submission or schedule data in pretalx for later use in another program.
+An Exporter is a method to export the submission or schedule data in eventyay for later use in another program.
 
 In this document, we will walk through the creation of an exporter output plugin step by step.
 
@@ -15,12 +15,12 @@ Exporter registration
 
 The exporter API does not make a lot of usage from signals, but it does use a
 signal to get a list of all available exporters. Your plugin should listen for
-this signal and return the subclass of ``pretalx.common.exporter.BaseExporter``
+this signal and return the subclass of ``eventyay.common.exporter.BaseExporter``
 that we'll provide in this plugin::
 
     from django.dispatch import receiver
 
-    from pretalx.common.signals import register_data_exporters
+    from eventyay.common.signals import register_data_exporters
 
 
     @receiver(register_data_exporters, dispatch_uid="exporter_myexporter")
@@ -32,7 +32,7 @@ that we'll provide in this plugin::
 The exporter class
 ------------------
 
-.. class:: pretalx.common.exporter.BaseExporter
+.. class:: eventyay.common.exporter.BaseExporter
 
    The central object of each exporter is the subclass of ``BaseExporter``.
 
@@ -68,7 +68,7 @@ The exporter class
 
 
 If you are planning to write an exporter that exports to CSV, have a look at
-the ``pretalx.common.exporters.CSVExporterMixin`` class. If you inherit from
+the ``eventyay.common.exporters.CSVExporterMixin`` class. If you inherit from
 this class next to ``BaseExporter``, you can provide a ``filename`` attribute
 and a ``get_data`` method, which should return the ``fieldnames`` as an iterable,
 and the ``data`` as a list of dictionaries.

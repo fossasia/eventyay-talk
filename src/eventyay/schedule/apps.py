@@ -2,7 +2,7 @@ from django.apps import AppConfig
 
 
 class ScheduleConfig(AppConfig):
-    name = "pretalx.schedule"
+    name = "eventyay.schedule"
 
     def ready(self):
         from . import signals  # noqa

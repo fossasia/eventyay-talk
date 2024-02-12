@@ -1,5 +1,5 @@
 <template lang="pug">
-.pretalx-schedule(:style="{'--scrollparent-width': scrollParentWidth + 'px'}", :class="draggedSession ? ['is-dragging'] : []", @pointerup="stopDragging")
+.eventyay-schedule(:style="{'--scrollparent-width': scrollParentWidth + 'px'}", :class="draggedSession ? ['is-dragging'] : []", @pointerup="stopDragging")
 	template(v-if="schedule")
 		#main-wrapper
 			#unassigned.no-print(v-scrollbar.y="", @pointerenter="isUnassigning = true", @pointerleave="isUnassigning = false")
@@ -381,7 +381,7 @@ export default {
 <style lang="stylus">
 #page-content
 	padding: 0
-.pretalx-schedule
+.eventyay-schedule
 	display: flex
 	flex-direction: column
 	min-height: 0
@@ -417,7 +417,7 @@ export default {
 			color: $clr-secondary-text-light
 	.days
 		background-color: $clr-white
-		tabs-style(active-color: var(--pretalx-clr-primary), indicator-color: var(--pretalx-clr-primary), background-color: transparent)
+		tabs-style(active-color: var(--eventyay-clr-primary), indicator-color: var(--eventyay-clr-primary), background-color: transparent)
 		overflow-x: auto
 		position: sticky
 		left: 0

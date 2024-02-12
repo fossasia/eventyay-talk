@@ -26,7 +26,7 @@ def prompt_nonempty(prompt):  # pragma: no cover
 
 
 class Command(BaseCommand):  # pragma: no cover
-    help = "Initializes your pretalx instance. Only to be used once."
+    help = "Initializes your eventyay instance. Only to be used once."
 
     def add_arguments(self, parser):
         parser.formatter_class = RawTextHelpFormatter
@@ -48,7 +48,7 @@ class Command(BaseCommand):  # pragma: no cover
     def handle(self, *args, **options):
         self.stdout.write(
             self.style.SUCCESS(
-                "\nWelcome to pretalx! This is my initialization command, please use it only once."
+                "\nWelcome to eventyay! This is my initialization command, please use it only once."
             )
         )
         self.stdout.write(
@@ -56,7 +56,7 @@ class Command(BaseCommand):  # pragma: no cover
         )
 
         self.stdout.write(
-            """\nLet\'s get you a user with the right to create new events and access every event on this pretalx instance."""
+            """\nLet\'s get you a user with the right to create new events and access every event on this eventyay instance."""
         )
 
         call_command("createsuperuser", interactive=options["interactive"])

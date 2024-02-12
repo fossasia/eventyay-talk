@@ -9,7 +9,7 @@ from django.dispatch import Signal
 
 here = Path(__file__).parent
 doc_dir = here / "../../../doc"
-base_dir = here / "../../pretalx"
+base_dir = here / "../../eventyay"
 
 with (doc_dir / "developer/plugins/general.rst").open() as doc_file:
     plugin_docs = doc_file.read()
@@ -23,7 +23,7 @@ def test_documentation_includes_config_options():
     with (doc_dir / "administrator/configure.rst").open() as doc_file:
         doc_text = doc_file.read()
     config = configparser.RawConfigParser()
-    config = config.read(here / "../../pretalx.example.cfg")
+    config = config.read(here / "../../eventyay.example.cfg")
 
     for category in config:
         for key in category:
@@ -48,4 +48,4 @@ def test_documentation_includes_management_commands(app):
         for python_file in path.glob("*.py"):
             file_name = python_file.name
             if file_name not in ["__init__.py", "makemigrations.py", "devserver.py"]:
-                assert f"python -m pretalx {file_name[:-3]}``" in command_docs
+                assert f"python -m eventyay {file_name[:-3]}``" in command_docs

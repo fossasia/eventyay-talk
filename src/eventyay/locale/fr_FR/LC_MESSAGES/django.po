@@ -8745,7 +8745,7 @@ msgstr "{name} ({duration} minutes)"
 #~ "\n"
 #~ "Créons un utilisateur avec les permissions pour créer de nouveaux "
 #~ "évènements et accéder à tous les évènements existants sur cette instance "
-#~ "Pretalx."
+#~ "Eventyay."
 
 #~ msgid ""
 #~ "\n"

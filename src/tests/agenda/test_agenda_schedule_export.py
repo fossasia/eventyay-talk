@@ -11,9 +11,9 @@ from django.urls import reverse
 from django_scopes import scope
 from lxml import etree
 
-from pretalx.agenda.tasks import export_schedule_html
-from pretalx.common.tasks import regenerate_css
-from pretalx.event.models import Event
+from eventyay.agenda.tasks import export_schedule_html
+from eventyay.common.tasks import regenerate_css
+from eventyay.event.models import Event
 
 
 @pytest.mark.skipif(
@@ -404,8 +404,8 @@ def test_schedule_orga_trigger_export_without_celery(
 def test_schedule_orga_trigger_export_with_celery(
     mocker, orga_client, django_assert_max_num_queries, event
 ):
-    mocker.patch("pretalx.agenda.tasks.export_schedule_html.apply_async")
-    from pretalx.agenda.tasks import export_schedule_html
+    mocker.patch("eventyay.agenda.tasks.export_schedule_html.apply_async")
+    from eventyay.agenda.tasks import export_schedule_html
 
     with django_assert_max_num_queries(39):
         response = orga_client.post(

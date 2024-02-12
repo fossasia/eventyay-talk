@@ -18,7 +18,7 @@ mailto
 mycon
 nginx
 Panna
-pretalx
+eventyay
 rixx
 SMTP
 SSL

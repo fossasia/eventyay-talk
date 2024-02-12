@@ -27,8 +27,8 @@ from eventyay.submission.models import SubmissionStates
 class Schedule(PretalxModel):
     """The Schedule model contains all scheduled.
 
-    :class:`~pretalx.schedule.models.slot.TalkSlot` objects (visible or not)
-    for a schedule release for an :class:`~pretalx.event.models.event.Event`.
+    :class:`~eventyay.schedule.models.slot.TalkSlot` objects (visible or not)
+    for a schedule release for an :class:`~eventyay.event.models.event.Event`.
 
     :param published: ``None`` if the schedule has not been published yet.
     """
@@ -65,7 +65,7 @@ class Schedule(PretalxModel):
 
         :param name: The new schedule name. May not be in use in this event,
             and cannot be 'wip' or 'latest'.
-        :param user: The :class:`~pretalx.person.models.user.User` initiating
+        :param user: The :class:`~eventyay.person.models.user.User` initiating
             the freeze.
         :param notify_speakers: Should notification emails for speakers with
             changed slots be generated?
@@ -91,7 +91,7 @@ class Schedule(PretalxModel):
         wip_schedule = Schedule.objects.create(event=self.event)
 
         self.save(update_fields=["published", "version", "comment"])
-        self.log_action("pretalx.schedule.release", person=user, orga=True)
+        self.log_action("eventyay.schedule.release", person=user, orga=True)
 
         # Set visibility
         self.talks.all().update(is_visible=False)
@@ -161,7 +161,7 @@ class Schedule(PretalxModel):
 
     @cached_property
     def scheduled_talks(self):
-        """Returns all :class:`~pretalx.schedule.models.slot.TalkSlot` objects
+        """Returns all :class:`~eventyay.schedule.models.slot.TalkSlot` objects
         that have been scheduled."""
         return (
             self.talks.select_related(
@@ -186,8 +186,8 @@ class Schedule(PretalxModel):
     def slots(self):
         """Returns all.
 
-        :class:`~pretalx.submission.models.submission.Submission` objects with
-        :class:`~pretalx.schedule.models.slot.TalkSlot` objects in this
+        :class:`~eventyay.submission.models.submission.Submission` objects with
+        :class:`~eventyay.schedule.models.slot.TalkSlot` objects in this
         schedule.
         """
         from eventyay.submission.models import Submission
@@ -570,7 +570,7 @@ class Schedule(PretalxModel):
         return speakers
 
     def generate_notifications(self, save=False):
-        """A list of unsaved :class:`~pretalx.mail.models.QueuedMail` objects
+        """A list of unsaved :class:`~eventyay.mail.models.QueuedMail` objects
         to be sent on schedule release."""
         mails = []
         date_formats = {}

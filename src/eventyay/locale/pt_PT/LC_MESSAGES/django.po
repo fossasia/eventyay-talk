@@ -475,7 +475,7 @@ msgid ""
 "errors, please contact us!"
 msgstr ""
 "As suas preferências de localidade foram salvas. Gostamos de pensar que "
-"temos um excelente suporte para o português no Pretalx, mas se encontrar "
+"temos um excelente suporte para o português no Eventyay, mas se encontrar "
 "problemas ou erros, entre em contato connosco!"
 
 #: pretalx/cfp/phrases.py:22
@@ -8653,7 +8653,7 @@ msgstr ""
 #~ "once."
 #~ msgstr ""
 #~ "\n"
-#~ "Bem-vindo ao Pretalx! Este é o meu comando de inicialização, use-o apenas "
+#~ "Bem-vindo ao Eventyay! Este é o meu comando de inicialização, use-o apenas "
 #~ "uma vez."
 
 #~ msgid ""

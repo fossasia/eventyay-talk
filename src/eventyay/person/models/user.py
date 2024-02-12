@@ -50,9 +50,9 @@ class UserManager(BaseUserManager):
 
 
 class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
-    """The pretalx user model.
+    """The eventyay user model.
 
-    Users describe all kinds of persons who interact with pretalx: Organisers, reviewers, submitters, speakers.
+    Users describe all kinds of persons who interact with eventyay: Organisers, reviewers, submitters, speakers.
 
     :param code: A user's alphanumeric code is auto generated, may not be
         changed, and is the unique identifier of that user.
@@ -63,8 +63,8 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
         the ``set_password`` and ``check_password`` methods to interact with it.
     :param nick: The nickname field has been deprecated and is scheduled to be
         deleted. Use the email field instead.
-    :param groups: Django internals, not used in pretalx.
-    :param user_permissions: Django internals, not used in pretalx.
+    :param groups: Django internals, not used in eventyay.
+    :param user_permissions: Django internals, not used in eventyay.
     """
 
     EMAIL_FIELD = "email"
@@ -92,11 +92,11 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
         default=True, help_text="Inactive users are not allowed to log in."
     )
     is_staff = models.BooleanField(
-        default=False, help_text="A default Django flag. Not in use in pretalx."
+        default=False, help_text="A default Django flag. Not in use in eventyay."
     )
     is_administrator = models.BooleanField(
         default=False,
-        help_text="Should only be ``True`` for people with administrative access to the server pretalx runs on.",
+        help_text="Should only be ``True`` for people with administrative access to the server eventyay runs on.",
     )
     is_superuser = models.BooleanField(
         default=False,
@@ -173,10 +173,10 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
     def event_profile(self, event):
         """Retrieve (and/or create) the event.
 
-        :class:`~pretalx.person.models.profile.SpeakerProfile` for this user.
+        :class:`~eventyay.person.models.profile.SpeakerProfile` for this user.
 
-        :type event: :class:`pretalx.event.models.event.Event`
-        :retval: :class:`pretalx.person.models.profile.EventProfile`
+        :type event: :class:`eventyay.event.models.event.Event`
+        :retval: :class:`eventyay.person.models.profile.EventProfile`
         """
         from eventyay.person.models.profile import SpeakerProfile
 
@@ -196,7 +196,7 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
         :param action: The log action that took place.
         :param data: Addition data to be saved.
         :param person: The person modifying this user. Defaults to this user.
-        :type person: :class:`~pretalx.person.models.user.User`
+        :type person: :class:`~eventyay.person.models.user.User`
         :param orga: Was this action initiated by a privileged user?
         """
         from eventyay.common.models import ActivityLog
@@ -344,7 +344,7 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
     def get_permissions_for_event(self, event) -> set:
         """Returns a set of all permission a user has for the given event.
 
-        :type event: :class:`~pretalx.event.models.event.Event`
+        :type event: :class:`~eventyay.event.models.event.Event`
         """
         if self.is_administrator:
             return {
@@ -362,7 +362,7 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
 
     def regenerate_token(self) -> Token:
         """Generates a new API access token, deleting the old one."""
-        self.log_action(action="pretalx.user.token.reset")
+        self.log_action(action="eventyay.user.token.reset")
         Token.objects.filter(user=self).delete()
         return Token.objects.create(user=self)
 
@@ -397,7 +397,7 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
             mail_text = _(
                 """Hi {name},
 
-you have requested a new password for your pretalx account.
+you have requested a new password for your eventyay account.
 To reset your password, click on the following link:
 
   {url}
@@ -405,7 +405,7 @@ To reset your password, click on the following link:
 If this wasn\'t you, you can just ignore this email.
 
 All the best,
-the pretalx robot"""
+the eventyay robot"""
             )
 
         with override(self.locale):
@@ -417,7 +417,7 @@ the pretalx robot"""
             mail.to_users.add(self)
             mail.send()
         self.log_action(
-            action="pretalx.user.password.reset", person=user, orga=bool(user)
+            action="eventyay.user.password.reset", person=user, orga=bool(user)
         )
 
     reset_password.alters_data = True

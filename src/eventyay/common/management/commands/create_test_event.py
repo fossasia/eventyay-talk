@@ -64,8 +64,8 @@ class Command(BaseCommand):
         self.bs = self.fake.bs()
         self.catch_phrase = self.fake.catch_phrase()
         intro = f"We provide a {self.catch_phrase.lower()} to {self.bs}."
-        disclaimer = """This is an automatically generated event to test and showcase pretalx features.
-Feel free to look around, but don\'t be alarmed if something doesn\'t quite make sense. You can always create your own free test event at [pretalx.com](https://pretalx.com)!"""
+        disclaimer = """This is an automatically generated event to test and showcase eventyay features.
+Feel free to look around, but don\'t be alarmed if something doesn\'t quite make sense. You can always create your own free test event at [eventyay.com](https://eventyay.com)!"""
         with scopes_disabled():
             event = Event.objects.create(
                 name="DemoCon",
@@ -226,7 +226,7 @@ If you have any interest in {self.fake.catch_phrase().lower()}, {self.fake.catch
                 content_locale="en",
                 do_not_record=random.choice([False] * 10 + [True]),
             )
-            submission.log_action("pretalx.submission.create", person=speaker)
+            submission.log_action("eventyay.submission.create", person=speaker)
         submission.speakers.add(speaker)
         return submission
 

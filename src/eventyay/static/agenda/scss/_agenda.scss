@@ -79,7 +79,7 @@ header {
 }
 
 #fahrplan noscript,
-.pretalx-tabbed {
+.eventyay-tabbed {
   max-width: 80vw;
   min-width: 360px;
   margin: 0 auto;
@@ -89,21 +89,21 @@ header {
   display: block;
 }
 
-.pretalx-tabbed {
+.eventyay-tabbed {
   display: flex;
   flex-direction: column-reverse;
   input[name="tabs"] {
     display: none;
 
-    &:not(:checked) + .pretalx-tab-content {
+    &:not(:checked) + .eventyay-tab-content {
       display: none;
     }
   }
-  .pretalx-tab-content {
+  .eventyay-tab-content {
     margin-top: 12px;
   }
 }
-.pretalx-tabs {
+.eventyay-tabs {
   display: flex;
   flex-direction: row;
   border-bottom: 1px solid $gray-lighter;
@@ -116,7 +116,7 @@ header {
   h3,
   h2,
   h1,
-  .pretalx-tab {
+  .eventyay-tab {
     padding: 8px 24px;
     font-size: 14pt;
     overflow: hidden;
@@ -130,7 +130,7 @@ header {
       border-top: 4px solid $brand-primary;
     }
     label {
-      margin-bottom: 0; /* container .pretalx-tab takes care of the spacing */
+      margin-bottom: 0; /* container .eventyay-tab takes care of the spacing */
       user-select: none;
       cursor: pointer;
       -moz-user-select: none;
@@ -161,7 +161,7 @@ header {
   display: inline-block;
 }
 
-.pretalx-list-day {
+.eventyay-list-day {
   .bucket-time {
     color: rgba(0, 0, 0, 0.54);
     font-size: 14px;
@@ -174,7 +174,7 @@ header {
     }
   }
 }
-.pretalx-session {
+.eventyay-session {
   display: flex;
   min-width: 360px;
   min-height: 96px;
@@ -182,17 +182,17 @@ header {
   overflow: hidden;
   font-size: 14px;
   &.break {
-    .pretalx-session-info .title {
+    .eventyay-session-info .title {
       color: rgba(0, 0, 0, 0.54);
     }
   }
   &:hover {
-    .pretalx-session-info,
-    .pretalx-session-time-box.avatar {
+    .eventyay-session-info,
+    .eventyay-session-time-box.avatar {
       border-color: var(--track-color);
     }
   }
-  .pretalx-session-time-box {
+  .eventyay-session-time-box {
     width: 69px;
     box-sizing: border-box;
     background-color: var(--track-color);
@@ -236,7 +236,7 @@ header {
       color: hsla(0, 0%, 100%, 0.7);
     }
   }
-  .pretalx-session-info {
+  .eventyay-session-info {
     flex: auto;
     display: flex;
     flex-direction: column;
@@ -287,7 +287,7 @@ header {
     }
   }
 }
-article .pretalx-session .pretalx-session-info .abstract {
+article .eventyay-session .eventyay-session-info .abstract {
   display: block;
 }
 
@@ -356,7 +356,7 @@ article .pretalx-session .pretalx-session-info .abstract {
   .container {
     max-width: 100%;
   }
-  .pretalx-schedule-day {
+  .eventyay-schedule-day {
     page-break-after: always;
     overflow: visible !important;
   }
@@ -384,7 +384,7 @@ article .pretalx-session .pretalx-session-info .abstract {
   }
 }
 #fahrplan.list {
-  .pretalx-tab-content {
+  .eventyay-tab-content {
     margin: 20px;
     margin-top: 8px;
   }

@@ -223,7 +223,7 @@ class SpeakerDetail(SpeakerViewMixin, ActionFromUrl, CreateOrUpdateView):
         self.questions_form.save()
         if form.has_changed():
             form.instance.log_action(
-                "pretalx.user.profile.update", person=self.request.user, orga=True
+                "eventyay.user.profile.update", person=self.request.user, orga=True
             )
         if form.has_changed() or self.questions_form.has_changed():
             self.request.event.cache.set("rebuild_schedule_export", True, None)
@@ -271,9 +271,9 @@ class SpeakerToggleArrived(SpeakerViewMixin, View):
         self.profile.has_arrived = not self.profile.has_arrived
         self.profile.save()
         action = (
-            "pretalx.speaker.arrived"
+            "eventyay.speaker.arrived"
             if self.profile.has_arrived
-            else "pretalx.speaker.unarrived"
+            else "eventyay.speaker.unarrived"
         )
         self.object.log_action(
             action,

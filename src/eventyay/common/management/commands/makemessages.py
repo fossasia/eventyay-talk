@@ -2,7 +2,7 @@
 
 We do this to allow the easy management of translations by way of plugins.
 The way GNU gettext handles path precedence, it will always create new
-translation files for given languages in the pretalx root locales directory
+translation files for given languages in the eventyay root locales directory
 instead of updating the already existing plugin locale directory.
 
 This management command copies all plugin-provided languages to the core

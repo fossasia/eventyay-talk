@@ -9,8 +9,8 @@ from eventyay.common.urls import EventUrls
 
 
 class Track(OrderedModel, PretalxModel):
-    """A track groups :class:`~pretalx.submission.models.submission.Submission`
-    objects within an :class:`~pretalx.event.models.event.Event`, e.g. by
+    """A track groups :class:`~eventyay.submission.models.submission.Submission`
+    objects within an :class:`~eventyay.event.models.event.Event`, e.g. by
     topic.
 
     :param color: The track colour, in the format #012345.

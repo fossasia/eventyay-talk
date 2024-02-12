@@ -4,7 +4,7 @@ It serves to create fewer migrations: Django, for technically very good reasons,
 creates migrations for tiny changes, including many that have no bearing on the
 actual database, like help_texts.
 
-It makes sense for Django to do so, but since pretalx only supports a small set
+It makes sense for Django to do so, but since eventyay only supports a small set
 of databases, and we can handle required changes as they appear, we can be fairly
 certain that many changes will never impact our databases. Fewer migrations mean
 less update headaches and a more readable git history, so that's what we are going

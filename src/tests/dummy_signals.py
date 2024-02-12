@@ -1,8 +1,8 @@
 from django.dispatch import receiver
 
-from pretalx.cfp.signals import footer_link, html_above_profile_page, html_head
-from pretalx.common.signals import register_locales
-from pretalx.orga.signals import (
+from eventyay.cfp.signals import footer_link, html_above_profile_page, html_head
+from eventyay.common.signals import register_locales
+from eventyay.orga.signals import (
     activate_event,
     nav_event,
     nav_event_settings,
@@ -25,7 +25,7 @@ def footer_link_test(sender, request, **kwargs):
 @receiver(html_head)
 def html_head_test(sender, request, **kwargs):
     if sender.slug != "ignore_signal":
-        return '<meta property="pretalx:foo" content="bar">'
+        return '<meta property="eventyay:foo" content="bar">'
 
 
 @receiver(html_above_profile_page)

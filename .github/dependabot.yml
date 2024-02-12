@@ -9,6 +9,6 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: npm
-    directory: "src/pretalx/frontend/"
+    directory: "src/eventyay/frontend/"
     schedule:
       interval: "daily"

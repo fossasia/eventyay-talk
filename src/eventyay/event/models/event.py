@@ -130,7 +130,7 @@ class Event(PretalxModel):
     prevent data leaks.
 
     :param is_public: Is this event public yet? Should only be set via the
-        ``pretalx.orga.views.EventLive`` view after the warnings have been
+        ``eventyay.orga.views.EventLive`` view after the warnings have been
         acknowledged.
     :param locale_array: Contains the event's active locales as a comma
         separated string. Please use the ``locales`` property to interact
@@ -214,7 +214,7 @@ class Event(PretalxModel):
         ],
         verbose_name=_("Main event colour"),
         help_text=_(
-            "Provide a hex value like #00ff00 if you want to style pretalx in your event's colour scheme."
+            "Provide a hex value like #00ff00 if you want to style eventyay in your event's colour scheme."
         ),
     )
     custom_css = models.FileField(
@@ -444,7 +444,7 @@ class Event(PretalxModel):
 
     @cached_property
     def available_content_locales(self) -> list:
-        # Content locales can be anything pretalx knows as a language, merged with
+        # Content locales can be anything eventyay knows as a language, merged with
         # this event's plugin locales.
 
         locale_names = copy.copy(LANGUAGE_NAMES)
@@ -806,7 +806,7 @@ class Event(PretalxModel):
     def pending_mails(self) -> int:
         """The amount of currently unsent.
 
-        :class:`~pretalx.mail.models.QueuedMail` objects.
+        :class:`~eventyay.mail.models.QueuedMail` objects.
         """
         return self.queued_mails.filter(sent__isnull=True).count()
 
@@ -814,9 +814,9 @@ class Event(PretalxModel):
     def wip_schedule(self):
         """Returns the latest unreleased.
 
-        :class:`~pretalx.schedule.models.schedule.Schedule`.
+        :class:`~eventyay.schedule.models.schedule.Schedule`.
 
-        :retval: :class:`~pretalx.schedule.models.schedule.Schedule`
+        :retval: :class:`~eventyay.schedule.models.schedule.Schedule`
         """
         try:
             schedule, _ = self.schedules.get_or_create(version__isnull=True)
@@ -836,7 +836,7 @@ class Event(PretalxModel):
     def current_schedule(self):
         """Returns the latest released.
 
-        :class:`~pretalx.schedule.models.schedule.Schedule`, or ``None`` before
+        :class:`~eventyay.schedule.models.schedule.Schedule`, or ``None`` before
         the first release.
         """
         return (
@@ -870,7 +870,7 @@ class Event(PretalxModel):
 
     @cached_property
     def teams(self):
-        """Returns all :class:`~pretalx.event.models.organiser.Team` objects
+        """Returns all :class:`~eventyay.event.models.organiser.Team` objects
         that concern this event."""
         from .organiser import Team
 
@@ -968,7 +968,7 @@ class Event(PretalxModel):
     def talks(self):
         """Returns a queryset of all.
 
-        :class:`~pretalx.submission.models.submission.Submission` object in the
+        :class:`~eventyay.submission.models.submission.Submission` object in the
         current released schedule.
         """
         from eventyay.submission.models.submission import Submission
@@ -987,7 +987,7 @@ class Event(PretalxModel):
     def speakers(self):
         """Returns a queryset of all speakers (of type.
 
-        :class:`~pretalx.person.models.user.User`) visible in the current
+        :class:`~eventyay.person.models.user.User`) visible in the current
         released schedule.
         """
         from eventyay.person.models import User
@@ -996,7 +996,7 @@ class Event(PretalxModel):
 
     @cached_property
     def submitters(self):
-        """Returns a queryset of all :class:`~pretalx.person.models.user.User`
+        """Returns a queryset of all :class:`~eventyay.person.models.user.User`
         objects who have submitted to this event.
 
         Ignores users who have deleted all of their submissions.
@@ -1027,14 +1027,14 @@ class Event(PretalxModel):
     def release_schedule(
         self, name: str, user=None, notify_speakers: bool = False, comment: str = None
     ):
-        """Releases a new :class:`~pretalx.schedule.models.schedule.Schedule`
+        """Releases a new :class:`~eventyay.schedule.models.schedule.Schedule`
         by finalising the current WIP schedule.
 
         :param name: The new version name
-        :param user: The :class:`~pretalx.person.models.user.User` executing the release
+        :param user: The :class:`~eventyay.person.models.user.User` executing the release
         :param notify_speakers: Generate emails for all speakers with changed slots.
         :param comment: Public comment for the release
-        :type user: :class:`~pretalx.person.models.user.User`
+        :type user: :class:`~eventyay.person.models.user.User`
         """
         self.wip_schedule.freeze(
             name=name, user=user, notify_speakers=notify_speakers, comment=comment

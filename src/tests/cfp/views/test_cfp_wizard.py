@@ -10,8 +10,8 @@ from django.http.request import QueryDict
 from django.utils.timezone import now
 from django_scopes import scope, scopes_disabled
 
-from pretalx.submission.forms import InfoForm
-from pretalx.submission.models import Submission, SubmissionType
+from eventyay.submission.forms import InfoForm
+from eventyay.submission.models import Submission, SubmissionType
 
 
 class TestWizard:
@@ -691,7 +691,7 @@ class TestWizard:
 
 @pytest.mark.django_db
 def test_infoform_set_submission_type(event, other_event):
-    # https://github.com/pretalx/pretalx/issues/642
+    # https://github.com/eventyay/eventyay/issues/642
     with scopes_disabled():
         assert len(SubmissionType.objects.all()) > 1
     with scope(event=event):
@@ -704,7 +704,7 @@ def test_infoform_set_submission_type(event, other_event):
 
 @pytest.mark.django_db
 def test_infoform_set_submission_type_2nd_event(event, other_event, submission_type):
-    # https://github.com/pretalx/pretalx/issues/642
+    # https://github.com/eventyay/eventyay/issues/642
     with scopes_disabled():
         assert len(SubmissionType.objects.all()) > 1
     with scope(event=event):

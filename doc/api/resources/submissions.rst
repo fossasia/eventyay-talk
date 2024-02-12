@@ -42,16 +42,16 @@ tag_ids                               list                       The tags attach
 ===================================== ========================== =======================================================
 
 .. versionadded:: 1.1.0
-   The ``resources`` field for file uploads was added in pretalx v1.1.0.
+   The ``resources`` field for file uploads was added in eventyay v1.1.0.
 
 .. versionadded:: 2.2.0
-   The ``tags`` field was added in pretalx v2.2.0.
+   The ``tags`` field was added in eventyay v2.2.0.
 
 .. versionadded:: 3.0.0
    The ``track_id``, ``tag_ids`` and ``submission_type_id`` fields were added, as well as the ``room_id`` field in the ``slot`` object.
 
 .. versionchanged:: 3.0.0
-   The ``answers`` field was turned off by default in pretalx v3.0.0. Pass the ``questions`` query parameter to see questions, and pass ``questions=all`` to get the previous behaviour.
+   The ``answers`` field was turned off by default in eventyay v3.0.0. Pass the ``questions`` query parameter to see questions, and pass ``questions=all`` to get the previous behaviour.
 
 
 Endpoints

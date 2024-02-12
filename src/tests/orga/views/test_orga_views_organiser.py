@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django_scopes import scopes_disabled
 
-from pretalx.event.models import Event, Organiser
+from eventyay.event.models import Event, Organiser
 
 
 @pytest.mark.django_db
@@ -153,7 +153,7 @@ def test_invite_multiple_orga_members_as_orga(orga_client, organiser):
     response = orga_client.post(
         url,
         {
-            "invite-bulk_email": "first@pretalx.org\nsecond@pretalx.org",
+            "invite-bulk_email": "first@eventyay.org\nsecond@eventyay.org",
             "form": "invite",
         },
         follow=True,
@@ -162,8 +162,8 @@ def test_invite_multiple_orga_members_as_orga(orga_client, organiser):
     assert team.members.count() == 1
     assert team.invites.count() == 2
     assert len(djmail.outbox) == 2
-    assert djmail.outbox[0].to == ["first@pretalx.org"]
-    assert djmail.outbox[1].to == ["second@pretalx.org"]
+    assert djmail.outbox[0].to == ["first@eventyay.org"]
+    assert djmail.outbox[1].to == ["second@eventyay.org"]
 
 
 @pytest.mark.django_db

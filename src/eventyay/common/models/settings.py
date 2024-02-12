@@ -87,7 +87,7 @@ hierarkey.add_default(
         gettext_noop(
             """Hi,
 
-we hope you're happy with pretalx as your event's CfP system.
+we hope you're happy with eventyay as your event's CfP system.
 These links may be helpful in the coming days and weeks:
 
 - Your event's dashboard: {event_dashboard}
@@ -95,8 +95,8 @@ These links may be helpful in the coming days and weeks:
 - Your schedule editor: {event_schedule}
 
 If there is anything you're missing, come tell us about it
-at https://github.com/pretalx/pretalx/issues/new or via an
-email to support@pretalx.com!
+at https://github.com/eventyay/eventyay/issues/new or via an
+email to support@eventyay.com!
 """
         )
     ),
@@ -140,8 +140,8 @@ statistics you might find interesting:
 - Over the course of the event, you sent {mail_count} mails.
 
 If there is anything you're missing, come tell us about it
-at https://github.com/pretalx/pretalx/issues/new or via an
-email to support@pretalx.com!
+at https://github.com/eventyay/eventyay/issues/new or via an
+email to support@eventyay.com!
 """
         )
     ),

@@ -38,7 +38,7 @@ class EventPluginsView(EventPermissionRequired, TemplateView):
                     if value == "enable" and module in plugins_available:
                         self.request.event.enable_plugin(module)
                         self.request.event.log_action(
-                            "pretalx.event.plugins.enabled",
+                            "eventyay.event.plugins.enabled",
                             person=self.request.user,
                             data={"plugin": module},
                             orga=True,
@@ -46,7 +46,7 @@ class EventPluginsView(EventPermissionRequired, TemplateView):
                     else:
                         self.request.event.disable_plugin(module)
                         self.request.event.log_action(
-                            "pretalx.event.plugins.disabled",
+                            "eventyay.event.plugins.disabled",
                             person=self.request.user,
                             data={"plugin": module},
                             orga=True,

@@ -64,7 +64,7 @@ def update_check():
     }
     try:
         response = requests.post(
-            "https://pretalx.com/.update_check/",
+            "https://eventyay.com/.update_check/",
             json=check_payload,
         )
     except requests.RequestException:  # pragma: no cover
@@ -95,17 +95,17 @@ def send_update_notification_email():
     mail_send_task.apply_async(
         kwargs={
             "to": [gs.settings.update_check_email],
-            "subject": _("pretalx update available"),
+            "subject": _("eventyay update available"),
             "body": str(
                 LazyI18nString.from_gettext(
                     gettext_noop(
-                        "Hi!\n\nAn update is available for pretalx or for one of the plugins you installed in your "
-                        "pretalx installation at {base_url}.\nPlease follow this link for more information:\n\n {url} \n\n"
+                        "Hi!\n\nAn update is available for eventyay or for one of the plugins you installed in your "
+                        "eventyay installation at {base_url}.\nPlease follow this link for more information:\n\n {url} \n\n"
                         "You can always find information on the latest updates in the changelog:\n\n"
-                        "  https://docs.pretalx.org/changelog.html\n\n"
-                        "Larger updates are also announced with upgrade notes on the pretalx.com blog:\n\n"
-                        "  https://pretalx.com/p/news"
-                        "\n\nBest regards,\nyour pretalx developers"
+                        "  https://docs.eventyay.org/changelog.html\n\n"
+                        "Larger updates are also announced with upgrade notes on the eventyay.com blog:\n\n"
+                        "  https://eventyay.com/p/news"
+                        "\n\nBest regards,\nyour eventyay developers"
                     ),
                 )
             ).format(
@@ -129,7 +129,7 @@ def check_result_table():
     table = []
     table.append(
         (
-            "pretalx",
+            "eventyay",
             pretalx_version,
             res["version"]["latest"],
             res["version"]["updatable"],

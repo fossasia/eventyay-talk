@@ -25,7 +25,7 @@ class AuthenticationTokenMiddleware:
             user = authenticate(
                 request,
                 token=token,
-                backend="pretalx.common.auth.AuthenticationTokenBackend",
+                backend="eventyay.common.auth.AuthenticationTokenBackend",
             )
             if user:
                 request.user = user

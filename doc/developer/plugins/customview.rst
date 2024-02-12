@@ -8,7 +8,7 @@ Creating custom views
 
 This page describes how to provide a custom view from within your plugin. Before you start
 reading this page, please read and understand how :ref:`URL handling <urlconf>` works in
-pretalx.
+eventyay.
 
 .. _urlconf:
 
@@ -20,7 +20,7 @@ If you want to add a custom view to the organiser area of an event, register an 
 
     from django.urls import re_path
 
-    from pretalx.event.models.event import SLUG_REGEX
+    from eventyay.event.models.event import SLUG_REGEX
 
     from . import views
 
@@ -60,7 +60,7 @@ the ``event`` parameter:
 If you want to require specific permission types, we provide you with a decorator or a mixin for
 your views::
 
-    from pretalx.common.mixins.views import PermissionRequired
+    from eventyay.common.mixins.views import PermissionRequired
 
     class AdminView(PermissionRequired, View):
         permission_required = "orga.view_submissions"
@@ -75,7 +75,7 @@ There is also a signal that allows you to add the view to the event sidebar navi
     from django.urls import resolve, reverse
     from django.utils.translation import ugettext_lazy as _
 
-    from pretalx.orga.signals import nav_event
+    from eventyay.orga.signals import nav_event
 
 
     @receiver(nav_event, dispatch_uid="friends_tickets_nav")
