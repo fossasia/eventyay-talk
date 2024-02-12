@@ -34,7 +34,7 @@ class AdminDashboard(PermissionRequired, TemplateView):
         return sys.executable
 
     @context
-    def pretalx_version(self):
+    def eventyay_version(self):
         return settings.EVENTYAY_VERSION
 
 

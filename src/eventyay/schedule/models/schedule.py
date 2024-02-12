@@ -16,7 +16,7 @@ from i18nfield.fields import I18nTextField
 
 from eventyay.agenda.tasks import export_schedule_html
 from eventyay.common.context_processors import get_day_month_date_format
-from eventyay.common.mixins.models import PretalxModel
+from eventyay.common.mixins.models import EventyayModel
 from eventyay.common.phrases import phrases
 from eventyay.common.urls import EventUrls
 from eventyay.person.models import SpeakerProfile, User
@@ -24,7 +24,7 @@ from eventyay.schedule.signals import schedule_release
 from eventyay.submission.models import SubmissionStates
 
 
-class Schedule(PretalxModel):
+class Schedule(EventyayModel):
     """The Schedule model contains all scheduled.
 
     :class:`~eventyay.schedule.models.slot.TalkSlot` objects (visible or not)

@@ -17,7 +17,7 @@ from django_scopes import ScopedManager
 
 from eventyay.common.choices import Choices
 from eventyay.common.exceptions import SubmissionError
-from eventyay.common.mixins.models import GenerateCode, PretalxModel
+from eventyay.common.mixins.models import GenerateCode, EventyayModel
 from eventyay.common.phrases import phrases
 from eventyay.common.urls import EventUrls
 from eventyay.common.utils import path_with_hash
@@ -98,7 +98,7 @@ class AllSubmissionManager(models.Manager):
     pass
 
 
-class Submission(GenerateCode, PretalxModel):
+class Submission(GenerateCode, EventyayModel):
     """Submissions are, next to :class:`~eventyay.event.models.event.Event`, the
     central model in eventyay.
 

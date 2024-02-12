@@ -3,11 +3,11 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from i18nfield.fields import I18nTextField
 
-from eventyay.common.mixins.models import PretalxModel
+from eventyay.common.mixins.models import EventyayModel
 from eventyay.common.urls import EventUrls
 
 
-class Tag(PretalxModel):
+class Tag(EventyayModel):
     event = models.ForeignKey(
         to="event.Event", on_delete=models.PROTECT, related_name="tags"
     )

@@ -1,4 +1,4 @@
-const cacheName = "pretalxScheduleCache"
+const cacheName = "eventyayScheduleCache"
 
 self.addEventListener("fetch", event => {
   event.respondWith(

@@ -11,7 +11,7 @@ class PluginApp(AppConfig):
     def is_available(self, event):
         return event != "totally hidden"
 
-    class PretalxPluginMeta:
+    class EventyayPluginMeta:
         name = "test plugin for eventyay"
         author = "Tobias Kunze"
         description = "Helps to test plugin related things for eventyay"

@@ -3,7 +3,7 @@ var api = {
   http(verb, url, body) {
     var fullHeaders = {}
     fullHeaders["Content-Type"] = "application/json"
-    fullHeaders["X-CSRFToken"] = getCookie("pretalx_csrftoken")
+    fullHeaders["X-CSRFToken"] = getCookie("eventyay_csrftoken")
 
     let options = {
       method: verb || "GET",

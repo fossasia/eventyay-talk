@@ -9,16 +9,16 @@ from django.utils.translation import gettext_lazy as _
 from django_scopes import scope, scopes_disabled
 from i18nfield.fields import I18nCharField
 
-from eventyay.common.mixins.models import PretalxModel
+from eventyay.common.mixins.models import EventyayModel
 from eventyay.common.urls import EventUrls, build_absolute_uri
 from eventyay.event.models.event import FULL_SLUG_REGEX
 from eventyay.person.models import User
 
 
-class Organiser(PretalxModel):
+class Organiser(EventyayModel):
     """The Organiser model represents the entity responsible for at least one.
 
-    :class:`~pretalx.event.models.event.Event`.
+    :class:`~eventyay.event.models.event.Event`.
     """
 
     name = I18nCharField(max_length=190, verbose_name=_("Name"))
@@ -66,12 +66,12 @@ class Organiser(PretalxModel):
     shred.alters_data = True
 
 
-class Team(PretalxModel):
+class Team(EventyayModel):
     """A team is a group of people working for the same organiser.
 
-    Team members (of type :class:`~pretalx.person.models.user.User`) share
+    Team members (of type :class:`~eventyay.person.models.user.User`) share
     permissions for one or several events of
-    :class:`~pretalx.event.models.organiser.Organiser`.  People can be in
+    :class:`~eventyay.event.models.organiser.Organiser`.  People can be in
     multiple Teams, and will have all permissions *any* of their teams has.
     """
 
@@ -149,7 +149,7 @@ def generate_invite_token():
     )
 
 
-class TeamInvite(PretalxModel):
+class TeamInvite(EventyayModel):
     """A TeamInvite is someone who has been invited to a team but hasn't accept
     the invitation yet."""
 

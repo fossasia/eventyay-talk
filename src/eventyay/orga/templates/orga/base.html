@@ -439,10 +439,10 @@
                     {% if development_mode %}
                         <span class="text-warning">· {% translate "running in development mode" %}</span>
                     {% endif %}
-                    {% if pretalx_version %}
+                    {% if eventyay_version %}
                         <span>·
-                            {% if development_mode %}<a href="https://github.com/eventyay/eventyay/tree/{{ pretalx_version }}/">{{ pretalx_version }}</a>
-                            {% else %}v{{ pretalx_version }}{% endif %}
+                            {% if development_mode %}<a href="https://github.com/eventyay/eventyay/tree/{{ eventyay_version }}/">{{ eventyay_version }}</a>
+                            {% else %}v{{ eventyay_version }}{% endif %}
                         </span>
                     {% endif %}
                 </footer>

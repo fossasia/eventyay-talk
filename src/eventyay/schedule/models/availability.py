@@ -4,12 +4,12 @@ from typing import List
 from django.db import models
 from django.utils.functional import cached_property
 
-from eventyay.common.mixins.models import PretalxModel
+from eventyay.common.mixins.models import EventyayModel
 
 zerotime = dt.time(0, 0)
 
 
-class Availability(PretalxModel):
+class Availability(EventyayModel):
     """The Availability class models when people or rooms are available for.
 
     :class:`~eventyay.schedule.models.slot.TalkSlot` objects.

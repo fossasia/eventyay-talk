@@ -2,11 +2,11 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from i18nfield.fields import I18nCharField
 
-from eventyay.common.mixins.models import OrderedModel, PretalxModel
+from eventyay.common.mixins.models import OrderedModel, EventyayModel
 from eventyay.common.urls import EventUrls
 
 
-class Room(OrderedModel, PretalxModel):
+class Room(OrderedModel, EventyayModel):
     """A Room is an actual place where talks will be scheduled.
 
     The Room object stores some meta information. Most, like capacity,

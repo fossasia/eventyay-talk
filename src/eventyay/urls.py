@@ -10,7 +10,7 @@ from eventyay.common.views import error_view
 
 plugin_patterns = []
 for app in apps.get_app_configs():
-    if getattr(app, "PretalxPluginMeta", None):
+    if getattr(app, "EventyayPluginMeta", None):
         if importlib.util.find_spec(app.name + ".urls"):
             urlmod = importlib.import_module(app.name + ".urls")
             single_plugin_patterns = []

@@ -3239,7 +3239,7 @@ msgid ""
 "language a user selects, it will be shown in your event's default language "
 "instead."
 msgstr ""
-"用戶將能夠使用這些語言的pretalx，並且你將能夠提供這些語言的所有文字。如果你未"
+"用戶將能夠使用這些語言的eventyay，並且你將能夠提供這些語言的所有文字。如果你未"
 "以使用者選擇的語言提供文字，則會改為以活動的預設的語言顯示文字。"
 
 #: eventyay/orga/forms/event.py:46
@@ -5727,7 +5727,7 @@ msgid ""
 "looking for, you can also provide a custom plugin to export the data – "
 "please ask your administrator to install the plugin."
 msgstr ""
-"Pretalx提供一系列出口產品。如果這些都不符合你要查找的內容，你還可以提供一個自"
+"Eventyay提供一系列出口產品。如果這些都不符合你要查找的內容，你還可以提供一個自"
 "定義外掛程式來匯出數據——請讓你的管理員安裝該外掛程式。"
 
 #: eventyay/orga/templates/orga/schedule/export.html:65
@@ -6139,7 +6139,7 @@ msgid ""
 "your homepage, instead of using this page. If you want to disable the "
 "schedule on here entirely, please activate the setting below."
 msgstr ""
-"你可以設定一項pretalx時程表小部件，以在你的主頁上顯示你的啟用議程表，而不是使"
+"你可以設定一項eventyay時程表小部件，以在你的主頁上顯示你的啟用議程表，而不是使"
 "用此頁面。如果你想完全禁用此處的時程表，請啟動以下設定。"
 
 #: eventyay/orga/templates/orga/settings/widget.html:31
@@ -6152,7 +6152,7 @@ msgid ""
 "website. This way, your attendees can see your schedule without leaving your "
 "website, and you can style the schedule to fit right in with your website."
 msgstr ""
-"pretalx日程安排小插件是一項將你的議程表安排嵌入到你的活動網站中的方法。這樣，"
+"eventyay日程安排小插件是一項將你的議程表安排嵌入到你的活動網站中的方法。這樣，"
 "你的出席者可以在不離開你的網站的情況下，查看你的議程表安排，並且你可以設定議"
 "程表，以適合你的網站。"
 

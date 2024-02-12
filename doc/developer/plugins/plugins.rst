@@ -42,7 +42,7 @@ view layer, how its ORM works, topics covered in the Django tutorial.).
 Plugin meta-data
 ----------------
 
-The plugin meta-data lives inside a ``PretalxPluginMeta`` class inside your
+The plugin meta-data lives inside a ``EventyayPluginMeta`` class inside your
 configuration class. The meta-data class must define the following attributes:
 
 .. rst-class:: rest-resource-table
@@ -66,10 +66,10 @@ A working example would be::
 
 
     class FacebookApp(AppConfig):
-        name = 'pretalx_facebook'
+        name = 'eventyay_facebook'
         verbose_name = _("Facebook")
 
-        class PretalxPluginMeta:
+        class EventyayPluginMeta:
             name = _("Facebook")
             author = _("the eventyay team")
             version = '1.0.0'
@@ -79,7 +79,7 @@ A working example would be::
             category = 'INTEGRATION'
 
 
-    default_app_config = 'pretalx_facebook.FacebookApp'
+    default_app_config = 'eventyay_facebook.FacebookApp'
 
 Plugin registration
 -------------------
@@ -90,7 +90,7 @@ in a separate python package, your ``pyproject.toml`` should contain something l
 
 
     [project.entry-points."eventyay.plugin"]
-    pretalx_facebook = "pretalx_facebook:PretalxPluginMeta"
+    eventyay_facebook = "eventyay_facebook:EventyayPluginMeta"
 
 
 This will automatically make eventyay discover this plugin as soon as you have
@@ -153,14 +153,14 @@ their ``eventyay.cfg`` file. Ask them to put their configuration in a section
 with the title ``[plugin:your_plugin_name]``, which eventyay will then provide
 in ``settings.PLUGIN_SETTINGS[your_plugin_name]``, like this::
 
-   [plugin:pretalx_soap]
+   [plugin:eventyay_soap]
    endpoint=https://example.com
    api_key=123456
 
 Which you can use in your code like this::
 
    from django.conf import settings
-   assert settings.PLUGIN_SETTINGS["pretalx_soap"]["endpoint"] == "https://example.com"
+   assert settings.PLUGIN_SETTINGS["eventyay_soap"]["endpoint"] == "https://example.com"
 
 .. versionadded:: 1.1
    The ``PLUGIN_SETTINGS`` configuration was added in eventyay 1.1.

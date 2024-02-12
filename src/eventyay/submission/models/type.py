@@ -3,7 +3,7 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from i18nfield.fields import I18nCharField
 
-from eventyay.common.mixins.models import PretalxModel
+from eventyay.common.mixins.models import EventyayModel
 from eventyay.common.urls import EventUrls
 
 
@@ -13,7 +13,7 @@ def pleasing_number(number):
     return number
 
 
-class SubmissionType(PretalxModel):
+class SubmissionType(EventyayModel):
     """Each :class:`~eventyay.submission.models.submission.Submission` has one
     SubmissionType.
 

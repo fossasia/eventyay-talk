@@ -59,7 +59,7 @@ And, of course, if you'd rather :ref:`contribute <contributing>` your time, we'r
 .. _largely: https://github.com/eventyay/eventyay/graphs/contributors
 .. _open-source: https://github.com/eventyay/eventyay/
 .. _me, Tobias: https://rixx.de/
-.. _pretalx.com: https://eventyay.com
+.. _eventyay.com: https://eventyay.com
 .. _sponsorship: https://github.com/eventyay/eventyay/labels/sponsorship
 .. _long list: https://github.com/eventyay/eventyay/wiki/Events
 .. _Patreon: https://patreon.com/rixx

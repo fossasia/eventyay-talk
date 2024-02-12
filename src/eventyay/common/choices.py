@@ -9,7 +9,7 @@ class Choices:
             TWO = 'dwa'
             valid_choices = [ONE, TWO]
 
-        class MyModel(PretalxModel):
+        class MyModel(EventyayModel):
             variant = models.CharField(
                 max_length=MyChoices.get_max_length(),
                 choices=MyChoices.get_choices(),

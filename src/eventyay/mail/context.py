@@ -62,7 +62,7 @@ def placeholder_aliases(identifiers, args, func, sample, explanation=None):
     return result
 
 
-@receiver(register_mail_placeholders, dispatch_uid="pretalx_register_base_placeholders")
+@receiver(register_mail_placeholders, dispatch_uid="eventyay_register_base_placeholders")
 def base_placeholders(sender, **kwargs):
     placeholders = [
         *placeholder_aliases(

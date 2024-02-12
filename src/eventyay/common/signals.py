@@ -158,8 +158,8 @@ def minimum_interval(
     def decorate(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            key_running = f"pretalx_periodic_{f.__module__}.{f.__name__}_running"
-            key_result = f"pretalx_periodic_{f.__module__}.{f.__name__}_result"
+            key_running = f"eventyay_periodic_{f.__module__}.{f.__name__}_running"
+            key_result = f"eventyay_periodic_{f.__module__}.{f.__name__}_result"
 
             if cache.get(key_running) or cache.get(key_result):
                 return

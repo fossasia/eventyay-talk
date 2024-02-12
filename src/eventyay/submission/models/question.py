@@ -6,7 +6,7 @@ from django_scopes import ScopedManager
 from i18nfield.fields import I18nCharField
 
 from eventyay.common.choices import Choices
-from eventyay.common.mixins.models import OrderedModel, PretalxModel
+from eventyay.common.mixins.models import OrderedModel, EventyayModel
 from eventyay.common.phrases import phrases
 from eventyay.common.urls import EventUrls
 from eventyay.common.utils import path_with_hash
@@ -80,7 +80,7 @@ class QuestionRequired(Choices):
     ]
 
 
-class Question(OrderedModel, PretalxModel):
+class Question(OrderedModel, EventyayModel):
     """Questions can be asked per.
 
     :class:`~eventyay.submission.models.submission.Submission`, per speaker, or
@@ -322,7 +322,7 @@ class Question(OrderedModel, PretalxModel):
         ordering = ("position", "id")
 
 
-class AnswerOption(PretalxModel):
+class AnswerOption(EventyayModel):
     """Provides the possible answers for.
 
     :class:`~eventyay.submission.models.question.Question` objects of variant
@@ -345,7 +345,7 @@ class AnswerOption(PretalxModel):
         return str(self.answer)
 
 
-class Answer(PretalxModel):
+class Answer(EventyayModel):
     """Answers are connected to a.
 
     :class:`~eventyay.submission.models.question.Question`, and, depending on

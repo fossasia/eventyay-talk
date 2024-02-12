@@ -83,7 +83,7 @@ import api from '~/api'
 import { getLocalizedString } from '~/utils'
 
 export default {
-	name: 'PretalxSchedule',
+	name: 'EventyaySchedule',
 	components: { Editor, GridSchedule, Session },
 	props: {
 		locale: String,

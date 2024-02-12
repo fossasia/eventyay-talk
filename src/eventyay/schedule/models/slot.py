@@ -13,7 +13,7 @@ from django.utils.functional import cached_property
 from django_scopes import ScopedManager
 from i18nfield.fields import I18nCharField
 
-from eventyay.common.mixins.models import PretalxModel
+from eventyay.common.mixins.models import EventyayModel
 from eventyay.common.urls import get_base_url
 
 INSTANCE_IDENTIFIER = None
@@ -23,7 +23,7 @@ with suppress(Exception):
     INSTANCE_IDENTIFIER = GlobalSettings().get_instance_identifier()
 
 
-class TalkSlot(PretalxModel):
+class TalkSlot(EventyayModel):
     """The TalkSlot object is the scheduled version of a.
 
     :class:`~eventyay.submission.models.submission.Submission`.

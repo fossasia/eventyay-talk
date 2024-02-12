@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("pretalx_csrftoken"),
+        "X-CSRFToken": getCookie("eventyay_csrftoken"),
       },
       credentials: "include",
     }

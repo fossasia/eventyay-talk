@@ -12,7 +12,7 @@ from django.utils.translation import gettext_noop
 from django_scopes import scopes_disabled
 from i18nfield.strings import LazyI18nString
 
-from eventyay import __version__ as pretalx_version
+from eventyay import __version__ as eventyay_version
 from eventyay.celery_app import app
 from eventyay.common.mail import mail_send_task
 from eventyay.common.models.settings import GlobalSettings
@@ -53,7 +53,7 @@ def update_check():
 
     check_payload = {
         "id": gs.settings.update_check_id,
-        "version": pretalx_version,
+        "version": eventyay_version,
         "events": {
             "total": Event.objects.count(),
             "public": Event.objects.filter(is_public=True).count(),
@@ -130,7 +130,7 @@ def check_result_table():
     table.append(
         (
             "eventyay",
-            pretalx_version,
+            eventyay_version,
             res["version"]["latest"],
             res["version"]["updatable"],
         )

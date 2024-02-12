@@ -1,4 +1,4 @@
-"""Sphinx theme for pretalx docs. Based on the ReadTheDocs theme."""
+"""Sphinx theme for eventyay docs. Based on the ReadTheDocs theme."""
 import os
 
 __version__ = '0.0.0'

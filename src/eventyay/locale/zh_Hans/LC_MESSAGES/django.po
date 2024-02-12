@@ -1940,7 +1940,7 @@ msgstr "无效请求。"
 msgid ""
 "It looks as if the communication between you and eventyay went wrong in some "
 "way.<br>Please return to the last page and try again!"
-msgstr "似乎您与Pretalx之间的通讯出现了问题。<br>请返回上一页并重试！"
+msgstr "似乎您与Eventyay之间的通讯出现了问题。<br>请返回上一页并重试！"
 
 #: eventyay/common/templates/403_csrf.html:4
 #: eventyay/common/templates/403_csrf.html:6
@@ -2269,7 +2269,7 @@ msgid ""
 "Provide a hex value like #00ff00 if you want to style eventyay in your "
 "event's colour scheme."
 msgstr ""
-"如果您想要使用活动颜色方案样式化Pretalx，请提供类似#00ff00的十六进制值。"
+"如果您想要使用活动颜色方案样式化Eventyay，请提供类似#00ff00的十六进制值。"
 
 #: eventyay/event/forms.py:271 eventyay/orga/forms/event.py:114
 msgid "Frontpage header pattern"
@@ -3015,8 +3015,8 @@ msgid ""
 "any IP addresses and we will not know who you are or where to find your "
 "instance. You can disable this behavior here at any time."
 msgstr ""
-"在更新检查期间，pretalx将向由pretalx开发人员操作的服务器报告一个匿名、唯一的"
-"安装ID、当前版本的pretalx和您安装的插件以及您安装中活动和不活动的事件数量。我"
+"在更新检查期间，eventyay将向由eventyay开发人员操作的服务器报告一个匿名、唯一的"
+"安装ID、当前版本的eventyay和您安装的插件以及您安装中活动和不活动的事件数量。我"
 "们仅存储匿名数据，从不记录任何IP地址，我们也不知道您是谁或者在哪里找到您的实"
 "例。您可以随时在此处禁用此行为。"
 
@@ -3191,7 +3191,7 @@ msgid ""
 "language a user selects, it will be shown in your event's default language "
 "instead."
 msgstr ""
-"用户将能够在这些语言中使用pretalx，您将能够提供这些语言中的所有文本。如果您没"
+"用户将能够在这些语言中使用eventyay，您将能够提供这些语言中的所有文本。如果您没"
 "有提供用户选择的语言的文本，那么将显示在您的事件的默认语言中。"
 
 #: eventyay/orga/forms/event.py:46
@@ -4095,7 +4095,7 @@ msgstr "eventyay 网站"
 
 #: eventyay/orga/templates/orga/admin.html:103
 msgid "eventyay documentation"
-msgstr "Pretalx文档"
+msgstr "Eventyay文档"
 
 #: eventyay/orga/templates/orga/admin.html:105
 msgid "Configuration reference"
@@ -4146,8 +4146,8 @@ msgid ""
 "disable this feature or enter your email address to get notified via email "
 "if a new update arrives. This message will disappear once you clicked it."
 msgstr ""
-"从版本1.1.0开始，Pretalx会在后台自动检查更新。在此检查期间，匿名数据将被传输"
-"到Pretalx开发者操作的服务器。点击此消息以了解更多信息，禁用此功能或输入您的电"
+"从版本1.1.0开始，Eventyay会在后台自动检查更新。在此检查期间，匿名数据将被传输"
+"到Eventyay开发者操作的服务器。点击此消息以了解更多信息，禁用此功能或输入您的电"
 "子邮件地址，以通过电子邮件收到新的更新通知。此消息将在您点击后消失。"
 
 #: eventyay/orga/templates/orga/base.html:178
@@ -4329,7 +4329,7 @@ msgid ""
 "custom help text to individual fields. Just click on the item you want to "
 "change!"
 msgstr ""
-"这是Pretalx的CfP编辑器。这个页面允许您更改所有单独CfP步骤上的标题和信息文本。"
+"这是Eventyay的CfP编辑器。这个页面允许您更改所有单独CfP步骤上的标题和信息文本。"
 "您还可以为单个字段添加自定义帮助文本。只需单击您要更改的项目即可！"
 
 #: eventyay/orga/templates/orga/cfp/question_delete.html:5
@@ -5663,7 +5663,7 @@ msgid ""
 "looking for, you can also provide a custom plugin to export the data – "
 "please ask your administrator to install the plugin."
 msgstr ""
-"pretalx提供了各种导出选项。如果没有符合您需要的选项，您也可以提供一个自定义插"
+"eventyay提供了各种导出选项。如果没有符合您需要的选项，您也可以提供一个自定义插"
 "件来导出数据 - 请向您的管理员请求安装该插件。"
 
 #: eventyay/orga/templates/orga/schedule/export.html:65
@@ -6079,7 +6079,7 @@ msgid ""
 "website. This way, your attendees can see your schedule without leaving your "
 "website, and you can style the schedule to fit right in with your website."
 msgstr ""
-"Pretalx日程小部件是一种将您的日程嵌入到活动网站上的方式。这样，您的参会者可以"
+"Eventyay日程小部件是一种将您的日程嵌入到活动网站上的方式。这样，您的参会者可以"
 "在不离开您的网站的情况下看到您的日程，您也可以样式化日程，使其与您的网站完美"
 "融合。"
 
@@ -6569,8 +6569,8 @@ msgid ""
 "and will show in English instead. You can help translating at github.com/"
 "eventyay/eventyay."
 msgstr ""
-"这个翻译不由pretalx团队维护。我们无法保证它的正确性，新的或最近更改的功能可能"
-"没有翻译，而会直接显示为英文。你可以在github.com/eventyay/pretalx上帮助翻译。"
+"这个翻译不由eventyay团队维护。我们无法保证它的正确性，新的或最近更改的功能可能"
+"没有翻译，而会直接显示为英文。你可以在github.com/eventyay/eventyay上帮助翻译。"
 
 #: eventyay/orga/templates/orga/widgets/multi_languages_widget.html:10
 msgid "Unofficial translation"

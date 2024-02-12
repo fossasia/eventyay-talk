@@ -5,11 +5,11 @@ from django.utils.translation import gettext_lazy as _
 from django_scopes import ScopedManager
 from i18nfield.fields import I18nCharField
 
-from eventyay.common.mixins.models import OrderedModel, PretalxModel
+from eventyay.common.mixins.models import OrderedModel, EventyayModel
 from eventyay.common.urls import EventUrls
 
 
-class ReviewScoreCategory(PretalxModel):
+class ReviewScoreCategory(EventyayModel):
     event = models.ForeignKey(
         to="event.Event", related_name="score_categories", on_delete=models.CASCADE
     )
@@ -63,7 +63,7 @@ class ReviewScoreCategory(PretalxModel):
         return super().delete(*args, **kwargs)
 
 
-class ReviewScore(PretalxModel):
+class ReviewScore(EventyayModel):
     category = models.ForeignKey(
         to=ReviewScoreCategory, related_name="scores", on_delete=models.CASCADE
     )
@@ -109,7 +109,7 @@ class AllReviewManager(models.Manager):
     pass
 
 
-class Review(PretalxModel):
+class Review(EventyayModel):
     """Reviews model the opinion of reviewers of a.
 
     :class:`~eventyay.submission.models.submission.Submission`.
@@ -235,7 +235,7 @@ class Review(PretalxModel):
         delete = "{base}delete"
 
 
-class ReviewPhase(OrderedModel, PretalxModel):
+class ReviewPhase(OrderedModel, EventyayModel):
     """ReviewPhases determine reviewer access rights during a (potentially
     open) time frame.
 

@@ -7,7 +7,7 @@ from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from i18nfield.fields import I18nCharField, I18nTextField
 
-from eventyay.common.mixins.models import PretalxModel
+from eventyay.common.mixins.models import EventyayModel
 from eventyay.common.phrases import phrases
 from eventyay.common.urls import EventUrls
 
@@ -77,7 +77,7 @@ def field_helper(cls):
 
 
 @field_helper
-class CfP(PretalxModel):
+class CfP(EventyayModel):
     """Every :class:`~eventyay.event.models.event.Event` has one Call for
     Papers/Participation/Proposals.
 

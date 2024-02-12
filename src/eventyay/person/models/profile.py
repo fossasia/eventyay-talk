@@ -2,12 +2,12 @@ from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
-from eventyay.common.mixins.models import PretalxModel
+from eventyay.common.mixins.models import EventyayModel
 from eventyay.common.phrases import phrases
 from eventyay.common.urls import EventUrls
 
 
-class SpeakerProfile(PretalxModel):
+class SpeakerProfile(EventyayModel):
     """All :class:`~eventyay.event.models.event.Event` related data concerning
     a.
 

@@ -16468,7 +16468,7 @@ var GridSchedule_component = Object(componentNormalizer["a" /* default */])(
 
 vue_runtime_esm["a" /* default */].use(buntpapier_src);
 /* harmony default export */ var Appvue_type_script_lang_js_shadow = ({
-  name: 'PretalxSchedule',
+  name: 'EventyaySchedule',
   components: {
     LinearSchedule: LinearSchedule,
     GridSchedule: GridSchedule

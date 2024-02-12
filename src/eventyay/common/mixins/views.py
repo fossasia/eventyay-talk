@@ -220,7 +220,7 @@ class PermissionRequired(PermissionRequiredMixin):
         if not result:
             request = getattr(self, "request", None)
             if request and hasattr(request, "event"):
-                key = f"pretalx_event_access_{request.event.pk}"
+                key = f"eventyay_event_access_{request.event.pk}"
                 if key in request.session:
                     sparent = SessionStore(request.session.get(key))
                     parentdata = []
@@ -318,7 +318,7 @@ class SocialMediaCardMixin:
 
 
 class PaginationMixin:
-    # TODO: possible make this into a PretalxListView, to make things easier for
+    # TODO: possible make this into a EventyayListView, to make things easier for
     # plugin developers
 
     DEFAULT_PAGINATION = 25

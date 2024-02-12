@@ -11,14 +11,14 @@ from django.utils.translation import override
 from i18nfield.fields import I18nCharField, I18nTextField
 
 from eventyay.common.exceptions import SendMailException
-from eventyay.common.mixins.models import PretalxModel
+from eventyay.common.mixins.models import EventyayModel
 from eventyay.common.templatetags.rich_text import ALLOWED_TAGS
 from eventyay.common.urls import EventUrls
 from eventyay.mail.context import get_mail_context
 from eventyay.mail.signals import queuedmail_post_send
 
 
-class MailTemplate(PretalxModel):
+class MailTemplate(EventyayModel):
     """MailTemplates can be used to create.
 
     :class:`~eventyay.mail.models.QueuedMail` objects.
@@ -164,7 +164,7 @@ class MailTemplate(PretalxModel):
     to_mail.alters_data = True
 
 
-class QueuedMail(PretalxModel):
+class QueuedMail(EventyayModel):
     """Emails in eventyay are rarely sent directly, hence the name QueuedMail.
 
     This mechanism allows organisers to make sure they send out the right

@@ -14,9 +14,9 @@ RUN apt-get update && \
     mkdir /etc/eventyay && \
     mkdir /data && \
     mkdir /public && \
-    groupadd -g 999 pretalxuser && \
-    useradd -r -u 999 -g pretalxuser -d /eventyay -ms /bin/bash pretalxuser && \
-    echo 'pretalxuser ALL=(ALL) NOPASSWD: /usr/bin/supervisord' >> /etc/sudoers
+    groupadd -g 999 eventyayuser && \
+    useradd -r -u 999 -g eventyayuser -d /eventyay -ms /bin/bash eventyayuser && \
+    echo 'eventyayuser ALL=(ALL) NOPASSWD: /usr/bin/supervisord' >> /etc/sudoers
 
 ENV LC_ALL=C.UTF-8
 
@@ -44,10 +44,10 @@ RUN apt-get update && \
 RUN chmod +x /usr/local/bin/eventyay && \
     cd /eventyay/src && \
     rm -f eventyay.cfg && \
-    chown -R pretalxuser:pretalxuser /eventyay /data /public && \
+    chown -R eventyayuser:eventyayuser /eventyay /data /public && \
     rm -f /eventyay/src/data/.secret
 
-USER pretalxuser
+USER eventyayuser
 VOLUME ["/etc/eventyay", "/data", "/public"]
 EXPOSE 80
 ENTRYPOINT ["eventyay"]

@@ -4,11 +4,11 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from i18nfield.fields import I18nCharField, I18nTextField
 
-from eventyay.common.mixins.models import OrderedModel, PretalxModel
+from eventyay.common.mixins.models import OrderedModel, EventyayModel
 from eventyay.common.urls import EventUrls
 
 
-class Track(OrderedModel, PretalxModel):
+class Track(OrderedModel, EventyayModel):
     """A track groups :class:`~eventyay.submission.models.submission.Submission`
     objects within an :class:`~eventyay.event.models.event.Event`, e.g. by
     topic.

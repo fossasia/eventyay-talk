@@ -150,9 +150,9 @@ CSP_IMG_SRC = merge_csp("'self'", "data:", config=config.get("site", "csp_img"))
 CSP_BASE_URI = ("'none'",)
 CSP_FORM_ACTION = merge_csp("'self'", config=config.get("site", "csp_form"))
 
-CSRF_COOKIE_NAME = "pretalx_csrftoken"
+CSRF_COOKIE_NAME = "eventyay_csrftoken"
 CSRF_TRUSTED_ORIGINS = [SITE_URL]
-SESSION_COOKIE_NAME = "pretalx_session"
+SESSION_COOKIE_NAME = "eventyay_session"
 SESSION_COOKIE_HTTPONLY = True
 if config.get("site", "cookie_domain"):
     SESSION_COOKIE_DOMAIN = CSRF_COOKIE_DOMAIN = config.get("site", "cookie_domain")
@@ -269,12 +269,12 @@ LOGGING = {
 
 email_level = config.get("logging", "email_level", fallback="ERROR") or "ERROR"
 emails = config.get("logging", "email", fallback="").split(",")
-DEFAULT_EXCEPTION_REPORTER = "eventyay.common.exceptions.PretalxExceptionReporter"
+DEFAULT_EXCEPTION_REPORTER = "eventyay.common.exceptions.EventyayExceptionReporter"
 MANAGERS = ADMINS = [(email, email) for email in emails if email]
 if ADMINS:
     LOGGING["handlers"]["mail_admins"] = {
         "level": email_level,
-        "class": "eventyay.common.exceptions.PretalxAdminEmailHandler",
+        "class": "eventyay.common.exceptions.EventyayAdminEmailHandler",
     }
     LOGGING["loggers"]["django.request"]["handlers"].append("mail_admins")
 
@@ -347,7 +347,7 @@ LOCALE_PATHS = (Path(__file__).resolve().parent / "locale",)
 FORMAT_MODULE_PATH = ["eventyay.common.formats"]
 
 LANGUAGE_CODE = config.get("locale", "language_code")
-LANGUAGE_COOKIE_NAME = "pretalx_language"
+LANGUAGE_COOKIE_NAME = "eventyay_language"
 LANGUAGES_INFORMATION = {
     "en": {
         "name": _("English"),

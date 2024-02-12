@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from i18nfield.fields import I18nCharField, I18nTextField
 
-from eventyay.common.mixins.models import PretalxModel
+from eventyay.common.mixins.models import EventyayModel
 from eventyay.common.phrases import phrases
 from eventyay.common.urls import EventUrls
 from eventyay.common.utils import path_with_hash
@@ -12,7 +12,7 @@ def resource_path(instance, filename):
     return f"{instance.event.slug}/speaker_information/{path_with_hash(filename)}"
 
 
-class SpeakerInformation(PretalxModel):
+class SpeakerInformation(EventyayModel):
     """Represents any information organisers want to show all or some
     submitters or speakers."""
 

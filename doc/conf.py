@@ -95,13 +95,13 @@ todo_include_todos = False
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = [
     '_static',
-    '_themes/pretalx_theme/static',
+    '_themes/eventyay_theme/static',
     os.path.abspath('../src/eventyay/static/vendored/forkawesome/fonts/'),
 ]
 html_additional_pages = {
     'index': 'index.html'
 }
-html_theme = 'pretalx_theme'
+html_theme = 'eventyay_theme'
 html_theme_path = [os.path.abspath('_themes')]
 html_theme_options = {
     'logo_only': True,
@@ -114,7 +114,7 @@ html_favicon = os.path.abspath('../src/eventyay/static/common/img/favicon-32x32.
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'pretalxdoc'
+htmlhelp_basename = 'eventyaydoc'
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/': None}

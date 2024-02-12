@@ -6,11 +6,11 @@ from django.utils.timezone import now
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
-from eventyay.common.mixins.models import GenerateCode, PretalxModel
+from eventyay.common.mixins.models import GenerateCode, EventyayModel
 from eventyay.common.urls import EventUrls
 
 
-class SubmitterAccessCode(GenerateCode, PretalxModel):
+class SubmitterAccessCode(GenerateCode, EventyayModel):
     event = models.ForeignKey(
         to="event.Event",
         on_delete=models.CASCADE,

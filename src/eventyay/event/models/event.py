@@ -17,7 +17,7 @@ from i18nfield.fields import I18nCharField, I18nTextField
 
 from eventyay.common.cache import ObjectRelatedCache
 from eventyay.common.language import LANGUAGE_NAMES
-from eventyay.common.mixins.models import PretalxModel
+from eventyay.common.mixins.models import EventyayModel
 from eventyay.common.models import TIMEZONE_CHOICES
 from eventyay.common.models.settings import hierarkey
 from eventyay.common.phrases import phrases
@@ -122,7 +122,7 @@ def default_mail_settings():
 
 
 @hierarkey.add()
-class Event(PretalxModel):
+class Event(EventyayModel):
     """The Event class has direct or indirect relations to all other models.
 
     Since most models depend on the Event model in some way, they should

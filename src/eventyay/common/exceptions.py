@@ -11,7 +11,7 @@ class SubmissionError(Exception):
     pass
 
 
-class PretalxExceptionReporter(ExceptionReporter):
+class EventyayExceptionReporter(ExceptionReporter):
     def get_traceback_text(self):  # pragma: no cover
         traceback_text = super().get_traceback_text()
         # Don't try to send fancy emails in dev, or when the exception comes from a task
@@ -54,8 +54,8 @@ It occurred when {user} accessed {self.request.path}.
         return traceback_text
 
 
-class PretalxAdminEmailHandler(AdminEmailHandler):
-    reporter_class = PretalxExceptionReporter
+class EventyayAdminEmailHandler(AdminEmailHandler):
+    reporter_class = EventyayExceptionReporter
 
     def emit(self, record):  # pragma: no cover
         request = getattr(record, "request", None)

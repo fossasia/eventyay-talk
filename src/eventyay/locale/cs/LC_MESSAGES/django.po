@@ -1772,7 +1772,7 @@ msgid ""
 msgstr ""
 "Zdravíme.\n"
 "\n"
-"Doufáme, že jste s pretalxem jako systémem pro CfP vaší události spokojení.\n"
+"Doufáme, že jste s eventyayem jako systémem pro CfP vaší události spokojení.\n"
 "Tyto odkazy vám mohou v následujících dnech a týdnech pomoci:\n"
 "\n"
 "- Nástěnka vaší události: {event_dashboard}\n"
@@ -2000,7 +2000,7 @@ msgid ""
 "It looks as if the communication between you and eventyay went wrong in some "
 "way.<br>Please return to the last page and try again!"
 msgstr ""
-"Zdá se, že se komunikace mezi vámi a pretalxem nějak pokazila.<br>Vraťte se "
+"Zdá se, že se komunikace mezi vámi a eventyayem nějak pokazila.<br>Vraťte se "
 "prosím na předchozí stránku a zkuste to znovu."
 
 #: eventyay/common/templates/403_csrf.html:4
@@ -2184,7 +2184,7 @@ msgstr "{number}krát"
 
 #: eventyay/common/update_check.py:98
 msgid "eventyay update available"
-msgstr "je dostupná aktualizace pretalxu"
+msgstr "je dostupná aktualizace eventyayu"
 
 #: eventyay/common/update_check.py:102
 #, python-brace-format
@@ -2226,7 +2226,7 @@ msgstr ""
 "  https://eventyay.com/p/news\n"
 "\n"
 "S pozdravem,\n"
-"vývojáři pretalxu"
+"vývojáři eventyayu"
 
 #: eventyay/common/update_check.py:143 eventyay/common/update_check.py:150
 msgid "Plugin: {}"
@@ -2347,7 +2347,7 @@ msgid ""
 "Provide a hex value like #00ff00 if you want to style eventyay in your "
 "event's colour scheme."
 msgstr ""
-"Pokud chcete nastavit barvu vzhledu pretalxu podle své události, zadejte "
+"Pokud chcete nastavit barvu vzhledu eventyayu podle své události, zadejte "
 "hodnotu v hexadecimálním formátu (např. #00ff00)."
 
 #: eventyay/event/forms.py:271 eventyay/orga/forms/event.py:114
@@ -3458,7 +3458,7 @@ msgstr ""
 
 #: eventyay/orga/forms/event.py:177
 msgid "Please do not choose the default domain as custom event domain."
-msgstr "Nezadávejte prosím jako vlastní doménu výchozí doménu pretalxu."
+msgstr "Nezadávejte prosím jako vlastní doménu výchozí doménu eventyayu."
 
 #: eventyay/orga/forms/event.py:188
 #, python-brace-format
@@ -3650,7 +3650,7 @@ msgid ""
 "schedule is not shown here using eventyay."
 msgstr ""
 "Nastavením povolíte externím stránkám zobrazovat widget s programem, i když "
-"se program nebude zobrazovat zde v pretalxu."
+"se program nebude zobrazovat zde v eventyayu."
 
 #: eventyay/orga/forms/event.py:581
 msgid "Widget language"
@@ -4116,7 +4116,7 @@ msgstr ""
 
 #: eventyay/orga/templates/orga/admin.html:29
 msgid "Your eventyay version is:"
-msgstr "Verze vašeho pretalxu je:"
+msgstr "Verze vašeho eventyayu je:"
 
 #: eventyay/orga/templates/orga/admin.html:30
 #, python-format
@@ -4239,7 +4239,7 @@ msgstr "Web projektu eventyay"
 
 #: eventyay/orga/templates/orga/admin.html:103
 msgid "eventyay documentation"
-msgstr "Dokumentace pretalxu"
+msgstr "Dokumentace eventyayu"
 
 #: eventyay/orga/templates/orga/admin.html:105
 msgid "Configuration reference"
@@ -4259,12 +4259,12 @@ msgstr "Poznámky k vydání"
 
 #: eventyay/orga/templates/orga/admin.html:111
 msgid "eventyay blog (release announcements, features)"
-msgstr "blog pretalxu (oznámení o vydáních a funkcích)"
+msgstr "blog eventyayu (oznámení o vydáních a funkcích)"
 
 #: eventyay/orga/templates/orga/auth/base.html:23
 #: eventyay/orga/templates/orga/base.html:57
 msgid "The eventyay logo"
-msgstr "Logo pretalxu"
+msgstr "Logo eventyayu"
 
 #: eventyay/orga/templates/orga/auth/login.html:4
 msgid "Sign in"
@@ -4291,7 +4291,7 @@ msgid ""
 "if a new update arrives. This message will disappear once you clicked it."
 msgstr ""
 "Počínaje verzí 1.1.0 eventyay na pozadí automaticky kontroluje dostupné "
-"aktualizace. Během této kontroly eventyay odešle na servery vývojářů pretalxu "
+"aktualizace. Během této kontroly eventyay odešle na servery vývojářů eventyayu "
 "anonymní informace. Klepnutím na tuto zprávu se dozvíte více podrobností, "
 "budete moci tuto funkci vypnout nebo zadat e-mailovou adresu pro zasílání "
 "oznámení o dostupnosti aktualizací. Tato zpráva po klepnutí zmizí."
@@ -4479,7 +4479,7 @@ msgid ""
 "custom help text to individual fields. Just click on the item you want to "
 "change!"
 msgstr ""
-"Toto je CfP editor pretalxu. Na této stránce můžete změnit záhlaví nebo "
+"Toto je CfP editor eventyayu. Na této stránce můžete změnit záhlaví nebo "
 "informační text pro každý jednotlivý krok CfP. Ke každému poli můžete také "
 "přidat vlastní nápovědu. Stačí klepnout na položku, kterou chcete změnit."
 
@@ -5157,7 +5157,7 @@ msgstr "Ostatní"
 #, fuzzy
 #| msgid "eventyay update available"
 msgid "Unavailable"
-msgstr "je dostupná aktualizace pretalxu"
+msgstr "je dostupná aktualizace eventyayu"
 
 #: eventyay/orga/templates/orga/mails/_placeholder_group.html:37
 msgid "e.g."
@@ -6278,7 +6278,7 @@ msgid ""
 "your homepage, instead of using this page. If you want to disable the "
 "schedule on here entirely, please activate the setting below."
 msgstr ""
-"Widget pretalxu s programem můžete nastavit pro zobrazování přímo na vaší "
+"Widget eventyayu s programem můžete nastavit pro zobrazování přímo na vaší "
 "domovské stránce. Pokud chcete zobrazování programu zde zcela zakázat, "
 "aktivujte nastavení níže."
 
@@ -6292,7 +6292,7 @@ msgid ""
 "website. This way, your attendees can see your schedule without leaving your "
 "website, and you can style the schedule to fit right in with your website."
 msgstr ""
-"Widget pretalxu s programem je způsob jak program vložit do stránek vaší "
+"Widget eventyayu s programem je způsob jak program vložit do stránek vaší "
 "události. Vaši návštěvníci tak uvidí program přímo na vašich stránkách, a "
 "zobrazení programu také můžete upravit přesně pro váš web."
 
@@ -6798,7 +6798,7 @@ msgid ""
 "and will show in English instead. You can help translating at github.com/"
 "eventyay/eventyay."
 msgstr ""
-"Tento překlad není udržován týmem pretalxu. Nedokážeme zaručit jeho "
+"Tento překlad není udržován týmem eventyayu. Nedokážeme zaručit jeho "
 "správnost a některé nové nebo změněné funkce nemusí být přeloženy a mohou se "
 "zobrazovat v angličtině. S překladem můžete pomoci na github.com/eventyay/"
 "eventyay."
@@ -8267,7 +8267,7 @@ msgid ""
 "visible publicly in a future release of eventyay."
 msgstr ""
 "Štítky se v tuto chvíli používají jenom pro organizátory a kontrolující. "
-"Veřejně budou viditelné v některé budoucí verzi pretalxu."
+"Veřejně budou viditelné v některé budoucí verzi eventyayu."
 
 #: eventyay/submission/models/track.py:41
 msgid ""
@@ -8528,7 +8528,7 @@ msgstr "{name} ({duration} minut)"
 #~ msgstr ""
 #~ "\n"
 #~ "Pojďme vám založit uživatelský účet s právy k vytváření událostí a "
-#~ "přístupu ke všem událostem v této instanci pretalxu."
+#~ "přístupu ke všem událostem v této instanci eventyayu."
 
 #~ msgid ""
 #~ "\n"

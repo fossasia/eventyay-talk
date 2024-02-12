@@ -104,7 +104,7 @@ list (or tell us about it, and we'll add it)!
 .. _feature list: https://eventyay.com/p/features
 .. _developer documentation: https://docs.eventyay.org/developer/index.html
 .. _administrator documentation: https://docs.eventyay.org/administrator/index.html
-.. _pretalx.com: https://eventyay.com/
+.. _eventyay.com: https://eventyay.com/
 .. _active development: https://github.com/eventyay/eventyay/pulse
 .. _changelog: https://docs.eventyay.org/en/latest/changelog.html
 .. _PyPI: https://pypi.python.org/pypi/eventyay
