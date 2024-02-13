@@ -4377,16 +4377,16 @@ msgid "Outbox"
 msgstr "K odeslání"
 
 #: pretalx/orga/templates/orga/base.html:385
-msgid "Templates"
-msgstr "Šablony"
-
-#: pretalx/orga/templates/orga/base.html:388
-msgid "Compose E-mails"
+msgid "Compose"
 msgstr "Poslání e-mailu"
 
-#: pretalx/orga/templates/orga/base.html:391
-msgid "Sent E-mails"
+#: pretalx/orga/templates/orga/base.html:388
+msgid "Sent"
 msgstr "Odeslané e-maily"
+
+#: pretalx/orga/templates/orga/base.html:391
+msgid "Templates"
+msgstr "Šablony"
 
 #: pretalx/orga/templates/orga/base.html:410
 msgid "Organisers"

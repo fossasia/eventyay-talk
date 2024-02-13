@@ -4283,16 +4283,16 @@ msgid "Outbox"
 msgstr ""
 
 #: pretalx/orga/templates/orga/base.html:385
-msgid "Templates"
-msgstr "範本"
-
-#: pretalx/orga/templates/orga/base.html:388
-msgid "Compose E-mails"
+msgid "Compose"
 msgstr "撰寫電子郵件"
 
-#: pretalx/orga/templates/orga/base.html:391
-msgid "Sent E-mails"
+#: pretalx/orga/templates/orga/base.html:388
+msgid "Sent"
 msgstr "傳送電子郵件"
+
+#: pretalx/orga/templates/orga/base.html:391
+msgid "Templates"
+msgstr "範本"
 
 #: pretalx/orga/templates/orga/base.html:410
 msgid "Organisers"

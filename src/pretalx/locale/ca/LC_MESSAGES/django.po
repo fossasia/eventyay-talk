@@ -3964,15 +3964,15 @@ msgid "Outbox"
 msgstr ""
 
 #: pretalx/orga/templates/orga/base.html:385
-msgid "Templates"
+msgid "Compose"
 msgstr ""
 
 #: pretalx/orga/templates/orga/base.html:388
-msgid "Compose E-mails"
+msgid "Sent"
 msgstr ""
 
 #: pretalx/orga/templates/orga/base.html:391
-msgid "Sent E-mails"
+msgid "Templates"
 msgstr ""
 
 #: pretalx/orga/templates/orga/base.html:410

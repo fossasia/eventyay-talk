@@ -4167,16 +4167,16 @@ msgid "Outbox"
 msgstr "Uitgaand"
 
 #: pretalx/orga/templates/orga/base.html:385
-msgid "Templates"
-msgstr "Sjablonen"
-
-#: pretalx/orga/templates/orga/base.html:388
-msgid "Compose E-mails"
+msgid "Compose"
 msgstr "Schrijf E-mails"
 
-#: pretalx/orga/templates/orga/base.html:391
-msgid "Sent E-mails"
+#: pretalx/orga/templates/orga/base.html:388
+msgid "Sent"
 msgstr "Verstuur E-mails"
+
+#: pretalx/orga/templates/orga/base.html:391
+msgid "Templates"
+msgstr "Sjablonen"
 
 #: pretalx/orga/templates/orga/base.html:410
 msgid "Organisers"

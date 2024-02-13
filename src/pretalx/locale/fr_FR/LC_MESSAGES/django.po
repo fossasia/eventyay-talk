@@ -4479,16 +4479,16 @@ msgid "Outbox"
 msgstr "Boite d'envoi"
 
 #: pretalx/orga/templates/orga/base.html:385
-msgid "Templates"
-msgstr "Modèles"
-
-#: pretalx/orga/templates/orga/base.html:388
-msgid "Compose E-mails"
+msgid "Compose"
 msgstr "Composer des courriels"
 
-#: pretalx/orga/templates/orga/base.html:391
-msgid "Sent E-mails"
+#: pretalx/orga/templates/orga/base.html:388
+msgid "Sent"
 msgstr "Courriels envoyés"
+
+#: pretalx/orga/templates/orga/base.html:391
+msgid "Templates"
+msgstr "Modèles"
 
 #: pretalx/orga/templates/orga/base.html:410
 msgid "Organisers"
