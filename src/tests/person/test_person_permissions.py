@@ -1,7 +1,7 @@
 import pytest
 from django_scopes import scope
 
-from pretalx.person.permissions import person_can_view_information
+from eventyay.person.permissions import person_can_view_information
 
 
 @pytest.mark.django_db

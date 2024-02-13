@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from pretalx.submission.models import SubmitterAccessCode
+from eventyay.submission.models import SubmitterAccessCode
 
 
 @pytest.mark.parametrize(

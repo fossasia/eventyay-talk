@@ -1,7 +1,7 @@
 import pytest
 from django_scopes import scopes_disabled
 
-from pretalx.submission.utils import move_submission
+from eventyay.submission.utils import move_submission
 
 
 @pytest.mark.django_db

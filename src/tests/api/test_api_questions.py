@@ -3,7 +3,7 @@ import json
 import pytest
 from django_scopes import scope
 
-from pretalx.api.serializers.question import (
+from eventyay.api.serializers.question import (
     AnswerSerializer,
     MinimalQuestionSerializer,
     QuestionSerializer,

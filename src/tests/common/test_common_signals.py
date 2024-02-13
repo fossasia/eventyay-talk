@@ -1,6 +1,6 @@
 import pytest
 
-from pretalx.common.signals import EventPluginSignal, _populate_app_cache
+from eventyay.common.signals import EventPluginSignal, _populate_app_cache
 from tests.dummy_signals import footer_link, footer_link_test
 
 

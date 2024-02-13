@@ -3,7 +3,7 @@ import json
 import pytest
 from django_scopes import scope
 
-from pretalx.submission.models import Answer
+from eventyay.submission.models import Answer
 
 
 @pytest.mark.django_db

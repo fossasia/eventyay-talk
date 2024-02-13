@@ -123,7 +123,7 @@ def test_dev_settings_warning(orga_client, event, settings):
 
 @pytest.mark.django_db
 def test_update_check_warning(orga_user, orga_client, event, settings):
-    from pretalx.common.models.settings import GlobalSettings
+    from eventyay.common.models.settings import GlobalSettings
 
     orga_user.is_administrator = True
     orga_user.save()

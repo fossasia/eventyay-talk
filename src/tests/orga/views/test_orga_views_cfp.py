@@ -5,10 +5,10 @@ import pytest
 from django.core import mail as djmail
 from django_scopes import scope
 
-from pretalx.event.models import Event
-from pretalx.mail.models import QueuedMail
-from pretalx.submission.models import Question
-from pretalx.submission.models.question import QuestionRequired
+from eventyay.event.models import Event
+from eventyay.mail.models import QueuedMail
+from eventyay.submission.models import Question
+from eventyay.submission.models.question import QuestionRequired
 
 
 @pytest.mark.django_db
@@ -662,7 +662,7 @@ def test_can_remind_answered_submission_question(
     count,
 ):
     with scope(event=event):
-        from pretalx.submission.models.question import Answer
+        from eventyay.submission.models.question import Answer
 
         question.question_required = QuestionRequired.REQUIRED
         question.deadline = None

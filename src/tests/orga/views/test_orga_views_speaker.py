@@ -3,7 +3,7 @@ import json
 import pytest
 from django_scopes import scope, scopes_disabled
 
-from pretalx.submission.models.question import QuestionRequired
+from eventyay.submission.models.question import QuestionRequired
 
 
 @pytest.mark.django_db

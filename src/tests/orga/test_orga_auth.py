@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core import mail as djmail
 from django.urls import reverse
 
-from pretalx.event.models import TeamInvite
+from eventyay.event.models import TeamInvite
 
 
 @pytest.mark.django_db

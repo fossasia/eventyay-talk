@@ -6,7 +6,7 @@ from django.urls import reverse
 from django_scopes import scope
 from rest_framework.authtoken.models import Token
 
-from pretalx.submission.models import SubmissionStates
+from eventyay.submission.models import SubmissionStates
 
 
 @pytest.mark.django_db

@@ -1,7 +1,7 @@
 import pytest
 from django.forms import ValidationError
 
-from pretalx.common.forms.utils import validate_field_length
+from eventyay.common.forms.utils import validate_field_length
 
 
 @pytest.mark.parametrize(

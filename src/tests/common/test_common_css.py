@@ -3,8 +3,8 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import override_settings
 
-from pretalx.common.css import validate_css
-from pretalx.event.models import Event
+from eventyay.common.css import validate_css
+from eventyay.event.models import Event
 
 
 @pytest.fixture
@@ -54,7 +54,7 @@ def test_invalid_css(invalid_css):
 @pytest.mark.django_db
 @override_settings(COMPRESS_PRECOMPILERS=settings.COMPRESS_PRECOMPILERS_ORIGINAL)
 def test_regenerate_css(event):
-    from pretalx.common.tasks import regenerate_css
+    from eventyay.common.tasks import regenerate_css
 
     event.primary_color = "#00ff00"
     event.save()
@@ -67,7 +67,7 @@ def test_regenerate_css(event):
 
 @pytest.mark.django_db
 def test_regenerate_css_no_color(event):
-    from pretalx.common.tasks import regenerate_css
+    from eventyay.common.tasks import regenerate_css
 
     event.primary_color = None
     event.save()
@@ -81,6 +81,6 @@ def test_regenerate_css_no_color(event):
 
 @pytest.mark.django_db
 def test_regenerate_css_no_event():
-    from pretalx.common.tasks import regenerate_css
+    from eventyay.common.tasks import regenerate_css
 
     regenerate_css(123)

@@ -1,6 +1,6 @@
 import pytest
 
-from pretalx.common.forms.renderers import render_label
+from eventyay.common.forms.renderers import render_label
 
 
 @pytest.mark.parametrize(

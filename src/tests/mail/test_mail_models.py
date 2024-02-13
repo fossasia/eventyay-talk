@@ -1,7 +1,7 @@
 import pytest
 
-from pretalx.common.mail import TolerantDict
-from pretalx.mail.models import QueuedMail
+from eventyay.common.mail import TolerantDict
+from eventyay.mail.models import QueuedMail
 
 
 @pytest.mark.parametrize(

@@ -1,7 +1,7 @@
 import pytest
 from django_scopes import scope
 
-from pretalx.submission.models import Answer, Question
+from eventyay.submission.models import Answer, Question
 
 
 @pytest.mark.parametrize("target", ("submission", "speaker", "reviewer"))

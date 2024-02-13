@@ -2,7 +2,7 @@ import pytest
 from django.core import mail as djmail
 from django_scopes import scope
 
-from pretalx.mail.models import MailTemplate, QueuedMail
+from eventyay.mail.models import MailTemplate, QueuedMail
 
 
 @pytest.mark.django_db

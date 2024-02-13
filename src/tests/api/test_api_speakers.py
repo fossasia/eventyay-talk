@@ -3,7 +3,7 @@ import json
 import pytest
 from django_scopes import scope
 
-from pretalx.api.serializers.speaker import (
+from eventyay.api.serializers.speaker import (
     SpeakerOrgaSerializer,
     SpeakerSerializer,
     SubmitterSerializer,

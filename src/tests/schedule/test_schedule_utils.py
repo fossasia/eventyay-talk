@@ -1,7 +1,7 @@
 import pytest
 from django_scopes import scope
 
-from pretalx.schedule.utils import guess_schedule_version
+from eventyay.schedule.utils import guess_schedule_version
 
 
 @pytest.mark.django_db

@@ -1,7 +1,7 @@
 import pytest
 from django_scopes import scope
 
-from pretalx.common.tasks import regenerate_css
+from eventyay.common.tasks import regenerate_css
 
 
 @pytest.mark.django_db

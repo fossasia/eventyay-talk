@@ -3,8 +3,8 @@ from django.core.management import call_command
 from django.db.models import Q
 from django_scopes import scope
 
-from pretalx.event.models import Event
-from pretalx.schedule.models import Room, TalkSlot
+from eventyay.event.models import Event
+from eventyay.schedule.models import Room, TalkSlot
 
 
 @pytest.mark.django_db

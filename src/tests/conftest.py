@@ -7,11 +7,11 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.timezone import now
 from django_scopes import scope, scopes_disabled
 
-from pretalx.event.models import Event, Organiser, Team, TeamInvite
-from pretalx.mail.models import MailTemplate
-from pretalx.person.models import SpeakerInformation, SpeakerProfile, User
-from pretalx.schedule.models import Availability, Room, TalkSlot
-from pretalx.submission.models import (
+from eventyay.event.models import Event, Organiser, Team, TeamInvite
+from eventyay.mail.models import MailTemplate
+from eventyay.person.models import SpeakerInformation, SpeakerProfile, User
+from eventyay.schedule.models import Availability, Room, TalkSlot
+from eventyay.submission.models import (
     Answer,
     AnswerOption,
     Feedback,
@@ -25,7 +25,7 @@ from pretalx.submission.models import (
     Tag,
     Track,
 )
-from pretalx.submission.models.question import QuestionRequired
+from eventyay.submission.models.question import QuestionRequired
 
 
 @pytest.fixture(scope="session", autouse=True)

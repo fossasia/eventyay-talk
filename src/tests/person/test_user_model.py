@@ -1,8 +1,8 @@
 import pytest
 from django_scopes import scope, scopes_disabled
 
-from pretalx.person.models.user import User, avatar_path
-from pretalx.submission.models.question import Answer
+from eventyay.person.models.user import User, avatar_path
+from eventyay.submission.models.question import Answer
 
 
 @pytest.mark.parametrize(

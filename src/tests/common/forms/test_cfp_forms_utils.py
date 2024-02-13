@@ -1,6 +1,6 @@
 import pytest
 
-from pretalx.common.forms.utils import get_help_text
+from eventyay.common.forms.utils import get_help_text
 
 
 @pytest.mark.parametrize(

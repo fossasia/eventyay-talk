@@ -3,7 +3,7 @@ import json
 import pytest
 from django_scopes import scope
 
-from pretalx.api.serializers.review import ReviewSerializer
+from eventyay.api.serializers.review import ReviewSerializer
 
 
 @pytest.mark.django_db

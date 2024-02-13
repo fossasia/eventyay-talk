@@ -4,7 +4,7 @@ import pytest
 from django.utils.timezone import now
 from django_scopes import scope
 
-from pretalx.schedule.models import TalkSlot
+from eventyay.schedule.models import TalkSlot
 
 
 @pytest.mark.django_db()

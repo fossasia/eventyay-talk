@@ -1,6 +1,6 @@
 import pytest
 
-from pretalx.person.models.information import resource_path
+from eventyay.person.models.information import resource_path
 
 
 @pytest.mark.django_db

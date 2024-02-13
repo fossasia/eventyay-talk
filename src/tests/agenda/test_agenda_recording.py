@@ -1,6 +1,6 @@
 import pytest
 
-from pretalx.agenda.recording import BaseRecordingProvider
+from eventyay.agenda.recording import BaseRecordingProvider
 
 
 def test_provider_raises_not_implemented():

@@ -3,7 +3,7 @@ import json
 import pytest
 from django_scopes import scope
 
-from pretalx.api.serializers.room import RoomOrgaSerializer, RoomSerializer
+from eventyay.api.serializers.room import RoomOrgaSerializer, RoomSerializer
 
 
 @pytest.mark.django_db

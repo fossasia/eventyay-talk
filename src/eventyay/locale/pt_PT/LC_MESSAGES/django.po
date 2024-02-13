@@ -8670,7 +8670,7 @@ msgstr ""
 #~ msgstr ""
 #~ "\n"
 #~ "Vamos lhe fornecer um utilizador com o direito de criar novos eventos e "
-#~ "aceder a todos os eventos nesta instância do eventyay."
+#~ "aceder a todos os eventos nesta instância do eventyayTALXl."
 
 #~ msgid ""
 #~ "\n"
