@@ -1,62 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="587.000000pt" height="340.000000pt" viewBox="0 0 587.000000 340.000000"
+ preserveAspectRatio="xMidYMid meet">
 
-<svg
-   version="1.1"
-   id="svg2"
-   width="300"
-   height="300"
-   viewBox="0 0 300 300"
-   sodipodi:docname="eventyay.svg"
-   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
-   inkscape:export-filename="/home/opntec/Downloads/eventyay.png"
-   inkscape:export-xdpi="100"
-   inkscape:export-ydpi="100"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs6" />
-  <sodipodi:namedview
-     id="namedview4"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     showgrid="false"
-     inkscape:zoom="0.65126712"
-     inkscape:cx="244.90719"
-     inkscape:cy="17.657885"
-     inkscape:window-width="1280"
-     inkscape:window-height="683"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="g8" />
-  <g
-     inkscape:groupmode="layer"
-     inkscape:label="Image"
-     id="g8">
-    <g
-       id="g11301"
-       transform="matrix(9.4783527,0,0,9.4783527,-1.6536432,-1.6536432)">
-      <ellipse
-         style="fill:#3498db;fill-opacity:1;stroke:none;stroke-width:8.94491;stroke-miterlimit:0"
-         id="path849-9"
-         cx="16"
-         cy="16"
-         rx="15.825535"
-         ry="15.825529" />
-      <ellipse
-         style="fill:#256b9b;fill-opacity:1;stroke:#ffffff;stroke-width:5.19614;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
-         id="path849"
-         cx="16"
-         cy="16"
-         rx="8.4038029"
-         ry="8.403801" />
-    </g>
-  </g>
+<g transform="translate(0.000000,340.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+</g>
 </svg>
