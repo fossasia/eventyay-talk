@@ -3,6 +3,7 @@
 Release Notes
 =============
 
+- :feature:`orga:form` Change “Choose one from a list” to “Radio button (Choose one option)” and “Choose multiple from a list” to “Checkbox (Choose one or several options)” for better clarity about their purpose.
 - :feature:`orga:sidebar` Renamed CfP to Call for Speakers for clarity
 - :feature:`orga,820` Restricted tracks now link to the page where you can create access codes for that track.
 - :announcement:`admin,1678` Due to its incomplete and complex nature, the ``import_schedule`` admin command has been removed. If you want to import a schedule, despite all the complexities, please use the pretalx-downstream plugin instead.
