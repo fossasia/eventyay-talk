@@ -3,6 +3,7 @@ from collections import defaultdict
 
 from csp.decorators import csp_update
 from django.contrib import messages
+from django.conf import settings
 from django.db import transaction
 from django.db.models import Count
 from django.db.models.deletion import ProtectedError
@@ -723,6 +724,8 @@ class CfPFlowEditor(EventPermissionRequired, TemplateView):
             "primary_color": self.request.event.get_primary_color(),
             "locales": self.request.event.locales,
         }
+        site_name = dict(settings.CONFIG.items("site")).get("name")
+        context["site_name"] = site_name
         return context
 
     def post(self, request, *args, **kwargs):

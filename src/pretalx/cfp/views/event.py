@@ -1,6 +1,7 @@
 from urllib.parse import urlencode
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.conf import settings
 from django.urls import reverse
 from django.utils.timezone import now
 from django.views.generic import TemplateView
@@ -59,6 +60,12 @@ class EventStartpage(EventPageMixin, TemplateView):
 
 class EventCfP(EventStartpage):
     template_name = "cfp/event/cfp.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        site_name = dict(settings.CONFIG.items("site")).get("name")
+        context["site_name"] = site_name
+        return context
 
     @context
     def has_featured(self):
