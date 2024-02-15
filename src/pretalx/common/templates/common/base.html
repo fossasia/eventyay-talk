@@ -6,11 +6,11 @@
 <html lang="{{ html_locale }}"{% if rtl %} dir="rtl" class="rtl"{% endif %}>
     <head>
         <meta charset="utf-8">
-        <title>{% block title %}{% endblock %} {% if request.event %} {{ request.event.name }} {% endif %}:: eventyay</title>
-        <meta name="title" content="{% block meta_title %}{% endblock %} {% if request.event %} - {{ request.event.name }} {% endif %}eventyay">
-        <meta name="description" content="{% block meta_description %}{% if request.event %}Schedule, talks and talk submissions for {{ request.event.name }}{% else %}Talks and talk submissions by eventyay{% endif %}{% endblock %}">
-        <meta name="application-name" content="eventyay">
-        <meta name="generator" content="eventyay">
+        <title>{% block title %}{% endblock %} {% if request.event %} {{ request.event.name }} {% endif %}:: {{site_name}} </title>
+        <meta name="title" content="{% block meta_title %}{% endblock %} {% if request.event %} - {{ request.event.name }} {% endif %} {{site_name}}">
+        <meta name="description" content="{% block meta_description %}{% if request.event %}Schedule, talks and talk submissions for {{ request.event.name }}{% else %}Talks and talk submissions by {{site_name}} {% endif %}{% endblock %}">
+        <meta name="application-name" content="{{site_name}}">
+        <meta name="generator" content="{{site_name}}">
         <meta name="keywords" content="{% if request.event %}{{ request.event.name }}, {{ request.event.slug }}, {% if request.event.date_from %}{{ request.event.date_from.year }}, {% endif %}{% endif %}schedule, talks, cfp, call for papers, conference, submissions, organizer">
         {{ html_head|safe }}
         {% if request.event and request.event.display_settings.meta_noindex %}<meta name="robots" content="noindex, nofollow">{% else %}<meta name="robots" content="index, follow">{% endif %}
@@ -21,7 +21,7 @@
             <meta property="og:image" content="{{ request.event.urls.social_image.full }}">
         {% endif %}{% endblock %}
         <meta property="og:title" content="{% block social_title %}{% endblock %} {% if request.event %}{{ request.event.name }}{% endif %}">
-        <meta property="og:description" content="{% block social_description %}{% if request.event %}Schedule, talks and talk submissions for {{ request.event.name }}{% else %}Talks and talk submissions by eventyay{% endif %}{% endblock %}">
+        <meta property="og:description" content="{% block social_description %}{% if request.event %}Schedule, talks and talk submissions for {{ request.event.name }}{% else %}Talks and talk submissions by {{site_name}} {% endif %}{% endblock %}">
         <meta property="og:url" content="{% if request.event and request.event.display_settings.html_export_url %}{{ request.event.display_settings.html_export_url }}{{ request.path|slice:"1:" }}{% else %}{{ request.build_absolute_uri }}{% endif %}">
         <meta property="twitter:card" content="summary">
 
