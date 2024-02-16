@@ -4534,16 +4534,16 @@ msgid "Outbox"
 msgstr "Postausgang"
 
 #: pretalx/orga/templates/orga/base.html:379
-msgid "Templates"
-msgstr "Vorlagen"
-
-#: pretalx/orga/templates/orga/base.html:382
-msgid "Compose E-mails"
+msgid "Compose"
 msgstr "E-Mails schreiben"
 
+#: pretalx/orga/templates/orga/base.html:382
+msgid "Sent"
+msgstr "Verschickte emails"
+
 #: pretalx/orga/templates/orga/base.html:385
-msgid "Sent E-mails"
-msgstr "Verschickte E-Mails"
+msgid "Templates"
+msgstr "Vorlagen"
 
 #: pretalx/orga/templates/orga/base.html:404
 msgid "Organisers"

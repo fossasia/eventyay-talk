@@ -3987,16 +3987,16 @@ msgid "Outbox"
 msgstr ""
 
 #: pretalx/orga/templates/orga/base.html:379
-msgid "Templates"
-msgstr ""
+msgid "Compose"
+msgstr "Menyusun"
 
 #: pretalx/orga/templates/orga/base.html:382
-msgid "Compose E-mails"
-msgstr ""
+msgid "Sent"
+msgstr "Kirim"
 
 #: pretalx/orga/templates/orga/base.html:385
-msgid "Sent E-mails"
-msgstr ""
+msgid "Templates"
+msgstr "Templats"
 
 #: pretalx/orga/templates/orga/base.html:404
 msgid "Organisers"

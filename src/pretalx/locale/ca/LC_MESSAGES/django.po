@@ -4027,16 +4027,16 @@ msgid "Outbox"
 msgstr ""
 
 #: pretalx/orga/templates/orga/base.html:379
-msgid "Templates"
-msgstr ""
+msgid "Compose"
+msgstr "Compose"
 
 #: pretalx/orga/templates/orga/base.html:382
-msgid "Compose E-mails"
-msgstr ""
+msgid "Sent"
+msgstr "Sent"
 
 #: pretalx/orga/templates/orga/base.html:385
-msgid "Sent E-mails"
-msgstr ""
+msgid "Templates"
+msgstr "Templates"
 
 #: pretalx/orga/templates/orga/base.html:404
 msgid "Organisers"

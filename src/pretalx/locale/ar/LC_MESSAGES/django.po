@@ -4502,16 +4502,16 @@ msgid "Outbox"
 msgstr "صندوق الصادرات"
 
 #: pretalx/orga/templates/orga/base.html:379
-msgid "Templates"
-msgstr "القوالب"
-
-#: pretalx/orga/templates/orga/base.html:382
-msgid "Compose E-mails"
+msgid "Compose"
 msgstr "الايميلات المقترحة"
 
-#: pretalx/orga/templates/orga/base.html:385
-msgid "Sent E-mails"
+#: pretalx/orga/templates/orga/base.html:382
+msgid "Sent"
 msgstr "الإيميلات المرسلة"
+
+#: pretalx/orga/templates/orga/base.html:385
+msgid "Templates"
+msgstr "القوالب"
 
 #: pretalx/orga/templates/orga/base.html:404
 msgid "Organisers"
