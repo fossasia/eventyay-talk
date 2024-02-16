@@ -4407,7 +4407,7 @@ msgstr "Escrever emails"
 
 #: pretalx/orga/templates/orga/base.html:388
 msgid "Sent"
-msgstr "emails enviados"
+msgstr "Emails enviados"
 
 #: pretalx/orga/templates/orga/base.html:391
 msgid "Templates"

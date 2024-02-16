@@ -3969,11 +3969,11 @@ msgstr "Compose"
 
 #: pretalx/orga/templates/orga/base.html:388
 msgid "Sent"
-msgstr ""
+msgstr "Sent"
 
 #: pretalx/orga/templates/orga/base.html:391
 msgid "Templates"
-msgstr ""
+msgstr "Templates"
 
 #: pretalx/orga/templates/orga/base.html:410
 msgid "Organisers"

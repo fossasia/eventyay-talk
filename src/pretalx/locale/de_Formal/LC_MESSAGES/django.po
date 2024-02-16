@@ -4485,11 +4485,11 @@ msgstr "Postausgang"
 
 #: pretalx/orga/templates/orga/base.html:385
 msgid "Compose"
-msgstr "E-Mails schreiben"
+msgstr "Emails schreiben"
 
 #: pretalx/orga/templates/orga/base.html:388
 msgid "Sent"
-msgstr "Verschickte E-Mails"
+msgstr "Verschickte emails"
 
 #: pretalx/orga/templates/orga/base.html:391
 msgid "Templates"

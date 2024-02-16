@@ -4463,7 +4463,7 @@ msgstr "E-Mails schreiben"
 
 #: pretalx/orga/templates/orga/base.html:388
 msgid "Sent"
-msgstr "Verschickte E-Mails"
+msgstr "Verschickte emails"
 
 #: pretalx/orga/templates/orga/base.html:391
 msgid "Templates"

@@ -4450,11 +4450,11 @@ msgstr "Caixa de Saída"
 
 #: pretalx/orga/templates/orga/base.html:385
 msgid "Compose"
-msgstr "Compor e-mails"
+msgstr "Compor emails"
 
 #: pretalx/orga/templates/orga/base.html:388
 msgid "Sent"
-msgstr "E-mails Enviados"
+msgstr "Emails enviados"
 
 #: pretalx/orga/templates/orga/base.html:391
 msgid "Templates"

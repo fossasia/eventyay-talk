@@ -4209,15 +4209,15 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/base.html:385
 msgid "Compose"
-msgstr ""
+msgstr "Redactar"
 
 #: pretalx/orga/templates/orga/base.html:388
 msgid "Sent"
-msgstr ""
+msgstr "Enviar"
 
 #: pretalx/orga/templates/orga/base.html:391
 msgid "Templates"
-msgstr ""
+msgstr "Plantillas"
 
 #: pretalx/orga/templates/orga/base.html:410
 msgid "Organisers"

@@ -4168,7 +4168,7 @@ msgstr "Uitgaand"
 
 #: pretalx/orga/templates/orga/base.html:385
 msgid "Compose"
-msgstr "Schrijf E-mails"
+msgstr "Schrijf emails"
 
 #: pretalx/orga/templates/orga/base.html:388
 msgid "Sent"

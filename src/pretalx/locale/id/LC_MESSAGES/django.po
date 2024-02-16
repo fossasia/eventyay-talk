@@ -3931,15 +3931,15 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/base.html:385
 msgid "Compose"
-msgstr ""
+msgstr "Menyusun"
 
 #: pretalx/orga/templates/orga/base.html:388
 msgid "Sent"
-msgstr ""
+msgstr "Kirim"
 
 #: pretalx/orga/templates/orga/base.html:391
 msgid "Templates"
-msgstr ""
+msgstr "Templats"
 
 #: pretalx/orga/templates/orga/base.html:410
 msgid "Organisers"

@@ -4378,11 +4378,11 @@ msgstr "K odeslání"
 
 #: pretalx/orga/templates/orga/base.html:385
 msgid "Compose"
-msgstr "Poslání e-mailu"
+msgstr "Poslání emailu"
 
 #: pretalx/orga/templates/orga/base.html:388
 msgid "Sent"
-msgstr "Odeslané e-maily"
+msgstr "Odeslané emaily"
 
 #: pretalx/orga/templates/orga/base.html:391
 msgid "Templates"

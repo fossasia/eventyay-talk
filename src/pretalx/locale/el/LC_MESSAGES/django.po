@@ -4485,7 +4485,7 @@ msgstr "Εξερχόμενα"
 
 #: pretalx/orga/templates/orga/base.html:385
 msgid "Compose"\
-msgstr "Σύνταξη e-mail"
+msgstr "Σύνταξη email"
 
 #: pretalx/orga/templates/orga/base.html:388
 msgid "Sent"
