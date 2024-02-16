@@ -351,6 +351,7 @@ FORMAT_MODULE_PATH = ["pretalx.common.formats"]
 LANGUAGE_CODE = config.get("locale", "language_code")
 LANGUAGE_COOKIE_NAME = "pretalx_language"
 LANGUAGES_INFORMATION = {
+
     "en": {
         "name": _("English"),
         "natural_name": "English",
@@ -376,68 +377,94 @@ LANGUAGES_INFORMATION = {
         "name": _("Arabic"),
         "natural_name": "اَلْعَرَبِيَّةُ",
         "official": False,
-        "percentage": 80,
+        "percentage": 77,
     },
     "cs": {
         "name": _("Czech"),
         "natural_name": "Čeština",
         "official": False,
-        "percentage": 99,
+        "percentage": 95,
     },
     "el": {
         "name": _("Greek"),
         "natural_name": "Ελληνικά",
         "official": False,
-        "percentage": 100,
+        "percentage": 95,
     },
     "es": {
         "name": _("Spanish"),
         "natural_name": "Español",
         "official": False,
-        "percentage": 88,
+        "percentage": 85,
     },
     "fr": {
         "name": _("French"),
         "natural_name": "Français",
         "official": False,
-        "percentage": 86,
+        "percentage": 85,
         "path": "fr_FR",
+    },
+    "it": {
+        "name": _("Italian"),
+        "natural_name": "Italiano",
+        "official": False,
+        "percentage": 96,
     },
     "ja-jp": {
         "name": _("Japanese"),
         "natural_name": "日本語",
         "official": False,
-        "percentage": 76,
+        "percentage": 74,
         "public_code": "jp",
+    },
+    "nl": {
+        "name": _("Dutch"),
+        "natural_name": "Nederlands",
+        "official": False,
+        "percentage": 92,
     },
     "pt-br": {
         "name": _("Brasilian Portuguese"),
         "natural_name": "Português brasileiro",
         "official": False,
-        "percentage": 87,
+        "percentage": 94,
         "public_code": "pt",
     },
     "pt-pt": {
         "name": _("Portuguese"),
         "natural_name": "Português",
         "official": False,
-        "percentage": 94,
+        "percentage": 91,
         "public_code": "pt",
     },
     "zh-hant": {
         "name": _("Traditional Chinese (Taiwan)"),
         "natural_name": "漢語",
         "official": False,
-        "percentage": 73,
+        "percentage": 70,
         "public_code": "zh",
     },
     "zh-hans": {
         "name": _("Simplified Chinese"),
         "natural_name": "简体中文",
         "official": False,
-        "percentage": 94,
+        "percentage": 90,
         "public_code": "zh",
     },
+    "ru": {
+        "name": _("Russian"),
+        "natural_name": "Russian",
+        "official": True,
+        "percentage": 100,
+    },
+
+    "uk": {
+        "name": _("Ukrainian"),
+        "natural_name": "Ukrainian",
+        "official": True,
+        "percentage": 100,
+    },
+
 }
 LANGUAGES_RTL = {
     "ar",
