@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{% block title %}{% endblock %} :: eventyay</title>
+        <title>{% block title %}{% endblock %} :: {{site_name}} </title>
         {% compress css %}
             <link rel="stylesheet" type="text/x-scss" href="{% static "orga/scss/auth.scss" %}"/>
         {% endcompress %}
@@ -20,7 +20,7 @@
     <body>
         <div id="wrapper"{% if request.event.primary_color %} style="background-color: {{ request.event.primary_color }}"{% endif %}>
             {% if not request.event.logo %}
-                <img src="{% static "common/img/logo_white.png" %}" class="logo" alt="{% translate "The eventyay logo" %}">
+                <img src="{% static "common/img/logo_white.png" %}" class="logo" alt="{% translate "The pretalx logo" %}">
             {% else %}
                 <img height="150" width="auto" src="{{ request.event.logo.url }}" id="event-logo" alt="{% translate "The event's logo" %}">
             {% endif %}
