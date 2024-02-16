@@ -4172,7 +4172,7 @@ msgstr "Schrijf emails"
 
 #: pretalx/orga/templates/orga/base.html:388
 msgid "Sent"
-msgstr "Verstuur E-mails"
+msgstr "Verstuur emails"
 
 #: pretalx/orga/templates/orga/base.html:391
 msgid "Templates"
