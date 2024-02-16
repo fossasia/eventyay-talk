@@ -196,6 +196,10 @@ directory of your git repository, and then run::
 
     (env)$ pip install --upgrade-strategy eager -Ur doc/requirements.txt
 
+Next, navigate to the ``doc`` subdirectory::
+
+    (env)$ cd doc
+
 Then, to build the documentation, run the following command::
 
     (env)$ make html
