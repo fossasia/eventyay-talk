@@ -161,11 +161,11 @@ def error_view(status_code):
     exception = exceptions[status_code]
 
     def error_view(request, *args, **kwargs):
-        context = {'site_name': dict(settings.CONFIG.items("site")).get("name")}
+        context = {"site_name": dict(settings.CONFIG.items("site")).get("name")}
         if status_code in exceptions:
             raise exception
         else:
-            return render(request, f'{status_code}.html', context, status=status_code)
+            return render(request, f"{status_code}.html", context, status=status_code)
 
     return error_view
 
