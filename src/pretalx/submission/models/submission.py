@@ -24,6 +24,8 @@ from pretalx.common.utils import path_with_hash
 from pretalx.mail.models import MailTemplate, QueuedMail
 from pretalx.submission.signals import submission_state_change
 
+from tinymce.models import HTMLField
+
 
 def generate_invite_code(length=32):
     return get_random_string(length=length, allowed_chars=Submission._code_charset)
@@ -160,17 +162,17 @@ class Submission(GenerateCode, PretalxModel):
         default=None,
         verbose_name=_("Pending proposal state"),
     )
-    abstract = models.TextField(
+    abstract = HTMLField(
         null=True,
         blank=True,
         verbose_name=_("Abstract"),
-        help_text=phrases.base.use_markdown,
+        #help_text=phrases.base.use_markdown,
     )
-    description = models.TextField(
+    description = HTMLField(
         null=True,
         blank=True,
         verbose_name=_("Description"),
-        help_text=phrases.base.use_markdown,
+        #help_text=phrases.base.use_markdown,
     )
     notes = models.TextField(
         null=True,

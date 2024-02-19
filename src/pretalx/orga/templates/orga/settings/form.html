@@ -25,12 +25,13 @@
     <div class="flex-container"><div class="flex-content">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
+            {{ form.media }}
             <fieldset>
                 <legend id="general">
                     {% translate "General information" %}
                 </legend>
                 {% bootstrap_form_errors form %}
-
+            
                 {% bootstrap_field form.name layout='event' %}
                 {% bootstrap_field form.slug layout='event' addon_before=url_placeholder addon_before_class="input-group-prepend input-group-text" %}
                 {% bootstrap_field form.date_from layout='event' %}

@@ -194,9 +194,6 @@ class InfoForm(CfPFormMixin, RequestRequire, PublicContent, forms.ModelForm):
         ]
         public_fields = ["title", "abstract", "description", "image"]
         widgets = {
-            "abstract": MarkdownWidget,
-            "description": MarkdownWidget,
-            "notes": MarkdownWidget,
             "track": TrackSelectWidget,
         }
         field_classes = {

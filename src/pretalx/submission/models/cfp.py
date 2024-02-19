@@ -93,7 +93,7 @@ class CfP(PretalxModel):
         null=True,
         blank=True,
         verbose_name=_("text"),
-        ## keeping this just in case it's required
+        ### keeping this just in case it's required
         # help_text=phrases.base.use_markdown,
     )
     default_type = models.ForeignKey(
