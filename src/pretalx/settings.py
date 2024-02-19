@@ -92,40 +92,6 @@ FALLBACK_APPS = [
     "django.forms",
     "rest_framework",
 ]
-INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + LOCAL_APPS + FALLBACK_APPS + ['tinymce']
-
-# TinyMCE Editor Settings
-TINYMCE_DEFAULT_CONFIG = {
-    'height': 400,
-    'cleanup_on_startup': True,
-    'custom_undo_redo_levels': 20,
-    'selector': 'textarea',
-    'theme': 'silver',
-    'menubar': False,
-    'plugins': '''
-        advlist autolink lists link image charmap print preview anchor
-        searchreplace visualblocks code fullscreen
-        insertdatetime media table paste codesample help wordcount
-    ''',
-    'toolbar': '''
-        undo redo | formatselect | bold italic underline strikethrough forecolor | \
-        alignleft aligncenter alignright alignjustify | \
-        bullist numlist outdent indent | codesample
-    ''',
-    'valid_elements': '''
-        a[!href|target|title],abbr[!title],acronym[!title],b,br,code,div,em,h1,h2,
-        h3,h4,h5,h6,hr,i,li,ol,p,pre,span,strong,table[!width],tbody,td[!width|align],thead,tr,ul
-    ''',
-    'extended_valid_elements': '''
-        a[href|target|title],abbr[title],acronym[title],table[width],td[width|align],div[class],p[class],span[class]
-    ''',
-    'toolbar_sticky': True, 
-    'toolbar_drawer': 'wrap',
-    'content_css' : "writer",
-}
-
-
-
 
 PLUGINS = []
 for entry_point in iter_entry_points(group="pretalx.plugin", name=None):
