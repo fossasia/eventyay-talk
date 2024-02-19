@@ -92,6 +92,7 @@ FALLBACK_APPS = [
     "django.forms",
     "rest_framework",
 ]
+INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + LOCAL_APPS + FALLBACK_APPS
 
 PLUGINS = []
 for entry_point in iter_entry_points(group="pretalx.plugin", name=None):
