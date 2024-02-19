@@ -26,7 +26,7 @@ This will ask you some questions and then create a project folder for your plugi
 Afterwards install your plugin into pretalx:
 
    (env)$ cd pretalx-pluginname
-   (env)$ python setup.py develop
+   (env)$ python -m pip install -e .
 
 If you already had it running, you'll now have to restart your pretalx dev-server
 for it to recognize the new plugin.
@@ -168,5 +168,5 @@ Which you can use in your code like this::
 .. _Django application: https://docs.djangoproject.com/en/dev/ref/applications/
 .. _signal dispatcher: https://docs.djangoproject.com/en/dev/topics/signals/
 .. _namespace packages: http://legacy.python.org/dev/peps/pep-0420/
-.. _entry point: https://setuptools.readthedocs.io/en/latest/pkg_resources.html#locating-plugins
+.. _entry point: https://setuptools.pypa.io/en/latest/pkg_resources.html#locating-plugins
 .. _cookiecutter: https://cookiecutter.readthedocs.io/en/latest/
