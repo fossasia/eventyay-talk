@@ -92,7 +92,6 @@ FALLBACK_APPS = [
     "django.forms",
     "rest_framework",
 ]
-INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + LOCAL_APPS + FALLBACK_APPS
 
 PLUGINS = []
 for entry_point in iter_entry_points(group="pretalx.plugin", name=None):
@@ -453,16 +452,16 @@ LANGUAGES_INFORMATION = {
     },
     "ru": {
         "name": _("Russian"),
-        "natural_name": "Russian",
+        "natural_name": "Русский",
         "official": True,
-        "percentage": 100,
+        "percentage":  100,
     },
 
     "uk": {
         "name": _("Ukrainian"),
-        "natural_name": "Ukrainian",
+        "natural_name": "Українська",
         "official": True,
-        "percentage": 100,
+        "percentage":  100,
     },
 
 }
