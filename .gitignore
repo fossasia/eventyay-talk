@@ -100,3 +100,6 @@ src/tests/**/*.yml
 
 # Screenshots
 screens/
+
+static.dist/*
+!static.dist/tinymce/
