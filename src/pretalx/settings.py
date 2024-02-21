@@ -450,6 +450,20 @@ LANGUAGES_INFORMATION = {
         "percentage": 90,
         "public_code": "zh",
     },
+    "ru": {
+        "name": _("Russian"),
+        "natural_name": "Русский",
+        "official": False,
+        "percentage": 90,
+        "public_code": "ru",
+    },
+    "uk": {
+        "name": _("Ukrainian"),
+        "natural_name": "Українська",
+        "official": False,
+        "percentage": 90,
+        "public_code": "uk",
+    },
 }
 LANGUAGES_RTL = {
     "ar",
