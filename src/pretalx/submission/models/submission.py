@@ -14,6 +14,7 @@ from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext
 from django_scopes import ScopedManager
+from tinymce.models import HTMLField as RichTextField
 
 from pretalx.common.choices import Choices
 from pretalx.common.exceptions import SubmissionError
@@ -23,7 +24,6 @@ from pretalx.common.urls import EventUrls
 from pretalx.common.utils import path_with_hash
 from pretalx.mail.models import MailTemplate, QueuedMail
 from pretalx.submission.signals import submission_state_change
-from tinymce.models import HTMLField as RichTextField
 
 
 def generate_invite_code(length=32):

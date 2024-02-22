@@ -3,10 +3,10 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from i18nfield.fields import I18nCharField, I18nTextField
+from tinymce.models import HTMLField as RichTextField
 
 from pretalx.common.mixins.models import OrderedModel, PretalxModel
 from pretalx.common.urls import EventUrls
-from tinymce.models import HTMLField as RichTextField
 
 
 class Track(OrderedModel, PretalxModel):

@@ -92,25 +92,25 @@ FALLBACK_APPS = [
     "django.forms",
     "rest_framework",
 ]
-INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + LOCAL_APPS + FALLBACK_APPS + ['tinymce']
+INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + LOCAL_APPS + FALLBACK_APPS + ["tinymce"]
 
 # RICH-TEXT CONFIG
 TINYMCE_DEFAULT_CONFIG = {
-    'cleanup_on_startup': True,
-    'custom_undo_redo_levels': 20,
-    'selector': 'textarea',
-    'theme': 'silver',
-    'plugins': '''
+    "cleanup_on_startup": True,
+    "custom_undo_redo_levels": 20,
+    "selector": "textarea",
+    "theme": "silver",
+    "plugins": """
         advlist autolink lists link image charmap print preview anchor
         searchreplace visualblocks code fullscreen
         insertdatetime media table paste code help wordcount
-    ''',
-    'toolbar': '''
+    """,
+    "toolbar": """
         language | undo redo | formatselect | bold italic backcolor | 
         alignleft aligncenter alignright alignjustify |
         bullist numlist outdent indent | removeformat | help
-    ''',
-  'content_langs':"[{ title: 'English', code: 'en' },]"
+    """,
+    "branding": False,
 }
 
 

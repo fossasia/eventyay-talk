@@ -337,7 +337,7 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
             "landing_page_text",
             "featured_sessions_text",
         ]
-        
+
         field_classes = {
             "logo": ImageField,
             "header_image": ImageField,

@@ -6,11 +6,11 @@ from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from i18nfield.fields import I18nCharField, I18nTextField
+from tinymce.models import HTMLField as RichTextField
 
 from pretalx.common.mixins.models import PretalxModel
 from pretalx.common.phrases import phrases
 from pretalx.common.urls import EventUrls
-from tinymce.models import HTMLField as RichTextField
 
 
 def default_settings():
@@ -94,7 +94,7 @@ class CfP(PretalxModel):
         blank=True,
         verbose_name=_("text"),
         help_text=phrases.base.use_markdown,
-    )   
+    )
     default_type = models.ForeignKey(
         to="submission.SubmissionType",
         on_delete=models.PROTECT,

@@ -14,6 +14,7 @@ from django.utils.timezone import make_aware, now
 from django.utils.translation import gettext_lazy as _
 from django_scopes import scopes_disabled
 from i18nfield.fields import I18nCharField, I18nTextField
+from tinymce.models import HTMLField as RichTextField
 
 from pretalx.common.cache import ObjectRelatedCache
 from pretalx.common.language import LANGUAGE_NAMES
@@ -24,8 +25,6 @@ from pretalx.common.phrases import phrases
 from pretalx.common.plugins import get_all_plugins
 from pretalx.common.urls import EventUrls
 from pretalx.common.utils import daterange, path_with_hash
-
-from tinymce.models import HTMLField as RichTextField
 
 # Slugs need to start and end with an alphanumeric character,
 # but may contain dashes and dots in between.
