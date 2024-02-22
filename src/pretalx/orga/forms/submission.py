@@ -213,9 +213,6 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
             "tags": forms.SelectMultiple(attrs={"class": "select2"}),
             "track": forms.Select(attrs={"class": "select2"}),
             "submission_type": forms.Select(attrs={"class": "select2"}),
-            "abstract": MarkdownWidget,
-            "description": MarkdownWidget,
-            "notes": MarkdownWidget,
         }
         field_classes = {
             "submission_type": SafeModelChoiceField,

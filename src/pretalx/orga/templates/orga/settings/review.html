@@ -17,7 +17,7 @@
     {% endcompress %}
     <form method="post" class="d-flex flex-column">
         {% csrf_token %}
-
+        {{form.media}}
         <h2>{% translate "Review settings" %}</h2>
         <div class="alert alert-info col-md-9 flip ml-auto">
             {% blocktranslate trimmed %}
@@ -26,6 +26,7 @@
                 button when reviewing proposals.
             {% endblocktranslate %}
         </div>
+
         {% bootstrap_form form layout='event' %}
         <div class="submit-group panel">
             <span></span>

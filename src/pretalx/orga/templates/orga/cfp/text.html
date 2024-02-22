@@ -33,6 +33,7 @@
             <div class="flex-content">
                 <form method="post">
                     {% csrf_token %}
+                    {{form.media}}
                     {% bootstrap_form_errors form %}
                     {% bootstrap_form_errors sform %}
                     <fieldset>

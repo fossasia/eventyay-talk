@@ -6,6 +6,7 @@ from pretalx.common.mixins.models import PretalxModel
 from pretalx.common.phrases import phrases
 from pretalx.common.urls import EventUrls
 from pretalx.common.utils import path_with_hash
+from tinymce.models import HTMLField as RichTextField
 
 
 def resource_path(instance, filename):
@@ -41,7 +42,7 @@ class SpeakerInformation(PretalxModel):
         help_text=_("Leave empty to show this information for all proposal types."),
     )
     title = I18nCharField(verbose_name=_("Subject"), max_length=200)
-    text = I18nTextField(verbose_name=_("Text"), help_text=phrases.base.use_markdown)
+    text = RichTextField(verbose_name=_("Text"), help_text=phrases.base.use_markdown)
     resource = models.FileField(
         verbose_name=_("File"),
         null=True,

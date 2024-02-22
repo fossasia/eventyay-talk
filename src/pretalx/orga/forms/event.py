@@ -337,18 +337,12 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
             "landing_page_text",
             "featured_sessions_text",
         ]
+        
         field_classes = {
             "logo": ImageField,
             "header_image": ImageField,
         }
-        widgets = {
-            "date_from": forms.DateInput(attrs={"class": "datepickerfield"}),
-            "date_to": forms.DateInput(
-                attrs={"class": "datepickerfield", "data-date-after": "#id_date_from"}
-            ),
-            "locale": forms.Select(attrs={"class": "select2"}),
-            "timezone": forms.Select(attrs={"class": "select2"}),
-        }
+
         json_fields = {
             "imprint_url": "display_settings",
             "show_schedule": "feature_flags",

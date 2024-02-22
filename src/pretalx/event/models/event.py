@@ -25,6 +25,8 @@ from pretalx.common.plugins import get_all_plugins
 from pretalx.common.urls import EventUrls
 from pretalx.common.utils import daterange, path_with_hash
 
+from tinymce.models import HTMLField as RichTextField
+
 # Slugs need to start and end with an alphanumeric character,
 # but may contain dashes and dots in between.
 SLUG_CHARS = "a-zA-Z0-9.-"
@@ -300,7 +302,7 @@ class Event(PretalxModel):
         null=True,
         blank=True,
     )
-    featured_sessions_text = I18nTextField(
+    featured_sessions_text = RichTextField(
         verbose_name=_("Featured sessions text"),
         help_text=_(
             "This text will be shown at the top of the featured sessions page instead of the default text."

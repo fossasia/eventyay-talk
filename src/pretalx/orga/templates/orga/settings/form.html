@@ -25,6 +25,7 @@
     <div class="flex-container"><div class="flex-content">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
+            {{ form.media }}
             <fieldset>
                 <legend id="general">
                     {% translate "General information" %}

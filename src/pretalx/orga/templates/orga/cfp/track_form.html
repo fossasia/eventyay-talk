@@ -26,6 +26,7 @@
     </h2>
     <form method="post">
         {% csrf_token %}
+        {{ form.media}}
         {% bootstrap_form_errors form %}
         {% bootstrap_field form.name layout='event' %}
         {% bootstrap_field form.description layout='event' %}

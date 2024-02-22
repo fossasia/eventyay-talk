@@ -10,6 +10,7 @@ from i18nfield.fields import I18nCharField, I18nTextField
 from pretalx.common.mixins.models import PretalxModel
 from pretalx.common.phrases import phrases
 from pretalx.common.urls import EventUrls
+from tinymce import models as tinymce_models
 
 
 def default_settings():
@@ -88,12 +89,12 @@ class CfP(PretalxModel):
     headline = I18nCharField(
         max_length=300, null=True, blank=True, verbose_name=_("headline")
     )
-    text = I18nTextField(
+    text = tinymce_models.HTMLField(
         null=True,
         blank=True,
         verbose_name=_("text"),
         help_text=phrases.base.use_markdown,
-    )
+    )   
     default_type = models.ForeignKey(
         to="submission.SubmissionType",
         on_delete=models.PROTECT,

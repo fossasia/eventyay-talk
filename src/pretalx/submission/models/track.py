@@ -6,6 +6,7 @@ from i18nfield.fields import I18nCharField, I18nTextField
 
 from pretalx.common.mixins.models import OrderedModel, PretalxModel
 from pretalx.common.urls import EventUrls
+from tinymce.models import HTMLField as RichTextField
 
 
 class Track(OrderedModel, PretalxModel):
@@ -23,7 +24,7 @@ class Track(OrderedModel, PretalxModel):
         max_length=200,
         verbose_name=_("Name"),
     )
-    description = I18nTextField(
+    description = RichTextField(
         verbose_name=_("Description"),
         blank=True,
     )
