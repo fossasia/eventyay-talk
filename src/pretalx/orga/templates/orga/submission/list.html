@@ -23,6 +23,8 @@
     {% has_perm 'orga.change_submission_state' request.user request.event as can_change_submission %}
     {% has_perm 'orga.view_speakers' request.user request.event as can_view_speakers %}
     {% has_perm 'orga.send_mails' request.user request.event as can_send_mails %}
+    <h1 class="mt-2 mb-2">Sessions</h1>
+    <h2>{% translate "Sessions" %}</h2>
     <h2 class="d-flex align-items-center">
         <span>
             {{ page_obj.paginator.count }}

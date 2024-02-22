@@ -13,7 +13,7 @@
 {% block settings_content %}
     <form method="post">
         {% csrf_token %}
-        <h2>{% translate "E-mail settings" %}</h2>
+        <h2 class="mt-2 mb-2">{% translate "E-mail settings" %}</h2>
         <div class="alert alert-info offset-md-3">
             {% blocktranslate trimmed %}
                 If you don't configure custom email settings, the global configuration

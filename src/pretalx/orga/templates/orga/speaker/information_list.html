@@ -2,14 +2,16 @@
 {% load i18n %}
 
 {% block content %}
-    <h2>
+    <h1 class="mt-2 mb-2">Speakers</h1>
+    <h2 class="mt-2 mb-2">Speaker Information</h2>
+    <h3>
         {{ information.count }}
         {% blocktranslate trimmed count count=information.count %}
             Speaker Information Note
         {% plural %}
             Speaker Information Notes
         {% endblocktranslate %}
-    </h2>
+    </h3>
     <div class="alert alert-info">
         {% blocktranslate trimmed %}
             Add important messages (e.g. "Please bring an HDMI adapter if required.") or files (e.g. a conference styleguide).<br>

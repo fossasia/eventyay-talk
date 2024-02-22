@@ -19,6 +19,10 @@
 {% block content %}
     {% has_perm 'orga.perform_reviews' request.user request.event as can_review %}
     {% has_perm 'orga.view_speakers' request.user request.event as can_view_speakers %}
+    <h1 class="mt-2 mb-2">Review</h1>
+    <h2 class="d-flex w-100 justify-content-between align-items-start">
+        {% translate "Review" %}
+    </h2>
     <div class="alert alert-info">
         <div>
             {% if can_review and next_submission %}

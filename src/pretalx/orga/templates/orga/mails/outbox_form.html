@@ -4,6 +4,7 @@
 {% load rich_text %}
 
 {% block mail_content %}
+    <h2>{% translate "Mail Editor" %}</h2>
     {% if form.instance.sent %}
         <div class="alert alert-info">
             {% blocktranslate trimmed with timestamp=form.instance.sent %}
@@ -13,7 +14,6 @@
     {% endif %}
     <form method="post">
         {% csrf_token %}
-        <h2>{% translate "Mail Editor" %}</h2>
         {% bootstrap_form_errors form %}
 
         {% if not form.read_only %}
