@@ -10,7 +10,7 @@ from i18nfield.fields import I18nCharField, I18nTextField
 from pretalx.common.mixins.models import PretalxModel
 from pretalx.common.phrases import phrases
 from pretalx.common.urls import EventUrls
-from tinymce import models as tinymce_models
+from tinymce.models import HTMLField as RichTextField
 
 
 def default_settings():
@@ -89,7 +89,7 @@ class CfP(PretalxModel):
     headline = I18nCharField(
         max_length=300, null=True, blank=True, verbose_name=_("headline")
     )
-    text = tinymce_models.HTMLField(
+    text = RichTextField(
         null=True,
         blank=True,
         verbose_name=_("text"),
