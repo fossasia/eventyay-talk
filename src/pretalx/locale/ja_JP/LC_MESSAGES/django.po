@@ -4412,7 +4412,7 @@ msgstr "メディアファイル"
 
 #: pretalx/orga/templates/orga/admin.html:61
 #: pretalx/orga/templates/orga/base.html:366
-msgid "Mails"
+msgid "Message Center"
 msgstr "メール"
 
 #: pretalx/orga/templates/orga/admin.html:63

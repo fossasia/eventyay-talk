@@ -4341,7 +4341,7 @@ msgstr "Media-Dateien"
 
 #: pretalx/orga/templates/orga/admin.html:61
 #: pretalx/orga/templates/orga/base.html:366
-msgid "Mails"
+msgid "Message Center"
 msgstr "E-Mails"
 
 #: pretalx/orga/templates/orga/admin.html:63

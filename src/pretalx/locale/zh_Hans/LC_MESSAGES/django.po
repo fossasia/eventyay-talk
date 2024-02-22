@@ -4082,7 +4082,7 @@ msgstr "媒体文件"
 
 #: pretalx/orga/templates/orga/admin.html:61
 #: pretalx/orga/templates/orga/base.html:366
-msgid "Mails"
+msgid "Message Center"
 msgstr "邮件"
 
 #: pretalx/orga/templates/orga/admin.html:63
