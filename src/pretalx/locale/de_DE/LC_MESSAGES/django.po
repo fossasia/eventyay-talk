@@ -4506,7 +4506,7 @@ msgstr "Postausgang"
 
 #: pretalx/orga/templates/orga/base.html:379
 msgid "Compose"
-msgstr "E-Mails schreiben"
+msgstr "Emails schreiben"
 
 #: pretalx/orga/templates/orga/base.html:382
 msgid "Sent"
