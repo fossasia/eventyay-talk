@@ -33,6 +33,18 @@ class SpeakerProfile(PretalxModel):
         null=True,
         blank=True,
     )
+    avatar_source = models.TextField(
+        verbose_name=_("Source/Author of Profile Image"),
+        help_text=phrases.base.use_markdown,
+        null=True,
+        blank=True,
+    )
+    avatar_copyright = models.TextField(
+        verbose_name=_("Copyright of Profile Image"),
+        help_text=phrases.base.use_markdown,
+        null=True,
+        blank=True,
+    )
     has_arrived = models.BooleanField(
         default=False, verbose_name=_("The speaker has arrived")
     )

@@ -60,6 +60,8 @@ class CfPSettingsForm(
             "notes",
             "biography",
             "avatar",
+            "avatar_source",
+            "avatar_copyright",
             "additional_speaker",
             "availabilities",
             "do_not_record",

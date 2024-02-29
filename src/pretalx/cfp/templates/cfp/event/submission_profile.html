@@ -18,6 +18,9 @@
     </p>
     {% if form.avatar or form.get_gravatar %}
         {% include "common/avatar.html" with user=user form=form %}
+
+        {% bootstrap_field form.avatar_source layout='event' %}
+        {% bootstrap_field form.avatar_copyright layout='event' %}
     {% endif %}
 
     {% bootstrap_field form.name layout='event' %}

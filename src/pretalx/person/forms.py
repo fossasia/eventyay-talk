@@ -163,7 +163,7 @@ class SpeakerProfileForm(
     RequestRequire,
     forms.ModelForm,
 ):
-    USER_FIELDS = ["name", "email", "avatar", "get_gravatar"]
+    USER_FIELDS = ["name", "email", "avatar", "avatar_source", "avatar_copyright", "get_gravatar"]
     FIRST_TIME_EXCLUDE = ["email"]
 
     def __init__(self, *args, name=None, **kwargs):
@@ -195,9 +195,13 @@ class SpeakerProfileForm(
 
         if not self.event.cfp.request_avatar:
             self.fields.pop("avatar", None)
+            self.fields.pop("avatar_source", None)
+            self.fields.pop("avatar_copyright", None)
             self.fields.pop("get_gravatar", None)
         elif "avatar" in self.fields:
             self.fields["avatar"].required = False
+            self.fields["avatar_source"].required = False
+            self.fields["avatar_copyright"].required = False
         if self.is_bound and not self.is_valid() and "availabilities" in self.errors:
             # Replace self.data with a version that uses initial["availabilities"]
             # in order to have event and timezone data available
@@ -263,12 +267,14 @@ class SpeakerProfileForm(
     class Meta:
         model = SpeakerProfile
         fields = ("biography",)
-        public_fields = ["name", "biography", "avatar"]
+        public_fields = ["name", "biography", "avatar", "avatar_source", "avatar_copyright"]
         field_classes = {
             "avatar": ImageField,
         }
         widgets = {
             "biography": MarkdownWidget,
+            "avatar_source": MarkdownWidget,
+            "avatar_copyright": MarkdownWidget,
         }
         request_require = {"biography", "availabilities"}
 
