@@ -2,8 +2,8 @@ import json
 from collections import defaultdict
 
 from csp.decorators import csp_update
-from django.contrib import messages
 from django.conf import settings
+from django.contrib import messages
 from django.db import transaction
 from django.db.models import Count
 from django.db.models.deletion import ProtectedError

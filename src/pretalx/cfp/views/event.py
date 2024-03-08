@@ -1,7 +1,7 @@
 from urllib.parse import urlencode
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.utils.timezone import now
 from django.views.generic import TemplateView
