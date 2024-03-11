@@ -45,6 +45,11 @@ class SpeakerExportForm(ExportForm):
             label=_("Picture"),
             help_text=_("The link to the speaker's profile picture"),
         )
+        self.fields["avatar_source"] = forms.BooleanField(
+            required=False,
+            label=_("Picture Source"),
+            help_text=_("The source of the speaker's profile picture"),
+        )
         self.fields["avatar_license"] = forms.BooleanField(
             required=False,
             label=_("Picture License"),

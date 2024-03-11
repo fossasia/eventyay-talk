@@ -60,6 +60,11 @@ class SpeakerSerializer(ModelSerializer):
         return obj.user.get_avatar_url(event=obj.event)
 
     @staticmethod
+    def get_avatar_source(obj):
+        if obj.user.has_avatar:
+            return obj.user.avatar_source(event=obj.event)
+
+    @staticmethod
     def get_avatar_license(obj):
         if obj.user.has_avatar:
             return obj.user.avatar_license(event=obj.event)
