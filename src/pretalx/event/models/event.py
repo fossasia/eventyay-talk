@@ -14,6 +14,7 @@ from django.utils.timezone import make_aware, now
 from django.utils.translation import gettext_lazy as _
 from django_scopes import scopes_disabled
 from i18nfield.fields import I18nCharField, I18nTextField
+from tinymce.models import HTMLField as RichTextField
 
 from pretalx.common.cache import ObjectRelatedCache
 from pretalx.common.language import LANGUAGE_NAMES
@@ -300,7 +301,7 @@ class Event(PretalxModel):
         null=True,
         blank=True,
     )
-    featured_sessions_text = I18nTextField(
+    featured_sessions_text = RichTextField(
         verbose_name=_("Featured sessions text"),
         help_text=_(
             "This text will be shown at the top of the featured sessions page instead of the default text."

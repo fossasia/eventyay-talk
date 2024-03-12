@@ -337,6 +337,7 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
             "landing_page_text",
             "featured_sessions_text",
         ]
+
         field_classes = {
             "logo": ImageField,
             "header_image": ImageField,
@@ -349,6 +350,7 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
             "locale": forms.Select(attrs={"class": "select2"}),
             "timezone": forms.Select(attrs={"class": "select2"}),
         }
+
         json_fields = {
             "imprint_url": "display_settings",
             "show_schedule": "feature_flags",

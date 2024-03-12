@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from i18nfield.fields import I18nCharField, I18nTextField
+from tinymce.models import HTMLField as RichTextField
 
 from pretalx.common.mixins.models import PretalxModel
 from pretalx.common.phrases import phrases
@@ -41,7 +42,7 @@ class SpeakerInformation(PretalxModel):
         help_text=_("Leave empty to show this information for all proposal types."),
     )
     title = I18nCharField(verbose_name=_("Subject"), max_length=200)
-    text = I18nTextField(verbose_name=_("Text"), help_text=phrases.base.use_markdown)
+    text = RichTextField(verbose_name=_("Text"), help_text=phrases.base.use_markdown)
     resource = models.FileField(
         verbose_name=_("File"),
         null=True,

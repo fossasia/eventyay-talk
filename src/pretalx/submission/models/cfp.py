@@ -6,6 +6,7 @@ from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from i18nfield.fields import I18nCharField, I18nTextField
+from tinymce.models import HTMLField as RichTextField
 
 from pretalx.common.mixins.models import PretalxModel
 from pretalx.common.phrases import phrases
@@ -90,7 +91,7 @@ class CfP(PretalxModel):
     headline = I18nCharField(
         max_length=300, null=True, blank=True, verbose_name=_("headline")
     )
-    text = I18nTextField(
+    text = RichTextField(
         null=True,
         blank=True,
         verbose_name=_("text"),

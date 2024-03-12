@@ -14,6 +14,7 @@ from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext
 from django_scopes import ScopedManager
+from tinymce.models import HTMLField as RichTextField
 
 from pretalx.common.choices import Choices
 from pretalx.common.exceptions import SubmissionError
@@ -160,13 +161,13 @@ class Submission(GenerateCode, PretalxModel):
         default=None,
         verbose_name=_("Pending proposal state"),
     )
-    abstract = models.TextField(
+    abstract = RichTextField(
         null=True,
         blank=True,
         verbose_name=_("Abstract"),
         help_text=phrases.base.use_markdown,
     )
-    description = models.TextField(
+    description = RichTextField(
         null=True,
         blank=True,
         verbose_name=_("Description"),

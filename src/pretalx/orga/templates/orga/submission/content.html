@@ -35,6 +35,7 @@
         {% endif %}
         {% bootstrap_form_errors form %}
         {% csrf_token %}
+        {{ form.media}}
         {% bootstrap_field form.title layout='event' %}
         {% if action == "create" %}
             {% bootstrap_field form.speaker layout='event' %}
