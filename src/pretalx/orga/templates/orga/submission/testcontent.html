@@ -1,0 +1,127 @@
+{% extends "orga/submission/base.html" %}
+{% load bootstrap4 %}
+{% load i18n %}
+{% load rich_text %}
+{% load static %}
+
+{% block submission_content %}
+    <script src="{% static "vendored/marked.min.js" %}" defer></script> 
+    <script src="{% static "orga/js/reviewSubmission.js" %}" defer></script>
+
+
+        <form method="post" id="review-form">
+            {% csrf_token %}
+            {% bootstrap_form_errors form %}
+            {% bootstrap_form_errors qform %}
+            {% if tags_form %}{% bootstrap_form_errors tags_form %}{% endif %}
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label">{% translate "Proposal Title" %}</label>
+                <div class="col-md-9 mt-1">
+                    {{ submission.title|default:'-' }}
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label">{% translate "Session Type" %}</label>
+                <div class="col-md-9 mt-1">
+                    {{ submission.submission_type }}
+                </div>
+            </div>
+            {% if submission.track %}
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label">{% translate "Track" %}</label>
+                    <div class="col-md-9 mt-1">
+                        {{ submission.track.name|default:'-' }}
+                    </div>
+                </div>
+            {% endif %}
+            {% if request.event.cfp.request_abstract %}
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label">{% translate "Abstract" %}</label>
+                    <div class="col-md-9 mt-1">
+                            {{ submission.abstract|rich_text|default:'-' }}
+                    </div>
+                </div>
+            {% endif %}
+            {% if request.event.cfp.request_description %}
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label">{% translate "Description" %}</label>
+                    <div class="col-md-9 mt-1">
+                            {{ submission.description|rich_text|default:'-' }}
+                    </div>
+                </div>
+            {% endif %}
+            {% if request.event.cfp.request_notes %}
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label">{% translate "Notes" %}</label>
+                    <div class="col-md-9 mt-1">
+                            {{ submission.notes|rich_text|default:'-' }}
+                    </div>
+                </div>
+            {% endif %}
+            {% if submission.internal_notes %}
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label">{% translate "Internal Notes" %}</label>
+                    <div class="col-md-9 mt-1">
+                            {{ submission.internal_notes|rich_text|default:'-' }}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if request.event.cfp.request_do_not_record %}
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label">{% translate "Don't record this session" %}</label>
+                <div class="col-md-9 mt-1">
+                        {{ submission.do_not_record|rich_text|default:'-' }}
+                </div>
+            </div>
+            {% endif %}
+            {% if submission.is_featured%}
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label">{% translate "Show this session in public list of featured sessions." %}</label>
+                <div class="col-md-9 mt-1">
+                        {{ submission.is_featured|rich_text|default:'-' }}
+                </div>
+            </div>
+            {% endif %}
+            {% if submission.duration %}
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label">{% translate "Duration" %}</label>
+                <div class="d-flex  col-md-9 mt-1">
+                        {{ submission.duration|rich_text|default:'-' }} minutes
+                </div>
+            </div>
+            {%else%}
+            <div class="form-group row">
+
+                <label class="col-md-3 col-form-label">{% translate "Duration" %}</label>
+                <div class="col-md-9 mt-1">
+                    {{ submission.duration|rich_text|default:'-' }}
+            </div>    
+        </div>        
+            {% endif %}
+            {% if request.event.cfp.request_image %}
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label">{% translate "Image" %}</label>
+                <div class="col-md-9 mt-1">
+                        {{ submission.image.link|rich_text|default:'-' }} 
+                </div>
+            </div>
+            {% endif %}
+            {% if submission.active_resources %}
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label">{% translate "Resources" %}</label>
+                    <div class="col-md-9 mt-1">
+                        {% for resource in submission.active_resources %}
+                            {% include "agenda/includes/submission_resource.html" %}
+                            {% if not forloop.last %}<br>{% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            
+            <a class="btn btn-primary" href="">
+                <i class="fa fa-edit"></i>
+                {% translate "Edit" %}
+            </a>
+        </form>
+{% endblock %}
