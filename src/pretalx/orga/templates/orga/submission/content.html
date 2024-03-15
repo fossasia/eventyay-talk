@@ -112,13 +112,23 @@
         </div>        
             {% endif %}
             {% if request.event.cfp.request_image %}
-            <div class="form-group row">
-                <label class="col-md-3 col-form-label">{% translate "Image" %}</label>
-                <div class="col-md-9 mt-1">
-                    {{ submission.image.url|default:'-' }}
-                </div>
-            </div>
-        {% endif %}
+                {% if submission.image %}   
+                    <div class="form-group row">
+                        <label class="col-md-3 col-form-label">{% translate "Image" %}</label>
+                        <div class="col-md-9 mt-1">
+                           <a href = "{{ submission.image.url|default:'-' }}">{{submission.image.name}}</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="form-group
+                    row">
+                        <label class="col-md-3 col-form-label">{% translate "Image" %}</label>
+                        <div class="col-md-9 mt-1">
+                            {% translate "-" %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
         
 
             {% if submission.active_resources %}
