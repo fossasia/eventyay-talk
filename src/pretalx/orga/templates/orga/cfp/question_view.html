@@ -54,11 +54,8 @@
                             {% endif %}
                         </td>
                         <td class="text-center">
-                            <a href="{{ question.urls.toggle }}"
-                               class=""
-                               title="{% translate "Show answers" %}">
-                                <i class="fa fa-{{ question.active|yesno:'check-circle text-success,times-circle text-danger' }}"></i>
-                            </a>
+                            <i class="fa fa-{{ question.active|yesno:'check-circle text-success,times-circle text-danger' }}">
+                            </i>
                         </td>
                         <td class="numeric">
                             {{ question.answer_count }}
@@ -75,7 +72,6 @@
                                title="{% translate "Delete" %}">
                                 <i class="fa fa-trash"></i>
                             </a>
-
                         </td>
                     </tr>
 

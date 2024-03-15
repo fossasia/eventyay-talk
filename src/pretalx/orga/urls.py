@@ -425,6 +425,11 @@ urlpatterns = [
                         [
                             path(
                                 "",
+                                submission.SubmissionEditView.as_view(),
+                                name="submissions.content",
+                            ),
+                            path(
+                                "edit",                                
                                 submission.SubmissionContent.as_view(),
                                 name="submissions.content.view",
                             ),
