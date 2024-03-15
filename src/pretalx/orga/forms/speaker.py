@@ -43,7 +43,17 @@ class SpeakerExportForm(ExportForm):
         self.fields["avatar"] = forms.BooleanField(
             required=False,
             label=_("Picture"),
-            help_text=_("The link to the speaker's profile picture"),
+            help_text=_("The link to the speaker’s profile picture"),
+        )
+        self.fields["avatar_source"] = forms.BooleanField(
+            required=False,
+            label=_("Picture Source"),
+            help_text=_("The source of the speaker's profile picture"),
+        )
+        self.fields["avatar_license"] = forms.BooleanField(
+            required=False,
+            label=_("Picture License"),
+            help_text=_("The license of the speaker's profile picture"),
         )
 
     @cached_property
@@ -61,6 +71,8 @@ class SpeakerExportForm(ExportForm):
         return self.Meta.model_fields + [
             "biography",
             "avatar",
+            "avatar_source",
+            "avatar_license",
             "submission_ids",
             "submission_titles",
         ]

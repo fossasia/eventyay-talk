@@ -128,6 +128,24 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
             "If you have registered with an email address that has a gravatar account, we can retrieve your profile picture from there."
         ),
     )
+    avatar_source = models.CharField(
+        null=True,
+        blank=True,
+        max_length=999,
+        verbose_name=_("Profile Picture Source"),
+        help_text=_(
+            "Please enter the name of the author or source of image and a link if applicable."
+        ),
+    )
+    avatar_license = models.CharField(
+        null=True,
+        blank=True,
+        max_length=999,
+        verbose_name=_("Profile Picture License"),
+        help_text=_(
+            "Please enter the name of the license of the photo and link to it if applicable."
+        ),
+    )
     pw_reset_token = models.CharField(
         null=True, max_length=160, verbose_name="Password reset token"
     )
@@ -412,7 +430,7 @@ To reset your password, click on the following link:
 
   {url}
 
-If this wasn\'t you, you can just ignore this email.
+If this wasn’t you, you can just ignore this email.
 
 All the best,
 the pretalx robot"""

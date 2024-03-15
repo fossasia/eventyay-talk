@@ -22,7 +22,14 @@ class SubmitterSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("code", "name", "biography", "avatar")
+        fields = (
+            "code",
+            "name",
+            "biography",
+            "avatar",
+            "avatar_source",
+            "avatar_license",
+        )
 
 
 class SubmitterOrgaSerializer(SubmitterSerializer):
@@ -34,6 +41,8 @@ class SpeakerSerializer(ModelSerializer):
     code = CharField(source="user.code")
     name = CharField(source="user.name")
     avatar = SerializerMethodField()
+    avatar_source = SerializerMethodField()
+    avatar_license = SerializerMethodField()
     submissions = SerializerMethodField()
     answers = SerializerMethodField()
 
@@ -49,6 +58,16 @@ class SpeakerSerializer(ModelSerializer):
     @staticmethod
     def get_avatar(obj):
         return obj.user.get_avatar_url(event=obj.event)
+
+    @staticmethod
+    def get_avatar_source(obj):
+        if obj.user.has_avatar:
+            return obj.user.avatar_source(event=obj.event)
+
+    @staticmethod
+    def get_avatar_license(obj):
+        if obj.user.has_avatar:
+            return obj.user.avatar_license(event=obj.event)
 
     @staticmethod
     def get_submissions(obj):
@@ -74,7 +93,16 @@ class SpeakerSerializer(ModelSerializer):
 
     class Meta:
         model = SpeakerProfile
-        fields = ("code", "name", "biography", "submissions", "avatar", "answers")
+        fields = (
+            "code",
+            "name",
+            "biography",
+            "submissions",
+            "avatar",
+            "avatar_source",
+            "avatar_license",
+            "answers",
+        )
 
 
 class SpeakerOrgaSerializer(SpeakerSerializer):
