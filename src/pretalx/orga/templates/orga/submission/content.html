@@ -132,6 +132,18 @@
                     </div>
                 </div>
             {% endif %}
+            {% if questions_form.fields %}
+                <div class="form-group">
+                    <label class="col-md-3 col-form-label">{% translate "Questions" %}</label>
+                    <div class="col-md-9 mt-1">
+                        {% for field_name, field in questions_form.fields.items %}
+                            <div>
+                                <strong>{{ field.label }}</strong>: {{ field.answer.answer}}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
             <a class="btn btn-primary" href="{{submission.orga_urls.edit}}">
                 <i class="fa fa-edit"></i>
                 {% translate "Edit" %}
