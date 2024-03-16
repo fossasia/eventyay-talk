@@ -579,7 +579,7 @@ class SubmissionContentView(SubmissionContent):
 
     def get_permission_object(self):
         return self.permission_object
-    
+
 
 class BaseSubmissionList(Sortable, ReviewerSubmissionFilter, PaginationMixin, ListView):
     model = Submission
