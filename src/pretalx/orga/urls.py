@@ -184,7 +184,7 @@ urlpatterns = [
                                 "public",
                                 cfp.CfPQuestionPublic.as_view(),
                                 name="cfp.question.public",
-                            )
+                            ),
                         ]
                     ),
                 ),

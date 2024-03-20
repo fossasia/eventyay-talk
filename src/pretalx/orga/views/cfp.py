@@ -396,7 +396,7 @@ class CfPQuestionRequired(PermissionRequired, View):
         question.save(update_fields=["question_required"])
         return redirect(question.urls.list)
 
-    
+
 class CfPQuestionPublic(PermissionRequired, View):
     permission_required = "orga.edit_question"
 
@@ -410,15 +410,15 @@ class CfPQuestionPublic(PermissionRequired, View):
 
         current_value = question.is_public
 
-        if current_value == True :
+        if current_value is True:
             question.is_public = False
         else:
             question.is_public = True
 
         question.save(update_fields=["is_public"])
         return redirect(question.urls.list)
-    
-    
+
+
 class CfPQuestionRemind(EventPermissionRequired, TemplateView):
     template_name = "orga/cfp/question_remind.html"
     permission_required = "orga.view_question"
