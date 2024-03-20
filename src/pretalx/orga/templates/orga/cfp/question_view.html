@@ -29,9 +29,10 @@
                 <tr>
                     <th>{% translate "Question" %}</th>
                     <th>{% translate "Target" %}</th>
-                    <th class="text-center">{% translate "required" %}</th>
-                    <th class="text-center">{% translate "active" %}</th>
-                    <th class="numeric">{% translate "Answers" %}</th>
+                    <th class="text-center">{% translate "Required" %}</th>
+                    <th class="text-center">{% translate "Active" %}</th>
+                    <th class="text-center">{% translate "Public" %}</th>
+                    <th class="numeric text-center">{% translate "Answers" %}</th>
                     <th></th>
                 </tr>
             </thead>
@@ -47,17 +48,58 @@
                             {{ question.get_target_display }}
                         </td>
                         <td class="text-center">
-                            <i class="fa fa-{{ question.required|yesno:'check-circle text-success,times-circle text-danger' }}">
-                            </i>
-                            {% if question.question_required == "require after" or question.freeze_after%}
-                                <i class="fa fa-clock-o" title="{% translate "This question’s availability depends on a deadline." %}"> </i>
-                            {% endif %}
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <a href="{{ question.urls.required }}"
+                                    {% if question.question_required == "required" %}
+                                        class="btn btn-sm btn-outline-primary"
+                                        title="{% translate "Always Required" %}"
+                                    {% elif question.question_required == "optional" %}
+                                        class="btn btn-sm btn-outline-secondary"
+                                        title="{% translate "Always Optional" %}"
+                                    {% else %}
+                                        class="btn btn-sm btn-outline-danger"
+                                        title="{% translate "Required After A Deadline" %}"
+                                    {% endif %}
+                                >
+                                    {% if question.question_required == "required" %}
+                                        Required
+                                    {% elif question.question_required == "optional"  %}
+                                        Optional
+                                    {% else %}
+                                        Deadline
+                                    {% endif %}
+                                </a>
+                            </div>
                         </td>
                         <td class="text-center">
-                            <i class="fa fa-{{ question.active|yesno:'check-circle text-success,times-circle text-danger' }}">
-                            </i>
+                            <a href="{{ question.urls.active }}" >
+                                {% if question.active %}
+                                    <i class="fa fa-toggle-on "></i>
+                                {% else %}
+                                    <i class="fa fa-toggle-off "></i>
+                                {% endif %}
+                            </a>
                         </td>
-                        <td class="numeric">
+                        <td class="text-center">
+                            {% if question.answer_count == 0%}
+                                <a href="{{ question.urls.public }}" >
+                                    {% if question.is_public == True %}
+                                        <i class="fa fa-toggle-on"></i>
+                                    {% else %}
+                                        <i class="fa fa-toggle-off "></i>
+                                    {% endif %}
+                                </a>
+                            {% else %}
+                                {% if question.is_public == True %}
+                                    <i class="fa fa-toggle-on"
+                                    title= "{% translate "This question is already public"%}"></i>
+                                {% else %}
+                                    <i class="fa fa-toggle-off"
+                                    title= "{% translate "This question has answers and cannot be made public"%}"></i>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td class="numeric text-center">
                             {{ question.answer_count }}
                         </td>
                         <td class="action-column">
