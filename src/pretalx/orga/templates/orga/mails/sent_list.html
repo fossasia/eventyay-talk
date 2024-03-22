@@ -4,6 +4,10 @@
 {% load url_replace %}
 
 {% block mail_content %}
+    <h1 class="mt-2 mb-0">Mails</h1>
+    <h2 class="mb-4">
+        {% translate "Sent E-mails" %}
+    </h2>
     <h2>
         {{ page_obj.paginator.count }}
         {% translate "Sent Mails" %}

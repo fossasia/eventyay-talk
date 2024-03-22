@@ -17,8 +17,7 @@
     {% endcompress %}
     <form method="post" class="d-flex flex-column">
         {% csrf_token %}
-
-        <h2>{% translate "Review settings" %}</h2>
+        <h2 class="mt-2 mb-2">{% translate "Review settings" %}</h2>
         <div class="alert alert-info col-md-9 flip ml-auto">
             {% blocktranslate trimmed %}
                 If you require neither a review score nor a review text, reviewers will

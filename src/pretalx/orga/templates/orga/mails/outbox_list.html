@@ -3,7 +3,11 @@
 {% load url_replace %}
 
 {% block mail_content %}
-    <h2>
+    <h1 class="mt-2 mb-0">Mails</h1>
+    <h2 class="mb-4">
+        {% translate "Outbox" %}
+    </h2>
+    <h3>
         <span>
             {{ page_obj.paginator.count }}
             {% blocktranslate trimmed count count=page_obj.paginator.count %}
@@ -12,7 +16,7 @@
                 pending mails
             {% endblocktranslate %}
         </span>
-    </h2>
+    </h3>
     <div class="submit-group">
         <span>
             {% include "common/search_form.html" %}
