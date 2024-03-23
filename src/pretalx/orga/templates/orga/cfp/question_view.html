@@ -74,9 +74,9 @@
                         <td class="text-center">
                             <a href="{{ question.urls.active }}" >
                                 {% if question.active %}
-                                    <i class="fa fa-toggle-on "></i>
+                                    <i class="fa fa-toggle-on text-dark"></i>
                                 {% else %}
-                                    <i class="fa fa-toggle-off "></i>
+                                    <i class="fa fa-toggle-off text-dark"></i>
                                 {% endif %}
                             </a>
                         </td>
@@ -84,9 +84,9 @@
                             {% if question.answer_count == 0%}
                                 <a href="{{ question.urls.public }}" >
                                     {% if question.is_public == True %}
-                                        <i class="fa fa-toggle-on"></i>
+                                        <i class="fa fa-toggle-on text-dark "></i>
                                     {% else %}
-                                        <i class="fa fa-toggle-off "></i>
+                                        <i class="fa fa-toggle-off text-dark"></i>
                                     {% endif %}
                                 </a>
                             {% else %}
