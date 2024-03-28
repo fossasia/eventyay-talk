@@ -272,11 +272,15 @@ class Question(OrderedModel, PretalxModel):
 
     class urls(EventUrls):
         base = "{self.event.cfp.urls.questions}{self.pk}/"
+        list = "{self.event.cfp.urls.questions}"
         edit = "{base}edit"
         up = "{base}up"
         down = "{base}down"
         delete = "{base}delete"
         toggle = "{base}toggle"
+        active = "{base}active"
+        required = "{base}required"
+        public = "{base}public"
 
     def __str__(self):
         return str(self.question)
