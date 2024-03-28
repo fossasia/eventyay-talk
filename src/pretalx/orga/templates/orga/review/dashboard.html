@@ -19,6 +19,7 @@
 {% block content %}
     {% has_perm 'orga.perform_reviews' request.user request.event as can_review %}
     {% has_perm 'orga.view_speakers' request.user request.event as can_view_speakers %}
+    <h2 class="mt-2 mb-4">Reviews</h2>
     <div class="alert alert-info">
         <div>
             {% if can_review and next_submission %}
