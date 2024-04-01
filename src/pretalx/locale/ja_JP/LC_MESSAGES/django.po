@@ -4420,7 +4420,7 @@ msgstr "メディアファイル"
 
 #: pretalx/orga/templates/orga/admin.html:61
 #: pretalx/orga/templates/orga/base.html:366
-msgid "Mails"
+msgid "Message Center"
 msgstr "メール"
 
 #: pretalx/orga/templates/orga/admin.html:63
@@ -4642,16 +4642,16 @@ msgid "Outbox"
 msgstr "送信箱"
 
 #: pretalx/orga/templates/orga/base.html:379
-msgid "Templates"
-msgstr "テンプレート"
-
-#: pretalx/orga/templates/orga/base.html:382
-msgid "Compose E-mails"
+msgid "Compose"
 msgstr "Eメールを作成"
 
-#: pretalx/orga/templates/orga/base.html:385
-msgid "Sent E-mails"
+#: pretalx/orga/templates/orga/base.html:382
+msgid "Sent"
 msgstr "送信済メール"
+
+#: pretalx/orga/templates/orga/base.html:385
+msgid "Templates"
+msgstr "テンプレート"
 
 #: pretalx/orga/templates/orga/base.html:404
 msgid "Organisers"
