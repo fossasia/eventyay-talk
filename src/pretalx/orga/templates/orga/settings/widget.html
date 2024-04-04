@@ -11,7 +11,7 @@
     <form method="post" class="d-flex flex-column">
         {% csrf_token %}
 
-        <h2>{% translate "Widget settings" %}</h2>
+        <h2 class="mt-2 mb-2">{% translate "Widget settings" %}</h2>
         <div class="alert alert-info col-md-9 flip ml-auto">
             {% blocktranslate trimmed %}
                 You can configure a pretalx schedule widget to show your event schedule

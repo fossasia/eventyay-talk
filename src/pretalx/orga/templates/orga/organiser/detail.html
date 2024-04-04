@@ -6,8 +6,9 @@
 {% block title %}{% if request.event %}{{ request.event.name }}{% else %}{{ request.organiser.name }}{% endif %}{% endblock %}
 
 {% block content %}
+    <h2 class="mt-2 mb-4">Settings</h2>
     <form method="post"><fieldset>
-        <legend>{% translate "Settings" %}</legend>
+        <legend>{% translate "Teams" %}</legend>
         {% csrf_token %}
         {% bootstrap_form form layout='event' %}
         <div class="submit-group panel">

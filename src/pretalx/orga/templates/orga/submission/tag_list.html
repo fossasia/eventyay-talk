@@ -3,6 +3,7 @@
 {% load rules %}
 
 {% block cfp_content %}
+    <h1 class="mt-2 mb-2">Sessions</h1>
     <h2>{% translate "Tags" %}</h2>
     {% has_perm 'orga.add_tags' request.user request.event as can_edit_tags %}
     {% if can_edit_tags %}
