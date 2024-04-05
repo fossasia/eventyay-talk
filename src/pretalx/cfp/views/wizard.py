@@ -33,6 +33,7 @@ class SubmitStartView(EventPageMixin, View):
 
 @method_decorator(csp_update(IMG_SRC="https://www.gravatar.com"), name="dispatch")
 class SubmitWizard(EventPageMixin, View):
+    reqs = {}
     @transaction.atomic
     def dispatch(self, request, *args, **kwargs):
         self.event = self.request.event
@@ -59,6 +60,9 @@ class SubmitWizard(EventPageMixin, View):
             raise Http404()
         handler = getattr(step, request.method.lower(), self.http_method_not_allowed)
         result = handler(request)
+
+        if request.method == "POST" and not self.reqs.get(step.identifier):
+            self.reqs[step.identifier] = request
 
         if request.method == "POST" and request.POST.get("action", "submit") == "draft":
             return self.done(
@@ -93,7 +97,13 @@ class SubmitWizard(EventPageMixin, View):
         request.event.cfp_flow.steps_dict["user"].done(request)
         for step in valid_steps:
             if not step.identifier == "user":
+                req = self.reqs.get(step.identifier)
+                if getattr(request, "submission", False):
+                    req.submission = request.submission
+                request = req
                 step.done(request, draft=draft)
+
+        self.reqs = {}
 
         if not draft:
             try:
