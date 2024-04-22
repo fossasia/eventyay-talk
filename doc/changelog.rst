@@ -1,6 +1,7 @@
 .. _changelog:
 
 Release Notes
+- :bug:`orga:schedule,1702` Sessions starting at exactly midnight of the first day of the event would not show up in the schedule editor (but could be scheduled there by dropping them on the day heading).
 - :feature:`orga:sidebar` Renamed CfP to Call for Speakers for clarity
 - :announcement:`admin` We now recommend that you use a virtualenv instead of the ``pip --user`` installation method, and have updated our install and upgrade documentation accordingly.
 - :bug:`orga` While organisers could reorder questions, and the order was saved and used in the frontend, the new order was not shown in the organiser backend.
