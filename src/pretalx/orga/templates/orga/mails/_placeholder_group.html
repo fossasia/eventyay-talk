@@ -5,9 +5,13 @@
     <div class="card-header">
       <strong>
         {% if tag == "submission" %}
-          {% translate "Session" %}
+          {% blocktranslate trimmed count count=1 %}
+            Session
+          {% plural %}
+            Sessions
+          {% endblocktranslate %}
         {% elif tag == "slot" %}
-          {% translate "Scheduling" %}
+          {% translate "Schedule" %}
         {% elif tag == "user" %}
           {% translate "User" %}
         {% elif tag == "event" %}

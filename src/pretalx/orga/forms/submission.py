@@ -29,12 +29,16 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
                 datetime_format = get_format("DATETIME_INPUT_FORMATS")[0]
                 initial_slot = {
                     "room": slot.room,
-                    "start": slot.local_start.strftime(datetime_format)
-                    if slot.local_start
-                    else "",
-                    "end": slot.local_end.strftime(datetime_format)
-                    if slot.real_end
-                    else "",
+                    "start": (
+                        slot.local_start.strftime(datetime_format)
+                        if slot.local_start
+                        else ""
+                    ),
+                    "end": (
+                        slot.local_end.strftime(datetime_format)
+                        if slot.real_end
+                        else ""
+                    ),
                 }
         if anonymise:
             kwargs.pop("initial", None)
@@ -270,9 +274,9 @@ class AnonymiseForm(SubmissionForm):
 
 class SubmissionStateChangeForm(forms.Form):
     pending = forms.BooleanField(
-        label=_("Mark the new state as 'pending'?"),
+        label=_("Mark the new state as “pending”"),
         help_text=_(
-            "If you mark state changes as pending, they won't be visible to speakers right away. You can always apply pending changes for some or all proposals in one go once you're ready to make your decisions public."
+            "If you mark state changes as pending, they won’t be visible to speakers right away. You can always apply pending changes for some or all proposals in one go once you’re ready to make your decisions public."
         ),
         required=False,
         initial=False,

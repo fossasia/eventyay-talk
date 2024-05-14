@@ -3,6 +3,7 @@ from contextlib import suppress
 from urllib.parse import quote, urljoin
 
 from django.conf import settings
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, reverse
 from django.urls import resolve
 from django.utils import timezone, translation
@@ -66,9 +67,9 @@ class EventPermissionMiddleware:
                     request.is_reviewer = event.teams.filter(
                         members__in=[request.user], is_reviewer=True
                     ).exists()
-                    request.user.team_permissions[
-                        event.slug
-                    ] = request.user.get_permissions_for_event(event)
+                    request.user.team_permissions[event.slug] = (
+                        request.user.get_permissions_for_event(event)
+                    )
 
     def _handle_orga_url(self, request, url):
         if request.uses_custom_domain:
@@ -104,10 +105,14 @@ class EventPermissionMiddleware:
         event_slug = url.kwargs.get("event")
         if event_slug:
             with scopes_disabled():
-                request.event = get_object_or_404(
-                    Event.objects.prefetch_related("schedules", "submissions"),
-                    slug__iexact=event_slug,
-                )
+                try:
+                    request.event = get_object_or_404(
+                        Event.objects.prefetch_related("schedules", "submissions"),
+                        slug__iexact=event_slug,
+                    )
+                except ValueError:
+                    # Happens mostly on malformed or malicious input
+                    raise Http404()
         event = getattr(request, "event", None)
 
         self._set_orga_events(request)

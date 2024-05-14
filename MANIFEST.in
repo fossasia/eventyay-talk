@@ -2,6 +2,10 @@ include _build/backend.py
 include LICENSE
 include README.rst
 include src/pretalx.example.cfg
+include Dockerfile
+
+recursive-include deployment *.bash
+recursive-include deployment *.conf
 
 exclude src/pretalx/override_settings.py
 exclude src/pretalx.cfg
@@ -26,6 +30,8 @@ recursive-include src/pretalx/orga/templates *
 recursive-include src/pretalx/schedule/templates *
 recursive-exclude src/tests *
 recursive-include src *.py
+
+recursive-include assets/svg-font *.svg
 
 global-exclude *.py[co]
 global-exclude __pycache__

@@ -71,6 +71,7 @@ EXTERNAL_APPS = [
     "compressor",
     "djangoformsetjs",
     "django_filters",
+    "django_pdb",
     "jquery",
     "rest_framework.authtoken",
     "rules",
@@ -206,12 +207,14 @@ DATABASES = {
         "PORT": config.get("database", "port"),
         "CONN_MAX_AGE": 0 if db_backend == "sqlite3" or HAS_CELERY else 120,
         "OPTIONS": db_opts,
-        "TEST": {
-            "CHARSET": "utf8mb4",
-            "COLLATION": "utf8mb4_unicode_ci",
-        }
-        if "mysql" in db_backend
-        else {},
+        "TEST": (
+            {
+                "CHARSET": "utf8mb4",
+                "COLLATION": "utf8mb4_unicode_ci",
+            }
+            if "mysql" in db_backend
+            else {}
+        ),
     }
 }
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
@@ -374,66 +377,90 @@ LANGUAGES_INFORMATION = {
         "name": _("Arabic"),
         "natural_name": "اَلْعَرَبِيَّةُ",
         "official": False,
-        "percentage": 80,
+        "percentage": 77,
     },
     "cs": {
         "name": _("Czech"),
         "natural_name": "Čeština",
         "official": False,
-        "percentage": 99,
+        "percentage": 95,
     },
     "el": {
         "name": _("Greek"),
         "natural_name": "Ελληνικά",
         "official": False,
-        "percentage": 100,
+        "percentage": 95,
     },
     "es": {
         "name": _("Spanish"),
         "natural_name": "Español",
         "official": False,
-        "percentage": 88,
+        "percentage": 85,
     },
     "fr": {
         "name": _("French"),
         "natural_name": "Français",
         "official": False,
-        "percentage": 86,
+        "percentage": 85,
         "path": "fr_FR",
+    },
+    "it": {
+        "name": _("Italian"),
+        "natural_name": "Italiano",
+        "official": False,
+        "percentage": 96,
     },
     "ja-jp": {
         "name": _("Japanese"),
         "natural_name": "日本語",
         "official": False,
-        "percentage": 76,
+        "percentage": 74,
         "public_code": "jp",
+    },
+    "nl": {
+        "name": _("Dutch"),
+        "natural_name": "Nederlands",
+        "official": False,
+        "percentage": 92,
     },
     "pt-br": {
         "name": _("Brasilian Portuguese"),
         "natural_name": "Português brasileiro",
         "official": False,
-        "percentage": 87,
+        "percentage": 94,
         "public_code": "pt",
     },
     "pt-pt": {
         "name": _("Portuguese"),
         "natural_name": "Português",
         "official": False,
-        "percentage": 94,
+        "percentage": 91,
         "public_code": "pt",
+    },
+    "ru": {
+        "name": _("Russian"),
+        "natural_name": "Русский",
+        "official": True,
+        "percentage": 0,
+    },
+    "ua": {
+        "name": _("Ukrainian"),
+        "natural_name": "Українська",
+        "official": True,
+        "percentage": 0,
     },
     "zh-hant": {
         "name": _("Traditional Chinese (Taiwan)"),
         "natural_name": "漢語",
         "official": False,
-        "percentage": 73,
+        "percentage": 70,
         "public_code": "zh",
     },
     "zh-hans": {
         "name": _("Simplified Chinese"),
         "natural_name": "简体中文",
         "official": False,
-        "percentage": 94,
+        "percentage": 90,
         "public_code": "zh",
     },
 }
@@ -467,7 +494,7 @@ LANGUAGES = [
 # Only used in Python code. Changing this value will still leave most of the
 # frontend using the default colour, but this makes sure that the backend
 # uses one consistent value.
-DEFAULT_EVENT_PRIMARY_COLOR = "#3aa57c"
+DEFAULT_EVENT_PRIMARY_COLOR = "#2185d0"
 
 ## AUTHENTICATION SETTINGS
 AUTH_USER_MODEL = "person.User"

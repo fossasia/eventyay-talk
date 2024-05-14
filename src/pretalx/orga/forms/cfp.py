@@ -1,9 +1,13 @@
+import json
+
 from django import forms
 from django.db.models import Count, Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import override
 from django_scopes.forms import SafeModelChoiceField, SafeModelMultipleChoiceField
 from i18nfield.forms import I18nFormMixin, I18nModelForm
+from i18nfield.strings import LazyI18nString
 
 from pretalx.common.mixins.forms import I18nHelpText, JsonSubfieldMixin, ReadOnlyFlag
 from pretalx.submission.models import (
@@ -49,13 +53,15 @@ class CfPSettingsForm(
             self.fields[
                 "mail_on_new_submission"
             ].help_text += f' (<a href="mailto:{obj.email}">{obj.email}</a>)'
-        self.length_fields = ["title", "abstract", "description", "biography"]
+        self.length_fields = ["title", "abstract", "description", "biography", "avatar_source", "avatar_license"]
         self.request_require_fields = [
             "abstract",
             "description",
             "notes",
             "biography",
             "avatar",
+            "avatar_source",
+            "avatar_license",
             "additional_speaker",
             "availabilities",
             "do_not_record",
@@ -69,14 +75,14 @@ class CfPSettingsForm(
             self.fields[field_name] = forms.IntegerField(
                 required=False,
                 min_value=0,
-                initial=obj.cfp.fields[attribute].get("min_length"),
+                initial=obj.cfp.fields.get(attribute,{"min_length":None}).get("min_length"),
             )
             self.fields[field_name].widget.attrs["placeholder"] = ""
             field_name = f"cfp_{attribute}_max_length"
             self.fields[field_name] = forms.IntegerField(
                 required=False,
                 min_value=0,
-                initial=obj.cfp.fields[attribute].get("max_length"),
+                initial=obj.cfp.fields.get(attribute,{"max_length":None}).get("max_length"),
             )
             self.fields[field_name].widget.attrs["placeholder"] = ""
         for attribute in self.request_require_fields:
@@ -147,6 +153,27 @@ class CfPForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
 
 
 class QuestionForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
+    options = forms.FileField(
+        label=_("Upload options"),
+        help_text=_(
+            "You can upload question options here, one option per line. "
+            "To use multiple languages, please upload a JSON file with a list of "
+            "options:"
+        )
+        + ' <code>[{"en": "English", "de": "Deutsch"}, ...]</code>',
+        required=False,
+    )
+    options_replace = forms.BooleanField(
+        label=_("Replace existing options"),
+        help_text=_(
+            "If you upload new options, do you want to replace the existing ones? "
+            "Please note that this will DELETE all existing answers to this question! "
+            "If you do not check this, the uploaded options will be added to the "
+            "existing ones, without adding duplicates."
+        ),
+        required=False,
+    )
+
     def __init__(self, *args, event=None, **kwargs):
         super().__init__(*args, **kwargs)
         instance = kwargs.get("instance")
@@ -170,6 +197,28 @@ class QuestionForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
         ):
             self.fields["is_public"].disabled = True
 
+    def clean_options(self):
+        # read uploaded file, return list of strings or list of i18n strings
+        options = self.cleaned_data.get("options")
+        if not options:
+            return
+        try:
+            content = options.read().decode("utf-8")
+        except Exception:
+            raise forms.ValidationError(_("Could not read file."))
+
+        try:
+            options = json.loads(content)
+            if not isinstance(options, list):
+                raise Exception(_("JSON file does not contain a list."))
+            if not all(isinstance(o, dict) for o in options):
+                raise Exception(_("JSON file does not contain a list of objects."))
+            return [LazyI18nString(data=o) for o in options]
+        except Exception:
+            options = content.split("\n")
+            options = [o.strip() for o in options if o.strip()]
+            return options
+
     def clean(self):
         deadline = self.cleaned_data["deadline"]
         question_required = self.cleaned_data["question_required"]
@@ -187,6 +236,45 @@ class QuestionForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
             or question_required == QuestionRequired.REQUIRED
         ):
             self.cleaned_data["deadline"] = None
+        options = self.cleaned_data.get("options")
+        options_replace = self.cleaned_data.get("options_replace")
+        if options_replace and not options:
+            self.add_error(
+                "options_replace",
+                forms.ValidationError(
+                    _("You cannot replace answer options without uploading new ones.")
+                ),
+            )
+
+    def save(self, *args, **kwargs):
+        instance = super().save(*args, **kwargs)
+        options = self.cleaned_data.get("options")
+        options_replace = self.cleaned_data.get("options_replace")
+        if not options:
+            return instance
+        if options_replace:
+            instance.answers.all().delete()
+            instance.options.all().delete()
+            for option in options:
+                instance.options.create(answer=option)
+            return instance
+
+        # If we aren't replacing all existing options, we need to make sure
+        # we don't add duplicates.
+        existing_options = list(instance.options.all().values_list("answer", flat=True))
+        use_i18n = (
+            isinstance(options[0], LazyI18nString) and instance.event.is_multilingual
+        )
+        if not use_i18n:
+            # Monolangual i18n strings with strings aren't equal, so we're normalising.
+            with override(instance.event.locale):
+                existing_options = [str(o) for o in existing_options]
+                options = [str(o) for o in options]
+        new_options = []
+        for option in options:
+            if option not in existing_options:
+                new_options.append(AnswerOption(question=instance, answer=option))
+        AnswerOption.objects.bulk_create(new_options)
 
     class Meta:
         model = Question
@@ -270,6 +358,11 @@ class TrackForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
         self.event = event
         super().__init__(*args, **kwargs)
         self.fields["color"].widget.attrs["class"] = "colorpickerfield"
+        if self.instance.pk:
+            url = f"{event.cfp.urls.new_access_code}?track={self.instance.pk}"
+            self.fields["requires_access_code"].help_text += " " + _(
+                'You can create an access code <a href="{url}">here</a>.'
+            ).format(url=url)
 
     def clean_name(self):
         name = self.cleaned_data["name"]
@@ -375,7 +468,7 @@ Please follow this URL to use the code:
 
   {url}
 
-I'm looking forward to your proposal!
+I’m looking forward to your proposal!
 {name}"""
         ).format(
             url=instance.urls.cfp_url.full(),

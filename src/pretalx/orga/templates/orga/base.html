@@ -7,15 +7,15 @@
 <html lang="{{ html_locale }}"{% if rtl %} dir="rtl" class="rtl"{% endif %}>
     <head>
         <meta charset="utf-8">
-        <title>{% block title %}{% if request.event %}{{ request.event.name }}{% endif %}{% endblock %} :: pretalx</title>
-        <meta name="title" content="{% block meta_title %}{% endblock %} {% if request.event %} - {{ request.event.name }} {% endif %}pretalx">
-        <meta name="description" content="{% block meta_description %}{% if request.event %}Schedule, talks and talk submissions for {{ reqeuest.event.name }}{% else %}Talks and talk submissions by pretalx{% endif %}{% endblock %}">
-        <meta name="application-name" content="pretalx">
-        <meta name="generator" content="pretalx">
+        <title>{% block title %}{% if request.event %}{{ request.event.name }}{% endif %}{% endblock %} :: {{ site_config.name }}</title>
+        <meta name="title" content="{% block meta_title %}{% endblock %} {% if request.event %} - {{ request.event.name }} {% endif %} {{ site_config.name }}">
+        <meta name="description" content="{% block meta_description %}{% if request.event %}Schedule, talks and talk submissions for {{ request.event.name }}{% else %}Talks and talk submissions by {{ site_config.name }} {% endif %}{% endblock %}">
+        <meta name="application-name" content={{ site_config.name }}>
+        <meta name="generator" content={{ site_config.name }}>
         <meta name="keywords" content="{% if request.event %}{{ request.event.name }}, {{ request.event.slug }}, {% if request.event.date_from %}{{ request.event.date_from.year }}, {% endif %}{% endif %}schedule, talks, cfp, call for papers, conference, submissions, organizer">
         <meta name="robots" content="nofollow">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#3aa57c">
+        <meta name="theme-color" content="#2185d0">
         <meta name="HandheldFriendly" content="True"/>
         {% if request.event and request.event.logo %}<meta property="thumbnail" content="{{ request.event.urls.logo.full }}">{% endif %}
         {% block alternate_link %}
@@ -54,63 +54,29 @@
                 </li>
             </ul>
             <a class="navbar-brand d-none d-md-block" href="/orga/">
-                <img loading="lazy" src="{% static "common/img/icons/icon.svg" %}" alt="{% translate "The pretalx logo" %}"> pretalx
+                <img loading="lazy" src="{% static "common/img/icons/icon.svg" %}" alt="{% translate "The {{ site_config.name }} logo" %}"> {{ site_config.name }}
             </a>
-            <div class="navbar-collapse event-dropdown" id="navbartoggle">
+            <div class="navbar-collapse" id="navbartoggle">
                 <ul class="navbar-nav mr-auto flip">
-                    <li class="nav-item dropdown active" id="event-navigation">
-                        {% if request.orga_events|length > 1 %}
-                            <a class="nav-link dropdown-toggle" id="eventDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-calendar"></i>
-                                <div class="event-text">
-                                    {% if request.event %}
-                                        <span class="event-name">{{ request.event.name }}</span>
-                                        <span class="event-date">{{ request.event.get_date_range_display }}</span>
-                                    {% else %}
-                                        {% translate "Events" %}
-                                    {% endif %}
-                                </div>
-                            </a>
-                            <ul class="dropdown-menu event-dropdown" role="menu" data-event-typeahead aria-labelledby="eventDropdown" data-source="{% url "orga:event.typeahead" %}">
-                                <li class="query-holder">
-                                    <div class="form-box">
-                                        <input type="text" class="form-control" id="event-search"
-                                               placeholder="{% translate "Search for events" %}"
-                                               data-typeahead-query>
-                                    </div>
-                                </li>
-                            </ul>
-                        {% elif request.event %}
-                            <a id="eventDropdown" class="nav-link">
-                                <i class="fa fa-calendar"></i>
-                                <div class="event-text">
-                                    {% if request.event %}
-                                        <span class="event-name">{{ request.event.name }}</span>
-                                        <span class="event-date">{{ request.event.get_date_range_display }}</span>
-                                    {% else %}
-                                        {% translate "Events" %}
-                                    {% endif %}
-                                </div>
-                            </a>
-                        {% endif %}
-                    </li>
                     {% if request.event %}
                         <li class="nav-item">
                             {% if request.event.custom_domain and not request.event.is_public %}
                                 <form action="{{ request.event.urls.auth.full }}" method="post"
-                                      target="_blank" class="mobile-navbar-view-form visible-xs-block">
+                                      target="_blank" class="mobile-navbar-view-form visible-xs-block d-flex align-items-center">
                                     <input type="hidden" value="{{ new_session }}" name="session">
                                     <input type="hidden" value="{{ go_to_target }}" name="target">
                                     <button type="submit" class="btn btn-link navbar-toggle">
                                         <i class="fa fa-eye"></i>
+                                        {% translate "View event" %}
                                     </button>
                                 </form>
                             {% else %}
                                 <a
-                                    class="nav-link" target="_blank" rel="noopener"
+                                    class="nav-link d-flex align-items-center" target="_blank" rel="noopener"
                                     href="{% if go_to_target == 'schedule' %}{{ request.event.urls.schedule }}{% else %}{{ request.event.cfp.urls.public }}{% endif %}"
                                 >
-                                    <i class="fa fa-eye"></i>
+                                    <i class="fa fa-eye mr-2 mt-0"></i>
+                                    {% translate "View event" %}
                                 </a>
                             {% endif %}
                         </li>
@@ -144,7 +110,7 @@
             <div class="superuser-warning">
                 <i class="fa fa-exclamation-triangle"></i>
                 {% blocktranslate with link=link trimmed %}
-                    You're using pretalx as a superuser. This is not recommended.
+                    You’re using pretalx as a superuser. This is not recommended.
                 {% endblocktranslate %}
                 <a href="{% url "orga:user.subuser" %}?next={{ request.path|urlencode }}">
                     {% translate "Please click here to switch to an administrator account." %}
@@ -166,6 +132,34 @@
         {% endif %}
         <div id="page-wrapper">
             <aside class="nav flex-column sidebar">
+                <a class="dropdown nav-link p-0" id="nav-search-wrapper">
+                    <div id="nav-search" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span id="search-context-icon" class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-{% if request.event %}calendar{% elif request.organiser %}group{% else %}user{% endif %} fa-stack-1x fa-inverse"></i>
+                        </span>
+                        <div id="search-context-text">
+                            {% if request.event %}
+                                <span class="context-name">{{ request.event.name }}</span>
+                                <span class="context-meta">{{ request.event.get_date_range_display }}</span>
+                            {% elif request.organiser %}
+                                <span class="context-name">{{ request.organiser.name }}</span>
+                                <span class="context-meta">{% translate "Organiser account" %}</span>
+                            {% else %}
+                                <span class="context-name">{{ request.user.get_display_name }}</span>
+                            {% endif %}
+                        </div>
+                        <div id="nav-search-dropdown" class="dropdown-menu dropdown-menu-left" aria-labelledby="nav-search" data-source="{% url "orga:nav.typeahead" %}" data-event-typeahead{% if request.event %} data-organiser="{{ request.event.organiser.pk }}"{% elif request.organiser %} data-organiser="{{ request.organiser.pk }}"{% endif %}>
+                            <div class="query-holder">
+                                <div class="form-box">
+                                    <input type="text" class="form-control" placeholder="{% translate "Search" %}" data-typeahead-query>
+                                </div>
+                            </div>
+                            <ul id="search-results">
+                            </ul>
+                        </div>
+                    </div>
+                </a>
                 {% if request.event %}
                     {% has_perm 'orga.view_orga_area' request.user request.event as can_see_orga_area %}
                     {% has_perm 'orga.change_submissions' request.user request.event as can_see_orga_exclusive %}
@@ -222,7 +216,7 @@
                                 <span class="has-children">
                                     <a class="nav-link nav-link-inner" href="{{ request.event.cfp.urls.text }}">
                                         <i class="fa fa-bullhorn"></i>
-                                        <span class="sidebar-text">{% translate "CfP" %}</span>
+                                        <span class="sidebar-text">{% translate "Call for Speakers" %}</span>
                                     </a>
                                     <a class="arrow nav-link" data-toggle="collapse" href="#collapseCfP" aria-controls="collapseCfP">
                                         <i class="fa fa-angle-down"></i>
@@ -441,7 +435,7 @@
                     {% endif %}
                     {% if pretalx_version %}
                         <span>·
-                            {% if development_mode %}<a href="https://github.com/pretalx/pretalx/tree/{{ pretalx_version }}/">{{ pretalx_version }}</a>
+                            {% if development_mode %}<a href="https://github.com/fossasia/eventyay-talk/tree/development/"> development<!--{{ pretalx_version }}--></a>
                             {% else %}v{{ pretalx_version }}{% endif %}
                         </span>
                     {% endif %}

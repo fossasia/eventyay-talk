@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.http import FileResponse, Http404, HttpResponseServerError
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template import TemplateDoesNotExist, loader
 from django.urls import NoReverseMatch, get_callable, path
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -47,9 +47,6 @@ def is_form_bound(request, form_name, form_param="form"):
 
 
 def get_static(request, path, content_type):  # pragma: no cover
-    """TODO: move to staticfiles usage as per https://gist.github.com/SmileyChris/8d472f2a67526e36f39f3c33520182bc
-    This would avoid potential directory traversal by … a malicious urlconfig, so not a huge attack vector.
-    """
     path = settings.BASE_DIR / "pretalx/static" / path
     if not path.exists():
         raise Http404()
@@ -144,6 +141,8 @@ def handle_500(request):
     context = {}
     try:  # This should never fail, but can't be too cautious in error views
         context["request_path"] = urllib.parse.quote(request.path)
+        site_name = dict(settings.CONFIG.items("site")).get("name")
+        context["site_name"] = site_name
     except Exception:  # pragma: no cover
         pass
     return HttpResponseServerError(template.render(context))
@@ -162,7 +161,11 @@ def error_view(status_code):
     exception = exceptions[status_code]
 
     def error_view(request, *args, **kwargs):
-        raise exception
+        context = {"site_name": dict(settings.CONFIG.items("site")).get("name")}
+        if status_code in exceptions:
+            raise exception
+        else:
+            return render(request, f"{status_code}.html", context, status=status_code)
 
     return error_view
 

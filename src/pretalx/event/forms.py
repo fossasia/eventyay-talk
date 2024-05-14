@@ -168,13 +168,15 @@ class EventWizardInitialForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields["organiser"] = forms.ModelChoiceField(
             label=_("Organiser"),
-            queryset=Organiser.objects.filter(
-                id__in=user.teams.filter(can_create_events=True).values_list(
-                    "organiser", flat=True
+            queryset=(
+                Organiser.objects.filter(
+                    id__in=user.teams.filter(can_create_events=True).values_list(
+                        "organiser", flat=True
+                    )
                 )
-            )
-            if not user.is_administrator
-            else Organiser.objects.all(),
+                if not user.is_administrator
+                else Organiser.objects.all()
+            ),
             widget=forms.Select(attrs={"class": "select2"}),
             empty_label=None,
             required=True,
@@ -263,7 +265,7 @@ class EventWizardDisplayForm(forms.Form):
         max_length=7,
         label=_("Main event colour"),
         help_text=_(
-            "Provide a hex value like #00ff00 if you want to style pretalx in your event's colour scheme."
+            "Provide a hex value like #00ff00 if you want to style pretalx in your event’s colour scheme."
         ),
         required=False,
     )

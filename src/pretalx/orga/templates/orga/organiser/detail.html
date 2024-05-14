@@ -32,12 +32,12 @@
 
             <fieldset>
                 <legend>{% translate "Teams" %}</legend>
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm table-flip">
+                <div class="table-responsive-sm">
+                    <table class="table table-hover table-sm table-flip table-sticky">
                         <thead>
                             <tr>
                                 <th>{% translate "Team" %}</th>
-                                <th>{% translate "Members" %}</th>
+                                <th class="numeric">{% translate "Members" %}</th>
                                 <th>{% translate "All events" %}</th>
                                 <th>{% translate "Reviewer" %}</th>
                                 <th></th>
@@ -54,7 +54,7 @@
                                             {% endif %}
                                         </a>
                                     </td>
-                                    <td>{{ team.members.count }}</td>
+                                    <td class="numeric">{{ team.members.count }}</td>
                                     <td>
                                         <i class="fa fa-{{ team.all_events|yesno:"check-circle text-success,times-circle text-danger" }}">
                                         </td>

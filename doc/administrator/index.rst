@@ -4,8 +4,7 @@ Administrator documentation
 ===========================
 
 You want to install pretalx on your own server? That’s great! We have
-documentation for a standard installation using pip in an unprivileged local
-user account.
+documentation for a standard installation using ``pip`` on Linux.
 
 If you want a more out-of-the-box way of running pretalx, please consider our
 hosted version at `pretalx.com`_. Other than that, we also have an
@@ -24,4 +23,4 @@ note that the docker setup is not officially supported.
 
 .. _ansible role: https://github.com/pretalx/ansible-pretalx
 .. _docker-compose setup: https://github.com/pretalx/pretalx-docker
-.. _pretalx.com: https://pretalx.com
+.. _pretalx.com: https://pretalx.com/p/about/

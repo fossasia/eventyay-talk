@@ -1,10 +1,9 @@
-from importlib import import_module
-
 from django.conf import settings
+from django.utils.module_loading import import_string
 
 from pretalx.orga.signals import html_head, nav_event, nav_event_settings, nav_global
 
-SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+SessionStore = import_string(f"{settings.SESSION_ENGINE}.SessionStore")
 
 
 def collect_signal(signal, kwargs):
@@ -20,6 +19,12 @@ def collect_signal(signal, kwargs):
 def orga_events(request):
     """Add data to all template contexts."""
     context = {"settings": settings}
+
+    # Extract site specific values from settings.CONFIG.items('site') and add them to the context
+    # This is a bit of a hack, but it's the only way to get the site specific values into the context
+    # rather than using the settings object directly in the template
+    site_config = dict(settings.CONFIG.items("site"))
+    context["site_config"] = site_config
 
     if not request.path.startswith("/orga/"):
         return {}

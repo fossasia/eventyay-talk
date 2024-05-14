@@ -163,7 +163,14 @@ class SpeakerProfileForm(
     RequestRequire,
     forms.ModelForm,
 ):
-    USER_FIELDS = ["name", "email", "avatar", "get_gravatar"]
+    USER_FIELDS = [
+        "name",
+        "email",
+        "avatar",
+        "avatar_source",
+        "avatar_license",
+        "get_gravatar",
+    ]
     FIRST_TIME_EXCLUDE = ["email"]
 
     def __init__(self, *args, name=None, **kwargs):
@@ -191,6 +198,8 @@ class SpeakerProfileForm(
             self.fields[field] = field_class(
                 initial=initial.get(field), disabled=read_only
             )
+            if self.Meta.widgets.get(field):
+                self.fields[field].widget = self.Meta.widgets.get(field)()
             self._update_cfp_texts(field)
 
         if not self.event.cfp.request_avatar:
@@ -269,6 +278,8 @@ class SpeakerProfileForm(
         }
         widgets = {
             "biography": MarkdownWidget,
+            "avatar_source": MarkdownWidget,
+            "avatar_license": MarkdownWidget,
         }
         request_require = {"biography", "availabilities"}
 

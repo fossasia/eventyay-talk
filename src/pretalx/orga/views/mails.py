@@ -336,13 +336,13 @@ class ComposeMailBaseView(EventPermissionRequired, FormView):
                 with language(locale):
                     context_dict = TolerantDict()
                     for k, v in form.get_valid_placeholders().items():
-                        context_dict[
-                            k
-                        ] = '<span class="placeholder" title="{}">{}</span>'.format(
-                            _(
-                                "This value will be replaced based on dynamic parameters."
-                            ),
-                            v.render_sample(self.request.event),
+                        context_dict[k] = (
+                            '<span class="placeholder" title="{}">{}</span>'.format(
+                                _(
+                                    "This value will be replaced based on dynamic parameters."
+                                ),
+                                v.render_sample(self.request.event),
+                            )
                         )
 
                     subject = bleach.clean(
@@ -358,7 +358,7 @@ class ComposeMailBaseView(EventPermissionRequired, FormView):
                         "html": preview_text,
                     }
                     # Very rough method to deduplicate recipients, but good enough for a preview
-                    self.mail_count = len(set(str(r) for r in result))
+                    self.mail_count = len({str(r) for r in result})
             return self.get(self.request, *self.args, **self.kwargs)
 
         result = form.save()

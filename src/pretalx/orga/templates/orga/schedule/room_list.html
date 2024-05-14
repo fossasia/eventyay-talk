@@ -12,12 +12,12 @@
             {% endblocktranslate %}
         </h2>
 
-        <div class="table-responsive">
-            <table class="table table-sm table-hover table-flip">
+        <div class="table-responsive-sm">
+            <table class="table table-sm table-hover table-flip table-sticky">
                 <thead>
                     <tr>
                         <th>{% translate "Name" %}</th>
-                        <th>{% translate "Capacity" %}</th>
+                        <th class="numeric">{% translate "Capacity" %}</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -29,7 +29,7 @@
                                     {{ room.name }}
                                 </a>
                             </td>
-                            <td>{% if room.capacity %}{{ room.capacity }}{% endif %}</td>
+                            <td class="numeric">{% if room.capacity %}{{ room.capacity }}{% endif %}</td>
                             <td class="action-column">
                                 {% include "orga/includes/order_object.html" with object=room %}
                                 <a href="{{ room.urls.edit }}"

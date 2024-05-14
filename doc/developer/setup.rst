@@ -3,7 +3,7 @@
 The development setup
 =====================
 
-To contribute to pretalx, it's useful to run pretalx locally on your device so you can test your
+To contribute to pretalx, it’s useful to run pretalx locally on your device so you can test your
 changes. First of all, you need install some packages on your operating system:
 
 If you want to install pretalx on a server for actual usage, go to the :ref:`administrator-index`
@@ -31,10 +31,6 @@ Please make sure you have the following dependencies installed:
 +----------------------------------+------------------+
 | git                              | ``git``          |
 +----------------------------------+------------------+
-
-If your operating system does not provide Python 3.9 or newer, you might need
-to `compile it yourself`_ or install it from the `unstable` or `experimental`
-repositories.
 
 Some Python dependencies might also need a compiler during installation, the Debian package
 ``build-essential`` or something similar should suffice.
@@ -119,7 +115,7 @@ all sites except those that use big custom JavaScript components, like the sched
 In order to use those, you have two options – in any case, you will need to have ``node`` and
 ``npm`` installed on your system.
 
-If you just need to use the JavaScript component, but don't need to change it,
+If you just need to use the JavaScript component, but don’t need to change it,
 compile the JavaScript files::
 
     (env)$ python manage.py rebuild --npm-install
@@ -140,7 +136,7 @@ Before you check in your code into git, always run the static linters and style 
     (env)$ flake8 .
     (env)$ find -name "*.html" | xargs djhtml -i
 
-Once you're done with those, run the tests::
+Once you’re done with those, run the tests::
 
     (env)$ python -m pytest tests/
 
@@ -157,12 +153,12 @@ afterwards to format that file.
 Working with mails
 ^^^^^^^^^^^^^^^^^^
 
-When running in development mode, Pretalx uses Django's console email backend.
+When running in development mode, Pretalx uses Django’s console email backend.
 This means the development server will print any emails to its stdout, instead
 of sending them via SMTP.
 
 If you want to test sending event emails via a custom SMTP server, we recommend
-starting Python's debugging SMTP server in a separate shell::
+starting Python’s debugging SMTP server in a separate shell::
 
     python -m smtpd -n -c DebuggingServer localhost:1025
 
@@ -210,5 +206,3 @@ Then, go to http://localhost:8081 for a version of the documentation that
 automatically re-builds when you save a changed source file.
 Please note that changes in the static files (stylesheets and JavaScript) will only be reflected
 after a restart.
-
-.. _compile it yourself: https://unix.stackexchange.com/a/332658/2013

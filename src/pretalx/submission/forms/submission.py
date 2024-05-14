@@ -156,7 +156,7 @@ class InfoForm(CfPFormMixin, RequestRequire, PublicContent, forms.ModelForm):
             self.fields["slot_count"].disabled = True
             self.fields["slot_count"].help_text += " " + str(
                 _(
-                    "Please contact the organisers if you want to change how often you're presenting this proposal."
+                    "Please contact the organisers if you want to change how often you’re presenting this proposal."
                 )
             )
 
@@ -283,7 +283,7 @@ class SubmissionFilterForm(forms.Form):
     question = SafeModelChoiceField(queryset=Question.objects.none(), required=False)
     unanswered = forms.BooleanField(required=False)
     answer = forms.CharField(required=False)
-    option = forms.IntegerField(required=False)
+    answer__options = forms.IntegerField(required=False)
     q = forms.CharField(required=False, label=_("Search"))
 
     def __init__(self, event, *args, limit_tracks=False, search_fields=None, **kwargs):
@@ -420,10 +420,23 @@ class SubmissionFilterForm(forms.Form):
         return qs
 
     def filter_queryset(self, qs):
-        for field in ("state", "submission_type", "content_locale", "track", "tags"):
+        for field in ("submission_type", "content_locale", "track", "tags"):
             value = self.cleaned_data.get(field)
             if value:
                 qs = qs.filter(**{f"{field}__in": value})
+
+        state_filter = self.cleaned_data.get("state")
+        if state_filter:
+            states = [s for s in state_filter if not s.startswith("pending_state__")]
+            pending_states = [s.split("__")[1] for s in state_filter if s not in states]
+            if states and not pending_states:
+                qs = qs.filter(state__in=states)
+            elif pending_states and not states:
+                qs = qs.filter(pending_state__in=pending_states)
+            else:
+                qs = qs.filter(
+                    Q(state__in=states) | Q(pending_state__in=pending_states)
+                )
 
         if self.cleaned_data.get("pending_state__isnull"):
             qs = qs.filter(pending_state__isnull=True)
@@ -436,7 +449,7 @@ class SubmissionFilterForm(forms.Form):
             qs,
             question=self.cleaned_data.get("question"),
             answer=self.cleaned_data.get("answer"),
-            option=self.cleaned_data.get("option"),
+            option=self.cleaned_data.get("answer__options"),
             unanswered=self.cleaned_data.get("unanswered"),
         )
         if not self.cleaned_data.get("state"):
