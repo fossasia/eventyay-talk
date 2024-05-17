@@ -1,6 +1,7 @@
 .. _changelog:
 
 Release Notes
+- :bug:`orga:speaker,1768` When filtering the speaker list by only accepted/confirmed speakers, the listed proposal count would be incorrect (inflated).
 - :bug:`orga:schedule,1702` Sessions starting at exactly midnight of the first day of the event would not show up in the schedule editor (but could be scheduled there by dropping them on the day heading).
 - :feature:`orga:sidebar` Renamed CfP to Call for Speakers for clarity
 - :announcement:`admin` We now recommend that you use a virtualenv instead of the ``pip --user`` installation method, and have updated our install and upgrade documentation accordingly.
