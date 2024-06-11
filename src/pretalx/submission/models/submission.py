@@ -263,6 +263,7 @@ class Submission(GenerateCode, PretalxModel):
 
     class orga_urls(EventUrls):
         base = edit = "{self.event.orga_urls.submissions}{self.code}/"
+        edit = "{base}edit"
         make_submitted = "{base}submit"
         accept = "{base}accept"
         reject = "{base}reject"
