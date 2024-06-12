@@ -19,6 +19,9 @@ from django.utils.functional import cached_property
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import TemplateResponseMixin
+
+from django_context_decorator import context
+
 from i18nfield.strings import LazyI18nString
 from i18nfield.utils import I18nJSONEncoder
 
@@ -306,6 +309,7 @@ class InfoStep(GenericFlowStep, FormFlowStep):
     identifier = "info"
     icon = "paper-plane"
     form_class = InfoForm
+    template_name = "cfp/event/submission_info.html"
     priority = 0
 
     @property
@@ -339,12 +343,26 @@ class InfoStep(GenericFlowStep, FormFlowStep):
                         result[field] = obj
         return result
 
+    @context
+    def questions_form(self):
+        return QuestionsForm(
+            data=self.request.POST if self.request.method == "POST" else None,
+            files=self.request.FILES if self.request.method == "POST" else None,
+            event=self.request.event,
+            speaker=self.request.user,
+            target="submission",
+        )
+
     def done(self, request, draft=False):
         self.request = request
         form = self.get_form(from_storage=True)
+        form.speaker = request.user
         form.instance.event = self.event
-        form.save()
+        form.is_valid()
         submission = form.instance
+        form.submission = submission
+        form.save()
+
         submission.speakers.add(request.user)
         if draft:
             submission.state = SubmissionStates.DRAFT
@@ -383,6 +401,12 @@ class InfoStep(GenericFlowStep, FormFlowStep):
             access_code.save()
 
         request.submission = submission
+        self.request = request
+
+        qform = self.questions_form()
+        if qform.is_valid():
+            qform.submission = self.request.submission
+            qform.save()
 
 
 class QuestionsStep(GenericFlowStep, FormFlowStep):
@@ -537,16 +561,31 @@ class ProfileStep(GenericFlowStep, FormFlowStep):
             result["gravatar_parameter"] = User(email=email).gravatar_parameter
         return result
 
+    @context
+    def questions_form(self):
+        return QuestionsForm(
+            data=self.request.POST if self.request.method == "POST" else None,
+            files=self.request.FILES if self.request.method == "POST" else None,
+            event=self.request.event,
+            speaker=self.request.user,
+            target="speaker",
+        )
+
     def done(self, request, draft=False):
         form = self.get_form(from_storage=True)
         form.is_valid()
         form.user = request.user
         form.save()
+        self.request = request
+
+        qform = self.questions_form()
+        if qform.is_valid():
+            qform.submission = self.request.submission
+            qform.save()
 
 
 DEFAULT_STEPS = (
     InfoStep,
-    QuestionsStep,
     UserStep,
     ProfileStep,
 )

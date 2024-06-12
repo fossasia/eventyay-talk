@@ -1,0 +1,22 @@
+{% extends "cfp/event/submission_base.html" %}
+{% load bootstrap4 %}
+{% load i18n %}
+{% load orga_edit_link %}
+{% load rich_text %}
+{% load rules %}
+
+{% block inner %}
+    <div class="d-flex">
+        <h2>{{ title }}</h2>
+        {% has_perm 'orga.edit_cfp' request.user request.event as can_edit_cfp %}
+        {% if can_edit_cfp %}{% orga_edit_link request.event.cfp.urls.editor %}{% endif %}
+    </div>
+    <p>
+        {{ text|rich_text }}
+    </p>
+    SUBMISSION INFO
+    {% for field in form %}
+        {% bootstrap_field field layout='event' %}
+    {% endfor %}
+    {% if questions_form %}{% bootstrap_form questions_form layout='event' %}{% endif %}
+{% endblock %}
