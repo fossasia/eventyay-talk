@@ -65,6 +65,8 @@ dependencies = [
   "vobject~=0.9.0",
   "whitenoise~=6.6.0",
   "zxcvbn~=4.4.0",
+  'pretalx_pages @ git+https://github.com/fossasia/eventyay-talk-pages.git@main',
+  'pretalx_venueless @ git+https://github.com/fossasia/eventyay-talk-video.git@main'
 ]
 
 [project.optional-dependencies]
@@ -133,14 +135,3 @@ ignore = [
   "src/tests/*",
   "SECURITY.md",
 ]
-
-[tool.poetry]
-name = "pretalx"
-version = "2024.2.0.dev0"
-description = "Conference organisation: CfPs, scheduling, much more"
-authors = ["Eventyay <info@eventyay.com>"]
-
-[tool.poetry.dependencies]
-python = ">=3.9"
-pretalx_pages = { git = "https://github.com/fossasia/eventyay-talk-pages.git", branch = "main"  }
-pretalx_venueless = { git = "https://github.com/fossasia/eventyay-talk-video.git", branch = "main"  }

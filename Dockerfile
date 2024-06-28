@@ -26,14 +26,10 @@ COPY src /pretalx/src
 COPY deployment/docker/pretalx.bash /usr/local/bin/pretalx
 COPY deployment/docker/supervisord.conf /etc/supervisord.conf
 
-RUN pip3 install -U pip setuptools wheel typing poetry && \
+RUN pip3 install -U pip setuptools wheel typing && \
     pip3 install -e /pretalx/[mysql,postgres,redis] && \
     pip3 install pylibmc && \
     pip3 install gunicorn
-
-RUN cd /pretalx && \
-    poetry install && \
-    rm -rf ~/.cache/poetry
 
 RUN python3 -m pretalx makemigrations
 RUN python3 -m pretalx migrate
