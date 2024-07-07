@@ -4076,7 +4076,7 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/admin.html:61
 #: pretalx/orga/templates/orga/base.html:366
-msgid "Mails"
+msgid "Message Center"
 msgstr ""
 
 #: pretalx/orga/templates/orga/admin.html:63
@@ -4288,16 +4288,16 @@ msgid "Outbox"
 msgstr ""
 
 #: pretalx/orga/templates/orga/base.html:379
-msgid "Templates"
-msgstr ""
+msgid "Compose"
+msgstr "Redactar"
 
 #: pretalx/orga/templates/orga/base.html:382
-msgid "Compose E-mails"
-msgstr ""
+msgid "Sent"
+msgstr "Enviar"
 
 #: pretalx/orga/templates/orga/base.html:385
-msgid "Sent E-mails"
-msgstr ""
+msgid "Templates"
+msgstr "Plantillas"
 
 #: pretalx/orga/templates/orga/base.html:404
 msgid "Organisers"
