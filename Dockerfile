@@ -1,4 +1,4 @@
-FROM python:3.10-bookworm
+FROM python:3.11-bookworm
 
 RUN apt-get update && \
     apt-get install -y git gettext libmariadb-dev libpq-dev locales libmemcached-dev build-essential \
@@ -20,25 +20,24 @@ RUN apt-get update && \
 
 ENV LC_ALL=C.UTF-8
 
-
 COPY pyproject.toml /pretalx
 COPY src /pretalx/src
 COPY deployment/docker/pretalx.bash /usr/local/bin/pretalx
 COPY deployment/docker/supervisord.conf /etc/supervisord.conf
 
-RUN pip3 install -U pip setuptools wheel typing && \
-    pip3 install -e /pretalx/[mysql,postgres,redis] && \
-    pip3 install pylibmc && \
-    pip3 install gunicorn
+RUN pip install -U pip setuptools wheel typing && \
+    pip install -e /pretalx/[mysql,postgres,redis] && \
+    pip install pylibmc && \
+    pip install gunicorn
 
-RUN python3 -m pretalx makemigrations
-RUN python3 -m pretalx migrate
+RUN python -m pretalx makemigrations
+RUN python -m pretalx migrate
 
 RUN apt-get update && \
     apt-get install -y nodejs npm && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    python3 -m pretalx rebuild
+    python -m pretalx rebuild
 
 RUN chmod +x /usr/local/bin/pretalx && \
     cd /pretalx/src && \
