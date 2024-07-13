@@ -25,19 +25,19 @@ COPY src /pretalx/src
 COPY deployment/docker/pretalx.bash /usr/local/bin/pretalx
 COPY deployment/docker/supervisord.conf /etc/supervisord.conf
 
-RUN pip install -U pip setuptools wheel typing && \
-    pip install -e /pretalx/[mysql,postgres,redis] && \
-    pip install pylibmc && \
-    pip install gunicorn
+RUN pip3 install -U pip setuptools wheel typing && \
+    pip3 install -e /pretalx/[mysql,postgres,redis] && \
+    pip3 install pylibmc && \
+    pip3 install gunicorn
 
-RUN python -m pretalx makemigrations
-RUN python -m pretalx migrate
+RUN python3 -m pretalx makemigrations
+RUN python3 -m pretalx migrate
 
 RUN apt-get update && \
     apt-get install -y nodejs npm && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    python -m pretalx rebuild
+    python3 -m pretalx rebuild
 
 RUN chmod +x /usr/local/bin/pretalx && \
     cd /pretalx/src && \
