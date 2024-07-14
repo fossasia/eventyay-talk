@@ -26,15 +26,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.11]
+        python-version: [3.9, '3.10', 3.11]
         database: [sqlite, postgres, mysql]
         exclude:
           - database: mysql
-            python-version: 3.11
+            python-version: 3.9
           - database: mysql
             python-version: 3.11
           - database: sqlite
-            python-version: 3.11
+            python-version: 3.9
           - database: sqlite
             python-version: 3.11
     steps:
