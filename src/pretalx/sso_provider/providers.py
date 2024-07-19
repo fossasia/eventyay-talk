@@ -1,4 +1,5 @@
 import requests
+from urllib.parse import urlencode
 
 from allauth.socialaccount.providers.oauth2.provider import OAuth2Provider
 from allauth.socialaccount.providers.base import AuthAction, ProviderAccount
@@ -8,7 +9,6 @@ from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.helpers import render_authentication_error
 from django.conf import settings
 from django.urls import reverse
-from urllib.parse import urlencode
 
 from .views import EventyayTicketOAuth2Adapter
 
