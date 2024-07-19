@@ -1,5 +1,6 @@
 import textwrap
 import urllib
+import logging
 
 from csp.decorators import csp_update
 from django.contrib import messages
@@ -29,6 +30,7 @@ from pretalx.cfp.views.event import LoggedInEventPageMixin
 from pretalx.common.middleware.event import get_login_redirect
 from pretalx.common.phrases import phrases
 from pretalx.common.views import is_form_bound
+from pretalx.common.exceptions import SendMailException
 from pretalx.person.forms import LoginInfoForm, SpeakerProfileForm
 from pretalx.person.permissions import person_can_view_information
 from pretalx.schedule.forms import AvailabilitiesFormMixin
@@ -397,6 +399,14 @@ class SubmissionsEditView(LoggedInEventPageMixin, SubmissionViewMixin, UpdateVie
                     form.instance.update_duration()
                 if form.instance.pk and "track" in form.changed_data:
                     form.instance.update_review_scores()
+                if form.instance.pk and "additional_speaker" in form.changed_data:
+                    try:
+                        form.instance.send_invite(to=[form.cleaned_data.get('additional_speaker')],
+                                               _from=self.request.user)
+                    except SendMailException as exception:
+                        logging.getLogger("").warning(str(exception))
+                        messages.warning(self.request,
+                                         phrases.cfp.submission_email_fail)
                 form.instance.log_action(
                     "pretalx.submission.update", person=self.request.user
                 )
