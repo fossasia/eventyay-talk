@@ -69,20 +69,20 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                 if not provider_class:
                     provider_class = registry.get_class(app.provider)
                 if not provider_class:
-                    raise ImproperlyConfigured(f"unknown provider: {app.provider}")
+                    raise ImproperlyConfigured("unknown provider: %s", app.provider)
                 return provider_class(request, app=app)
             elif provider_class:
                 assert not provider_class.uses_apps
                 return provider_class(request, app=None)
             else:
-                raise ImproperlyConfigured("unknown provider: %s", {app.provider})
+                raise ImproperlyConfigured("unknown provider: %s", app.provider)
         except ImproperlyConfigured as e:
             app = self.get_app(request, provider=provider, client_id=client_id)
             if app is not None:
                 provider_class = registry.get_class('eventyay') # Get default custom provider
                 return provider_class(request, app=app)
             else:
-                raise ImproperlyConfigured("unknown provider: %s", {app.provider})
+                raise ImproperlyConfigured("unknown provider: %s", app.provider)
 
     def save_user(self, request, sociallogin, form=None):
         try:
