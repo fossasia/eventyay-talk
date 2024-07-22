@@ -18,6 +18,11 @@
                 <i class="fa fa-group"></i> {% translate "Tickets" %}
             </a>
         {% endif %}
+        {% if request.event.display_settings.video_link %}
+        <a href="{{ request.event.display_settings.video_link }}" target="_blank" class="btn btn-outline-success">
+            <i class="fas fa-video"></i> {% translate "Videos" %}
+        </a>
+        {% endif %}
     </div>
     <div class="header-right">
         {% if with_extra %}

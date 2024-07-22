@@ -120,6 +120,16 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
         }),
         required=False,
     )
+    video_link = forms.URLField(
+        label=_("Online Video URL"),
+        help_text=(
+            "Online video link will be shown on event menu."
+        ),
+        widget=forms.TextInput(attrs={
+            'placeholder': ' e.g: https://www.youtube.com/'
+        }),
+        required=False,
+    )
     header_pattern = forms.ChoiceField(
         label=_("Frontpage header pattern"),
         help_text=_(
@@ -368,6 +378,7 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
             "export_html_on_release": "feature_flags",
             "html_export_url": "display_settings",
             "ticket_link": "display_settings",
+            "video_link": "display_settings",
             "header_pattern": "display_settings",
             "meta_noindex": "display_settings",
         }
