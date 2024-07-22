@@ -38,6 +38,8 @@ from pretalx.submission.forms import InfoForm, QuestionsForm, ResourceForm
 from pretalx.submission.models import Resource, Submission, SubmissionStates
 
 
+logger = logging.getLogger(__name__)
+
 @method_decorator(csp_update(IMG_SRC="https://www.gravatar.com"), name="dispatch")
 class ProfileView(LoggedInEventPageMixin, TemplateView):
     template_name = "cfp/event/user_profile.html"
@@ -404,7 +406,7 @@ class SubmissionsEditView(LoggedInEventPageMixin, SubmissionViewMixin, UpdateVie
                         form.instance.send_invite(to=[form.cleaned_data.get('additional_speaker')],
                                                _from=self.request.user)
                     except SendMailException as exception:
-                        logging.getLogger("").warning(str(exception))
+                        logger.warning('Failed to send email with error: %s', exception)
                         messages.warning(self.request,
                                          phrases.cfp.submission_email_fail)
                 form.instance.log_action(
