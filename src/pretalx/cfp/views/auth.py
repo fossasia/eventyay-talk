@@ -44,6 +44,11 @@ class LoginView(GenericLoginView):
     def get_password_reset_link(self):
         return self.request.event.urls.reset
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['event'] = self.request.event
+        return context
+
 
 class ResetView(EventPageMixin, GenericResetView):
     template_name = "cfp/event/reset.html"

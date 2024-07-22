@@ -28,11 +28,11 @@
                 {% translate "Log in" %}
             </button>
         {% endif %}
-        {% socialapp_exists 'eventyay' as eventyay_exists %}
+        {% socialapp_exists request.event.organiser.slug as eventyay_exists %}
         {% if eventyay_exists %}
           {% if not no_buttons %}
             <div class="text-center">
-                <a class="btn btn-lg btn-primary btn-block mt-3" href="{% provider_login_url 'eventyay' %}">
+                <a class="btn btn-lg btn-primary btn-block mt-3" href="{% provider_login_url event.organiser.slug %}">
                     {% translate "Login with Eventyay-ticket" %}
                 </a>
             </div>

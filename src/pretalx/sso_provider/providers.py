@@ -1,15 +1,15 @@
 import requests
 from urllib.parse import urlencode
 
+from django.conf import settings
+from django.urls import reverse
 from allauth.socialaccount.providers.oauth2.provider import OAuth2Provider
 from allauth.socialaccount.providers.base import AuthAction, ProviderAccount
 from allauth.socialaccount.app_settings import QUERY_EMAIL
 from allauth.account.models import EmailAddress
 from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.helpers import render_authentication_error
-from django.conf import settings
-from django.urls import reverse
-from urllib.parse import urlencode
+from allauth.socialaccount.models import SocialApp
 
 from .views import EventyayTicketOAuth2Adapter
 
@@ -38,6 +38,15 @@ class EventyayProvider(OAuth2Provider):
     name = 'Eventyay'
     account_class = EventYayTicketAccount
     oauth2_adapter_class = EventyayTicketOAuth2Adapter
+
+    def __init__(self, request, app=None):
+        if hasattr(request, 'event'):
+            app = SocialApp.objects.get(provider=request.event.organiser.slug)
+            self.id = request.event.organiser.slug
+        elif request.session.get('org') is not None:
+            app = SocialApp.objects.get(provider=request.session.get('org'))
+            self.id = request.session.get('org')
+        super(EventyayProvider, self).__init__(request, app=app)
 
     def get_openid_config(self):
         try:
@@ -76,7 +85,7 @@ class EventyayProvider(OAuth2Provider):
     def get_login_url(self, request, **kwargs):
         current_event = request.event
         request.session['org'] = current_event.organiser.slug
-        url = reverse(self.id + "_login")
+        url = reverse("eventyay_login") # Base login url for sso with eventyay-ticker
         if kwargs:
             url = url + "?" + urlencode(kwargs)
         return url

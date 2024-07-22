@@ -8,9 +8,12 @@ from django_context_decorator import context
 
 from pretalx.common.exceptions import SendMailException
 from pretalx.common.mixins.views import PermissionRequired
-from pretalx.common.views import CreateOrUpdateView
+from pretalx.common.views import CreateOrUpdateView, is_form_bound
 from pretalx.event.forms import OrganiserForm, TeamForm, TeamInviteForm
 from pretalx.event.models import Organiser, Team, TeamInvite
+from pretalx.orga.forms.sso_client_form import SSOClientForm
+
+from allauth.socialaccount.models import SocialApp
 
 
 class TeamMixin:
@@ -224,6 +227,58 @@ class OrganiserDetail(PermissionRequired, CreateOrUpdateView):
     def get_success_url(self):
         messages.success(self.request, _("Saved!"))
         return self.request.path
+
+    @context
+    @cached_property
+    def sso_client_form(self):
+        organiser = self.kwargs.get("organiser", None)
+        if self.request.POST.get('form') == 'remove_sso_client':
+            bind = is_form_bound(self.request, "remove_sso_client")
+        bind = is_form_bound(self.request, "sso_client")
+        return SSOClientForm(
+            provider_id=organiser,
+            data=self.request.POST if bind else None,
+        )
+
+    def save_sso_client(self, request, *args, **kwargs):
+        self.sso_client_form.save(organiser=self.kwargs.get("organiser", None))
+        return redirect(self.get_success_url())
+
+    def post(self, request, *args, **kwargs):
+        try:
+            if self.is_remove_sso_client_request(request):
+                return self.handle_remove_sso_client(request)
+            elif self.is_sso_client_request(request):
+                return self.handle_sso_client(request, *args, **kwargs)
+            else:
+                self.set_object()
+                return super().post(request, *args, **kwargs)
+        except Exception as e:
+            messages.error(request, _("An error occurred: ") + str(e))
+            return redirect(self.request.path)
+
+    def is_remove_sso_client_request(self, request):
+        return is_form_bound(self.request, "remove_sso_client") and request.POST.get(
+            'form') == 'remove_sso_client'
+
+    def handle_remove_sso_client(self, request):
+        provider_id = self.kwargs.get("organiser")
+        social_app = SocialApp.objects.filter(provider=provider_id).first()
+        if social_app:
+            social_app.delete()
+            messages.success(request, _("The key was removed."))
+        else:
+            messages.error(request, _("The key does not exist."))
+        return redirect(self.request.path)
+
+    def is_sso_client_request(self, request):
+        return is_form_bound(self.request, "sso_client") and request.POST.get(
+            'form') == 'sso_client' and self.sso_client_form.is_valid()
+
+    def handle_sso_client(self, request, *args, **kwargs):
+        return self.save_sso_client(request, *args, **kwargs)
+
+
 
 
 class OrganiserDelete(PermissionRequired, DeleteView):
