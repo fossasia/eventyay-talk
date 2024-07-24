@@ -1,18 +1,19 @@
+import logging
 import requests
 from urllib.parse import urlencode
 
-from django.conf import settings
-from django.urls import reverse
-from allauth.socialaccount.providers.oauth2.provider import OAuth2Provider
-from allauth.socialaccount.providers.base import AuthAction, ProviderAccount
-from allauth.socialaccount.app_settings import QUERY_EMAIL
 from allauth.account.models import EmailAddress
 from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.helpers import render_authentication_error
 from allauth.socialaccount.models import SocialApp
+from allauth.socialaccount.providers.base import ProviderAccount
+from allauth.socialaccount.providers.oauth2.provider import OAuth2Provider
+from django.conf import settings
+from django.urls import reverse
 
 from .views import EventyayTicketOAuth2Adapter
 
+logger = logging.getLogger(__name__)
 
 class Scope(object):
     OPEN_ID = "openid"
@@ -27,10 +28,6 @@ class EventYayTicketAccount(ProviderAccount):
 
     def get_avatar_url(self):
         return self.account.extra_data.get("picture")
-
-    def to_str(self):
-        dflt = super(GoogleAccount, self).to_str()
-        return self.account.extra_data.get("name", dflt)
 
 
 class EventyayProvider(OAuth2Provider):
@@ -53,7 +50,8 @@ class EventyayProvider(OAuth2Provider):
             response = requests.get(settings.EVENTYAY_TICKET_SSO_WELL_KNOW_URL
                                     .format(org=self.request.session.get('org')))
             response.raise_for_status()
-        except:
+        except Exception as e:
+            logger.error(f"Error when getting openid config: {e}")
             raise ImmediateHttpResponse(
                 render_authentication_error(self.request,
                                             'Error happened when trying get configurations from Eventyay-ticket'))
@@ -85,7 +83,7 @@ class EventyayProvider(OAuth2Provider):
     def get_login_url(self, request, **kwargs):
         current_event = request.event
         request.session['org'] = current_event.organiser.slug
-        url = reverse("eventyay_login") # Base login url for sso with eventyay-ticker
+        url = reverse("eventyay_login")  # Base login url for sso with eventyay-ticker
         if kwargs:
             url = url + "?" + urlencode(kwargs)
         return url

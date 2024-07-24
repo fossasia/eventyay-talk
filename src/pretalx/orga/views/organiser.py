@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -5,6 +7,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DeleteView, DetailView, TemplateView
 from django_context_decorator import context
+from allauth.socialaccount.models import SocialApp
 
 from pretalx.common.exceptions import SendMailException
 from pretalx.common.mixins.views import PermissionRequired
@@ -13,7 +16,7 @@ from pretalx.event.forms import OrganiserForm, TeamForm, TeamInviteForm
 from pretalx.event.models import Organiser, Team, TeamInvite
 from pretalx.orga.forms.sso_client_form import SSOClientForm
 
-from allauth.socialaccount.models import SocialApp
+logger = logging.getLogger(__name__)
 
 
 class TeamMixin:
@@ -245,6 +248,8 @@ class OrganiserDetail(PermissionRequired, CreateOrUpdateView):
         try:
             self.sso_client_form.save(organiser=self.kwargs.get("organiser", None))
         except Exception as e:
+            logger.error(
+                f"Error saving SSO client for organiser {self.kwargs.get('organiser', None)}: {e}")
             messages.error(request, _("An error occurred: ") + str(e))
             return redirect(self.request.path)
         return redirect(self.get_success_url())
@@ -268,11 +273,10 @@ class OrganiserDetail(PermissionRequired, CreateOrUpdateView):
 
     def handle_remove_sso_client(self, request):
         provider_id = self.kwargs.get("organiser")
-        social_app = SocialApp.objects.filter(provider=provider_id)
-        if social_app.exists():
+        try:
+            social_app = SocialApp.objects.get(provider=provider_id)
             social_app.delete()
-            messages.success(request, _("The key was removed."))
-        else:
+        except SocialApp.DoesNotExist:
             messages.error(request, _("The key does not exist."))
         return redirect(self.request.path)
 

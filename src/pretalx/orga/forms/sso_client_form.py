@@ -1,11 +1,7 @@
-from django import forms
 from allauth.socialaccount.models import SocialApp
-from django.contrib.sites.models import Site
+from django import forms
 from django.conf import settings
-
-
-from pretalx.common.forms.fields import SizeFileField
-from pretalx.submission.models import Resource
+from django.contrib.sites.models import Site
 
 
 class SSOClientForm(forms.ModelForm):
@@ -18,10 +14,6 @@ class SSOClientForm(forms.ModelForm):
     class Meta:
         model = SocialApp
         fields = ["client_id", "secret"]
-
-    def clean(self):
-        cleaned_data = super().clean()
-        return cleaned_data
 
     def save(self, organiser=None):
         self.instance.name = organiser

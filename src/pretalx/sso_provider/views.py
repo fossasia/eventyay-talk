@@ -1,15 +1,12 @@
-import jwt
 import requests
 
+from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth.socialaccount.providers.oauth2.views import OAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from allauth.socialaccount.providers.oauth2.views import (
     OAuth2LoginView, OAuth2CallbackView)
-from allauth.socialaccount.internal import jwtkit
-from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth.utils import build_absolute_uri
-from django.db import IntegrityError
 from django.core.exceptions import ImproperlyConfigured
+from django.db import IntegrityError
 from django.urls import NoReverseMatch
 from django.urls import reverse
 
@@ -79,16 +76,17 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         except ImproperlyConfigured as e:
             app = self.get_app(request, provider=provider, client_id=client_id)
             if app is not None:
-                provider_class = registry.get_class('eventyay') # Get default custom provider
+                provider_class = registry.get_class('eventyay')  # Get default custom provider
                 return provider_class(request, app=app)
             else:
-                raise ImproperlyConfigured("unknown provider: %s", app.provider)
+                raise ImproperlyConfigured("unknown provider: " + app.provider)
 
     def save_user(self, request, sociallogin, form=None):
         try:
             user = super().save_user(request, sociallogin, form)
         except IntegrityError as e:
-            # bypass the error if the user with this email created in eventyay-talk before
+            # bypass the error if the user with this email created in eventyay-talk
+            # before
             pass
 
 
