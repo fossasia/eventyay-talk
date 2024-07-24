@@ -234,14 +234,19 @@ class OrganiserDetail(PermissionRequired, CreateOrUpdateView):
         organiser = self.kwargs.get("organiser", None)
         if self.request.POST.get('form') == 'remove_sso_client':
             bind = is_form_bound(self.request, "remove_sso_client")
-        bind = is_form_bound(self.request, "sso_client")
+        else:
+            bind = is_form_bound(self.request, "sso_client")
         return SSOClientForm(
             provider_id=organiser,
             data=self.request.POST if bind else None,
         )
 
     def save_sso_client(self, request, *args, **kwargs):
-        self.sso_client_form.save(organiser=self.kwargs.get("organiser", None))
+        try:
+            self.sso_client_form.save(organiser=self.kwargs.get("organiser", None))
+        except Exception as e:
+            messages.error(request, _("An error occurred: ") + str(e))
+            return redirect(self.request.path)
         return redirect(self.get_success_url())
 
     def post(self, request, *args, **kwargs):
@@ -263,8 +268,8 @@ class OrganiserDetail(PermissionRequired, CreateOrUpdateView):
 
     def handle_remove_sso_client(self, request):
         provider_id = self.kwargs.get("organiser")
-        social_app = SocialApp.objects.filter(provider=provider_id).first()
-        if social_app:
+        social_app = SocialApp.objects.filter(provider=provider_id)
+        if social_app.exists():
             social_app.delete()
             messages.success(request, _("The key was removed."))
         else:

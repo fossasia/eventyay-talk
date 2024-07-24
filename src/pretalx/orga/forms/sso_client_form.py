@@ -13,7 +13,7 @@ class SSOClientForm(forms.ModelForm):
         social_app = SocialApp.objects.filter(provider=provider_id).first()
         kwargs["instance"] = social_app
         super().__init__(*args, **kwargs)
-        self.fields['secret'].required = True
+        self.fields['secret'].required = True  # Secret is required
 
     class Meta:
         model = SocialApp
@@ -26,5 +26,5 @@ class SSOClientForm(forms.ModelForm):
     def save(self, organiser=None):
         self.instance.name = organiser
         self.instance.provider = organiser
-        social_app = super().save()
+        super().save()
         self.instance.sites.add(Site.objects.get(pk=settings.SITE_ID))
