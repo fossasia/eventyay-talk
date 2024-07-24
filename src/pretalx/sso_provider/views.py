@@ -72,7 +72,7 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                 assert not provider_class.uses_apps
                 return provider_class(request, app=None)
             else:
-                raise ImproperlyConfigured("unknown provider: %s", app.provider)
+                raise ImproperlyConfigured("unknown provider: %s", provider)
         except ImproperlyConfigured as e:
             app = self.get_app(request, provider=provider, client_id=client_id)
             if app is not None:
