@@ -4,7 +4,7 @@ import statistics
 from itertools import repeat
 
 from django.conf import settings
-from django.contrib.postgres.fields import ArrayField
+from django.db.models import JSONField
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
@@ -931,8 +931,7 @@ class SubmissionFavourite(models.Model):
         on_delete=models.PROTECT,
         verbose_name=_n("User", "Users", 1)
     )
-    talk_list = ArrayField(
-        models.CharField(max_length=200, blank=True),
+    talk_list = JSONField(
         null=True,
         blank=True,
         verbose_name=_("List favourite talk")
