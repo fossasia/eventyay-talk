@@ -425,13 +425,13 @@ urlpatterns = [
                         [
                             path(
                                 "",
-                                submission.SubmissionContent.as_view(),
-                                name="submissions.content.view",
+                                submission.SubmissionContentView.as_view(),
+                                name="submissions.content",
                             ),
                             path(
-                                "submit",
-                                submission.SubmissionStateChange.as_view(),
-                                name="submissions.submit",
+                                "edit",
+                                submission.SubmissionContent.as_view(),
+                                name="submissions.content.view",
                             ),
                             path(
                                 "accept",
