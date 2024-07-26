@@ -9,6 +9,7 @@ from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.helpers import render_authentication_error
 from django.conf import settings
 from django.urls import reverse
+from urllib.parse import urlencode
 
 from .views import EventyayTicketOAuth2Adapter
 
