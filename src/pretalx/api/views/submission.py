@@ -218,7 +218,7 @@ class SubmissionFavouriteView(View):
 
         except Http404:
             logger.info("User not login yet, so can't add favourite talks.")
-            return JsonResponse([], safe=False, status=status.HTTP_200_OK)
+            return JsonResponse('user_not_logged_in', safe=False, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
             logger.error(f"Integrity error: {str(e)}")
             return JsonResponse({'error': str(e)}, safe=False,
