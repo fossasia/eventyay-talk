@@ -23,8 +23,10 @@
         {% if with_extra %}
             <span>{% translate "Version" %} <a href="{{ request.event.urls.changelog }}">{{ schedule.version|default:"–" }}</a></span>
             <details class="dropdown">
-                <summary class="btn btn-sm btn-outline-info">
-                    <i class="fa fa-code"></i><i class="fa fa-caret-down"></i>
+                <summary class="btn btn-sm">
+                    <div class="btn btn-sm btn-outline-info">
+                        <i class="fa fa-calendar-plus-o"></i> Add to Calendar
+                    </div>                    
                 </summary>
                 <ul class="dropdown-content dropdown-content-s{% if rtl %}e{% else %}w{% endif %}">
                     {% for exporter in exporters %}{% if exporter.public %}
@@ -45,7 +47,7 @@
                             {% endif %}
                         </a></li>
                     {% endif %}{% endfor %}
-                    <div class="export-break" style="grid-area: slice-08-07-00-00 / 1 / slice-08-08-00-00;"></div>
+                    <div class="export-break"></div>
                     {% for exporter in my_exporters %}{% if exporter.public %}
                         <li><a class="dropdown-item" href="{{ exporter.urls.base }}">
                             {% if exporter.icon|slice:":3" == "fa-" %}

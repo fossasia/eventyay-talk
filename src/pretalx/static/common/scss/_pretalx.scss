@@ -1,6 +1,7 @@
 html {
   scroll-behavior: smooth;
 }
+
 .alert {
   border-width: 2px;
   padding: 16px;
@@ -76,21 +77,26 @@ table tr {
 .table a:hover {
   text-decoration: none;
 }
+
 .table th {
   white-space: nowrap;
 }
+
 table th.numeric,
 table td.numeric {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
+
 table th.numeric-left,
 table td.numeric-left {
   font-variant-numeric: tabular-nums;
 }
+
 .nowrap {
   white-space: nowrap;
 }
+
 .badge {
   border-radius: 0.25em;
   height: 100%;
@@ -102,20 +108,31 @@ table td.numeric-left {
   color: $white;
   margin-left: 4px;
 }
-.export-qrcode-image,
-.qrcode-image {
-  display: none;
+
+.export-qrcode {
+  position: relative;
+  display: inline-block;
+}
+
+.export-qrcode-image {
+  display: block;
   position: absolute;
   background: white;
+  padding: 10px;
+  border: 1px solid #ccc;
+  z-index: 1000;  /* Ensure it's above other content */
 }
-.export-break {
-  height: 1px;
-  background: #B0B0B0;
-}
-.export-qrcode:hover .export-qrcode-image,
-.qrcode:hover .qrcode-image {
+
+
+.export-qrcode:hover .export-qrcode-image {
   display: block;
 }
+
+.export-qrcode-image img {
+  max-width: 150px; 
+  height: auto;
+}
+
 .copyable-text {
   cursor: pointer;
   &:hover {
@@ -123,15 +140,18 @@ table td.numeric-left {
     box-shadow: 0px 0px 4px 4px $gray-lightest;
   }
 }
+
 .mail-card .card-header {
   cursor: pointer;
 }
+
 .nowline {
   border-top: $brand-danger solid 2px;
   display: flex;
   position: relative;
   visibility: hidden;
 }
+
 pre {
   display: block;
   padding: 9.5px;
@@ -145,6 +165,7 @@ pre {
   border: 1px solid $gray-light;
   border-radius: 3px;
 }
+
 .state-fragment {
   white-space: nowrap;
 }
