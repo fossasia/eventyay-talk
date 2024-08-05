@@ -1,4 +1,4 @@
-from io import StringIO
+from io import BytesIO
 from urllib.parse import quote
 from xml.etree import ElementTree as ET
 
@@ -7,9 +7,10 @@ import qrcode.image.svg
 from defusedcsv import csv
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
+from django.utils.encoding import force_bytes
+from base64 import b64encode
 
 from pretalx.common.urls import EventUrls
-
 
 class BaseExporter:
     """The base class for all data exporters."""
@@ -94,11 +95,22 @@ class BaseExporter:
         base = "{self.event.urls.export}{self.quoted_identifier}"
 
     def get_qrcode(self):
-        image = qrcode.make(
-            self.urls.base.full(), image_factory=qrcode.image.svg.SvgImage
+        """Generate and return a QR code for the exporter's URL."""
+        qr_url = self.urls.base.full()  # Retrieve the full URL
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
         )
-        return mark_safe(ET.tostring(image.get_image()).decode())
+        qr.add_data(qr_url)
+        qr.make(fit=True)
+        image = qr.make_image(fill='black', back_color='white')
 
+        output = BytesIO()
+        image.save(output, format='PNG')
+        img_base64 = b64encode(output.getvalue()).decode('utf-8')
+        return mark_safe(f'<img src="data:image/png;base64,{img_base64}" alt="QR Code">')
 
 class CSVExporterMixin:
     def render(self, **kwargs):

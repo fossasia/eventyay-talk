@@ -8,17 +8,17 @@ html {
   display: flex;
   background: $white;
   align-items: center;
+}
 
-  &::before {
-    align-self: stretch;
-    min-width: 64px;
-    color: $white;
-    font-family: "ForkAwesome";
-    font-size: 20px;
-    padding: 0.75rem 1.25rem;
-    margin: -16px;
-    margin-right: 16px;
-  }
+.alert::before {
+  align-self: stretch;
+  min-width: 64px;
+  color: $white;
+  font-family: "ForkAwesome";
+  font-size: 20px;
+  padding: 0.75rem 1.25rem;
+  margin: -16px;
+  margin-right: 16px;
 }
 
 .alert.alert-success::before {
@@ -61,9 +61,7 @@ html {
 }
 
 .alert {
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 1px 2px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 .btn:focus {
@@ -114,31 +112,34 @@ table td.numeric-left {
   display: inline-block;
 }
 
-.export-qrcode-image {
-  display: block;
+.export-qrcode-image,
+.qrcode-image {
+  display: none;
   position: absolute;
   background: white;
-  padding: 10px;
   border: 1px solid #ccc;
-  z-index: 1000;  /* Ensure it's above other content */
+  padding: 5px;
+  z-index: 1000;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-
-.export-qrcode:hover .export-qrcode-image {
+.export-qrcode:hover .export-qrcode-image,
+.qrcode:hover .qrcode-image {
   display: block;
 }
 
-.export-qrcode-image img {
-  max-width: 150px; 
-  height: auto;
+.export-break {
+  height: 1px;
+  background: #B0B0B0;
 }
 
 .copyable-text {
   cursor: pointer;
-  &:hover {
-    background: $gray-lightest;
-    box-shadow: 0px 0px 4px 4px $gray-lightest;
-  }
+}
+
+.copyable-text:hover {
+  background: $gray-lightest;
+  box-shadow: 0px 0px 4px 4px $gray-lightest;
 }
 
 .mail-card .card-header {
