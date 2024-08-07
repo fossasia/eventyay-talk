@@ -1,23 +1,24 @@
 html {
   scroll-behavior: smooth;
 }
+
 .alert {
   border-width: 2px;
   padding: 16px;
   display: flex;
   background: $white;
   align-items: center;
+}
 
-  &::before {
-    align-self: stretch;
-    min-width: 64px;
-    color: $white;
-    font-family: "ForkAwesome";
-    font-size: 20px;
-    padding: 0.75rem 1.25rem;
-    margin: -16px;
-    margin-right: 16px;
-  }
+.alert::before {
+  align-self: stretch;
+  min-width: 64px;
+  color: $white;
+  font-family: "ForkAwesome";
+  font-size: 20px;
+  padding: 0.75rem 1.25rem;
+  margin: -16px;
+  margin-right: 16px;
 }
 
 .alert.alert-success::before {
@@ -60,9 +61,7 @@ html {
 }
 
 .alert {
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 1px 2px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 .btn:focus {
@@ -76,21 +75,26 @@ table tr {
 .table a:hover {
   text-decoration: none;
 }
+
 .table th {
   white-space: nowrap;
 }
+
 table th.numeric,
 table td.numeric {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
+
 table th.numeric-left,
 table td.numeric-left {
   font-variant-numeric: tabular-nums;
 }
+
 .nowrap {
   white-space: nowrap;
 }
+
 .badge {
   border-radius: 0.25em;
   height: 100%;
@@ -102,36 +106,53 @@ table td.numeric-left {
   color: $white;
   margin-left: 4px;
 }
+
+.export-qrcode {
+  position: relative;
+  display: inline-block;
+}
+
 .export-qrcode-image,
 .qrcode-image {
   display: none;
   position: absolute;
   background: white;
+  border: 1px solid #ccc;
+  padding: 5px;
+  z-index: 1000;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
-.export-break {
-  height: 1px;
-  background: #B0B0B0;
-}
+
 .export-qrcode:hover .export-qrcode-image,
 .qrcode:hover .qrcode-image {
   display: block;
 }
+
+.export-break {
+  height: 1px;
+  background: #B0B0B0;
+}
+
 .copyable-text {
   cursor: pointer;
-  &:hover {
-    background: $gray-lightest;
-    box-shadow: 0px 0px 4px 4px $gray-lightest;
-  }
 }
+
+.copyable-text:hover {
+  background: $gray-lightest;
+  box-shadow: 0px 0px 4px 4px $gray-lightest;
+}
+
 .mail-card .card-header {
   cursor: pointer;
 }
+
 .nowline {
   border-top: $brand-danger solid 2px;
   display: flex;
   position: relative;
   visibility: hidden;
 }
+
 pre {
   display: block;
   padding: 9.5px;
@@ -145,6 +166,7 @@ pre {
   border: 1px solid $gray-light;
   border-radius: 3px;
 }
+
 .state-fragment {
   white-space: nowrap;
 }
