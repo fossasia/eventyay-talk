@@ -15,8 +15,7 @@ class CfPPhrases(Phrases, app="cfp"):
     auth_reset_success = _("Awesome! You can now log in using your new password.")
 
     locale_change_success = _(
-        "Your locale preferences have been saved. We like to think that we have excellent support "
-        "for English in pretalx, but if you encounter issues or errors, please contact us!"
+        "Your locale preferences have been saved, if you encounter issues or errors, please contact us!"
     )
 
     submission_withdrawn = _("Your proposal has been withdrawn.")
