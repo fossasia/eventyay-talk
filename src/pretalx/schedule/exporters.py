@@ -114,7 +114,7 @@ class ScheduleData(BaseExporter):
 
 class FrabXmlExporter(ScheduleData):
     identifier = "schedule.xml"
-    verbose_name = "Sesssions XML"
+    verbose_name = "Sessions XML"
     public = True
     show_qrcode = True
     favs_retrieve = False
