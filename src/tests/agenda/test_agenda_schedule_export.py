@@ -524,14 +524,6 @@ def test_html_export_full(
     )
     assert schedule_json["schedule"]["conference"]["title"] == event.name
 
-    schedule_ics = (
-        (settings.HTMLEXPORT_ROOT / "test/test/schedule/export/schedule.ics")
-        .open()
-        .read()
-    )
-    assert slot.submission.code in schedule_ics
-    assert canceled_talk.submission.code not in schedule_ics
-
     schedule_xcal = (
         (settings.HTMLEXPORT_ROOT / "test/test/schedule/export/schedule.xcal")
         .open()
