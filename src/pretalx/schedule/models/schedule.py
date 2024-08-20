@@ -679,7 +679,7 @@ class Schedule(PretalxModel):
                             + " ("
                             + str(talk.submission.submission_type.default_duration)
                             + " minutes)"
-                        )
+                        ),
                     }
                 )
             else:
