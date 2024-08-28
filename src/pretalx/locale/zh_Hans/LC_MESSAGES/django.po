@@ -4095,7 +4095,7 @@ msgstr "媒体文件"
 
 #: pretalx/orga/templates/orga/admin.html:61
 #: pretalx/orga/templates/orga/base.html:366
-msgid "Mails"
+msgid "Message Center"
 msgstr "邮件"
 
 #: pretalx/orga/templates/orga/admin.html:63
@@ -4310,16 +4310,16 @@ msgid "Outbox"
 msgstr "发件箱"
 
 #: pretalx/orga/templates/orga/base.html:379
-msgid "Templates"
-msgstr "模板"
-
-#: pretalx/orga/templates/orga/base.html:382
-msgid "Compose E-mails"
+msgid "Compose"
 msgstr "撰写电子邮件"
 
-#: pretalx/orga/templates/orga/base.html:385
-msgid "Sent E-mails"
+#: pretalx/orga/templates/orga/base.html:382
+msgid "Sent"
 msgstr "发送的电子邮件"
+
+#: pretalx/orga/templates/orga/base.html:385
+msgid "Templates"
+msgstr "模板"
 
 #: pretalx/orga/templates/orga/base.html:404
 msgid "Organisers"

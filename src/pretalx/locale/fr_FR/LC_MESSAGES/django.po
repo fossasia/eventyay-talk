@@ -4332,7 +4332,7 @@ msgstr "Fichiers médias"
 
 #: pretalx/orga/templates/orga/admin.html:61
 #: pretalx/orga/templates/orga/base.html:366
-msgid "Mails"
+msgid "Message Center"
 msgstr "Courriels"
 
 #: pretalx/orga/templates/orga/admin.html:63
@@ -4554,16 +4554,16 @@ msgid "Outbox"
 msgstr "Boite d'envoi"
 
 #: pretalx/orga/templates/orga/base.html:379
-msgid "Templates"
-msgstr "Modèles"
-
-#: pretalx/orga/templates/orga/base.html:382
-msgid "Compose E-mails"
+msgid "Compose"
 msgstr "Composer des courriels"
 
-#: pretalx/orga/templates/orga/base.html:385
-msgid "Sent E-mails"
+#: pretalx/orga/templates/orga/base.html:382
+msgid "Sent"
 msgstr "Courriels envoyés"
+
+#: pretalx/orga/templates/orga/base.html:385
+msgid "Templates"
+msgstr "Modèless"
 
 #: pretalx/orga/templates/orga/base.html:404
 msgid "Organisers"
