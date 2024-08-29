@@ -32,8 +32,8 @@ logger = logging.getLogger(__name__)
 class ScheduleMixin:
     @cached_property
     def version(self):
-        if "version" in self.kwargs:
-            return unquote(self.kwargs["version"])
+        if version := self.kwargs.get("version"):
+            return unquote(version)
         return None
 
     def get_object(self):
@@ -50,8 +50,8 @@ class ScheduleMixin:
         return self.get_object()
 
     def dispatch(self, request, *args, **kwargs):
-        if "version" in request.GET:
-            kwargs["version"] = request.GET["version"]
+        if version := request.GET.get("version"):
+            kwargs["version"] = version
             return HttpResponsePermanentRedirect(
                 reverse(
                     f"agenda:versioned-{request.resolver_match.url_name}",
@@ -94,13 +94,13 @@ class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
         exporter = (
             exporter[len("export.") :] if exporter.startswith("export.") else exporter
         )
-        responses = (register_data_exporters.send(request.event)
-                     + register_my_data_exporters.send(request.event))
+        responses = register_data_exporters.send(
+            request.event
+        ) + register_my_data_exporters.send(request.event)
         for __, response in responses:
             ex = response(request.event)
-            if ex.identifier == exporter:
-                if ex.public or request.is_orga:
-                    return ex
+            if ex.identifier == exporter and (ex.public or request.is_orga):
+                return ex
 
     def get(self, request, *args, **kwargs):
         exporter = self.get_exporter(request)
@@ -114,8 +114,8 @@ class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
 
         exporter.schedule = self.schedule
         if "-my" in exporter.identifier and self.request.user.id is None:
-            if request.GET.get('talks'):
-                exporter.talk_ids = request.GET.get('talks').split(',')
+            if request.GET.get("talks"):
+                exporter.talk_ids = request.GET.get("talks").split(",")
             else:
                 return HttpResponseRedirect(self.request.event.urls.login)
         favs_talks = SubmissionFavourite.objects.filter(user=self.request.user.id)
@@ -132,11 +132,10 @@ class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
                 f"Failed to use {exporter.identifier} for {self.request.event.slug}"
             )
             raise Http404()
-        if "If-None-Match" in request.headers:
-            if request.headers["If-None-Match"] == etag:
-                return HttpResponseNotModified()
+        if request.headers.get("If-None-Match") == etag:
+            return HttpResponseNotModified()
         headers = {"ETag": etag}
-        if file_type not in ["application/json", "text/xml"]:
+        if file_type not in ("application/json", "text/xml"):
             headers["Content-Disposition"] = (
                 f'attachment; filename="{safe_filename(file_name)}"'
             )
@@ -171,9 +170,12 @@ class ScheduleView(EventPermissionRequired, ScheduleMixin, TemplateView):
         """
         )
         output_format = request.GET.get("format", "table")
-        if output_format not in ["list", "table"]:
+        if output_format not in ("list", "table"):
             output_format = "table"
-        result = draw_ascii_schedule(data, output_format=output_format)
+        try:
+            result = draw_ascii_schedule(data, output_format=output_format)
+        except StopIteration:
+            result = draw_ascii_schedule(data, output_format="list")
         return HttpResponse(
             response_start + result, content_type="text/plain; charset=utf-8"
         )
@@ -220,10 +222,10 @@ class ScheduleView(EventPermissionRequired, ScheduleMixin, TemplateView):
 
     @context
     def exporters(self):
-        return list(
+        return [
             exporter(self.request.event)
             for _, exporter in register_data_exporters.send(self.request.event)
-        )
+        ]
 
     @context
     def my_exporters(self):
@@ -240,6 +242,10 @@ class ScheduleView(EventPermissionRequired, ScheduleMixin, TemplateView):
         )
 
 
+def talk_sort_key(talk):
+    return (talk.start, talk.submission.title if talk.submission else "")
+
+
 class ScheduleNoJsView(ScheduleView):
     template_name = "agenda/schedule_nojs.html"
 
@@ -253,9 +259,7 @@ class ScheduleNoJsView(ScheduleView):
         for date in data:
             rooms = date.pop("rooms")
             talks = [talk for room in rooms for talk in room.get("talks", [])]
-            talks.sort(
-                key=lambda x: (x.start, x.submission.title if x.submission else "")
-            )
+            talks.sort(key=talk_sort_key)
             date["talks"] = talks
         return {"data": list(data)}
 

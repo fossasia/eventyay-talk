@@ -66,7 +66,7 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
-    'django.contrib.sites',
+    "django.contrib.sites",
 ]
 EXTERNAL_APPS = [
     "compressor",
@@ -382,64 +382,64 @@ LANGUAGES_INFORMATION = {
         "name": _("Arabic"),
         "natural_name": "اَلْعَرَبِيَّةُ",
         "official": False,
-        "percentage": 77,
+        "percentage": 75,
     },
     "cs": {
         "name": _("Czech"),
         "natural_name": "Čeština",
         "official": False,
-        "percentage": 95,
+        "percentage": 100,
     },
     "el": {
         "name": _("Greek"),
         "natural_name": "Ελληνικά",
         "official": False,
-        "percentage": 95,
+        "percentage": 92,
     },
     "es": {
         "name": _("Spanish"),
         "natural_name": "Español",
         "official": False,
-        "percentage": 85,
+        "percentage": 82,
     },
     "fr": {
         "name": _("French"),
         "natural_name": "Français",
         "official": False,
-        "percentage": 85,
+        "percentage": 100,
         "path": "fr_FR",
     },
     "it": {
         "name": _("Italian"),
         "natural_name": "Italiano",
         "official": False,
-        "percentage": 96,
+        "percentage": 98,
     },
     "ja-jp": {
         "name": _("Japanese"),
         "natural_name": "日本語",
         "official": False,
-        "percentage": 74,
+        "percentage": 72,
         "public_code": "jp",
     },
     "nl": {
         "name": _("Dutch"),
         "natural_name": "Nederlands",
         "official": False,
-        "percentage": 92,
+        "percentage": 91,
     },
     "pt-br": {
         "name": _("Brasilian Portuguese"),
         "natural_name": "Português brasileiro",
         "official": False,
-        "percentage": 94,
+        "percentage": 91,
         "public_code": "pt",
     },
     "pt-pt": {
         "name": _("Portuguese"),
         "natural_name": "Português",
         "official": False,
-        "percentage": 91,
+        "percentage": 92,
         "public_code": "pt",
     },
     "ru": {
@@ -458,14 +458,14 @@ LANGUAGES_INFORMATION = {
         "name": _("Traditional Chinese (Taiwan)"),
         "natural_name": "漢語",
         "official": False,
-        "percentage": 70,
+        "percentage": 68,
         "public_code": "zh",
     },
     "zh-hans": {
         "name": _("Simplified Chinese"),
         "natural_name": "简体中文",
         "official": False,
-        "percentage": 90,
+        "percentage": 88,
         "public_code": "zh",
     },
 }
@@ -554,7 +554,6 @@ TEMPLATES = [
             DATA_DIR / "templates",
             BASE_DIR / "templates",
             BASE_DIR / "pretalx" / "sso_provider" / "templates",
-
         ],
         "OPTIONS": {
             "context_processors": [
@@ -598,7 +597,7 @@ STORAGES = {
 VITE_DEV_SERVER_PORT = 8080
 VITE_DEV_SERVER = f"http://localhost:{VITE_DEV_SERVER_PORT}"
 VITE_DEV_MODE = DEBUG
-_VITE_IGNORE = False  # Used to ignore `collectstatic`/`rebuild`
+VITE_IGNORE = False  # Used to ignore `collectstatic`/`rebuild`
 
 
 ## EXTERNAL APP SETTINGS
@@ -698,24 +697,25 @@ else:
 
 # Below is configuration for SSO using eventyay-ticket
 
-EVENTYAY_TICKET_BASE_PATH = config.get("urls", "eventyay-ticket",
-                                       fallback="https://tickets-dev.eventyay.com")
+EVENTYAY_TICKET_BASE_PATH = config.get(
+    "urls", "eventyay-ticket", fallback="https://tickets-dev.eventyay.com"
+)
 
 SITE_ID = 1
 # for now, customer must verified their email at eventyay-ticket, so this check not required
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = "none"
 # will take name from eventyay-ticket as username
-ACCOUNT_USER_MODEL_USERNAME_FIELD = 'name'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = "name"
 # redirect to home page after login with eventyay-ticket
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = "/"
 # custom form for signup and adapter
 SOCIALACCOUNT_FORMS = {"signup": "pretalx.sso_provider.forms.CustomSignUpForm"}
-SOCIALACCOUNT_ADAPTER = 'pretalx.sso_provider.views.CustomSocialAccountAdapter'
+SOCIALACCOUNT_ADAPTER = "pretalx.sso_provider.views.CustomSocialAccountAdapter"
 # disable confirm step when using eventyay-ticket to login
 SOCIALACCOUNT_LOGIN_ON_GET = True
 # eventyay-ticket provider configuration
-EVENTYAY_TICKET_SSO_WELL_KNOW_URL = "/".join([EVENTYAY_TICKET_BASE_PATH,
-                                              '{org}',
-                                              '.well-known/openid-configuration'])
+EVENTYAY_TICKET_SSO_WELL_KNOW_URL = "/".join(
+    [EVENTYAY_TICKET_BASE_PATH, "{org}", ".well-known/openid-configuration"]
+)
 # redirect_url as https
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"

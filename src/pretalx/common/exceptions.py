@@ -11,6 +11,10 @@ class SubmissionError(Exception):
     pass
 
 
+class AuthenticationFailed(Exception):
+    pass
+
+
 class PretalxExceptionReporter(ExceptionReporter):
     def get_traceback_text(self):  # pragma: no cover
         traceback_text = super().get_traceback_text()
@@ -50,8 +54,7 @@ It occurred when {user} accessed {self.request.path}.
                 f"This page belongs to {event.name} <{event.orga_urls.base.full()}>."
             )
             tldr += f", an event page of {event.name}."
-        traceback_text = f"{tldr}\n{intro}\n\n{traceback_text}\n{tldr}\n"
-        return traceback_text
+        return f"{tldr}\n{intro}\n\n{traceback_text}\n{tldr}\n"
 
 
 class PretalxAdminEmailHandler(AdminEmailHandler):
