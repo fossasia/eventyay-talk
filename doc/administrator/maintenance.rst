@@ -63,7 +63,7 @@ Backups
 There are two things which you should create backups of:
 
 Database
-    Your SQL database (SQLite,  PostgreSQL). This is critical and you
+    Your SQL database (SQLite, PostgreSQL). This is critical and you
     must **always always create automatic backups of your database**. There are
     tons of tutorials on the internet on how to do this, and the process
     depends on the choice of your database.

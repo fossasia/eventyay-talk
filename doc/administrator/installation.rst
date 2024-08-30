@@ -27,7 +27,8 @@ and configuration here, but please have a look at the linked pages.
 * **Python 3.11 or newer**
 * An SMTP server to send out mails
 * An HTTP reverse proxy like `nginx`_ to allow HTTPS connections
-* A database server: `PostgreSQL`_ 12+, or SQLite
+* * A database server: `PostgreSQL`_ 12+, or SQLite
+  Note: Support for MySQL and MariaDB has been removed to streamline compatibility and leverage advanced features available in PostgreSQL.
   3. Given the choice, we’d recommend to use PostgreSQL.
 * A `redis`_ server, if you want to use pretalx with an asynchronous task
   runner or improved caching.
