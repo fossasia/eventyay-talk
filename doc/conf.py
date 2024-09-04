@@ -30,7 +30,6 @@ except:
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinx_autodoc_typehints',
@@ -111,7 +110,7 @@ html_theme_path = [os.path.abspath('_themes')]
 htmlhelp_basename = 'pretalxdoc'
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {'https://docs.python.org/': ('https://docs.python.org/3', None)}
 
 linkcheck_ignore = [
     'https://pretalx.yourdomain.com',

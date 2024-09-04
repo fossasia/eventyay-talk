@@ -9,13 +9,6 @@ from pretalx.schedule.models import Availability
 class SubmitterSerializer(ModelSerializer):
     biography = SerializerMethodField()
 
-    def get_biography(self, obj):
-        if self.event:
-            return getattr(
-                obj.profiles.filter(event=self.event).first(), "biography", ""
-            )
-        return ""
-
     def __init__(self, *args, **kwargs):
         self.event = kwargs.pop("event", None)
         super().__init__(*args, **kwargs)
@@ -30,6 +23,13 @@ class SubmitterSerializer(ModelSerializer):
             "avatar_source",
             "avatar_license",
         )
+
+    def get_biography(self, obj):
+        if self.event:
+            return getattr(
+                obj.profiles.filter(event=self.event).first(), "biography", ""
+            )
+        return ""
 
 
 class SubmitterOrgaSerializer(SubmitterSerializer):
@@ -50,8 +50,8 @@ class SpeakerSerializer(ModelSerializer):
         questions = kwargs.pop("questions", [])
         self.questions = (
             questions
-            if questions in ["all", ["all"]]
-            else [q for q in questions if q.isnumeric()]
+            if questions in ("all", ["all"])
+            else [question for question in questions if question.isnumeric()]
         )
         super().__init__(*args, **kwargs)
 
@@ -61,12 +61,12 @@ class SpeakerSerializer(ModelSerializer):
 
     @staticmethod
     def get_avatar_source(obj):
-        if obj.user.has_avatar and obj.user.avatar_source != '':
+        if obj.user.has_avatar and obj.user.avatar_source != "":
             return obj.user.avatar_source
 
     @staticmethod
     def get_avatar_license(obj):
-        if obj.user.has_avatar and obj.user.avatar_license != '':
+        if obj.user.has_avatar and obj.user.avatar_license != "":
             return obj.user.avatar_license
 
     @staticmethod
@@ -87,7 +87,7 @@ class SpeakerSerializer(ModelSerializer):
         if not self.questions:
             return []
         queryset = self.answers_queryset(obj)
-        if self.questions not in ["all", ["all"]]:
+        if self.questions not in ("all", ["all"]):
             queryset = queryset.filter(question__in=self.questions)
         return AnswerSerializer(queryset, many=True).data
 

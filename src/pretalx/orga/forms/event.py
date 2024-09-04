@@ -22,13 +22,23 @@ from pretalx.common.mixins.forms import (
     JsonSubfieldMixin,
     ReadOnlyFlag,
 )
-from pretalx.common.phrases import phrases
+from pretalx.common.text.phrases import phrases
 from pretalx.event.models.event import Event
 from pretalx.orga.forms.widgets import HeaderSelect, MultipleLanguagesWidget
 from pretalx.schedule.models import Availability, TalkSlot
 from pretalx.submission.models import ReviewPhase, ReviewScore, ReviewScoreCategory
 
 ENCRYPTED_PASSWORD_PLACEHOLDER = "*******"
+
+
+def make_naive(moment):
+    return dt.datetime(
+        year=moment.year,
+        month=moment.month,
+        day=moment.day,
+        hour=moment.hour,
+        minute=moment.minute,
+    )
 
 
 class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
@@ -112,12 +122,12 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
     )
     ticket_link = forms.URLField(
         label=_("Event ticket shop URL"),
-        help_text=_(
-            "Ticket shop link will be shown on event menu. "
+        help_text=_("Ticket shop link will be shown on event menu. "),
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "e.g: https://tickets-dev.eventyay.com/2024/wikimania/"
+            }
         ),
-        widget=forms.TextInput(attrs={
-            'placeholder': 'e.g: https://tickets-dev.eventyay.com/2024/wikimania/'
-        }),
         required=False,
     )
     header_pattern = forms.ChoiceField(
@@ -182,7 +192,7 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
         if not data:
             return data
         data = data.lower()
-        if data in [urlparse(settings.SITE_URL).hostname, settings.SITE_URL]:
+        if data in (urlparse(settings.SITE_URL).hostname, settings.SITE_URL):
             raise ValidationError(
                 _("Please do not choose the default domain as custom event domain.")
             )
@@ -299,15 +309,6 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
         ).first()
         if not first_slot:
             return
-
-        def make_naive(moment):
-            return dt.datetime(
-                year=moment.year,
-                month=moment.month,
-                day=moment.day,
-                hour=moment.hour,
-                minute=moment.minute,
-            )
 
         old_start = make_naive(first_slot.start.astimezone(old_instance.tz))
         new_start = make_naive(first_slot.start.astimezone(self.instance.tz))
@@ -481,7 +482,7 @@ class MailSettingsForm(
             "localhost",
             "localhost.localdomain",
         ]
-        if not uses_encryption and not data.get("smtp_host") in localhost_names:
+        if not uses_encryption and data.get("smtp_host") not in localhost_names:
             self.add_error(
                 "smtp_host",
                 ValidationError(

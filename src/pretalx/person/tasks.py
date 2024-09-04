@@ -12,7 +12,7 @@ from pretalx.person.models.user import User
 logger = logging.getLogger(__name__)
 
 
-@app.task()
+@app.task(name="pretalx.person.gravatar_cache")
 def gravatar_cache(person_id: int):
     user = User.objects.filter(pk=person_id, get_gravatar=True).first()
 
@@ -23,25 +23,25 @@ def gravatar_cache(person_id: int):
         )
         return
 
-    r = get(
+    response = get(
         f"https://www.gravatar.com/avatar/{user.gravatar_parameter}?s=512",
         timeout=10,
     )
 
     logger.info(
-        f"gravatar returned http {r.status_code} when getting avatar for user {user.name}"
+        f"gravatar returned http {response.status_code} when getting avatar for user {user.name}"
     )
 
-    if 400 <= r.status_code <= 499:
+    if 400 <= response.status_code <= 499:
         # avatar not found.
         user.get_gravatar = False
         user.save()
         return
-    elif r.status_code != 200:
+    elif response.status_code != 200:
         return
 
     with NamedTemporaryFile(delete=True) as tmp_img:
-        for chunk in r:
+        for chunk in response:
             tmp_img.write(chunk)
         tmp_img.flush()
 
@@ -57,4 +57,4 @@ def refetch_gravatars(sender, **kwargs):
     users_with_gravatar = User.objects.filter(get_gravatar=True)
 
     for user in users_with_gravatar:
-        gravatar_cache.apply_async(args=(user.pk,))
+        gravatar_cache.apply_async(args=(user.pk,), ignore_result=True)
