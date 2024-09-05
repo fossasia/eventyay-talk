@@ -32804,15 +32804,15 @@ const lib = {
 var moment_timezone = __webpack_require__("7f45");
 var moment_timezone_default = /*#__PURE__*/__webpack_require__.n(moment_timezone);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"6c297608-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/pug-plain-loader!./node_modules/cache-loader/dist/cjs.js??ref--1-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/LinearSchedule.vue?vue&type=template&id=308e9d33&lang=pug&
-var LinearSchedulevue_type_template_id_308e9d33_lang_pug_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{directives:[{name:"scrollbar",rawName:"v-scrollbar.y",modifiers:{"y":true}}],staticClass:"c-linear-schedule"},[_vm._l((_vm.sessionBuckets),function(ref,index){
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"6c297608-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/pug-plain-loader!./node_modules/cache-loader/dist/cjs.js??ref--1-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/LinearSchedule.vue?vue&type=template&id=99d34c50&lang=pug&
+var LinearSchedulevue_type_template_id_99d34c50_lang_pug_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{directives:[{name:"scrollbar",rawName:"v-scrollbar.y",modifiers:{"y":true}}],staticClass:"c-linear-schedule"},[_vm._l((_vm.sessionBuckets),function(ref,index){
 var date = ref.date;
 var sessions = ref.sessions;
 return (_vm.sortBy == 'time')?_c('div',{staticClass:"bucket"},[_c('div',{ref:_vm.getBucketName(date),refInFor:true,staticClass:"bucket-label",attrs:{"data-date":date.format()}},[(index === 0 || date.clone().startOf('day').diff(_vm.sessionBuckets[index - 1].date.clone().startOf('day'), 'day') > 0)?_c('div',{staticClass:"day"},[_vm._v(" "+_vm._s(date.format('dddd DD. MMMM')))]):_vm._e(),_c('div',{staticClass:"time"},[_vm._v(_vm._s(date.format('LT')))]),_vm._l((sessions),function(session){return [(_vm.isProperSession(session))?_c('session',{attrs:{"session":session,"faved":session.id && _vm.favs.includes(session.id),"isLinearSchedule":""},on:{"fav":function($event){return _vm.$emit('fav', session.id)},"unfav":function($event){return _vm.$emit('unfav', session.id)}}}):_c('div',{staticClass:"break"},[_c('div',{staticClass:"title"},[_vm._v(_vm._s(_vm.getLocalizedString(session.title)))])])]})],2)]):_vm._e()}),_vm._l((_vm.sessionBuckets),function(session){return (_vm.sortBy == 'popularity' || _vm.sortBy == 'title')?_c('div',{staticClass:"bucket"},[_c('div',{staticClass:"sorted-session"},[(_vm.isProperSession(session))?_c('session',{attrs:{"session":session,"faved":session.id && _vm.favs.includes(session.id),"isLinearSchedule":""},on:{"fav":function($event){return _vm.$emit('fav', session.id)},"unfav":function($event){return _vm.$emit('unfav', session.id)}}}):_c('div',{staticClass:"break"},[_c('div',{staticClass:"title"},[_vm._v(_vm._s(_vm.getLocalizedString(session.title)))])])],1)]):_vm._e()})],2)}
-var LinearSchedulevue_type_template_id_308e9d33_lang_pug_staticRenderFns = []
+var LinearSchedulevue_type_template_id_99d34c50_lang_pug_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/LinearSchedule.vue?vue&type=template&id=308e9d33&lang=pug&
+// CONCATENATED MODULE: ./src/components/LinearSchedule.vue?vue&type=template&id=99d34c50&lang=pug&
 
 // EXTERNAL MODULE: ./node_modules/lodash/lodash.js
 var lodash = __webpack_require__("2ef0");
@@ -33125,45 +33125,47 @@ var Session_component = Object(componentNormalizer["a" /* default */])(
 
   computed: {
     sessionBuckets() {
-      if (this.sortBy === 'time') {
-        const buckets = {};
+      let sortFunction = () => {};
 
-        for (const session of this.sessions) {
-          const key = session.start.format();
+      switch (this.sortBy) {
+        case 'title':
+          sortFunction = (a, b) => a.title.localeCompare(b.title);
 
-          if (!buckets[key]) {
-            buckets[key] = [];
+          break;
+
+        case 'popularity':
+          sortFunction = (a, b) => b.fav_count - a.fav_count;
+
+          break;
+
+        default:
+          // default will be sort by time
+          const buckets = {};
+
+          for (const session of this.sessions) {
+            const key = session.start.format();
+
+            if (!buckets[key]) {
+              buckets[key] = [];
+            }
+
+            if (!session.id) {
+              // Remove duplicate breaks, meaning same start, end and text
+              session.break_id = `${session.start}${session.end}${session.title}`;
+              if (!buckets[key].some(s => s.break_id === session.break_id)) buckets[key].push(session);
+            } else {
+              buckets[key].push(session);
+            }
           }
 
-          if (!session.id) {
-            // Remove duplicate breaks, meaning same start, end and text
-            session.break_id = `${session.start}${session.end}${session.title}`;
-            if (!buckets[key].some(s => s.break_id === session.break_id)) buckets[key].push(session);
-          } else {
-            buckets[key].push(session);
-          }
-        }
-
-        return Object.entries(buckets).map(([date, sessions]) => ({
-          date: sessions[0].start,
-          // sort by room for stable sort across time buckets
-          sessions: lodash_default.a.sortBy(sessions, session => this.rooms.findIndex(room => room.id === session.room.id))
-        }));
-      } else {
-        const sortedSessions = this.sessions.slice().sort((a, b) => {
-          switch (this.sortBy) {
-            case 'title':
-              return a.title.localeCompare(b.title);
-
-            case 'popularity':
-              return b.fav_count - a.fav_count;
-
-            default:
-              return lodash_default.a.sortBy(this.rooms, room => room.id === a.room.id) - lodash_default.a.sortBy(this.rooms, room => room.id === b.room.id);
-          }
-        });
-        return sortedSessions;
+          return Object.entries(buckets).map(([date, sessions]) => ({
+            date: sessions[0].start,
+            // sort by room for stable sort across time buckets
+            sessions: lodash_default.a.sortBy(sessions, session => this.rooms.findIndex(room => room.id === session.room.id))
+          }));
       }
+
+      return this.sessions.slice().sort(sortFunction);
     }
 
   },
@@ -33289,8 +33291,8 @@ if (style0.__inject__) style0.__inject__(context)
 
 var LinearSchedule_component = Object(componentNormalizer["a" /* default */])(
   components_LinearSchedulevue_type_script_lang_js_,
-  LinearSchedulevue_type_template_id_308e9d33_lang_pug_render,
-  LinearSchedulevue_type_template_id_308e9d33_lang_pug_staticRenderFns,
+  LinearSchedulevue_type_template_id_99d34c50_lang_pug_render,
+  LinearSchedulevue_type_template_id_99d34c50_lang_pug_staticRenderFns,
   false,
   LinearSchedule_injectStyles,
   null,
