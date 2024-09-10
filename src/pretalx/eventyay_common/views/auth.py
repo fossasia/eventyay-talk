@@ -1,4 +1,5 @@
 import logging
+import os
 
 from django.conf import settings
 from django.contrib.auth import login
@@ -8,6 +9,10 @@ from requests_oauthlib import OAuth2Session
 from pretalx.person.models import User
 
 logger = logging.getLogger(__name__)
+
+
+# Set the OAUTHLIB_INSECURE_TRANSPORT environment variable based on the setting
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" if settings.OAUTHLIB_INSECURE_TRANSPORT else "0"
 
 
 def oauth2_login_view(request, *args, **kwargs):
