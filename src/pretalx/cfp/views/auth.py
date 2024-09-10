@@ -13,6 +13,7 @@ from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, View
+
 from pretalx.cfp.forms.auth import RecoverForm
 from pretalx.cfp.views.event import EventPageMixin
 from pretalx.common.text.phrases import phrases
