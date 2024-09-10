@@ -13,7 +13,6 @@ from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, View
-
 from pretalx.cfp.forms.auth import RecoverForm
 from pretalx.cfp.views.event import EventPageMixin
 from pretalx.common.text.phrases import phrases
@@ -26,9 +25,12 @@ SessionStore = import_string(f"{settings.SESSION_ENGINE}.SessionStore")
 class LogoutView(View):
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponseRedirect:
         logout(request)
-        return redirect(
+        response = redirect(
             reverse("cfp:event.start", kwargs={"event": self.request.event.slug})
         )
+        # Remove the JWT cookie
+        response.delete_cookie("sso_token")  # Same domain used when setting the cookie
+        return response
 
 
 class LoginView(GenericLoginView):
@@ -43,6 +45,11 @@ class LoginView(GenericLoginView):
 
     def get_password_reset_link(self):
         return self.request.event.urls.reset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["register_url"] = settings.EVENTYAY_TICKET_BASE_PATH
+        return context
 
 
 class ResetView(EventPageMixin, GenericResetView):
