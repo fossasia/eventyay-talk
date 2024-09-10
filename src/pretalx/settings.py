@@ -729,6 +729,8 @@ OAUTH2_PROVIDER_AUTHORIZATION_CODE_MODEL = "oauth2_provider.AuthorizationCode"
 OAUTH2_PROVIDER_CLIENT_MODEL = "oauth2_provider.Application"
 OAUTH2_PROVIDER_ID_TOKEN_MODEL = "oauth2_provider.IDToken"
 SSO_USER_INFO = "/".join([EVENTYAY_TICKET_BASE_PATH, "control/oauth2/user_info/"])
+# Disable this if you are not using HTTPS
+OAUTHLIB_INSECURE_TRANSPORT = True
 
 LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = "/login/"

@@ -12,7 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 # Set the OAUTHLIB_INSECURE_TRANSPORT environment variable based on the setting
-os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" if settings.OAUTHLIB_INSECURE_TRANSPORT else "0"
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = (
+    "1" if settings.OAUTHLIB_INSECURE_TRANSPORT else "0"
+)
 
 
 def oauth2_login_view(request, *args, **kwargs):
