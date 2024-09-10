@@ -1,18 +1,16 @@
-import os
 import logging
 
 from django.conf import settings
 from django.contrib.auth import login
 from django.shortcuts import redirect
-from pretalx.person.models import User
 from requests_oauthlib import OAuth2Session
+
+from pretalx.person.models import User
 
 logger = logging.getLogger(__name__)
 
 
 def oauth2_login_view(request, *args, **kwargs):
-    # Disable HTTPS check
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
     # Create an OAuth2 session using the client ID and redirect URI
     oauth2_session = OAuth2Session(
         client_id=settings.OAUTH2_PROVIDER["CLIENT_ID"],
@@ -33,7 +31,6 @@ def oauth2_login_view(request, *args, **kwargs):
 
 
 def oauth2_callback(request):
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
     oauth2_session = OAuth2Session(
         settings.OAUTH2_PROVIDER["CLIENT_ID"],
         redirect_uri=settings.OAUTH2_PROVIDER["REDIRECT_URI"],

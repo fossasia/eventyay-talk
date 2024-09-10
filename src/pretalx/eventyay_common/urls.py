@@ -1,4 +1,5 @@
 from django.urls import include, path
+
 from pretalx.eventyay_common.views import auth
 
 app_name = "eventyay_common"
