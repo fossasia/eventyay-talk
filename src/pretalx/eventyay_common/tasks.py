@@ -1,12 +1,19 @@
 import logging
+from datetime import datetime
 
 from celery import shared_task
 from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django_scopes import scopes_disabled
 
-from pretalx.event.forms import TeamForm
-from pretalx.event.models import Organiser, Team
+from pretalx.event.forms import (
+    EventWizardBasicsForm,
+    EventWizardInitialForm,
+    EventWizardTimelineForm,
+    TeamForm,
+)
+from pretalx.event.models import Event, Organiser, Team
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +25,7 @@ class Action:
 
 
 @shared_task
-def process_create_organiser_webhook(organiser_data):
+def process_organiser_webhook(organiser_data):
     try:
         action = organiser_data.get("action")
         if action == Action.CREATE:
@@ -73,7 +80,7 @@ def process_create_organiser_webhook(organiser_data):
 
 
 @shared_task
-def process_create_team_webhook(team_data):
+def process_team_webhook(team_data):
     try:
         action = team_data.get("action")
         organiser = get_object_or_404(Organiser, slug=team_data.get("organiser_slug"))
@@ -109,6 +116,40 @@ def process_create_team_webhook(team_data):
                 raise Http404("No Team matches the given query.")
             team.delete()
             logger.info(f"Team for organiser {organiser.name} deleted successfully.")
+
+        else:
+            logger.error(f"Unknown action: {action}")
+    except ValidationError as e:
+        logger.error("Validation error:", e.message_dict)
+    except Exception as e:
+        logger.error("Error saving organiser:", e)
+
+
+@shared_task
+def process_event_webhook(event_data):
+    try:
+        action = event_data.get("action")
+        organiser = get_object_or_404(Organiser, slug=event_data.get("organiser_slug"))
+        if action == Action.CREATE:
+            with scopes_disabled():
+                event = Event.objects.create(
+                    organiser=organiser,
+                    locale_array=",".join(event_data.get("locales")),
+                    content_locale_array=",".join(event_data.get("locales")),
+                    name=event_data.get("name"),
+                    slug=event_data.get("slug"),
+                    timezone=event_data.get("timezone"),
+                    email=event_data.get("user_email"),
+                    locale=event_data.get("locale"),
+                    date_from=datetime.fromisoformat(event_data.get("date_from")),
+                    date_to=datetime.fromisoformat(event_data.get("date_to")),
+                )
+                event.save()
+        elif action == Action.UPDATE:
+            pass
+
+        elif action == Action.DELETE:
+            pass
 
         else:
             logger.error(f"Unknown action: {action}")
