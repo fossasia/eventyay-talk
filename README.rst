@@ -2,7 +2,7 @@
 
 ``eventyay-talk`` is a comprehensive conference planning tool designed to deliver an exceptional experience for organizers, speakers, reviewers, and attendees. It efficiently manages the submission process with a customizable Call for Participation, facilitates the review and selection of submissions, and handles scheduling and release logistics. Post-event, ``eventyay-talk`` enables speakers to receive feedback, upload their slides, and allows organizers to embed recordings.
 
-For a detailed overview of its capabilities, check out our feature list on our main site. **eventyay-talk** typically covers all the essential tasks required to curate submissions and content for a multi-track, multi-day conference.
+For a detailed overview of its capabilities, check out our feature list on our main site. ``eventyay-talk`` typically covers all the essential tasks required to curate submissions and content for a multi-track, multi-day conference.
 
 You can host ``eventyay-talk`` yourself or use our public instance at eventyay.com.
 
