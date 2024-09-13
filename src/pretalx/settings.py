@@ -25,7 +25,7 @@ CONFIG = config
 ##
 
 DEBUG = config.getboolean("site", "debug")
-BASE_PATH = config.get("site", "base_path", fallback="talk/")
+BASE_PATH = config.get("site", "base_path", fallback="/talk/")
 
 
 ## DIRECTORY SETTINGS
