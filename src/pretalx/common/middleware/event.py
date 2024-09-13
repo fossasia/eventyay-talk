@@ -124,7 +124,8 @@ class EventPermissionMiddleware:
         )
 
         if "orga" in url.namespaces or (
-            "plugins" in url.namespaces and request.path.startswith(settings.BASE_PATH + "orga")
+            "plugins" in url.namespaces
+            and request.path.startswith(settings.BASE_PATH + "orga")
         ):
             response = self._handle_orga_url(request, url)
             if response:
