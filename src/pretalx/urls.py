@@ -17,19 +17,23 @@ for app in apps.get_app_configs():
                 plugin_patterns.append(path("", include((urlpatterns, app.label))))
 
 urlpatterns = [
-    path("400", error_view(400)),
-    path("403", error_view(403)),
-    path("403/csrf", error_view(4031)),
-    path("404", error_view(404)),
-    path("500", error_view(500)),
-    path("orga/", include("pretalx.orga.urls", namespace="orga")),
-    path("api/", include("pretalx.api.urls", namespace="api")),
-    # Root patterns are ordered by precedence:
-    # Plugins last, so that they cannot break anything
-    path("", include("pretalx.agenda.urls", namespace="agenda")),
-    path("", include("pretalx.cfp.urls", namespace="cfp")),
-    path("", include((plugin_patterns, "plugins"))),
-    re_path(r"^accounts/", include("allauth.urls")),
+    path(
+        settings.BASE_PATH[1:],
+        include([
+            path("400", error_view(400)),
+            path("403", error_view(403)),
+            path("403/csrf", error_view(4031)),
+            path("404", error_view(404)),
+            path("500", error_view(500)),
+            path("orga/", include("pretalx.orga.urls", namespace="orga")),
+            path("api/", include("pretalx.api.urls", namespace="api")),
+            # Root patterns are ordered by precedence:
+            # Plugins last, so that they cannot break anything
+            path("", include("pretalx.agenda.urls", namespace="agenda")),
+            path("", include("pretalx.cfp.urls", namespace="cfp")),
+            path("", include((plugin_patterns, "plugins"))),
+            re_path(r"^accounts/", include("allauth.urls")),
+        ])),
 ]
 
 handler500 = "pretalx.common.views.handle_500"

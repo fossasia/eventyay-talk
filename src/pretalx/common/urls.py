@@ -7,7 +7,7 @@ from urlman import Urls
 
 
 def get_base_url(event=None, url=None):
-    if url and url.startswith("/orga"):
+    if url and url.startswith((settings.BASE_PATH + "orga/")):
         return settings.SITE_URL
     if event:
         if event.display_settings["html_export_url"] and url:

@@ -27,7 +27,7 @@ def get_login_redirect(request):
     if event:
         url = (
             event.orga_urls.login
-            if request.path.startswith("/orga")
+            if request.path.startswith(settings.BASE_PATH + "orga")
             else event.urls.login
         )
         return redirect(url.full() + params)
@@ -120,11 +120,11 @@ class EventPermissionMiddleware:
         is_exempt = (
             url.url_name == "export"
             if "agenda" in url.namespaces
-            else request.path.startswith("/api/")
+            else request.path.startswith(settings.BASE_PATH + "api/")
         )
 
         if "orga" in url.namespaces or (
-            "plugins" in url.namespaces and request.path.startswith("/orga")
+            "plugins" in url.namespaces and request.path.startswith(settings.BASE_PATH + "orga")
         ):
             response = self._handle_orga_url(request, url)
             if response:

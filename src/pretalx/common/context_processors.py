@@ -62,7 +62,7 @@ def system_information(request):
     _head = []
     event = getattr(request, "event", None)
 
-    if not request.path.startswith("/orga/"):
+    if not request.path.startswith(settings.BASE_PATH + "orga/"):
         for __, response in footer_link.send(event, request=request):
             if isinstance(response, list):
                 _footer += response
@@ -85,10 +85,11 @@ def system_information(request):
 
     context["warning_update_available"] = False
     context["warning_update_check_active"] = False
+    context['base_path'] = settings.BASE_PATH
     if (
         not request.user.is_anonymous
         and request.user.is_administrator
-        and request.path.startswith("/orga")
+        and request.path.startswith(settings.BASE_PATH + "orga/")
     ):
         gs = GlobalSettings()
         if gs.settings.update_check_result_warning:
