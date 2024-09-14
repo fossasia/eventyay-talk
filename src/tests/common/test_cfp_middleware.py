@@ -44,30 +44,43 @@ def test_event_on_custom_domain(event_on_foobar, client):
 
 @pytest.mark.django_db
 def test_event_on_custom_port(event_on_custom_port, client):
-    r = client.get(settings.BASE_PATH + f"{event_on_custom_port.slug}/", HTTP_HOST="foobar:8000")
+    r = client.get(
+        settings.BASE_PATH + f"{event_on_custom_port.slug}/", HTTP_HOST="foobar:8000"
+    )
     assert r.status_code == 200
 
 
 @pytest.mark.django_db
 def test_event_on_custom_domain_in_orga_area(event_on_foobar, client):
-    r = client.get(settings.BASE_PATH + f"orga/event/{event_on_foobar.slug}/", HTTP_HOST="foobar")
+    r = client.get(
+        settings.BASE_PATH + f"orga/event/{event_on_foobar.slug}/", HTTP_HOST="foobar"
+    )
     assert r.status_code == 302
-    assert r["Location"] == f"http://example.com{settings.BASE_PATH}orga/event/{event_on_foobar.slug}/"
+    assert (
+        r["Location"]
+        == f"http://example.com{settings.BASE_PATH}orga/event/{event_on_foobar.slug}/"
+    )
 
 
 @pytest.mark.django_db
 def test_event_on_custom_port_in_orga_area(event_on_custom_port, client):
-    r = client.get(settings.BASE_PATH + f"orga/event/{event_on_custom_port.slug}/", HTTP_HOST="foobar:8000")
+    r = client.get(
+        settings.BASE_PATH + f"orga/event/{event_on_custom_port.slug}/",
+        HTTP_HOST="foobar:8000",
+    )
     assert r.status_code == 302
     assert (
-        r["Location"] == f"http://example.com{settings.BASE_PATH}orga/event/{event_on_custom_port.slug}/"
+        r["Location"]
+        == f"http://example.com{settings.BASE_PATH}orga/event/{event_on_custom_port.slug}/"
     )
 
 
 @pytest.mark.django_db
 def test_event_with_custom_domain_on_main_domain(event_on_foobar, client):
     """redirect from common domain to custom domain."""
-    r = client.get(settings.BASE_PATH + f"{event_on_foobar.slug}/", HTTP_HOST="example.com")
+    r = client.get(
+        settings.BASE_PATH + f"{event_on_foobar.slug}/", HTTP_HOST="example.com"
+    )
     assert r.status_code == 302
     assert r["Location"] == f"https://foobar{settings.BASE_PATH}{event_on_foobar.slug}/"
     assert r["Access-Control-Allow-Origin"] == "*"
@@ -76,9 +89,14 @@ def test_event_with_custom_domain_on_main_domain(event_on_foobar, client):
 @pytest.mark.django_db
 def test_event_with_custom_port_on_main_domain(event_on_custom_port, client):
     """redirect from common domain to custom domain."""
-    r = client.get(settings.BASE_PATH + f"{event_on_custom_port.slug}/", HTTP_HOST="example.com")
+    r = client.get(
+        settings.BASE_PATH + f"{event_on_custom_port.slug}/", HTTP_HOST="example.com"
+    )
     assert r.status_code == 302
-    assert r["Location"] == f"https://foobar:8000{settings.BASE_PATH}{event_on_custom_port.slug}/"
+    assert (
+        r["Location"]
+        == f"https://foobar:8000{settings.BASE_PATH}{event_on_custom_port.slug}/"
+    )
 
 
 @pytest.mark.django_db
@@ -90,7 +108,9 @@ def test_unknown_event_on_custom_domain(event_on_foobar, client):
 @pytest.mark.django_db
 def test_with_forwarded_host(event_on_foobar, client):
     settings.USE_X_FORWARDED_HOST = True
-    r = client.get(settings.BASE_PATH + f"{event_on_foobar.slug}/", HTTP_X_FORWARDED_HOST="foobar")
+    r = client.get(
+        settings.BASE_PATH + f"{event_on_foobar.slug}/", HTTP_X_FORWARDED_HOST="foobar"
+    )
     assert r.status_code == 200
 
 

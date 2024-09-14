@@ -81,7 +81,8 @@ def test_settings(client, user):
     assert gs.settings.update_check_email
 
     client.post(
-        settings.BASE_PATH + "orga/admin/update/", {"update_check_email": "", "update_check_enabled": ""}
+        settings.BASE_PATH + "orga/admin/update/",
+        {"update_check_email": "", "update_check_enabled": ""},
     )
     gs.settings.flush()
     assert not gs.settings.update_check_enabled

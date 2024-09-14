@@ -182,7 +182,9 @@ def test_orga_incorrect_invite_token(client, event, invitation):
 def test_can_reset_password_by_email(orga_user, client, event):
     djmail.outbox = []
     response = client.post(
-       settings.BASE_PATH + "orga/reset/", data={"login_email": orga_user.email}, follow=True
+        settings.BASE_PATH + "orga/reset/",
+        data={"login_email": orga_user.email},
+        follow=True,
     )
     orga_user.refresh_from_db()
     reset_token = orga_user.pw_reset_token
@@ -192,7 +194,9 @@ def test_can_reset_password_by_email(orga_user, client, event):
 
     # Make sure we can do this only once
     response = client.post(
-        settings.BASE_PATH + "orga/reset/", data={"login_email": orga_user.email}, follow=True
+        settings.BASE_PATH + "orga/reset/",
+        data={"login_email": orga_user.email},
+        follow=True,
     )
     orga_user.refresh_from_db()
     assert response.status_code == 200
@@ -200,12 +204,11 @@ def test_can_reset_password_by_email(orga_user, client, event):
     assert orga_user.pw_reset_token == reset_token
     assert len(djmail.outbox) == 1
 
-    response = client.post(settings.BASE_PATH +
-                           f"orga/reset/{orga_user.pw_reset_token}",
-                           data={"password": "mynewpassword1!",
-                                 "password_repeat": "mynewpassword1!"},
-                           follow=True,
-                           )
+    response = client.post(
+        settings.BASE_PATH + f"orga/reset/{orga_user.pw_reset_token}",
+        data={"password": "mynewpassword1!", "password_repeat": "mynewpassword1!"},
+        follow=True,
+    )
     assert response.status_code == 200
     orga_user.refresh_from_db()
     assert not orga_user.pw_reset_token
@@ -230,7 +233,9 @@ def test_cannot_use_incorrect_token(orga_user, client, event):
 @pytest.mark.django_db
 def test_cannot_reset_password_with_incorrect_input(orga_user, client, event):
     response = client.post(
-        settings.BASE_PATH + "orga/reset/", data={"login_email": orga_user.email}, follow=True
+        settings.BASE_PATH + "orga/reset/",
+        data={"login_email": orga_user.email},
+        follow=True,
     )
     assert response.status_code == 200
     orga_user.refresh_from_db()
@@ -254,7 +259,9 @@ def test_cannot_reset_password_with_incorrect_input(orga_user, client, event):
 @pytest.mark.django_db
 def test_cannot_reset_password_to_insecure_password(orga_user, client, event):
     response = client.post(
-        settings.BASE_PATH + "orga/reset/", data={"login_email": orga_user.email}, follow=True
+        settings.BASE_PATH + "orga/reset/",
+        data={"login_email": orga_user.email},
+        follow=True,
     )
     assert response.status_code == 200
     orga_user.refresh_from_db()
@@ -278,6 +285,8 @@ def test_cannot_reset_password_to_insecure_password(orga_user, client, event):
 @pytest.mark.django_db
 def test_cannot_reset_password_without_account(orga_user, client, event):
     response = client.post(
-        settings.BASE_PATH + "orga/reset/", data={"login_email": "incorrect" + orga_user.email}, follow=True
+        settings.BASE_PATH + "orga/reset/",
+        data={"login_email": "incorrect" + orga_user.email},
+        follow=True,
     )
     assert response.status_code == 200

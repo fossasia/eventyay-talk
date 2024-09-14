@@ -30,9 +30,9 @@ def test_event_startpage_query_string_handling(client, event, access_code):
         f"track=academic&submission_type=academic_talk&access_code={access_code.code}"
     )
     base_path = settings.BASE_PATH
-    response = client.get(base_path +
-                          f"{event.slug}/?{params_dict}",
-                          )
+    response = client.get(
+        base_path + f"{event.slug}/?{params_dict}",
+    )
     assert response.status_code == 200
     doc = bs4.BeautifulSoup(response.rendered_content, "lxml")
     info_btns = doc.select("a.btn-info")
@@ -56,9 +56,9 @@ def test_event_cfp_query_string_handling(client, event):
     given in the request URL."""
     params_dict = QueryDict("track=academic&submission_type=academic_talk")
     base_path = settings.BASE_PATH
-    response = client.get(base_path +
-                          f"{event.slug}/cfp?{params_dict}",
-                          )
+    response = client.get(
+        base_path + f"{event.slug}/cfp?{params_dict}",
+    )
     assert response.status_code == 200
     doc = bs4.BeautifulSoup(response.rendered_content, "lxml")
     info_btn = doc.select("a.btn-success")[0]
