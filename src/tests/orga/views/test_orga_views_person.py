@@ -40,7 +40,7 @@ def test_user_typeahead(
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "follow,expected", (("/orga/", "/orga/"), ("https://example.com", "/orga/event/"))
+    "follow,expected", (("/talk/orga/", "/talk/orga/"), ("https://example.com", "/talk/orga/event/"))
 )
 def test_remove_superuser(orga_client, orga_user, follow, expected):
     orga_user.is_superuser = True

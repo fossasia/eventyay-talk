@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 import bs4
 import pytest
 from django import forms as forms
+from django.conf import settings
 from django.core import mail as djmail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http.request import QueryDict
@@ -29,8 +30,9 @@ class TestWizard:
 
     def perform_init_wizard(self, client, success=True, event=None, access_code=None):
         # Start wizard
+        base_path = settings.BASE_PATH
         djmail.outbox = []
-        url = "/test/submit/"
+        url = base_path + "test/submit/"
         if access_code:
             url += f"?access_code={access_code.code}"
         response, current_url = self.get_response_and_url(client, url, method="GET")
@@ -198,8 +200,9 @@ class TestWizard:
     @pytest.mark.django_db
     def test_info_wizard_query_string_handling(self, event, client, track):
         # build query string
+        base_path = settings.BASE_PATH
         params_dict = QueryDict(f"track={track.pk}&submission_type=academic_talk")
-        current_url = "/test/submit/?{params_dict}"
+        current_url = base_path + "test/submit/?{params_dict}"
         # Start wizard
         _, current_url = self.get_response_and_url(client, current_url, method="GET")
         # get query string from current URL

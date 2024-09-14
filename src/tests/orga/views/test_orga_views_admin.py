@@ -2,6 +2,7 @@ import json
 
 import pytest
 import responses
+from django.conf import settings
 
 from pretalx.common.models.settings import GlobalSettings
 from pretalx.person.models import User
@@ -12,7 +13,7 @@ from pretalx.person.models import User
 def test_admin_dashboard_only_for_admin_user(orga_user, orga_client, is_administrator):
     orga_user.is_administrator = is_administrator
     orga_user.save()
-    response = orga_client.get("/orga/admin/")
+    response = orga_client.get(settings.BASE_PATH + "orga/admin/")
     assert (response.status_code == 200) is is_administrator
     assert (
         "Administrator information" in response.content.decode()
@@ -42,7 +43,7 @@ def request_callback_updatable(request):
 def test_update_notice_displayed(client, user):
     client.login(email="dummy@dummy.dummy", password="dummy")
 
-    r = client.get("/orga/", follow=True)
+    r = client.get(settings.BASE_PATH + "orga/", follow=True)
     assert (
         "pretalx automatically checks for updates in the background"
         not in r.content.decode()
@@ -50,14 +51,14 @@ def test_update_notice_displayed(client, user):
 
     user.is_administrator = True
     user.save()
-    r = client.get("/orga/", follow=True)
+    r = client.get(settings.BASE_PATH + "orga/", follow=True)
     assert (
         "pretalx automatically checks for updates in the background"
         in r.content.decode()
     )
 
-    client.get("/orga/admin/update/")  # Click it
-    r = client.get("/orga/", follow=True)
+    client.get(settings.BASE_PATH + "orga/admin/update/")  # Click it
+    r = client.get(settings.BASE_PATH + "orga/", follow=True)
     assert (
         "pretalx automatically checks for updates in the background"
         not in r.content.decode()
@@ -71,7 +72,7 @@ def test_settings(client, user):
     client.login(email="dummy@dummy.dummy", password="dummy")
 
     client.post(
-        "/orga/admin/update/",
+        settings.BASE_PATH + "orga/admin/update/",
         {"update_check_email": "test@example.com", "update_check_enabled": "on"},
     )
     gs = GlobalSettings()
@@ -80,7 +81,7 @@ def test_settings(client, user):
     assert gs.settings.update_check_email
 
     client.post(
-        "/orga/admin/update/", {"update_check_email": "", "update_check_enabled": ""}
+        settings.BASE_PATH + "orga/admin/update/", {"update_check_email": "", "update_check_enabled": ""}
     )
     gs.settings.flush()
     assert not gs.settings.update_check_enabled
@@ -103,6 +104,6 @@ def test_trigger(client, user):
 
     gs = GlobalSettings()
     assert not gs.settings.update_check_last
-    client.post("/orga/admin/update/", {"trigger": "on"})
+    client.post(settings.BASE_PATH + "orga/admin/update/", {"trigger": "on"})
     gs.settings.flush()
     assert gs.settings.update_check_last

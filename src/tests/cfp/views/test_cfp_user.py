@@ -518,7 +518,7 @@ def test_can_change_locale(multilingual_event, client):
     assert "submission" in first_response.content.decode()
     second_response = client.get(
         reverse("cfp:locale.set", kwargs={"event": multilingual_event.slug})
-        + f"?locale=de&next=/{multilingual_event.slug}/",
+        + f"?locale=de&next={settings.BASE_PATH}{multilingual_event.slug}/",
         follow=True,
     )
     assert "Fancy testeve" in second_response.content.decode()
@@ -530,7 +530,7 @@ def test_can_change_locale_with_queryparam(multilingual_event, client):
     assert "submission" in first_response.content.decode()
     second_response = client.get(
         reverse("cfp:locale.set", kwargs={"event": multilingual_event.slug})
-        + f"?locale=de&next=/{multilingual_event.slug}/?foo=bar",
+        + f"?locale=de&next={settings.BASE_PATH}{multilingual_event.slug}/?foo=bar",
         follow=True,
     )
     assert "Fancy testeve" in second_response.content.decode()
@@ -541,7 +541,7 @@ def test_persists_changed_locale(multilingual_event, orga_user, orga_client):
     assert orga_user.locale == "en"
     response = orga_client.get(
         reverse("cfp:locale.set", kwargs={"event": multilingual_event.slug})
-        + f"?locale=de&next=/{multilingual_event.slug}/",
+        + f"?locale=de&next={settings.BASE_PATH}{multilingual_event.slug}/",
         follow=True,
     )
     orga_user.refresh_from_db()

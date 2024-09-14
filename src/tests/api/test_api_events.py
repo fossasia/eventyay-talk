@@ -1,6 +1,7 @@
 import json
 
 import pytest
+from django.conf import settings
 
 from pretalx.api.serializers.event import EventSerializer
 
@@ -28,11 +29,12 @@ def test_event_serializer(event):
 @pytest.mark.django_db
 def test_can_only_see_public_events(client, event, other_event):
     other_event.is_public = False
+    base_path = settings.BASE_PATH
     other_event.save()
     assert event.is_public
     assert not other_event.is_public
 
-    response = client.get("/api/events", follow=True)
+    response = client.get(base_path + "api/events", follow=True)
     content = json.loads(response.content.decode())
 
     assert response.status_code == 200
@@ -60,11 +62,12 @@ def test_can_only_see_public_events_in_detail(client, event):
 @pytest.mark.django_db
 def test_orga_can_see_nonpublic_events(orga_client, event, other_event):
     event.is_public = False
+    base_path = settings.BASE_PATH
     event.save()
     assert not event.is_public
     assert other_event.is_public
 
-    response = orga_client.get("/api/events", follow=True)
+    response = orga_client.get(base_path + "api/events", follow=True)
     content = json.loads(response.content.decode())
 
     assert response.status_code == 200

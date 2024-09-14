@@ -1,4 +1,5 @@
 import pytest
+from django.conf import settings
 from django.test import Client
 from rest_framework.authtoken.models import Token
 
@@ -10,7 +11,7 @@ def test_can_see_schedule_with_bearer_token(event, schedule, slot, orga_user):
     client = Client(headers={"authorization": "Token " + orga_user.auth_token.key})
     event.feature_flags["show_schedule"] = False
     event.save()
-    response = client.get(f"/{event.slug}/schedule.xml")
+    response = client.get(settings.BASE_PATH + f"{event.slug}/schedule.xml")
     assert response.status_code == 200
     assert slot.submission.title in response.content.decode()
 

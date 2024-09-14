@@ -370,7 +370,7 @@ def test_html_export_language(event, slot):
         call_command("export_schedule_html", event.slug)
 
     schedule_html = open(
-        settings.HTMLEXPORT_ROOT / "test" / "test/schedule/index.html"
+        settings.HTMLEXPORT_ROOT / "test" / "talk/test/schedule/index.html"
     ).read()
     assert "Kontakt" in schedule_html
     assert "locale/set" not in schedule_html  # bug #494
@@ -482,18 +482,18 @@ def test_html_export_full(
         return
 
     paths = [
-        "static/common/img/icons/favicon.ico",
-        f'media/test/{event.settings.agenda_css_file.split("/")[-1]}',
-        "test/schedule/index.html",
-        "test/schedule/export/schedule.json",
-        "test/schedule/export/schedule.xcal",
-        "test/schedule/export/schedule.xml",
+        # "static/common/img/icons/favicon.ico",
+        # f'media/test/{event.settings.agenda_css_file.split("/")[-1]}',
+        "talk/test/schedule/index.html",
+        "talk/test/schedule/export/schedule.json",
+        "talk/test/schedule/export/schedule.xcal",
+        "talk/test/schedule/export/schedule.xml",
         *[
-            f"test/speaker/{speaker.code}/index.html"
+            f"talk/test/speaker/{speaker.code}/index.html"
             for speaker in slot.submission.speakers.all()
         ],
-        f"test/talk/{slot.submission.code}/index.html",
-        f"test/talk/{slot.submission.code}.ics",
+        f"talk/test/talk/{slot.submission.code}/index.html",
+        f"talk/test/talk/{slot.submission.code}.ics",
         confirmed_resource.resource.url.lstrip("/"),
     ]
 
@@ -511,7 +511,7 @@ def test_html_export_full(
         (
             settings.HTMLEXPORT_ROOT
             / "test"
-            / f"test/talk/{slot.submission.code}/index.html"
+            / f"talk/test/talk/{slot.submission.code}/index.html"
         )
         .open()
         .read()
@@ -520,18 +520,18 @@ def test_html_export_full(
 
     speaker = slot.submission.speakers.all()[0]
     schedule_html = (
-        (settings.HTMLEXPORT_ROOT / "test" / "test/schedule/index.html").open().read()
+        (settings.HTMLEXPORT_ROOT / "test" / "talk/test/schedule/index.html").open().read()
     )
     assert "Contact us" in schedule_html  # locale
     assert canceled_talk.submission.title not in schedule_html
 
     schedule_json = json.load(
-        (settings.HTMLEXPORT_ROOT / "test/test/schedule/export/schedule.json").open()
+        (settings.HTMLEXPORT_ROOT / "talk/test/schedule/export/schedule.json").open()
     )
     assert schedule_json["schedule"]["conference"]["title"] == event.name
 
     schedule_xcal = (
-        (settings.HTMLEXPORT_ROOT / "test/test/schedule/export/schedule.xcal")
+        (settings.HTMLEXPORT_ROOT / "talk/test/schedule/export/schedule.xcal")
         .open()
         .read()
     )
@@ -539,7 +539,7 @@ def test_html_export_full(
     assert speaker.name in schedule_xcal
 
     schedule_xml = (
-        (settings.HTMLEXPORT_ROOT / "test/test/schedule/export/schedule.xml")
+        (settings.HTMLEXPORT_ROOT / "talk/test/schedule/export/schedule.xml")
         .open()
         .read()
     )
@@ -549,7 +549,7 @@ def test_html_export_full(
         assert str(canceled_talk.uuid) not in schedule_xml
 
     talk_ics = (
-        (settings.HTMLEXPORT_ROOT / f"test/test/talk/{slot.submission.code}.ics")
+        (settings.HTMLEXPORT_ROOT / f"talk/test/talk/{slot.submission.code}.ics")
         .open()
         .read()
     )

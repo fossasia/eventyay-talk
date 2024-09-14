@@ -1,6 +1,7 @@
 import datetime as dt
 
 import pytest
+from django.conf import settings
 from django.core import mail as djmail
 from django.urls import reverse
 from django.utils.timezone import now
@@ -12,8 +13,9 @@ from pretalx.event.models import Event, Organiser
 @pytest.mark.django_db
 def test_orga_create_organiser(administrator_client):
     assert len(Organiser.objects.all()) == 0
+    base_path = settings.BASE_PATH
     response = administrator_client.post(
-        "/orga/organiser/new",
+        base_path + "orga/organiser/new",
         data={
             "name_0": "The bestest organiser",
             "name_1": "The bestest organiser",
@@ -219,7 +221,8 @@ def test_reset_team_member_password(orga_client, organiser, other_orga_user):
 @pytest.mark.django_db
 @pytest.mark.parametrize("deadline", (True, False))
 class TestEventCreation:
-    url = "/orga/event/new/"
+    base_path = settings.BASE_PATH
+    url = base_path + "orga/event/new/"
 
     def post(self, step, data, client):
         data = {f"{step}-{key}": value for key, value in data.items()}

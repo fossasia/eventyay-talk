@@ -1094,7 +1094,7 @@ def test_edit_review_settings_reviewer_cannot_move_review_phase(review_client, e
 
 @pytest.mark.django_db
 def test_organiser_can_see_event_suggestions(orga_client, event):
-    response = orga_client.get("/orga/nav/typeahead/")
+    response = orga_client.get(settings.BASE_PATH + "orga/nav/typeahead/")
     assert response.status_code == 200
     content = json.loads(response.content.decode())["results"]
     assert len(content) == 3
@@ -1107,7 +1107,8 @@ def test_organiser_can_see_event_suggestions(orga_client, event):
 
 @pytest.mark.django_db
 def test_speaker_cannot_see_event_suggestions(speaker_client, event):
-    response = speaker_client.get("/orga/nav/typeahead/")
+    base_path = settings.BASE_PATH
+    response = speaker_client.get(base_path + "orga/nav/typeahead/")
     assert response.status_code == 200
     content = json.loads(response.content.decode())["results"]
     assert len(content) == 1
