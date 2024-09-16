@@ -126,8 +126,8 @@ ALLOWED_HOSTS = [
 ROOT_URLCONF = "pretalx.urls"
 BASE_PATH = config.get("site", "base_path", fallback="")
 FORCE_SCRIPT_NAME = BASE_PATH
-STATIC_URL = config.get('site', 'static', fallback=BASE_PATH + '/static/')
-MEDIA_URL = config.get('site', 'media', fallback=BASE_PATH + '/media/')
+STATIC_URL = config.get("site", "static", fallback=BASE_PATH + "/static/")
+MEDIA_URL = config.get("site", "media", fallback=BASE_PATH + "/media/")
 FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755
 FILE_UPLOAD_DEFAULT_LIMIT = 10 * 1024 * 1024
 IMAGE_DEFAULT_MAX_WIDTH = 1920
