@@ -65,7 +65,7 @@ def process_organiser_webhook(organiser_data):
 
         elif action == Action.DELETE:
             # Implement delete logic here
-            logger.info(f"Organiser delete not implemented yet.")
+            logger.info("Organiser delete not implemented yet.")
             pass
 
         else:
