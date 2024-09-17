@@ -7,9 +7,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django_scopes import scopes_disabled
 
-from pretalx.event.forms import (
-    TeamForm,
-)
+from pretalx.event.forms import TeamForm
 from pretalx.event.models import Event, Organiser, Team
 
 logger = logging.getLogger(__name__)
