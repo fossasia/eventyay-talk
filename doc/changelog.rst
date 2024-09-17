@@ -3,6 +3,19 @@
 Release Notes
 =============
 
+- :bug:`orga:schedule,1828` When exporting an event to a HTML export, files with umlauts or other non-ascii characters in their file name were saved with the encoded version of that name, so when the export was served by a webserver, these files wouldn't be shown.
+- :bug:`schedule` When organisers initially asked speakers to upload a profile picture, but then turned off the upload, the profile pictures collected to that date would still show up in the schedule grid and on the individual speaker pages. They will now be hidden from view.
+- :bug:`orga` Organisers could inadvertently remove all access to an event when they updated their team permissions. Pretalx now forbids this, and additionally shows warnings when an event is being orphaned by a team change.
+- :feature:`orga` A lot of info boxes that are mostly useful to new or inexperienced users are now hidden behind ❓ symbols rather than being always visible.
+- :bug:`cfp` The "additional speaker" form field would be shown even after a proposal had been submitted, even though there is a more detailed dedicated page to add new speakers at that point. The field now won't be shown on the proposal edit page.
+- :feature:`orga:speaker` Speaker profile pictures are now shown in more places.
+- :feature:`orga` Most organiser pages now have a useful tab title.
+- :bug:`orga` When copying an old event's settings to a new one, questions were copied, but their answer options (for choice/multiple choice questions) were omitted.
+- :bug:`orga:email` When sending an email to only speakers with a specific question answer, emails would instead be generated (and placed in the outbox, not sent!) to all speakers.
+- :bug:`orga:submission` When organisers filtered the session list by specific question answers, adding search terms or filters would reset the question filter.
+- :feature:`schedule,1002` Logged-in users can now download an iCal file with their starred talks.
+- :feature:`schedule` For logged in users, pretalx will now save the list of starred/favourited talks, so that you can sync the starred talks across devices.
+- :feature:`schedule` If a talk won't be recorded, this will now be shown in the schedule, rather than just on the individual talk pages.
 - :feature:`schedule,1794` The iCal schedule export has been made private (available only to organisers) as the utility of importing a conference's entire schedule is limited, and people were frustrated that the iCal export did not reflect any applied schedule filters.
 - :bug:`schedule,1803` The QR code for schedule exporter links was not showing up when hovering on the QR code symbol.
 - :release:`2024.2.1 <2024-08-07>`
