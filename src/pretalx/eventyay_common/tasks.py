@@ -8,9 +8,6 @@ from django.shortcuts import get_object_or_404
 from django_scopes import scopes_disabled
 
 from pretalx.event.forms import (
-    EventWizardBasicsForm,
-    EventWizardInitialForm,
-    EventWizardTimelineForm,
     TeamForm,
 )
 from pretalx.event.models import Event, Organiser, Team
