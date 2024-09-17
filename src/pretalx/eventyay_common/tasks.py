@@ -153,8 +153,8 @@ def process_event_webhook(event_data):
                 raise Http404("No Event matches the given query.")
             # Update the team object with new data from team_data
             event.name = event_data.get("name")
-            event.date_from = datetime.fromisoformat(event_data['date_from'])
-            event.date_to = datetime.fromisoformat(event_data['date_to'])
+            event.date_from = datetime.fromisoformat(event_data["date_from"])
+            event.date_to = datetime.fromisoformat(event_data["date_to"])
             event.locale_array = ",".join(event_data.get("locales"))
             event.content_locale_array = ",".join(event_data.get("locales"))
             event.timezone = event_data.get("timezone")
