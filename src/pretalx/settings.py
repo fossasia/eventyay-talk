@@ -126,7 +126,7 @@ ALLOWED_HOSTS = [
     "*"
 ]  # We have our own security middleware to allow for custom event URLs
 ROOT_URLCONF = "pretalx.urls"
-BASE_PATH = config.get("site", "base_path", fallback="")
+BASE_PATH = config.get("site", "base_path", fallback="/talk")
 FORCE_SCRIPT_NAME = BASE_PATH
 STATIC_URL = config.get("site", "static", fallback=BASE_PATH + "/static/")
 MEDIA_URL = config.get("site", "media", fallback=BASE_PATH + "/media/")
