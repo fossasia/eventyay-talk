@@ -4,8 +4,8 @@
 
 {% block agenda_header_row %}
     {% compress js %}
-        <script type="text/javascript" src='{% static "/agenda/js/jquery.min.js"%}'></script>
-        <script type="text/javascript" src='{% static "/agenda/js/join-online-event.js"%}'></script>
+        <script src="{% static "jquery/js/jquery-3.7.1.min.js" %}"></script>
+        <script src="{% static "agenda/js/join-online-event.js" %}"></script>
     {% endcompress %}
 {% endblock %}
 
@@ -15,19 +15,22 @@
       <div class="modal-card-content-join">
           <div>
               <h3>
-                  {% trans "This is a ticketed event. Please check your email for your unique ticketed link to join." %}
+                  {% trans "This is a ticketed event. If you ordered a ticket as a guest user, you don't have an account but can still access the ticket using the secret link in your ticket confirmation email. On the tickets page there is also a link to join online sessions." %}
+              </h3>
+              <h3>
+                  {% trans "As a ticket holder please also check your email for the unique link to join online sessions." %}
               </h3>
               <p class="text">
-                  {% trans "Lost your ticket?" %}
+                  {% trans "Can't find your ticket?" %}
                   <a id="resend_link" class="btn btn-default" href='{{ request.event.display_settings.ticket_link }}resend'>
                       {% trans "Resend the email" %}
                   </a>
-                  {% trans "to receive it here." %}
+                  {% trans "to receive it." %}
               </p>
               <p class="text">
-                  {% trans "Haven’t got a ticket yet?" %}
-                  <a id="login_link" class="btn btn-default" href='{{ request.event.display_settings.ticket_link }}'>
-                      {% trans "Register here" %}
+                  {% trans "Want to order a ticket?" %}
+                  <a id="ticket_link" class="btn btn-default" href='{{ request.event.display_settings.ticket_link }}'>
+                      {% trans "Get a ticket here" %}
                   </a>
               </p>
           </div>
@@ -79,7 +82,7 @@
             <span>{% translate "Version" %} <a href="{{ request.event.urls.changelog }}">{{ schedule.version|default:"–" }}</a></span>
             <details class="dropdown">
                 <summary class="btn btn-sm btn-outline-info">
-                    <i class="fa fa-calendar-plus-o"></i> 
+                    <i class="fa fa-calendar-plus-o"></i>
                         <span class="calendar-text"> Add to Calendar </span>
                     <i class="fa fa-caret-down"></i>
                 </summary>

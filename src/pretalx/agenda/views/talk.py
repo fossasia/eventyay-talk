@@ -1,16 +1,14 @@
-import requests
-import jwt
 import datetime as dt
 from urllib.parse import urlparse, unquote
 
+import jwt
+import requests
 import vobject
 from django.conf import settings
 from django.contrib import messages
-from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.http import Http404, HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, render, redirect
-from django.urls import reverse
+from django.shortcuts import get_object_or_404, render
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views import View
@@ -19,10 +17,9 @@ from django_context_decorator import context
 
 from pretalx.agenda.signals import register_recording_provider
 from pretalx.cfp.views.event import EventPageMixin
-from pretalx.common.mixins.views import PermissionRequired, SocialMediaCardMixin, \
-    EventPermissionRequired
-from pretalx.common.phrases import phrases
+from pretalx.common.mixins.views import EventPermissionRequired
 from pretalx.common.mixins.views import PermissionRequired, SocialMediaCardMixin
+from pretalx.common.phrases import phrases
 from pretalx.common.text.phrases import phrases
 from pretalx.schedule.models import Schedule, TalkSlot
 from pretalx.submission.forms import FeedbackForm
@@ -304,7 +301,7 @@ class OnlineVideoJoin(EventPermissionRequired, View):
 
         # call to ticket to check if user order ticket yet or not
         response = requests.get(
-            f"{base_url}api/v1/{organizer}/{event}/customer/{request.user.code}/ticket-check")
+            f"{base_url}/api/v1/{organizer}/{event}/customer/{request.user.code}/ticket-check")
 
         if response.status_code != 200:
             return HttpResponse(status=403, content='user_not_allowed')
@@ -348,11 +345,11 @@ class OnlineVideoJoin(EventPermissionRequired, View):
 
     def retrieve_info_from_url(self, url):
         parsed_url = urlparse(url)
-        base_url = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_url)
+        ticket_host = settings.EVENTYAY_TICKET_BASE_PATH
         path = parsed_url.path
         parts = path.strip('/').split('/')
         if len(parts) >= 2:
             organizer, event = parts[-2:]
-            return base_url, unquote(organizer), unquote(event)
+            return ticket_host, unquote(organizer), unquote(event)
         else:
-            return base_url, None, None
+            return ticket_host, None, None

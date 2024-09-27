@@ -410,7 +410,7 @@ article .pretalx-session .pretalx-session-info .abstract {
       margin: 50px auto 0;
       top: 50px;
       width: 90%;
-      max-width: 600px;
+      max-width: 900px;
       background: white;
       border-radius: 0;
       box-shadow: 0 7px 14px 0 rgba(78, 50, 92, 0.1),0 3px 6px 0 rgba(0,0,0,.07);
@@ -430,10 +430,14 @@ article .pretalx-session .pretalx-session-info .abstract {
           }
       }
       .modal-card-content-join {
-          text-align: left;
-          h3 {
-              margin-top: 0;
-          }
+        text-align: left;
+        h3 {
+            margin-top: 0;
+        }
+        .btn-link {
+          box-shadow: 0px 0px 0px 1px $btn-primary-border inset;
+          box-sizing: border-box;
+        }
       }
       .join-online-close {
           display: flex;
