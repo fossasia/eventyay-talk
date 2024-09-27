@@ -53,7 +53,14 @@ class CfPSettingsForm(
             self.fields[
                 "mail_on_new_submission"
             ].help_text += f' (<a href="mailto:{obj.email}">{obj.email}</a>)'
-        self.length_fields = ["title", "abstract", "description", "biography", "avatar_source", "avatar_license"]
+        self.length_fields = [
+            "title",
+            "abstract",
+            "description",
+            "biography",
+            "avatar_source",
+            "avatar_license",
+        ]
         self.request_require_fields = [
             "abstract",
             "description",
@@ -75,14 +82,18 @@ class CfPSettingsForm(
             self.fields[field_name] = forms.IntegerField(
                 required=False,
                 min_value=0,
-                initial=obj.cfp.fields.get(attribute,{"min_length":None}).get("min_length"),
+                initial=obj.cfp.fields.get(attribute, {"min_length": None}).get(
+                    "min_length"
+                ),
             )
             self.fields[field_name].widget.attrs["placeholder"] = ""
             field_name = f"cfp_{attribute}_max_length"
             self.fields[field_name] = forms.IntegerField(
                 required=False,
                 min_value=0,
-                initial=obj.cfp.fields.get(attribute,{"max_length":None}).get("max_length"),
+                initial=obj.cfp.fields.get(attribute, {"max_length": None}).get(
+                    "max_length"
+                ),
             )
             self.fields[field_name].widget.attrs["placeholder"] = ""
         for attribute in self.request_require_fields:
@@ -211,13 +222,12 @@ class QuestionForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
             options = json.loads(content)
             if not isinstance(options, list):
                 raise Exception(_("JSON file does not contain a list."))
-            if not all(isinstance(o, dict) for o in options):
+            if not all(isinstance(opt, dict) for opt in options):
                 raise Exception(_("JSON file does not contain a list of objects."))
-            return [LazyI18nString(data=o) for o in options]
+            return [LazyI18nString(data=opt) for opt in options]
         except Exception:
             options = content.split("\n")
-            options = [o.strip() for o in options if o.strip()]
-            return options
+            return [opt.strip() for opt in options if opt.strip()]
 
     def clean(self):
         deadline = self.cleaned_data["deadline"]
@@ -231,10 +241,7 @@ class QuestionForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
                     )
                 ),
             )
-        if (
-            question_required == QuestionRequired.OPTIONAL
-            or question_required == QuestionRequired.REQUIRED
-        ):
+        if question_required in (QuestionRequired.OPTIONAL, QuestionRequired.REQUIRED):
             self.cleaned_data["deadline"] = None
         options = self.cleaned_data.get("options")
         options_replace = self.cleaned_data.get("options_replace")
@@ -268,8 +275,8 @@ class QuestionForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
         if not use_i18n:
             # Monolangual i18n strings with strings aren't equal, so we're normalising.
             with override(instance.event.locale):
-                existing_options = [str(o) for o in existing_options]
-                options = [str(o) for o in options]
+                existing_options = [str(opt) for opt in existing_options]
+                options = [str(opt) for opt in options]
         new_options = []
         for option in options:
             if option not in existing_options:
@@ -334,7 +341,7 @@ class SubmissionTypeForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
         qs = self.event.submission_types.all()
         if self.instance and self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)
-        if any(str(s.name) == str(name) for s in qs):
+        if any(str(stype.name) == str(name) for stype in qs):
             raise forms.ValidationError(
                 _("You already have a session type by this name!")
             )
@@ -369,7 +376,7 @@ class TrackForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
         qs = self.event.tracks.all()
         if self.instance and self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)
-        if any(str(s.name) == str(name) for s in qs):
+        if any(str(track.name) == str(name) for track in qs):
             raise forms.ValidationError(_("You already have a track by this name!"))
         return name
 
@@ -540,7 +547,7 @@ class QuestionFilterForm(forms.Form):
         result["missing_answers"] = question.missing_answers(
             filter_speakers=speakers, filter_talks=talks
         )
-        if question.variant in [QuestionVariant.CHOICES, QuestionVariant.MULTIPLE]:
+        if question.variant in (QuestionVariant.CHOICES, QuestionVariant.MULTIPLE):
             grouped_answers = (
                 answers.order_by("options")
                 .values("options", "options__answer")

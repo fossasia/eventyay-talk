@@ -121,7 +121,7 @@ especially useful for automating invocations of this command. For the first
 phase (creation of a superuser), set the environment variables
 ``DJANGO_SUPERUSER_EMAIL`` and ``DJANGO_SUPERUSER_PASSWORD`` (`see also the
 documentation of the non-interactive mode of the corresponding Django command
-<https://docs.djangoproject.com/en/4.2/ref/django-admin/#createsuperuser>`_).
+<https://docs.djangoproject.com/en/stable/ref/django-admin/#createsuperuser>`_).
 For the second phase (creation of an organiser), set the environment variables
 ``PRETALX_INIT_ORGANISER_NAME`` and ``PRETALX_INIT_ORGANISER_SLUG``.
 
@@ -192,3 +192,11 @@ This command generates new migration files for database changed. It should ONLY
 be used during pretalx development, even if you are running a custom
 installation, or if the console output of pretalx tells you to run it in case
 of changes to database models.
+
+``create_social_apps``
+~~~~~~~~~~~~~~~~~~~~~~~
+This command is used to create SocialApp entries for Eventyay-ticket Provider
+
+``sync_customer_account``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This command is used to sync customer accounts from Eventyay Ticket

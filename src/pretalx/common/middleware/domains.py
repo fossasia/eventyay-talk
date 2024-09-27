@@ -8,10 +8,11 @@ from django.contrib.sessions.middleware import (
 )
 from django.core.exceptions import DisallowedHost
 from django.db.models import Q
+from django.http import Http404
 from django.http.request import split_domain_port
 from django.middleware.csrf import CSRF_SESSION_KEY
 from django.middleware.csrf import CsrfViewMiddleware as BaseCsrfMiddleware
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import redirect
 from django.urls import resolve
 from django.utils.cache import patch_vary_headers
 from django.utils.http import http_date
@@ -50,12 +51,19 @@ class MultiDomainMiddleware:
         request.port = int(port) if port else None
         request.uses_custom_domain = False
 
-        resolved = resolve(request.path)
-        if resolved.url_name in ANY_DOMAIN_ALLOWED or request.path.startswith("/api/"):
+        resolved = resolve(request.path_info)
+        if resolved.url_name in ANY_DOMAIN_ALLOWED or request.path_info.startswith(
+            "/api/"
+        ):
             return None
         event_slug = resolved.kwargs.get("event")
         if event_slug:
-            event = get_object_or_404(Event, slug__iexact=event_slug)
+            try:
+                event = Event.objects.get(slug__iexact=event_slug)
+            except (Event.DoesNotExist, ValueError):
+                # A ValueError can happen if the event slug contains malicious input
+                # like NUL bytes. We return a 404 here to avoid leaking information.
+                raise Http404()
             request.event = event
             if event.custom_domain:
                 custom_domain = urlparse(event.custom_domain)
@@ -70,7 +78,7 @@ class MultiDomainMiddleware:
         if settings.DEBUG or domain in LOCAL_HOST_NAMES:
             return None
 
-        if request.path.startswith("/orga"):  # pragma: no cover
+        if request.path_info.startswith("/orga"):  # pragma: no cover
             if default_port not in (80, 443):
                 default_domain = f"{default_domain}:{default_port}"
             return redirect(urljoin(default_domain, request.get_full_path()))

@@ -26,10 +26,11 @@ urlpatterns = [
     path("api/", include("pretalx.api.urls", namespace="api")),
     # Root patterns are ordered by precedence:
     # Plugins last, so that they cannot break anything
+    path("", include("pretalx.eventyay_common.urls", namespace="eventyay_common")),
     path("", include("pretalx.agenda.urls", namespace="agenda")),
     path("", include("pretalx.cfp.urls", namespace="cfp")),
     path("", include((plugin_patterns, "plugins"))),
-    re_path(r'^accounts/', include('allauth.urls')),
+    re_path(r"^accounts/", include("allauth.urls")),
 ]
 
 handler500 = "pretalx.common.views.handle_500"

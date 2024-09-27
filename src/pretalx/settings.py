@@ -66,7 +66,7 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
-    'django.contrib.sites',
+    "django.contrib.sites",
 ]
 EXTERNAL_APPS = [
     "compressor",
@@ -79,6 +79,7 @@ EXTERNAL_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "oauth2_provider",
 ]
 LOCAL_APPS = [
     "pretalx.api",
@@ -92,6 +93,7 @@ LOCAL_APPS = [
     "pretalx.cfp",
     "pretalx.orga",
     "pretalx.sso_provider",
+    "pretalx.eventyay_common",
 ]
 FALLBACK_APPS = [
     "bootstrap4",
@@ -123,10 +125,11 @@ SITE_NETLOC = urlparse(SITE_URL).netloc
 ALLOWED_HOSTS = [
     "*"
 ]  # We have our own security middleware to allow for custom event URLs
-
 ROOT_URLCONF = "pretalx.urls"
-STATIC_URL = config.get("site", "static")
-MEDIA_URL = config.get("site", "media")
+BASE_PATH = config.get("site", "base_path", fallback="")
+FORCE_SCRIPT_NAME = BASE_PATH
+STATIC_URL = config.get("site", "static", fallback=BASE_PATH + "/static/")
+MEDIA_URL = config.get("site", "media", fallback=BASE_PATH + "/media/")
 FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755
 FILE_UPLOAD_DEFAULT_LIMIT = 10 * 1024 * 1024
 IMAGE_DEFAULT_MAX_WIDTH = 1920
@@ -194,14 +197,9 @@ else:
 ## DATABASE SETTINGS
 db_backend = config.get("database", "backend")
 db_name = config.get("database", "name", fallback=str(DATA_DIR / "db.sqlite3"))
-if db_backend == "mysql":
-    db_opts = {
-        "charset": "utf8mb4",
-        "use_unicode": True,
-        "init_command": "SET character_set_connection=utf8mb4,collation_connection=utf8mb4_unicode_ci;",
-    }
-else:
-    db_opts = {}
+
+db_opts = {}
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends." + db_backend,
@@ -212,14 +210,7 @@ DATABASES = {
         "PORT": config.get("database", "port"),
         "CONN_MAX_AGE": 0 if db_backend == "sqlite3" or HAS_CELERY else 120,
         "OPTIONS": db_opts,
-        "TEST": (
-            {
-                "CHARSET": "utf8mb4",
-                "COLLATION": "utf8mb4_unicode_ci",
-            }
-            if "mysql" in db_backend
-            else {}
-        ),
+        "TEST": {},
     }
 }
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
@@ -382,64 +373,64 @@ LANGUAGES_INFORMATION = {
         "name": _("Arabic"),
         "natural_name": "اَلْعَرَبِيَّةُ",
         "official": False,
-        "percentage": 77,
+        "percentage": 75,
     },
     "cs": {
         "name": _("Czech"),
         "natural_name": "Čeština",
         "official": False,
-        "percentage": 95,
+        "percentage": 100,
     },
     "el": {
         "name": _("Greek"),
         "natural_name": "Ελληνικά",
         "official": False,
-        "percentage": 95,
+        "percentage": 92,
     },
     "es": {
         "name": _("Spanish"),
         "natural_name": "Español",
         "official": False,
-        "percentage": 85,
+        "percentage": 82,
     },
     "fr": {
         "name": _("French"),
         "natural_name": "Français",
         "official": False,
-        "percentage": 85,
+        "percentage": 100,
         "path": "fr_FR",
     },
     "it": {
         "name": _("Italian"),
         "natural_name": "Italiano",
         "official": False,
-        "percentage": 96,
+        "percentage": 98,
     },
     "ja-jp": {
         "name": _("Japanese"),
         "natural_name": "日本語",
         "official": False,
-        "percentage": 74,
+        "percentage": 72,
         "public_code": "jp",
     },
     "nl": {
         "name": _("Dutch"),
         "natural_name": "Nederlands",
         "official": False,
-        "percentage": 92,
+        "percentage": 91,
     },
     "pt-br": {
         "name": _("Brasilian Portuguese"),
         "natural_name": "Português brasileiro",
         "official": False,
-        "percentage": 94,
+        "percentage": 91,
         "public_code": "pt",
     },
     "pt-pt": {
         "name": _("Portuguese"),
         "natural_name": "Português",
         "official": False,
-        "percentage": 91,
+        "percentage": 92,
         "public_code": "pt",
     },
     "ru": {
@@ -458,14 +449,14 @@ LANGUAGES_INFORMATION = {
         "name": _("Traditional Chinese (Taiwan)"),
         "natural_name": "漢語",
         "official": False,
-        "percentage": 70,
+        "percentage": 68,
         "public_code": "zh",
     },
     "zh-hans": {
         "name": _("Simplified Chinese"),
         "natural_name": "简体中文",
         "official": False,
-        "percentage": 90,
+        "percentage": 88,
         "public_code": "zh",
     },
 }
@@ -503,7 +494,7 @@ DEFAULT_EVENT_PRIMARY_COLOR = "#2185d0"
 
 ## AUTHENTICATION SETTINGS
 AUTH_USER_MODEL = "person.User"
-LOGIN_URL = "/orga/login"
+LOGIN_URL = BASE_PATH + "/orga/login"
 AUTHENTICATION_BACKENDS = (
     "rules.permissions.ObjectPermissionBackend",
     "django.contrib.auth.backends.ModelBackend",
@@ -554,7 +545,6 @@ TEMPLATES = [
             DATA_DIR / "templates",
             BASE_DIR / "templates",
             BASE_DIR / "pretalx" / "sso_provider" / "templates",
-
         ],
         "OPTIONS": {
             "context_processors": [
@@ -598,7 +588,7 @@ STORAGES = {
 VITE_DEV_SERVER_PORT = 8080
 VITE_DEV_SERVER = f"http://localhost:{VITE_DEV_SERVER_PORT}"
 VITE_DEV_MODE = DEBUG
-_VITE_IGNORE = False  # Used to ignore `collectstatic`/`rebuild`
+VITE_IGNORE = False  # Used to ignore `collectstatic`/`rebuild`
 
 
 ## EXTERNAL APP SETTINGS
@@ -698,24 +688,52 @@ else:
 
 # Below is configuration for SSO using eventyay-ticket
 
-EVENTYAY_TICKET_BASE_PATH = config.get("urls", "eventyay-ticket",
-                                       fallback="https://tickets-dev.eventyay.com")
+EVENTYAY_TICKET_BASE_PATH = config.get(
+    "urls", "eventyay-ticket", fallback="https://app-test.eventyay.com/tickets"
+)
 
 SITE_ID = 1
 # for now, customer must verified their email at eventyay-ticket, so this check not required
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = "none"
 # will take name from eventyay-ticket as username
-ACCOUNT_USER_MODEL_USERNAME_FIELD = 'name'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = "name"
 # redirect to home page after login with eventyay-ticket
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = BASE_PATH
 # custom form for signup and adapter
 SOCIALACCOUNT_FORMS = {"signup": "pretalx.sso_provider.forms.CustomSignUpForm"}
-SOCIALACCOUNT_ADAPTER = 'pretalx.sso_provider.views.CustomSocialAccountAdapter'
+SOCIALACCOUNT_ADAPTER = "pretalx.sso_provider.views.CustomSocialAccountAdapter"
 # disable confirm step when using eventyay-ticket to login
 SOCIALACCOUNT_LOGIN_ON_GET = True
 # eventyay-ticket provider configuration
-EVENTYAY_TICKET_SSO_WELL_KNOW_URL = "/".join([EVENTYAY_TICKET_BASE_PATH,
-                                              '{org}',
-                                              '.well-known/openid-configuration'])
+EVENTYAY_TICKET_SSO_WELL_KNOW_URL = "/".join(
+    [EVENTYAY_TICKET_BASE_PATH, "{org}", ".well-known/openid-configuration"]
+)
 # redirect_url as https
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
+
+# OAuth2 Client settings
+SSO_CLIENT_ID = config.get("sso", "client_id", fallback="")
+SSO_CLIENT_SECRET = config.get("sso", "client_secret", fallback="")
+OAUTH2_PROVIDER = {
+    "CLIENT_ID": SSO_CLIENT_ID,
+    "CLIENT_SECRET": SSO_CLIENT_SECRET,
+    "AUTHORIZE_URL": "/".join([EVENTYAY_TICKET_BASE_PATH, "control/oauth2/authorize/"]),
+    "ACCESS_TOKEN_URL": "/".join([EVENTYAY_TICKET_BASE_PATH, "control/oauth2/token/"]),
+    "REDIRECT_URI": "/".join([SITE_URL, BASE_PATH[1:], "oauth2/callback/"]),
+    "SCOPE": ["profile"],
+}
+# Set default Application model if using default
+OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = "oauth2_provider.AccessToken"
+OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
+OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL = "oauth2_provider.RefreshToken"
+OAUTH2_PROVIDER_AUTHORIZATION_CODE_MODEL = "oauth2_provider.AuthorizationCode"
+OAUTH2_PROVIDER_CLIENT_MODEL = "oauth2_provider.Application"
+OAUTH2_PROVIDER_ID_TOKEN_MODEL = "oauth2_provider.IDToken"
+SSO_USER_INFO = "/".join([EVENTYAY_TICKET_BASE_PATH, "control/oauth2/user_info/"])
+# Disable this if you are not using HTTPS
+OAUTHLIB_INSECURE_TRANSPORT = True
+
+LOGOUT_REDIRECT_URL = "/"
+LOGIN_URL = BASE_PATH + "/login/"
+
+CORS_ORIGIN_WHITELIST = [EVENTYAY_TICKET_BASE_PATH]

@@ -16,7 +16,7 @@ from django.views.generic import FormView, View
 
 from pretalx.cfp.forms.auth import RecoverForm
 from pretalx.cfp.views.event import EventPageMixin
-from pretalx.common.phrases import phrases
+from pretalx.common.text.phrases import phrases
 from pretalx.common.views import GenericLoginView, GenericResetView
 from pretalx.person.models import User
 
@@ -26,9 +26,12 @@ SessionStore = import_string(f"{settings.SESSION_ENGINE}.SessionStore")
 class LogoutView(View):
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponseRedirect:
         logout(request)
-        return redirect(
+        response = redirect(
             reverse("cfp:event.start", kwargs={"event": self.request.event.slug})
         )
+        # Remove the JWT cookie
+        response.delete_cookie("sso_token")  # Same domain used when setting the cookie
+        return response
 
 
 class LoginView(GenericLoginView):
@@ -43,6 +46,11 @@ class LoginView(GenericLoginView):
 
     def get_password_reset_link(self):
         return self.request.event.urls.reset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["register_url"] = settings.EVENTYAY_TICKET_BASE_PATH
+        return context
 
 
 class ResetView(EventPageMixin, GenericResetView):
@@ -115,9 +123,9 @@ class EventAuth(View):
 
         request.session[key] = parent
         url = request.event.urls.base
-        if "target" in request.POST:
-            if request.POST["target"] == "cfp":
+        if target := request.POST.get("target"):
+            if target == "cfp":
                 url = request.event.cfp.urls.public
-            elif request.POST["target"] == "schedule":
+            elif target == "schedule":
                 url = request.event.urls.schedule
         return redirect(url)

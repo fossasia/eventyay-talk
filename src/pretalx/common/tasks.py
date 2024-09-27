@@ -32,7 +32,7 @@ def delete_media_file(path):
         default_storage.delete(str(path))
 
 
-@app.task()
+@app.task(name="pretalx.common.regenerate_css")
 def regenerate_css(event_id: int):
     event = Event.objects.filter(pk=event_id).first()
     local_apps = ["agenda", "cfp"]
@@ -50,10 +50,11 @@ def regenerate_css(event_id: int):
 
     for local_app in local_apps:
         path = settings.STATIC_ROOT / local_app / "scss/main.scss"
-        sassrules = []
-        sassrules.append(f"$brand-primary: {event.primary_color};")
-        sassrules.append("$link-color: $brand-primary;")
-        sassrules.append(f'@import "{path}";')
+        sassrules = [
+            f"$brand-primary: {event.primary_color};",
+            "$link-color: $brand-primary;",
+            f'@import "{path}";',
+        ]
 
         custom_functions = dict(django_libsass.CUSTOM_FUNCTIONS)
         custom_functions["static"] = static

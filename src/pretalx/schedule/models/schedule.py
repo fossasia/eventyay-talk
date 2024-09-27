@@ -14,7 +14,7 @@ from i18nfield.fields import I18nTextField
 
 from pretalx.agenda.tasks import export_schedule_html
 from pretalx.common.mixins.models import PretalxModel
-from pretalx.common.phrases import phrases
+from pretalx.common.text.phrases import phrases
 from pretalx.common.urls import EventUrls
 from pretalx.person.models import SpeakerProfile, User
 from pretalx.schedule.notifications import render_notifications
@@ -73,7 +73,7 @@ class Schedule(PretalxModel):
         """
         from pretalx.schedule.models import TalkSlot
 
-        if name in ["wip", "latest"]:
+        if name in ("wip", "latest"):
             raise Exception(f'Cannot use reserved name "{name}" for schedule version.')
         if self.version:
             raise Exception(
@@ -117,7 +117,9 @@ class Schedule(PretalxModel):
 
         if self.event.feature_flags["export_html_on_release"]:
             if settings.HAS_CELERY:
-                export_schedule_html.apply_async(kwargs={"event_id": self.event.id})
+                export_schedule_html.apply_async(
+                    kwargs={"event_id": self.event.id}, ignore_result=True
+                )
             else:
                 self.event.cache.set("rebuild_schedule_export", True, None)
         return self, wip_schedule
@@ -667,10 +669,19 @@ class Schedule(PretalxModel):
                         "duration": talk.submission.get_duration(),
                         "updated": talk.updated.isoformat(),
                         "state": talk.submission.state if all_talks else None,
-                        "fav_count": count_fav_talk(talk.submission.code) if talk.submission else 0,
+                        "fav_count": (
+                            count_fav_talk(talk.submission.code)
+                            if talk.submission
+                            else 0
+                        ),
                         "do_not_record": talk.submission.do_not_record,
                         "tags": talk.submission.get_tag(),
-                        "session_type": talk.submission.submission_type.name,
+                        "session_type": (
+                            str(talk.submission.submission_type.name)
+                            + " ("
+                            + str(talk.submission.submission_type.default_duration)
+                            + " minutes)"
+                        ),
                     }
                 )
             else:
@@ -684,7 +695,7 @@ class Schedule(PretalxModel):
                     }
                 )
         tracks.discard(None)
-        tracks = sorted(list(tracks), key=lambda x: x.position or 0)
+        tracks = sorted(tracks, key=lambda track: track.position or 0)
         result["tracks"] = [
             {
                 "id": track.id,
@@ -720,7 +731,11 @@ class Schedule(PretalxModel):
 
 def count_fav_talk(submission_code):
     # Cast talk_list to TextField for using the contains lookup
-    count = SubmissionFavourite.objects.annotate(
-        talk_list_str=Cast('talk_list', TextField())
-    ).filter(talk_list_str__contains=str(submission_code)).count()
+    count = (
+        SubmissionFavourite.objects.annotate(
+            talk_list_str=Cast("talk_list", TextField())
+        )
+        .filter(talk_list_str__contains=str(submission_code))
+        .count()
+    )
     return count

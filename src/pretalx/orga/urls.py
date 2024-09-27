@@ -1,11 +1,10 @@
 from django.urls import include, path
 from django.views.generic.base import RedirectView
 
-from pretalx.orga.views import cards
-
-from .views import (
+from pretalx.orga.views import (
     admin,
     auth,
+    cards,
     cfp,
     dashboard,
     event,
@@ -26,7 +25,7 @@ urlpatterns = [
     path("logout/", auth.logout_view, name="logout"),
     path("reset/", auth.ResetView.as_view(), name="auth.reset"),
     path("reset/<token>", auth.RecoverView.as_view(), name="auth.recover"),
-    path("", RedirectView.as_view(url="event", permanent=False)),
+    path("", RedirectView.as_view(url="event", permanent=False), name="base"),
     path("admin/", admin.AdminDashboard.as_view(), name="admin.dashboard"),
     path("admin/update/", admin.UpdateCheckView.as_view(), name="admin.update"),
     path("me", event.UserSettings.as_view(), name="user.view"),

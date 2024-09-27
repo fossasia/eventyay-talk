@@ -143,8 +143,6 @@ The database section
 +============+======================+=======================+
 | PostgresQL | ``postgresql``       | ``pretalx[postgres]`` |
 +------------+----------------------+-----------------------+
-| MySQL      | ``mysql``            | ``pretalx[mysql]``    |
-+------------+----------------------+-----------------------+
 | SQLite     | ``sqlite3``          | ``pretalx``           |
 +------------+----------------------+-----------------------+
 
@@ -172,7 +170,7 @@ The database section
 ``host``
 ~~~~~~~~
 
-- The database host, or the socket location, as needed. You can set this variable to a socket path for MySQL. For local PostgreSQL authentication, you can leave this variable empty.
+- The database host, or the socket location, as needed. For local PostgreSQL authentication, you can leave this variable empty.
 - **Environment variable:** ``PRETALX_DB_HOST``
 - **Default:** ``''``
 
@@ -185,6 +183,12 @@ The database section
 
 The mail section
 ----------------
+
+This section serves to configure the email server pretalx will use to send
+emails by default. Events can override these settings in the web interface.
+However, even with event-specific settings, pretalx will use these global
+settings for non-event-specific emails like password resets (even when
+triggered from an event context) and team invitations.
 
 ``from``
 ~~~~~~~~

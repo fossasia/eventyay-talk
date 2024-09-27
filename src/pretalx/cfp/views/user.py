@@ -1,6 +1,6 @@
+import logging
 import textwrap
 import urllib
-import logging
 
 from csp.decorators import csp_update
 from django.contrib import messages
@@ -27,18 +27,18 @@ from rest_framework.authtoken.models import Token
 
 from pretalx.cfp.forms.submissions import SubmissionInvitationForm
 from pretalx.cfp.views.event import LoggedInEventPageMixin
-from pretalx.common.middleware.event import get_login_redirect
-from pretalx.common.phrases import phrases
-from pretalx.common.views import is_form_bound
 from pretalx.common.exceptions import SendMailException
+from pretalx.common.middleware.event import get_login_redirect
+from pretalx.common.text.phrases import phrases
+from pretalx.common.views import is_form_bound
 from pretalx.person.forms import LoginInfoForm, SpeakerProfileForm
 from pretalx.person.permissions import person_can_view_information
 from pretalx.schedule.forms import AvailabilitiesFormMixin
 from pretalx.submission.forms import InfoForm, QuestionsForm, ResourceForm
 from pretalx.submission.models import Resource, Submission, SubmissionStates
 
-
 logger = logging.getLogger(__name__)
+
 
 @method_decorator(csp_update(IMG_SRC="https://www.gravatar.com"), name="dispatch")
 class ProfileView(LoggedInEventPageMixin, TemplateView):
@@ -149,9 +149,9 @@ class SubmissionsListView(LoggedInEventPageMixin, ListView):
     @context
     def information(self):
         return [
-            i
-            for i in self.request.event.information.all()
-            if person_can_view_information(self.request.user, i)
+            info
+            for info in self.request.event.information.all()
+            if person_can_view_information(self.request.user, info)
         ]
 
     @context
@@ -269,7 +269,7 @@ class SubmissionDraftDiscardView(
 
     def get_object(self):
         submission = super().get_object()
-        if not submission.state == SubmissionStates.DRAFT:
+        if submission.state != SubmissionStates.DRAFT:
             raise Http404()
         return submission
 
@@ -329,7 +329,9 @@ class SubmissionsEditView(LoggedInEventPageMixin, SubmissionViewMixin, UpdateVie
             elif form.has_changed():
                 form.instance.submission = obj
                 form.save()
-                change_data = {k: form.cleaned_data.get(k) for k in form.changed_data}
+                change_data = {
+                    key: form.cleaned_data.get(key) for key in form.changed_data
+                }
                 change_data["id"] = form.instance.pk
                 obj.log_action(
                     "pretalx.submission.resource.update", person=self.request.user
@@ -403,12 +405,15 @@ class SubmissionsEditView(LoggedInEventPageMixin, SubmissionViewMixin, UpdateVie
                     form.instance.update_review_scores()
                 if form.instance.pk and "additional_speaker" in form.changed_data:
                     try:
-                        form.instance.send_invite(to=[form.cleaned_data.get('additional_speaker')],
-                                               _from=self.request.user)
+                        form.instance.send_invite(
+                            to=[form.cleaned_data.get("additional_speaker")],
+                            _from=self.request.user,
+                        )
                     except SendMailException as exception:
-                        logger.warning('Failed to send email with error: %s', exception)
-                        messages.warning(self.request,
-                                         phrases.cfp.submission_email_fail)
+                        logger.warning("Failed to send email with error: %s", exception)
+                        messages.warning(
+                            self.request, phrases.cfp.submission_email_fail
+                        )
                 form.instance.log_action(
                     "pretalx.submission.update", person=self.request.user
                 )
@@ -455,7 +460,7 @@ class SubmissionInviteView(LoggedInEventPageMixin, SubmissionViewMixin, FormView
         kwargs = super().get_form_kwargs()
         kwargs["submission"] = self.submission
         kwargs["speaker"] = self.request.user
-        if "email" in self.request.GET and not self.request.method == "POST":
+        if "email" in self.request.GET and self.request.method != "POST":
             initial = kwargs.get("initial", {})
             initial["speaker"] = urllib.parse.unquote(self.request.GET["email"])
             kwargs["initial"] = initial

@@ -1,6 +1,7 @@
 import json
 from contextlib import suppress
 
+from django.conf import settings
 from django.db.models import Exists, OuterRef, Q
 from django.http import JsonResponse
 from django.utils.translation import ngettext_lazy as _n
@@ -12,10 +13,11 @@ from pretalx.submission.models import Submission
 
 
 def serialize_user(user):
+    base_path = settings.BASE_PATH
     return {
         "type": "user",
         "name": str(user),
-        "url": "/orga/me",
+        "url": base_path + "/orga/me",
     }
 
 
@@ -76,10 +78,8 @@ def nav_typeahead(request):
 
     show_user = (
         not query
-        or (
-            query and request.user.email and query.lower() in request.user.email.lower()
-        )
-        or (query and request.user.name and query.lower() in request.user.name.lower())
+        or (request.user.email and query.lower() in request.user.email.lower())
+        or (request.user.name and query.lower() in request.user.name.lower())
     )
 
     qs_orga = Organiser.objects.filter(
@@ -104,10 +104,6 @@ def nav_typeahead(request):
         full_events = request.user.get_events_for_permission(
             can_change_submissions=True
         )
-        # review_events = request.user.get_events_for_permission(
-        #     is_reviewer=True, can_change_submissions=False
-        # )
-        # review_events = set(review_events) - set(full_submission_permissions)
         # We'll exclude review events entirely for now, as they have extra challenges:
         # users may be restricted from seeing speaker names by review settings, or
         # limited to seeing submissions in specific tracks.

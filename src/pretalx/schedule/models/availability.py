@@ -55,10 +55,8 @@ class Availability(PretalxModel):
         are the same.
         """
         return all(
-            [
-                getattr(self, attribute, None) == getattr(other, attribute, None)
-                for attribute in ["person", "room", "start", "end"]
-            ]
+            getattr(self, attribute, None) == getattr(other, attribute, None)
+            for attribute in ["person", "room", "start", "end"]
         )
 
     @cached_property
@@ -151,7 +149,7 @@ class Availability(PretalxModel):
         if not availabilities:
             return []
 
-        availabilities = sorted(availabilities, key=lambda a: a.start)
+        availabilities = sorted(availabilities, key=lambda avail: avail.start)
         result = [availabilities[0]]
         availabilities = availabilities[1:]
 
@@ -175,10 +173,10 @@ class Availability(PretalxModel):
 
         # yay for O(b*a) time! I am sure there is some fancy trick to make this faster,
         # but we're dealing with less than 100 items in total, sooo.. ¯\_(ツ)_/¯
-        for a in availabilities_a:
-            for b in availabilities_b:
-                if a.overlaps(b, True):
-                    result.append(a.intersect_with(b))
+        for avail_a in availabilities_a:
+            for avail_b in availabilities_b:
+                if avail_a.overlaps(avail_b, True):
+                    result.append(avail_a.intersect_with(avail_b))
 
         return result
 

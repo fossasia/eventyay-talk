@@ -132,7 +132,9 @@ class TalkSlot(PretalxModel):
         """
         new_slot = TalkSlot(schedule=new_schedule)
 
-        for field in [f for f in self._meta.fields if f.name not in ("id", "schedule")]:
+        for field in (
+            fn for fn in self._meta.fields if fn.name not in ("id", "schedule")
+        ):
             setattr(new_slot, field.name, getattr(self, field.name))
 
         if save:
@@ -152,7 +154,7 @@ class TalkSlot(PretalxModel):
         all_slots = list(
             TalkSlot.objects.filter(
                 submission_id=self.submission_id, schedule_id=self.schedule_id
-            )
+            ).order_by("start")
         )
         if len(all_slots) == 1:
             return ""
