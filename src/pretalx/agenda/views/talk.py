@@ -1,5 +1,5 @@
 import datetime as dt
-from urllib.parse import urlparse, unquote
+from urllib.parse import unquote, urlparse
 
 import jwt
 import requests
@@ -17,9 +17,11 @@ from django_context_decorator import context
 
 from pretalx.agenda.signals import register_recording_provider
 from pretalx.cfp.views.event import EventPageMixin
-from pretalx.common.mixins.views import EventPermissionRequired
-from pretalx.common.mixins.views import PermissionRequired, SocialMediaCardMixin
-from pretalx.common.phrases import phrases
+from pretalx.common.mixins.views import (
+    EventPermissionRequired,
+    PermissionRequired,
+    SocialMediaCardMixin,
+)
 from pretalx.common.text.phrases import phrases
 from pretalx.schedule.models import Schedule, TalkSlot
 from pretalx.submission.forms import FeedbackForm
@@ -136,8 +138,8 @@ class TalkView(PermissionRequired, TemplateView):
             self.submission.abstract
             or self.submission.description
             or _("The session “{title}” at {event}").format(
-            title=self.submission.title, event=self.request.event.name
-        )
+                title=self.submission.title, event=self.request.event.name
+            )
         )
 
     @context
@@ -277,34 +279,38 @@ class OnlineVideoJoin(EventPermissionRequired, View):
 
     def get(self, request, *args, **kwargs):
         # First check video is configured or not
-        if ('pretalx_venueless' not in request.event.plugin_list
+        if (
+            "pretalx_venueless" not in request.event.plugin_list
             or not request.event.venueless_settings
             or not request.event.venueless_settings.join_url
             or not request.event.venueless_settings.secret
             or not request.event.venueless_settings.issuer
-            or not request.event.venueless_settings.audience):
-            return HttpResponse(status=403, content='missing_configuration')
+            or not request.event.venueless_settings.audience
+        ):
+            return HttpResponse(status=403, content="missing_configuration")
 
         if not request.user.is_authenticated:
             # redirect to login page if user not logged in yet
-            return HttpResponse(status=403, content='user_not_allowed')
+            return HttpResponse(status=403, content="user_not_allowed")
 
         # prepare event data to check from ticket
-        if 'ticket_link' not in request.event.display_settings:
-            return HttpResponse(status=403, content='missing_configuration')
+        if "ticket_link" not in request.event.display_settings:
+            return HttpResponse(status=403, content="missing_configuration")
 
         base_url, organizer, event = self.retrieve_info_from_url(
-            request.event.display_settings['ticket_link'])
+            request.event.display_settings["ticket_link"]
+        )
 
         if not organizer or not event or not base_url:
-            return HttpResponse(status=403, content='missing_configuration')
+            return HttpResponse(status=403, content="missing_configuration")
 
         # call to ticket to check if user order ticket yet or not
         response = requests.get(
-            f"{base_url}/api/v1/{organizer}/{event}/customer/{request.user.code}/ticket-check")
+            f"{base_url}/api/v1/{organizer}/{event}/customer/{request.user.code}/ticket-check"
+        )
 
         if response.status_code != 200:
-            return HttpResponse(status=403, content='user_not_allowed')
+            return HttpResponse(status=403, content="user_not_allowed")
 
         else:
             # Redirect user to online event
@@ -332,22 +338,24 @@ class OnlineVideoJoin(EventPermissionRequired, View):
                     }
                 ),
             }
-            token = jwt.encode(payload, request.event.venueless_settings.secret,
-                               algorithm="HS256")
+            token = jwt.encode(
+                payload, request.event.venueless_settings.secret, algorithm="HS256"
+            )
 
-            return JsonResponse({
-                "redirect_url":
-                    "{}/#token={}".format(request.event.venueless_settings.join_url,
-                                          token).replace(
-                        "//#", "/#"
-                    )
-            }, status=200)
+            return JsonResponse(
+                {
+                    "redirect_url": "{}/#token={}".format(
+                        request.event.venueless_settings.join_url, token
+                    ).replace("//#", "/#")
+                },
+                status=200,
+            )
 
     def retrieve_info_from_url(self, url):
         parsed_url = urlparse(url)
         ticket_host = settings.EVENTYAY_TICKET_BASE_PATH
         path = parsed_url.path
-        parts = path.strip('/').split('/')
+        parts = path.strip("/").split("/")
         if len(parts) >= 2:
             organizer, event = parts[-2:]
             return ticket_host, unquote(organizer), unquote(event)

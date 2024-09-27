@@ -116,8 +116,8 @@ urlpatterns = [
                 path(
                     "online-video/join/",
                     talk.OnlineVideoJoin.as_view(),
-                    name="event.onlinevideo.join"
-                )
+                    name="event.onlinevideo.join",
+                ),
             ]
         ),
     ),

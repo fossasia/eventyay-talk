@@ -132,12 +132,10 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
     )
     video_link = forms.URLField(
         label=_("Video Live URL"),
-        help_text=(
-            "Online video link will be shown on event menu."
+        help_text=("Online video link will be shown on event menu."),
+        widget=forms.TextInput(
+            attrs={"placeholder": " e.g: https://app.eventyay.com/video"}
         ),
-        widget=forms.TextInput(attrs={
-            'placeholder': ' e.g: https://wikimania-live.eventyay.com/'
-        }),
         required=False,
     )
     header_pattern = forms.ChoiceField(
