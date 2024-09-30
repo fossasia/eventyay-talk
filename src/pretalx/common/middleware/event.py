@@ -94,7 +94,9 @@ class EventPermissionMiddleware:
                 pass
             except Exception as e:
                 # Invalid token
-                logger.error(f"Unexpected error happened: {str(e)}\n{traceback.format_exc()}")
+                logger.error(
+                    f"Unexpected error happened: {str(e)}\n{traceback.format_exc()}"
+                )
                 pass
 
     @staticmethod
