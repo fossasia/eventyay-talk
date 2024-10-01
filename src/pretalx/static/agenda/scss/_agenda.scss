@@ -44,11 +44,8 @@ header {
 }
 
 @function is-dark($color) {
-  $r: red($color);
-  $g: green($color);
-  $b: blue($color);
-  $brightness: (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
-  @return $brightness < 128;
+  $luminance: (0.2126 * red($color) + 0.7152 * green($color) + 0.0722 * blue($color)) / 255;
+  @return $luminance < 0.5;
 }
 
 @mixin contrast-color($bg-color) {
@@ -56,6 +53,20 @@ header {
     color: #fff;
   } @else {
     color: #000;
+  }
+}
+
+@mixin active-state($color) {
+    background-color: $color;
+    @include contrast-color($color);
+}
+
+@mixin outline-button($color) {
+  color: $color;
+  border-color: $color;
+
+  &:hover, &.active {
+    @include active-state($color);
   }
 }
 
@@ -75,17 +86,11 @@ header {
     }
 
     .btn-outline-success {
-      color: $brand-primary;
-      border-color: $brand-primary;
+      @include outline-button($brand-primary);
+    }
 
-      &:hover {
-        background-color: $brand-primary;
-        @include contrast-color($brand-primary);
-      }
-        &.active {
-        background-color: $brand-primary;
-        @include contrast-color($brand-primary);
-      }
+    .btn-outline-info {
+      @include outline-button($brand-primary);
     }
 
   form {
