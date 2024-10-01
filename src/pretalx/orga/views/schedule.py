@@ -235,6 +235,24 @@ class ScheduleToggleView(EventPermissionRequired, View):
             not self.request.event.feature_flags["show_schedule"]
         )
         self.request.event.save()
+        # Trigger tickets to hidden/unhidden schedule menu
+        try:
+            from pretalx.orga.tasks import trigger_public_schedule
+
+            trigger_public_schedule.apply_async(
+                kwargs={
+                    "is_show_schedule": self.request.event.feature_flags[
+                        "show_schedule"
+                    ],
+                    "event_slug": self.request.event.slug,
+                    "organiser_slug": self.request.event.organiser.slug,
+                    "user_email": self.request.user.email,
+                },
+                ignore_result=True,
+            )
+        except Exception as e:
+            # Ignore the error if the task fails
+            pass
         return redirect(self.request.event.orga_urls.schedule)
 
 
