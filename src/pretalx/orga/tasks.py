@@ -53,8 +53,8 @@ def trigger_public_schedule(
         response.raise_for_status()  # Raise exception for bad status codes
     except requests.RequestException as e:
         logger.error(
-            "Error happen when trigger hide/unhidden schedule to tickets component: %s",
-            e,
+            f"Error occurred when triggering hide/unhide schedule for tickets "
+            f"component. Event: {event_slug}, Organiser: {organiser_slug}. Error: {e}",
         )
         # Retry the task if an exception occurs (with exponential backoff by default)
         try:

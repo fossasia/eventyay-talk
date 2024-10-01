@@ -1,9 +1,11 @@
 import collections
 import datetime as dt
 import json
+import logging
 from contextlib import suppress
 
 import dateutil.parser
+from celery.exceptions import TaskError
 from csp.decorators import csp_update
 from django.conf import settings
 from django.contrib import messages
@@ -50,6 +52,9 @@ if settings.VITE_DEV_MODE:
     DEFAULT_SRC = (
         f"{DEFAULT_SRC} {settings.VITE_DEV_SERVER} {settings.VITE_DEV_SERVER.replace('http', 'ws')}",
     )
+
+
+logger = logging.getLogger(__name__)
 
 
 @method_decorator(
@@ -250,9 +255,10 @@ class ScheduleToggleView(EventPermissionRequired, View):
                 },
                 ignore_result=True,
             )
-        except Exception:
-            # Ignore the error if the task fails
-            pass
+        except (TaskError, ConnectionError) as e:
+            logger.warning(f"Task failed: {e}")
+        except Exception as e:
+            logger.error(f"Unexpected error in task: {e}")
         return redirect(self.request.event.orga_urls.schedule)
 
 
