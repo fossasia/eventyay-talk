@@ -250,7 +250,7 @@ class ScheduleToggleView(EventPermissionRequired, View):
                 },
                 ignore_result=True,
             )
-        except Exception as e:
+        except Exception:
             # Ignore the error if the task fails
             pass
         return redirect(self.request.event.orga_urls.schedule)
