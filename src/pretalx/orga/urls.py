@@ -169,6 +169,21 @@ urlpatterns = [
                                 cfp.CfPQuestionToggle.as_view(),
                                 name="cfp.question.toggle",
                             ),
+                            path(
+                                "active",
+                                cfp.CfPQuestionActive.as_view(),
+                                name="cfp.question.active",
+                            ),
+                            path(
+                                "required",
+                                cfp.CfPQuestionRequired.as_view(),
+                                name="cfp.question.required",
+                            ),
+                            path(
+                                "public",
+                                cfp.CfPQuestionPublic.as_view(),
+                                name="cfp.question.public",
+                            ),
                         ]
                     ),
                 ),

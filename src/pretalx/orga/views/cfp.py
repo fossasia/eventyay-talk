@@ -364,6 +364,68 @@ class CfPQuestionToggle(PermissionRequired, View):
         return redirect(question.urls.base)
 
 
+class CfPQuestionActive(PermissionRequired, View):
+    permission_required = "orga.edit_question"
+
+    def get_object(self) -> Question:
+        return Question.all_objects.filter(
+            pk=self.kwargs.get("pk")
+        ).first()
+
+    def dispatch(self, request, *args, **kwargs):
+        question = self.get_object()
+        question.active = not question.active
+        question.save(update_fields=["active"])
+        return redirect(question.urls.list)
+
+
+class CfPQuestionRequired(PermissionRequired, View):
+    permission_required = "orga.edit_question"
+
+    def get_object(self) -> Question:
+        return Question.all_objects.filter(
+            pk=self.kwargs.get("pk")
+        ).first()
+
+    def dispatch(self, request, *args, **kwargs):
+        question = self.get_object()
+
+        current_value = question.question_required
+
+        if current_value == "optional":
+            question.question_required = "required"
+        elif current_value == "required":
+            question.question_required = "after_deadline"
+            return redirect(question.urls.edit)
+        else:
+            question.question_required = "optional"
+
+        question.save(update_fields=["question_required"])
+        return redirect(question.urls.list)
+
+
+class CfPQuestionPublic(PermissionRequired, View):
+    permission_required = "orga.edit_question"
+
+    def get_object(self) -> Question:
+        return Question.all_objects.filter(
+            pk=self.kwargs.get("pk")
+        ).first()
+
+    def dispatch(self, request, *args, **kwargs):
+        question = self.get_object()
+
+        current_value = question.is_public
+
+        if current_value is True:
+            question.is_public = False
+        else:
+            question.is_public = True
+
+        question.save(update_fields=["is_public"])
+        return redirect(question.urls.list)
+
+
 class CfPQuestionRemind(EventPermissionRequired, TemplateView):
     template_name = "orga/cfp/question_remind.html"
     permission_required = "orga.view_question"

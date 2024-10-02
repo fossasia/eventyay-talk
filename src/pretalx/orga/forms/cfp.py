@@ -98,16 +98,24 @@ class CfPSettingsForm(
             self.fields[field_name].widget.attrs["placeholder"] = ""
         for attribute in self.request_require_fields:
             field_name = f"cfp_ask_{attribute}"
+            visibility = obj.cfp.fields.get(attribute, default_fields()[attribute])["visibility"]
+            if visibility == "optional":
+                css_class = "btn btn-outline-dark btn-sm"
+            elif visibility == "required":
+                css_class = "btn btn-outline-success btn-sm"
+            else:
+                css_class = "btn btn-outline-danger btn-sm"
             self.fields[field_name] = forms.ChoiceField(
                 required=True,
                 initial=obj.cfp.fields.get(attribute, default_fields()[attribute])[
                     "visibility"
                 ],
                 choices=[
-                    ("do_not_ask", _("Do not ask")),
-                    ("optional", _("Ask, but do not require input")),
-                    ("required", _("Ask and require input")),
+                    ("do_not_ask", _("Not Active")),
+                    ("optional", _("Optional")),
+                    ("required", _("Required")),
                 ],
+                widget=forms.Select(attrs={'class': css_class}), 
             )
         if not obj.is_multilingual:
             self.fields.pop("cfp_ask_content_locale", None)
