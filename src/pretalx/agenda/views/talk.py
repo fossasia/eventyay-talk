@@ -6,9 +6,8 @@ import requests
 import vobject
 from django.conf import settings
 from django.contrib import messages
-from django.db.models import Q
 from django.http import Http404, HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views import View
@@ -211,7 +210,6 @@ class SingleICalView(EventPageMixin, DetailView):
 
 class FeedbackView(PermissionRequired, FormView):
     form_class = FeedbackForm
-    template_name = "agenda/feedback_form.html"
     permission_required = "agenda.view_submission"
 
     def get_object(self):
