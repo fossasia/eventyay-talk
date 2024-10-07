@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from urllib.parse import urljoin
 
 import jwt
@@ -15,8 +15,8 @@ def generate_sso_token(user_email):
     jwt_payload = {
         "email": user_email,
         "has_perms": "orga.edit_schedule",
-        "exp": datetime.utcnow() + timedelta(hours=1),
-        "iat": datetime.utcnow(),
+        "exp": datetime.now(timezone.utc) + timedelta(hours=1),
+        "iat": datetime.now(timezone.utc),
     }
     jwt_token = jwt.encode(jwt_payload, settings.SECRET_KEY, algorithm="HS256")
     return jwt_token
@@ -53,8 +53,9 @@ def trigger_public_schedule(
         response.raise_for_status()  # Raise exception for bad status codes
     except requests.RequestException as e:
         logger.error(
-            f"Error occurred when triggering hide/unhide schedule for tickets "
-            f"component. Event: {event_slug}, Organiser: {organiser_slug}. Error: {e}",
+            "Error occurred when triggering hide/unhide schedule for tickets component."
+            "Event: %s, Organiser: %s. Error: %s",
+            event_slug, organiser_slug, e,
         )
         # Retry the task if an exception occurs (with exponential backoff by default)
         try:

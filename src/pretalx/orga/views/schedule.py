@@ -256,9 +256,10 @@ class ScheduleToggleView(EventPermissionRequired, View):
                 ignore_result=True,
             )
         except (TaskError, ConnectionError) as e:
-            logger.warning(f"Task failed: {e}")
+            logger.warning("Unexpected error when trying to trigger "
+                           "schedule's state to external system: %s", e)
         except Exception as e:
-            logger.error(f"Unexpected error in task: {e}")
+            logger.error("Unexpected error in task: %s", e)
         return redirect(self.request.event.orga_urls.schedule)
 
 
