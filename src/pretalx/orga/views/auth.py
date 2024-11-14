@@ -1,6 +1,5 @@
 import datetime as dt
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.shortcuts import redirect
@@ -17,11 +16,6 @@ from pretalx.person.models import User
 
 class LoginView(GenericLoginView):
     template_name = "orga/auth/login.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["site_name"] = dict(settings.CONFIG.items("site")).get("name")
-        return context
 
     @cached_property
     def event(self):
@@ -40,14 +34,11 @@ class LoginView(GenericLoginView):
 
 
 def logout_view(request):
-    logout(request)
-    response = redirect(
+    if request.method == "POST":
+        logout(request)
+    return redirect(
         GenericLoginView.get_next_url_or_fallback(request, reverse("orga:login"))
     )
-    # Remove the JWT cookie
-    response.delete_cookie("sso_token")  # Same domain used when setting the cookie
-    response.delete_cookie("customer_sso_token")
-    return response
 
 
 class ResetView(GenericResetView):
