@@ -296,9 +296,7 @@ class OnlineVideoJoin(EventPermissionRequired, View):
         if not organizer or not event or not base_url:
             return HttpResponse(status=403, content="missing_configuration")
 
-        check_payload = {
-            'user_email': request.user.email
-        }
+        check_payload = {"user_email": request.user.email}
 
         # call to ticket to check if user order ticket yet or not
         response = requests.post(
