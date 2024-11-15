@@ -1,7 +1,7 @@
 <template lang="pug">
-.c-linear-schedule-session(:style="style", @pointerdown.stop="$emit('startDragging', {session: session, event: $event})", :class="classes")
+.c-linear-schedule-session(:style="style", @pointerdown.stop="$emit('startDragging', { session: session, event: $event })", :class="classes")
 	.time-box
-		.start(:class="{'has-ampm': startTime.ampm}", v-if="startTime")
+		.start(:class="{ 'has-ampm': startTime.ampm }", v-if="startTime")
 			.time {{ startTime.time }}
 			.ampm(v-if="startTime.ampm") {{ startTime.ampm }}
 		.duration {{ durationPretty }}
@@ -46,7 +46,7 @@ export default {
 		eventUrl: { default: null },
 		generateSessionLinkUrl: {
 			default () {
-				return ({eventUrl, session}) => `${eventUrl}talk/${session.id}/`
+				return ({ eventUrl, session }) => `${eventUrl}talk/${session.id}/`
 			}
 		}
 	},
@@ -57,7 +57,7 @@ export default {
 	},
 	computed: {
 		link () {
-			return this.generateSessionLinkUrl({eventUrl: this.eventUrl, session: this.session})
+			return this.generateSessionLinkUrl({ eventUrl: this.eventUrl, session: this.session })
 		},
 		isBreak () {
 			return !this.session.code

@@ -7,8 +7,8 @@
 					path(d="M 0 4 L 5 0 L 10 4 z")
 					path(d="M 0 6 L 5 10 L 10 6 z")
 			.timeseparator(:class="getSliceClasses(slice)", :style="getSliceStyle(slice)")
-		.room(:style="{'grid-area': `1 / 1 / auto / auto`}")
-		.room(v-for="(room, index) of visibleRooms", :style="{'grid-area': `1 / ${index + 2 } / auto / auto`}")
+		.room(:style="{ 'grid-area': `1 / 1 / auto / auto` }")
+		.room(v-for="(room, index) of visibleRooms", :style="{ 'grid-area': `1 / ${index + 2 } / auto / auto` }")
 			span {{ getLocalizedString(room.name) }}
 			.hide-room.no-print(v-if="visibleRooms.length > 1", @click="hiddenRooms = rooms.filter(r => hiddenRooms.includes(r) || r === room)")
 				i.fa.fa-eye-slash
@@ -95,7 +95,7 @@ export default {
 			const minimumSliceMins = 30
 			const slices = []
 			const slicesLookup = {}
-			const pushSlice = function (date, {hasStart = false, hasEnd = false, hasSession = false, isExpanded = false} = {}) {
+			const pushSlice = function (date, { hasStart = false, hasEnd = false, hasSession = false, isExpanded = false } = {}) {
 				const name = getSliceName(date)
 				let slice = slicesLookup[name]
 				if (slice) {
@@ -117,7 +117,7 @@ export default {
 					slicesLookup[name] = slice
 				}
 			}
-			const fillHalfHours = function (start, end, {hasSession} = {}) {
+			const fillHalfHours = function (start, end, { hasSession } = {}) {
 				// fill to the nearest half hour, then each half hour, then fill to end
 				let mins = end.diff(start, 'minutes')
 				const startingMins = minimumSliceMins - start.minute() % minimumSliceMins
@@ -138,7 +138,7 @@ export default {
 
 				// last slice is actually just after the end of the session and has no session
 				const lastSlice = halfHourSlices.pop()
-				halfHourSlices.forEach(slice => pushSlice(slice, {hasSession}))
+				halfHourSlices.forEach(slice => pushSlice(slice, { hasSession }))
 				pushSlice(lastSlice)
 			}
 			for (const session of this.sessions) {
@@ -151,17 +151,17 @@ export default {
 				}
 
 				// add start and end slices for the session itself
-				pushSlice(session.start, {hasStart: true, hasSession: true})
-				pushSlice(session.end, {hasEnd: true})
+				pushSlice(session.start, { hasStart: true, hasSession: true })
+				pushSlice(session.end, { hasEnd: true })
 				// add half hour slices between a session
-				fillHalfHours(session.start, session.end, {hasSession: true})
+				fillHalfHours(session.start, session.end, { hasSession: true })
 			}
 			for (const slice of this.expandedTimes) {
-				pushSlice(slice, {isExpanded: true})
+				pushSlice(slice, { isExpanded: true })
 			}
 			// Always show business hours
 			fillHalfHours(this.start, this.end)
-			if (this.hoverEndSlice) pushSlice(this.hoverEndSlice, {hasEnd: true})
+			if (this.hoverEndSlice) pushSlice(this.hoverEndSlice, { hasEnd: true })
 			const sliceIsFraction = function (slice) {
 				if (!slice) return
 				return slice.date.minutes() !== 0 && slice.date.minutes() !== minimumSliceMins
@@ -258,7 +258,7 @@ export default {
 				}
 			}
 			for (const room of this.visibleRooms) {
-				if (!this.availabilities.rooms[room.id] || !this.availabilities.rooms[room.id].length) avails.push({room: room, start: earliestStart, end: latestEnd})
+				if (!this.availabilities.rooms[room.id] || !this.availabilities.rooms[room.id].length) avails.push({ room: room, start: earliestStart, end: latestEnd })
 				else {
 					for (const avail of this.availabilities.rooms[room.id]) {
 						avails.push({
@@ -328,14 +328,14 @@ export default {
 		this.gridOffset = this.$refs.grid.getBoundingClientRect().left
 	},
 	methods: {
-		startDragging({session, event}) {
+		startDragging({ session, event }) {
 			this.dragStart = {
 				x: event.clientX,
 				y: event.clientY,
 				session: session,
 				now: moment(),
 			}
-			this.$emit('startDragging', {event, session})
+			this.$emit('startDragging', { event, session })
 		},
 		stopDragging (event) {
 			if (this.dragStart && this.draggedSession) {
@@ -353,9 +353,9 @@ export default {
 			const start = this.hoverSlice.time
 			const end = this.hoverSlice.time.clone().add(this.draggedSession.duration, 'm')
 			if (!this.draggedSession.id) {
-			  this.$emit('createSession', {session: {...this.draggedSession, start: start.format(), end: end.format(), room: this.hoverSlice.room.id}})
+			  this.$emit('createSession', { session: { ...this.draggedSession, start: start.format(), end: end.format(), room: this.hoverSlice.room.id } })
 			} else {
-				this.$emit('rescheduleSession', {session: this.draggedSession, start: start.format(), end: end.format(), room: this.hoverSlice.room})
+				this.$emit('rescheduleSession', { session: this.draggedSession, start: start.format(), end: end.format(), room: this.hoverSlice.room })
 			}
 		},
 		expandTimeslice (slice) {
@@ -439,9 +439,9 @@ export default {
 				if (index < 0) {
 					index = this.timeslices.length - 1
 				}
-				return {'grid-area': `${slice.name} / 1 / ${this.timeslices[index].name} / auto`}
+				return { 'grid-area': `${slice.name} / 1 / ${this.timeslices[index].name} / auto` }
 			}
-			return {'grid-area': `${slice.name} / 1 / auto / auto`}
+			return { 'grid-area': `${slice.name} / 1 / auto / auto` }
 		},
 		getSliceLabel (slice) {
 			if (slice.datebreak) return slice.date.format('ddd[\n]DD. MMM')
@@ -455,10 +455,10 @@ export default {
 			this.scrollTo(offset)
 		},
 		scrollTo (offset) {
-			this.scrollParent.scroll({top: offset, behavior: "smooth"})
+			this.scrollParent.scroll({ top: offset, behavior: "smooth" })
 		},
 		scrollBy (offset) {
-			this.scrollParent.scrollBy({top: offset, behavior: "smooth"})
+			this.scrollParent.scrollBy({ top: offset, behavior: "smooth" })
 		},
 		dragOnScroll () {
 			if (!this.draggedSession) {

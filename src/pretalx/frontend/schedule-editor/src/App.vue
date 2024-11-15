@@ -1,18 +1,18 @@
 <template lang="pug">
-.pretalx-schedule(:style="{'--scrollparent-width': scrollParentWidth + 'px'}", :class="draggedSession ? ['is-dragging'] : []", @pointerup="stopDragging")
+.pretalx-schedule(:style="{ '--scrollparent-width': scrollParentWidth + 'px' }", :class="draggedSession ? ['is-dragging'] : []", @pointerup="stopDragging")
 	template(v-if="schedule")
 		#main-wrapper
 			#unassigned.no-print(v-scrollbar.y="", @pointerenter="isUnassigning = true", @pointerleave="isUnassigning = false")
 				.title
 					bunt-input#filter-input(v-model="unassignedFilterString", :placeholder="translations.filterSessions", icon="search")
-					#unassigned-sort(@click="showUnassignedSortMenu = !showUnassignedSortMenu", :class="{'active': showUnassignedSortMenu}")
+					#unassigned-sort(@click="showUnassignedSortMenu = !showUnassignedSortMenu", :class="{ 'active': showUnassignedSortMenu }")
 						i.fa.fa-sort
 					#unassigned-sort-menu(v-if="showUnassignedSortMenu")
 						.sort-method(v-for="method of unassignedSortMethods", @click="unassignedSort === method.name ? unassignedSortDirection = unassignedSortDirection * -1 : unassignedSort = method.name; showUnassignedSortMenu = false")
 							span {{ method.label }}
 							i.fa.fa-sort-amount-asc(v-if="unassignedSort === method.name && unassignedSortDirection === 1")
 							i.fa.fa-sort-amount-desc(v-if="unassignedSort === method.name && unassignedSortDirection === -1")
-				session.new-break(:session="{title: '+ ' + translations.newBreak}", :isDragged="false", @startDragging="startNewBreak", @click="showNewBreakHint", v-tooltip.fixed="{text: newBreakTooltip, show: newBreakTooltip}", @pointerleave="removeNewBreakHint")
+				session.new-break(:session="{ title: '+ ' + translations.newBreak }", :isDragged="false", @startDragging="startNewBreak", @click="showNewBreakHint", v-tooltip.fixed="{ text: newBreakTooltip, show: newBreakTooltip }", @pointerleave="removeNewBreakHint")
 				session(v-for="un in unscheduled", :session="un", @startDragging="startDragging", :isDragged="draggedSession && un.id === draggedSession.id")
 			#schedule-wrapper(v-scrollbar.x.y="")
 				bunt-tabs.days(v-if="days", :modelValue="currentDay.format()", ref="tabs" :class="['grid-tabs']")
@@ -133,13 +133,13 @@ export default {
 		},
 		unassignedSortMethods () {
 			const sortMethods = [
-				{label: this.$t('Title'), name: 'title'},
-				{label: this.$t('Speakers'), name: 'speakers'},
+				{ label: this.$t('Title'), name: 'title' },
+				{ label: this.$t('Speakers'), name: 'speakers' },
 			]
 			if (this.schedule && this.schedule.tracks.length > 1) {
-				sortMethods.push({label: this.$t('Track'), name: 'track'})
+				sortMethods.push({ label: this.$t('Track'), name: 'track' })
 			}
-			sortMethods.push({label: this.$t('Duration'), name: 'duration' })
+			sortMethods.push({ label: this.$t('Duration'), name: 'duration' })
 			return sortMethods
 		},
 		speakersLookup () {
@@ -315,14 +315,14 @@ export default {
 		removeNewBreakHint () {
 			this.newBreakTooltip = ''
 		},
-		startNewBreak({event}) {
+		startNewBreak({ event }) {
 			const title = this.locales.reduce((obj, locale) => {
 				obj[locale] = this.$t("New break")
 				return obj
 			}, {})
 			this.startDragging({event, session: {title, duration: "5", uncreated: true}})
 		},
-		startDragging ({event, session}) {
+		startDragging ({ event, session }) {
 			if (this.availabilities && this.availabilities.talks[session.id] && this.availabilities.talks[session.id].length !== 0) {
 				session.availabilities = this.availabilities.talks[session.id]
 			}
@@ -363,7 +363,7 @@ export default {
 			this.warnings = await api.fetchWarnings()
 		},
 		async pollUpdates () {
-			this.fetchSchedule({since: this.since, warnings: true}).then(schedule => {
+			this.fetchSchedule({ since: this.since, warnings: true }).then(schedule => {
 				if (schedule.version !== this.schedule.version) {
 					// we need to reload if a new schedule version is available
 					window.location.reload()
