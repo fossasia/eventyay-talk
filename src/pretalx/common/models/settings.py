@@ -94,8 +94,8 @@ These links may be helpful in the coming days and weeks:
 - Your schedule editor: {event_schedule}
 
 If there is anything you’re missing, come tell us about it
-at https://github.com/pretalx/pretalx/issues/new or via an
-email to support@pretalx.com!
+at https://github.com/fossasia/eventyay-talk/issues/new or via an
+email to support@eventyay.com!
 """
         )
     ),
@@ -140,7 +140,7 @@ statistics you might find interesting:
 
 If there is anything you’re missing, come tell us about it
 at https://github.com/pretalx/pretalx/issues/new or via an
-email to support@pretalx.com!
+email to support@eventyay.com!
 """
         )
     ),
