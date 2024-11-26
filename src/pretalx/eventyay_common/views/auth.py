@@ -1,6 +1,7 @@
 import logging
 import os
 
+from allauth.socialaccount.models import SocialApp
 from django.conf import settings
 from django.contrib.auth import login
 from django.shortcuts import redirect
@@ -19,9 +20,11 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = (
 
 
 def oauth2_login_view(request, *args, **kwargs):
+    sso_provider = SocialApp.objects.filter(
+        provider=settings.EVENTYAY_SSO_PROVIDER).first()
     # Create an OAuth2 session using the client ID and redirect URI
     oauth2_session = OAuth2Session(
-        client_id=settings.OAUTH2_PROVIDER["CLIENT_ID"],
+        client_id=sso_provider.client_id,
         redirect_uri=settings.OAUTH2_PROVIDER["REDIRECT_URI"],
         scope=settings.OAUTH2_PROVIDER["SCOPE"],
     )
@@ -39,8 +42,10 @@ def oauth2_login_view(request, *args, **kwargs):
 
 
 def oauth2_callback(request):
+    sso_provider = SocialApp.objects.filter(
+        provider=settings.EVENTYAY_SSO_PROVIDER).first()
     oauth2_session = OAuth2Session(
-        settings.OAUTH2_PROVIDER["CLIENT_ID"],
+        sso_provider.client_id,
         redirect_uri=settings.OAUTH2_PROVIDER["REDIRECT_URI"],
         state=request.session.get("oauth2_state"),
     )
@@ -49,7 +54,7 @@ def oauth2_callback(request):
         # Fetch the token using the authorization code
         oauth2_session.fetch_token(
             settings.OAUTH2_PROVIDER["ACCESS_TOKEN_URL"],
-            client_secret=settings.OAUTH2_PROVIDER["CLIENT_SECRET"],
+            client_secret=sso_provider.secret,
             authorization_response=request.build_absolute_uri(),
             scope=settings.OAUTH2_PROVIDER["SCOPE"],
         )
