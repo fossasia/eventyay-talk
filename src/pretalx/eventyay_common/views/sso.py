@@ -37,7 +37,7 @@ class SSOConfigureView(PermissionRequired, CreateOrUpdateView):
         Handle the form submission and save the instance.
         """
         instance = form.save(commit=False)
-        instance.provider = "eventyay"
+        instance.provider = settings.EVENTYAY_SSO_PROVIDER
         instance.name = "Eventyay Ticket Provider"
         instance.save()
         site = Site.objects.get(pk=settings.SITE_ID)
