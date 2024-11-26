@@ -21,7 +21,8 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = (
 
 def oauth2_login_view(request, *args, **kwargs):
     sso_provider = SocialApp.objects.filter(
-        provider=settings.EVENTYAY_SSO_PROVIDER).first()
+        provider=settings.EVENTYAY_SSO_PROVIDER
+    ).first()
     # Create an OAuth2 session using the client ID and redirect URI
     oauth2_session = OAuth2Session(
         client_id=sso_provider.client_id,
@@ -43,7 +44,8 @@ def oauth2_login_view(request, *args, **kwargs):
 
 def oauth2_callback(request):
     sso_provider = SocialApp.objects.filter(
-        provider=settings.EVENTYAY_SSO_PROVIDER).first()
+        provider=settings.EVENTYAY_SSO_PROVIDER
+    ).first()
     oauth2_session = OAuth2Session(
         sso_provider.client_id,
         redirect_uri=settings.OAUTH2_PROVIDER["REDIRECT_URI"],
