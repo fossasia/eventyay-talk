@@ -2,6 +2,7 @@ from allauth.socialaccount.models import SocialApp
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.sites.models import Site
+from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -39,9 +40,10 @@ class SSOConfigureView(PermissionRequired, CreateOrUpdateView):
         instance = form.save(commit=False)
         instance.provider = settings.EVENTYAY_SSO_PROVIDER
         instance.name = "Eventyay Ticket Provider"
-        instance.save()
-        site = Site.objects.get(pk=settings.SITE_ID)
-        instance.sites.add(site)
+        with transaction.atomic():
+            instance.save()
+            site = Site.objects.get(pk=settings.SITE_ID)
+            instance.sites.add(site)
         return redirect(self.get_success_url())
 
     def form_invalid(self, form):
