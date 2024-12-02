@@ -140,7 +140,11 @@ def process_event_webhook(event_data):
                     locale=event_data.get("locale"),
                     date_from=datetime.fromisoformat(event_data.get("date_from")),
                     date_to=datetime.fromisoformat(event_data.get("date_to")),
-                    plugins=enable_video_plugin() if event_data.get("is_video_creation") else None,
+                    plugins=(
+                        enable_video_plugin()
+                        if event_data.get("is_video_creation")
+                        else None
+                    ),
                 )
                 event.save()
         elif action == Action.UPDATE:
@@ -157,7 +161,11 @@ def process_event_webhook(event_data):
             event.content_locale_array = ",".join(event_data.get("locales"))
             event.timezone = event_data.get("timezone")
             event.locale = event_data.get("locale")
-            event.plugins = add_plugin(event, enable_video_plugin()) if event_data.get("is_video_creation") else None
+            event.plugins = (
+                add_plugin(event, enable_video_plugin())
+                if event_data.get("is_video_creation")
+                else None
+            )
             event.save()
             logger.info(f"Event for organiser {organiser.name} created successfully.")
 
@@ -173,9 +181,9 @@ def process_event_webhook(event_data):
 
 
 def enable_video_plugin():
-    video_plugin = get_installed_plugin('pretalx_venueless')
+    video_plugin = get_installed_plugin("pretalx_venueless")
     if video_plugin:
-        plugins = 'pretalx_venueless'
+        plugins = "pretalx_venueless"
         return plugins
     else:
         logger.error("Video plugin not installed.")
@@ -204,6 +212,6 @@ def add_plugin(event, plugin_name):
     """
     if not event.plugins:
         return plugin_name
-    plugins = set(event.plugins.split(','))
+    plugins = set(event.plugins.split(","))
     plugins.add(plugin_name)
-    return ','.join(plugins)
+    return ",".join(plugins)
