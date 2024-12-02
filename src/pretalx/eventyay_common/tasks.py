@@ -181,6 +181,10 @@ def process_event_webhook(event_data):
 
 
 def enable_video_plugin():
+    """
+    Enable the video plugin if it is installed.
+    @return: The plugin if it is installed, otherwise None.
+    """
     video_plugin = get_installed_plugin("pretalx_venueless")
     if video_plugin:
         plugins = "pretalx_venueless"
