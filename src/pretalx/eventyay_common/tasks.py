@@ -141,7 +141,7 @@ def process_event_webhook(event_data):
                     date_from=datetime.fromisoformat(event_data.get("date_from")),
                     date_to=datetime.fromisoformat(event_data.get("date_to")),
                     plugins=(
-                        enable_video_plugin()
+                        get_video_plugin()
                         if event_data.get("is_video_creation")
                         else None
                     ),
@@ -162,9 +162,9 @@ def process_event_webhook(event_data):
             event.timezone = event_data.get("timezone")
             event.locale = event_data.get("locale")
             event.plugins = (
-                add_plugin(event, enable_video_plugin())
+                add_plugin(event, get_video_plugin())
                 if event_data.get("is_video_creation")
-                else None
+                else event.plugins
             )
             event.save()
             logger.info(f"Event for organiser {organiser.name} created successfully.")
@@ -180,10 +180,10 @@ def process_event_webhook(event_data):
         logger.error("Error saving organiser:", e)
 
 
-def enable_video_plugin():
+def get_video_plugin():
     """
-    Enable the video plugin if it is installed.
-    @return: The plugin if it is installed, otherwise None.
+    Check if the video plugin is installed.
+    @return: If the video plugin is installed, return the plugin name, otherwise None.
     """
     video_plugin = get_installed_plugin("pretalx_venueless")
     if video_plugin:
@@ -214,6 +214,8 @@ def add_plugin(event, plugin_name):
     @param plugin_name: A string representing the name of the plugin to add.
     @return: The updated list of plugins for the event.
     """
+    if plugin_name is None:
+        return event.plugins
     if not event.plugins:
         return plugin_name
     plugins = set(event.plugins.split(","))
