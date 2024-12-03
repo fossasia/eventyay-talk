@@ -7,9 +7,7 @@ from itertools import repeat
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import JSONField
 from django.db.models.fields.files import FieldFile
-from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from django.utils.timezone import now
@@ -24,8 +22,7 @@ from pretalx.common.text.path import path_with_hash
 from pretalx.common.text.phrases import phrases
 from pretalx.common.text.serialize import serialize_duration
 from pretalx.common.urls import EventUrls
-from pretalx.mail.models import MailTemplate, QueuedMail
-from pretalx.person.models import User
+from pretalx.mail.models import MailTemplateRoles, QueuedMail
 from pretalx.submission.signals import submission_state_change
 
 
@@ -346,12 +343,6 @@ class Submission(GenerateCode, PretalxModel):
             return self.submission_type.default_duration
         return self.duration
 
-    def get_tag(self):
-        tags = []
-        for tag in self.tags.all():
-            tags.append({"id": tag.id, "tag": tag.tag, "color": tag.color})
-        return tags
-
     def update_duration(self):
         """Apply the submission's duration to its currently scheduled.
 
@@ -496,7 +487,7 @@ class Submission(GenerateCode, PretalxModel):
     update_talk_slots.alters_data = True
 
     def send_initial_mails(self, person):
-        template = self.event.ack_template
+        template = self.event.get_mail_template(MailTemplateRoles.NEW_SUBMISSION)
         template_text = copy.deepcopy(template.text)
         locale = self.get_email_locale(person.locale)
         with override(locale):
@@ -525,10 +516,8 @@ class Submission(GenerateCode, PretalxModel):
             template.text = template_text
             template.save()
         if self.event.mail_settings["mail_on_new_submission"]:
-            MailTemplate(
-                event=self.event,
-                subject=str(_("New proposal")) + f": {self.title}",
-                text=self.event.settings.mail_text_new_submission,
+            self.event.get_mail_template(
+                MailTemplateRoles.NEW_SUBMISSION_INTERNAL
             ).to_mail(
                 user=self.event.email,
                 event=self.event,
@@ -661,9 +650,9 @@ class Submission(GenerateCode, PretalxModel):
 
     def send_state_mail(self):
         if self.state == SubmissionStates.ACCEPTED:
-            template = self.event.accept_template
+            template = self.event.get_mail_template(MailTemplateRoles.SUBMISSION_ACCEPT)
         elif self.state == SubmissionStates.REJECTED:
-            template = self.event.reject_template
+            template = self.event.get_mail_template(MailTemplateRoles.SUBMISSION_REJECT)
         else:
             return
 
@@ -982,41 +971,6 @@ class Submission(GenerateCode, PretalxModel):
 
     def remove_favourite(self, user):
         SubmissionFavourite.objects.filter(user=user, submission=self).delete()
-
-
-class SubmissionFavouriteDeprecated(models.Model):
-    user = models.OneToOneField(
-        to="person.User",
-        related_name="submission_favorites",
-        on_delete=models.PROTECT,
-        verbose_name=_n("User", "Users", 1),
-    )
-    talk_list = JSONField(null=True, blank=True, verbose_name=_("List favourite talk"))
-
-    class Meta:
-        db_table = '"submission_submission_favourites"'
-
-
-class SubmissionFavouriteDeprecatedSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(slug_field="id", read_only=True)
-
-    def __init__(self, user_id=None, **kwargs):
-        super().__init__(**kwargs)
-        self.user = user_id
-
-    class Meta:
-        model = SubmissionFavouriteDeprecated
-        fields = ["user", "talk_list"]
-
-    def save(self, user_id, talk_code):
-        with scopes_disabled():
-            user = get_object_or_404(User, id=user_id)
-            submission_fav, created = (
-                SubmissionFavouriteDeprecated.objects.get_or_create(user=user)
-            )
-            submission_fav.talk_list = talk_code
-            submission_fav.save()
-            return submission_fav
 
 
 class SubmissionFavourite(PretalxModel):
