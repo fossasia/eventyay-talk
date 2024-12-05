@@ -4,7 +4,6 @@ from urllib.parse import quote
 
 from django.conf import settings
 from django.db import models, transaction
-from django.db.models import Count
 from django.db.utils import DatabaseError
 from django.utils.functional import cached_property
 from django.utils.timezone import now
@@ -16,12 +15,8 @@ from pretalx.agenda.tasks import export_schedule_html
 from pretalx.common.models.mixins import PretalxModel
 from pretalx.common.text.phrases import phrases
 from pretalx.common.urls import EventUrls
-from pretalx.mail.models import MailTemplateRoles
-from pretalx.person.models import SpeakerProfile, User
 from pretalx.schedule.notifications import render_notifications
 from pretalx.schedule.signals import schedule_release
-from pretalx.submission.models import SubmissionStates
-from pretalx.submission.models.submission import SubmissionFavourite
 
 
 class Schedule(PretalxModel):
@@ -76,6 +71,7 @@ class Schedule(PretalxModel):
         :rtype: Schedule
         """
         from pretalx.schedule.models import TalkSlot
+        from pretalx.submission.models import SubmissionStates
 
         if name in ("wip", "latest"):
             raise Exception(f'Cannot use reserved name "{name}" for schedule version.')
@@ -169,6 +165,8 @@ class Schedule(PretalxModel):
         """Returns all :class:`~pretalx.schedule.models.slot.TalkSlot` objects
         that have been scheduled and are visible in the schedule (that is, have
         been confirmed at the time of release)."""
+        from pretalx.submission.models import SubmissionStates
+
         return (
             self.talks.select_related(
                 "submission",
@@ -491,6 +489,8 @@ class Schedule(PretalxModel):
         speaker_avails = None
         speaker_profiles = None
         if with_speakers:
+            from pretalx.person.models import SpeakerProfile
+
             speaker_profiles = {
                 profile.user: profile
                 for profile in SpeakerProfile.objects.filter(
@@ -529,6 +529,8 @@ class Schedule(PretalxModel):
         visible due to their unconfirmed status, and ``no_track`` are
         submissions without a track in a conference that uses tracks.
         """
+        from pretalx.submission.models import SubmissionStates
+
         talks = self.talks.filter(submission__isnull=False)
         warnings = {
             "talk_warnings": [
@@ -555,6 +557,8 @@ class Schedule(PretalxModel):
         """
         result = {}
         if self.changes["action"] == "create":
+            from pretalx.person.models import User
+
             for speaker in User.objects.filter(submissions__slots__schedule=self):
                 talks = self.talks.filter(
                     submission__speakers=speaker,
@@ -580,6 +584,8 @@ class Schedule(PretalxModel):
     def generate_notifications(self, save=False):
         """A list of unsaved :class:`~pretalx.mail.models.QueuedMail` objects
         to be sent on schedule release."""
+        from pretalx.mail.models import MailTemplateRoles
+
         mails = []
         for speaker, data in self.speakers_concerned.items():
             locale = speaker.get_locale_for_event(self.event)
@@ -678,18 +684,11 @@ class Schedule(PretalxModel):
                         "duration": talk.submission.get_duration(),
                         "updated": talk.updated.isoformat(),
                         "state": talk.submission.state if all_talks else None,
-                        "fav_count": (
-                            count_fav_talk(talk.submission.code)
-                            if talk.submission
-                            else 0
-                        ),
                         "do_not_record": (
                             talk.submission.do_not_record
                             if show_do_not_record
                             else None
                         ),
-                        "tags": talk.submission.get_tag(),
-                        "session_type": talk.submission.submission_type.name,
                     }
                 )
             else:
@@ -748,10 +747,3 @@ class Schedule(PretalxModel):
     def __str__(self) -> str:
         """Help when debugging."""
         return f"Schedule(event={self.event.slug}, version={self.version})"
-
-
-def count_fav_talk(submission_code):
-    count = SubmissionFavourite.objects.filter(
-        submission__code=submission_code
-    ).aggregate(count=Count("id"))["count"]
-    return count
