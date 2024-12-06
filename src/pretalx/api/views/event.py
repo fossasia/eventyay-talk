@@ -134,9 +134,7 @@ def get_payload_from_token(request, video_settings):
             )
 
         token_decode = jwt.decode(
-            auth_header[1],
-            video_settings.get("secret"),
-            algorithms=["HS256"]
+            auth_header[1], video_settings.get("secret"), algorithms=["HS256"]
         )
 
         event_slug = token_decode.get("slug")
@@ -145,10 +143,7 @@ def get_payload_from_token(request, video_settings):
         if not event_slug or not video_tokens:
             raise exceptions.AuthenticationFailedError("Invalid token payload")
 
-        return {
-            "event_slug": event_slug,
-            "video_tokens": video_tokens
-        }
+        return {"event_slug": event_slug, "video_tokens": video_tokens}
 
     except jwt.ExpiredSignatureError:
         raise exceptions.AuthenticationFailedError("Token has expired")
