@@ -135,9 +135,7 @@ def save_video_settings_information(event_slug, video_tokens, event_instance):
 
     if video_settings_form.is_valid():
         video_settings_form.save()
-        logger.info(
-            "Video settings configured successfully for event %s.", event_slug
-        )
+        logger.info("Video settings configured successfully for event %s.", event_slug)
         return Response({"status": "success"}, status=200)
     else:
         logger.error(
