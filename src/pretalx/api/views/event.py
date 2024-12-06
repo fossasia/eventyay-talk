@@ -61,7 +61,9 @@ def configure_video_settings(request):
         raise ValueError("Video tokens not found in the payload")
 
     try:
-        save_video_settings_information(event_slug, video_tokens)
+        with scopes_disabled():
+            event_instance = Event.objects.get(slug=event_slug)
+            save_video_settings_information(event_slug, video_tokens, event_instance)
     except Event.DoesNotExist:
         logger.error("Event with slug %s does not exist.", event_slug)
         return Response(
@@ -119,37 +121,35 @@ def get_payload_from_token(request, video_settings):
         raise exceptions.AuthenticationFailedError("Invalid token")
 
 
-def save_video_settings_information(event_slug, video_tokens):
-    with scopes_disabled():
-        event_instance = Event.objects.get(slug=event_slug)
-        video_settings_data = {
-            "token": video_tokens[0],
-            "url": "{}/api/v1/worlds/{}/".format(
-                settings.EVENTYAY_VIDEO_BASE_PATH, event_slug
-            ),
-        }
+def save_video_settings_information(event_slug, video_tokens, event_instance):
+    video_settings_data = {
+        "token": video_tokens[0],
+        "url": "{}/api/v1/worlds/{}/".format(
+            settings.EVENTYAY_VIDEO_BASE_PATH, event_slug
+        ),
+    }
 
-        video_settings_form = VenuelessSettingsForm(
-            event=event_instance, data=video_settings_data
+    video_settings_form = VenuelessSettingsForm(
+        event=event_instance, data=video_settings_data
+    )
+
+    if video_settings_form.is_valid():
+        video_settings_form.save()
+        logger.info(
+            "Video settings configured successfully for event %s.", event_slug
         )
-
-        if video_settings_form.is_valid():
-            video_settings_form.save()
-            logger.info(
-                "Video settings configured successfully for event %s.", event_slug
-            )
-            return Response({"status": "success"}, status=200)
-        else:
-            logger.error(
-                "Failed to configure video settings for event %s - Validation errors: %s.",
-                event_slug,
-                video_settings_form.errors,
-            )
-            return Response(
-                {
-                    "status": "error",
-                    "message": "Validation errors",
-                    "errors": video_settings_form.errors,
-                },
-                status=400,
-            )
+        return Response({"status": "success"}, status=200)
+    else:
+        logger.error(
+            "Failed to configure video settings for event %s - Validation errors: %s.",
+            event_slug,
+            video_settings_form.errors,
+        )
+        return Response(
+            {
+                "status": "error",
+                "message": "Validation errors",
+                "errors": video_settings_form.errors,
+            },
+            status=400,
+        )
