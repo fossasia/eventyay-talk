@@ -122,6 +122,13 @@ def get_payload_from_token(request, video_settings):
 
 
 def save_video_settings_information(event_slug, video_tokens, event_instance):
+    """
+    Save video settings information
+    @param event_slug:  A string representing the event slug
+    @param video_tokens: A list of video tokens
+    @param event_instance: An instance of the event
+    @return: Response object
+    """
     video_settings_data = {
         "token": video_tokens[0],
         "url": "{}/api/v1/worlds/{}/".format(
