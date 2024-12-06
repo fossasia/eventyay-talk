@@ -57,6 +57,9 @@ def configure_video_settings(request):
     event_slug = payload.get("event_slug")
     video_tokens = payload.get("video_tokens")
 
+    if not video_tokens:
+        raise ValueError("Video tokens not found in the payload")
+
     try:
         with scopes_disabled():
             event_instance = Event.objects.get(slug=event_slug)
@@ -100,6 +103,12 @@ def configure_video_settings(request):
             },
             status=404,
         )
+    except ValueError as e:
+        logger.error("Error configuring video settings: %s", e)
+        return Response(
+            {"status": "error", "message": "Error configuring video settings."},
+            status=400,
+        )
     except AuthenticationFailedError as e:
         logger.error("Authentication failed: %s", e)
         return Response(
@@ -114,24 +123,34 @@ def get_payload_from_token(request, video_settings):
     @param video_settings: dict containing video settings
     @return: dict containing payload data from the token
     """
-    auth_header = get_authorization_header(request).split()
-    if not auth_header:
-        raise Http404
-    if auth_header and auth_header[0].lower() == b"bearer":
-        if len(auth_header) == 1:
-            raise exceptions.AuthenticationFailedError(
-                "Invalid token header. No credentials provided."
-            )
-        elif len(auth_header) > 2:
-            raise exceptions.AuthenticationFailedError(
-                "Invalid token header. Token string should not contain spaces."
-            )
-    token_decode = jwt.decode(
-        auth_header[1],
-        video_settings.get("secret"),
-        algorithms=["HS256"],
-    )
-    event_slug = token_decode.get("slug")
-    video_tokens = token_decode.get("video_tokens")
+    try:
+        auth_header = get_authorization_header(request).split()
+        if not auth_header:
+            raise exceptions.AuthenticationFailedError("No authorization header")
 
-    return {"event_slug": event_slug, "video_tokens": video_tokens}
+        if len(auth_header) != 2 or auth_header[0].lower() != b"bearer":
+            raise exceptions.AuthenticationFailedError(
+                "Invalid token format. Must be 'Bearer <token>'"
+            )
+
+        token_decode = jwt.decode(
+            auth_header[1],
+            video_settings.get("secret"),
+            algorithms=["HS256"]
+        )
+
+        event_slug = token_decode.get("slug")
+        video_tokens = token_decode.get("video_tokens")
+
+        if not event_slug or not video_tokens:
+            raise exceptions.AuthenticationFailedError("Invalid token payload")
+
+        return {
+            "event_slug": event_slug,
+            "video_tokens": video_tokens
+        }
+
+    except jwt.ExpiredSignatureError:
+        raise exceptions.AuthenticationFailedError("Token has expired")
+    except jwt.InvalidTokenError:
+        raise exceptions.AuthenticationFailedError("Invalid token")
