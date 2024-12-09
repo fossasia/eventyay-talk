@@ -52,16 +52,16 @@ def configure_video_settings(request):
     @param request: request object
     @return response object
     """
-    video_settings = request.data.get("video_settings")
-
-    if not video_settings or "secret" not in video_settings:
-        raise ValueError("Video settings are missing or secret is not provided")
-
-    payload = get_payload_from_token(request, video_settings)
-    event_slug = payload.get("event_slug")
-    video_tokens = payload.get("video_tokens")
-
     try:
+        video_settings = request.data.get("video_settings")
+
+        if not video_settings or "secret" not in video_settings:
+            raise ValueError("Video settings are missing or secret is not provided")
+
+        payload = get_payload_from_token(request, video_settings)
+        event_slug = payload.get("event_slug")
+        video_tokens = payload.get("video_tokens")
+
         with scopes_disabled():
             event_instance = Event.objects.get(slug=event_slug)
             save_video_settings_information(event_slug, video_tokens, event_instance)
