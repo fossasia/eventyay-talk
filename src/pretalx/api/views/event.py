@@ -53,12 +53,16 @@ def configure_video_settings(request):
     @return response object
     """
     video_settings = request.data.get("video_settings")
+
+    if not video_settings or "secret" not in video_settings:
+        return Response(
+            {"status": "error", "message": "Invalid video settings."},
+            status=400,
+        )
+
     payload = get_payload_from_token(request, video_settings)
     event_slug = payload.get("event_slug")
     video_tokens = payload.get("video_tokens")
-
-    if not video_tokens:
-        raise ValueError("Video tokens not found in the payload")
 
     try:
         with scopes_disabled():
@@ -129,6 +133,10 @@ def save_video_settings_information(event_slug, video_tokens, event_instance):
     @param event_instance: An instance of the event
     @return: Response object
     """
+
+    if not video_tokens:
+        raise ValueError("Video tokens list is empty")
+
     video_settings_data = {
         "token": video_tokens[0],
         "url": "{}/api/v1/worlds/{}/".format(
