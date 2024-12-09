@@ -55,10 +55,7 @@ def configure_video_settings(request):
     video_settings = request.data.get("video_settings")
 
     if not video_settings or "secret" not in video_settings:
-        return Response(
-            {"status": "error", "message": "Invalid video settings."},
-            status=400,
-        )
+        raise ValueError("Video settings are missing or secret is not provided")
 
     payload = get_payload_from_token(request, video_settings)
     event_slug = payload.get("event_slug")
