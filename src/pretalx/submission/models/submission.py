@@ -7,13 +7,17 @@ from itertools import repeat
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import JSONField
 from django.db.models.fields.files import FieldFile
+from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext_lazy as _n
 from django.utils.translation import override, pgettext_lazy
-from django_scopes import ScopedManager
+from django_scopes import ScopedManager, scopes_disabled
+from rest_framework import serializers
 
 from pretalx.common.exceptions import SubmissionError
 from pretalx.common.models.choices import Choices
@@ -22,6 +26,7 @@ from pretalx.common.text.path import path_with_hash
 from pretalx.common.text.phrases import phrases
 from pretalx.common.text.serialize import serialize_duration
 from pretalx.common.urls import EventUrls
+from pretalx.person.models import User
 from pretalx.submission.signals import submission_state_change
 
 
@@ -1013,6 +1018,41 @@ class Submission(GenerateCode, PretalxModel):
 
     def remove_favourite(self, user):
         SubmissionFavourite.objects.filter(user=user, submission=self).delete()
+
+
+class SubmissionFavouriteDeprecated(models.Model):
+    user = models.OneToOneField(
+        to="person.User",
+        related_name="submission_favorites",
+        on_delete=models.PROTECT,
+        verbose_name=_n("User", "Users", 1),
+    )
+    talk_list = JSONField(null=True, blank=True, verbose_name=_("List favourite talk"))
+
+    class Meta:
+        db_table = '"submission_submission_favourites"'
+
+
+class SubmissionFavouriteDeprecatedSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field="id", read_only=True)
+
+    def __init__(self, user_id=None, **kwargs):
+        super().__init__(**kwargs)
+        self.user = user_id
+
+    class Meta:
+        model = SubmissionFavouriteDeprecated
+        fields = ["user", "talk_list"]
+
+    def save(self, user_id, talk_code):
+        with scopes_disabled():
+            user = get_object_or_404(User, id=user_id)
+            submission_fav, _ = (
+                SubmissionFavouriteDeprecated.objects.get_or_create(user=user)
+            )
+            submission_fav.talk_list = talk_code
+            submission_fav.save()
+            return submission_fav
 
 
 class SubmissionFavourite(PretalxModel):
