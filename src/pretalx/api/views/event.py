@@ -1,4 +1,5 @@
 import logging
+from http import HTTPMethod
 
 import jwt
 from django.conf import settings
@@ -43,7 +44,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         raise Http404()
 
 
-@api_view(http_method_names=["POST"])
+@api_view(http_method_names=[HTTPMethod.POST])
 @authentication_classes([])
 @permission_classes([])
 def configure_video_settings(request):
