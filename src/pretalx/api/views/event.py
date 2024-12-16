@@ -1,5 +1,5 @@
 import logging
-from http import HTTPMethod
+from http import HTTPMethod, HTTPStatus
 
 import jwt
 from django.conf import settings
@@ -73,18 +73,19 @@ def configure_video_settings(request):
                 "status": "error",
                 "message": "Event with slug {} not found.".format(event_slug),
             },
-            status=404,
+            status=HTTPStatus.NOT_FOUND,
         )
     except ValueError as e:
         logger.error("Error configuring video settings: %s", e)
         return Response(
             {"status": "error", "message": "Error configuring video settings."},
-            status=400,
+            status=HTTPStatus.BAD_REQUEST,
         )
     except AuthenticationFailedError as e:
         logger.error("Authentication failed: %s", e)
         return Response(
-            {"status": "error", "message": "Authentication failed."}, status=401
+            {"status": "error", "message": "Authentication failed."},
+            status=HTTPStatus.UNAUTHORIZED
         )
 
 
