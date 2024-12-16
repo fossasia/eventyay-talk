@@ -1047,8 +1047,8 @@ class SubmissionFavouriteDeprecatedSerializer(serializers.ModelSerializer):
     def save(self, user_id, talk_code):
         with scopes_disabled():
             user = get_object_or_404(User, id=user_id)
-            submission_fav, _ = (
-                SubmissionFavouriteDeprecated.objects.get_or_create(user=user)
+            submission_fav, _ = SubmissionFavouriteDeprecated.objects.get_or_create(
+                user=user
             )
             submission_fav.talk_list = talk_code
             submission_fav.save()
