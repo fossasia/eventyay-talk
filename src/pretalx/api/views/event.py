@@ -85,7 +85,7 @@ def configure_video_settings(request):
         logger.error("Authentication failed: %s", e)
         return Response(
             {"status": "error", "message": "Authentication failed."},
-            status=HTTPStatus.UNAUTHORIZED
+            status=HTTPStatus.UNAUTHORIZED,
         )
 
 
