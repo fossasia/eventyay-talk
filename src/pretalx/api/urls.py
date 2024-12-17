@@ -30,5 +30,5 @@ urlpatterns = [
         "events/<event>/favourite-talk/",
         submission.SubmissionFavouriteDeprecatedView.as_view(),
     ),
-    path("configure-video-settings/", event.configure_video_settings),
+    path("configure-video-settings/", event.ConfigureVideoSettingsView.as_view()),
 ]

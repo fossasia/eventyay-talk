@@ -13,7 +13,10 @@ from rest_framework.decorators import (
     authentication_classes,
     permission_classes,
 )
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from pretalx.api.serializers.event import EventSerializer
 from pretalx.common import exceptions
@@ -44,49 +47,60 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         raise Http404()
 
 
-@api_view(http_method_names=[HTTPMethod.POST])
-@authentication_classes([])
-@permission_classes([])
-def configure_video_settings(request):
+class ConfigureVideoSettingsView(APIView):
     """
-    Configure video settings for an event
-    @param request: request object
-    @return response object
+    API View to configure video settings for an event.
     """
-    try:
-        video_settings = request.data.get("video_settings")
 
-        if not video_settings or "secret" not in video_settings:
-            raise ValueError("Video settings are missing or secret is not provided")
+    authentication_classes = []
+    permission_classes = [AllowAny]
 
-        payload = get_payload_from_token(request, video_settings)
-        event_slug = payload.get("event_slug")
-        video_tokens = payload.get("video_tokens")
-
-        with scopes_disabled():
-            event_instance = Event.objects.get(slug=event_slug)
-            save_video_settings_information(event_slug, video_tokens, event_instance)
-    except Event.DoesNotExist:
-        logger.error("Event with slug %s does not exist.", event_slug)
-        return Response(
-            {
-                "status": "error",
-                "message": "Event with slug {} not found.".format(event_slug),
-            },
-            status=HTTPStatus.NOT_FOUND,
-        )
-    except ValueError as e:
-        logger.error("Error configuring video settings: %s", e)
-        return Response(
-            {"status": "error", "message": "Error configuring video settings."},
-            status=HTTPStatus.BAD_REQUEST,
-        )
-    except AuthenticationFailedError as e:
-        logger.error("Authentication failed: %s", e)
-        return Response(
-            {"status": "error", "message": "Authentication failed."},
-            status=HTTPStatus.UNAUTHORIZED,
-        )
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST request to configure video settings.
+        @param request: request object
+        @return response object
+        """
+        try:
+            video_settings = request.data.get("video_settings")
+            if not video_settings or "secret" not in video_settings:
+                raise ValueError("Video settings are missing or secret is not provided")
+            payload = get_payload_from_token(request, video_settings)
+            event_slug = payload.get("event_slug")
+            video_tokens = payload.get("video_tokens")
+            with scopes_disabled():
+                event_instance = Event.objects.get(slug=event_slug)
+                save_video_settings_information(
+                    event_slug, video_tokens, event_instance
+                )
+            return Response(
+                {
+                    "status": "success",
+                    "message": "Video settings configured successfully.",
+                },
+                status=HTTPStatus.OK,
+            )
+        except Event.DoesNotExist:
+            logger.error("Event with slug %s does not exist.", event_slug)
+            return Response(
+                {
+                    "status": "error",
+                    "message": f"Event with slug {event_slug} not found.",
+                },
+                status=HTTPStatus.NOT_FOUND,
+            )
+        except ValueError as e:
+            logger.error("Error configuring video settings: %s", e)
+            return Response(
+                {"status": "error", "message": str(e)},
+                status=HTTPStatus.BAD_REQUEST,
+            )
+        except AuthenticationFailed as e:
+            logger.error("Authentication failed: %s", e)
+            return Response(
+                {"status": "error", "message": "Authentication failed."},
+                status=HTTPStatus.UNAUTHORIZED,
+            )
 
 
 def get_payload_from_token(request, video_settings):
@@ -150,7 +164,7 @@ def save_video_settings_information(event_slug, video_tokens, event_instance):
     if video_settings_form.is_valid():
         video_settings_form.save()
         logger.info("Video settings configured successfully for event %s.", event_slug)
-        return Response({"status": "success"}, status=200)
+        return Response({"status": "success"}, status=HTTPStatus.OK)
     else:
         logger.error(
             "Failed to configure video settings for event %s - Validation errors: %s.",
@@ -163,5 +177,5 @@ def save_video_settings_information(event_slug, video_tokens, event_instance):
                 "message": "Validation errors",
                 "errors": video_settings_form.errors,
             },
-            status=400,
+            status=HTTPStatus.BAD_REQUEST,
         )
