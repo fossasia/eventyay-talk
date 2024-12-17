@@ -1,5 +1,5 @@
 import logging
-from http import HTTPMethod, HTTPStatus
+from http import HTTPStatus
 
 import jwt
 from django.conf import settings
@@ -8,11 +8,6 @@ from django_scopes import scopes_disabled
 from pretalx_venueless.forms import VenuelessSettingsForm
 from rest_framework import viewsets
 from rest_framework.authentication import get_authorization_header
-from rest_framework.decorators import (
-    api_view,
-    authentication_classes,
-    permission_classes,
-)
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -20,7 +15,6 @@ from rest_framework.views import APIView
 
 from pretalx.api.serializers.event import EventSerializer
 from pretalx.common import exceptions
-from pretalx.common.exceptions import AuthenticationFailedError
 from pretalx.event.models import Event
 
 logger = logging.getLogger(__name__)
