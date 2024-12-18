@@ -3,7 +3,8 @@ from http import HTTPStatus
 
 import jwt
 from django.conf import settings
-from django.http import Http404, HttpResponseServerError
+from django.core.exceptions import ValidationError
+from django.http import Http404, HttpResponseServerError, HttpResponseBadRequest
 from django_scopes import scopes_disabled
 from pretalx_venueless.forms import VenuelessSettingsForm
 from rest_framework import viewsets
@@ -79,6 +80,11 @@ class ConfigureVideoSettingsView(APIView):
         except Event.DoesNotExist:
             logger.error("Event does not exist.")
             raise Http404("Event does not exist")
+        except ValidationError as e:
+            logger.error("Validation error: %s", e)
+            return HttpResponseBadRequest(
+                "Failed to configure video settings - Validation errors: %s." % e,
+                status=HTTPStatus.BAD_REQUEST)
         except VideoIntegrationError as e:
             logger.error("Error configuring video settings: %s", e)
             return HttpResponseServerError(
@@ -150,18 +156,13 @@ def save_video_settings_information(event_slug, video_tokens, event_instance):
     if video_settings_form.is_valid():
         video_settings_form.save()
         logger.info("Video settings configured successfully for event %s.", event_slug)
-        return Response({"status": "success"}, status=HTTPStatus.OK)
     else:
         logger.error(
             "Failed to configure video settings for event %s - Validation errors: %s.",
             event_slug,
             video_settings_form.errors,
         )
-        return Response(
-            {
-                "status": "error",
-                "message": "Validation errors",
-                "errors": video_settings_form.errors,
-            },
-            status=HTTPStatus.BAD_REQUEST,
+        raise ValidationError(
+            "Failed to configure video settings for event %s - Validation errors: %s." % (
+                event_slug, video_settings_form.errors)
         )
