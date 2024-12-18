@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 import jwt
 from django.conf import settings
-from django.http import Http404
+from django.http import Http404, HttpResponseServerError
 from django_scopes import scopes_disabled
 from pretalx_venueless.forms import VenuelessSettingsForm
 from rest_framework import viewsets
@@ -15,6 +15,7 @@ from rest_framework.views import APIView
 
 from pretalx.api.serializers.event import EventSerializer
 from pretalx.common import exceptions
+from pretalx.common.exceptions import VideoIntegrationError
 from pretalx.event.models import Event
 
 logger = logging.getLogger(__name__)
@@ -58,7 +59,8 @@ class ConfigureVideoSettingsView(APIView):
         try:
             video_settings = request.data.get("video_settings")
             if not video_settings or "secret" not in video_settings:
-                raise ValueError("Video settings are missing or secret is not provided")
+                raise VideoIntegrationError(
+                    "Video settings are missing or secret is not provided")
             payload = get_payload_from_token(request, video_settings)
             event_slug = payload.get("event_slug")
             video_tokens = payload.get("video_tokens")
@@ -75,26 +77,15 @@ class ConfigureVideoSettingsView(APIView):
                 status=HTTPStatus.OK,
             )
         except Event.DoesNotExist:
-            logger.error("Event with slug %s does not exist.", event_slug)
-            return Response(
-                {
-                    "status": "error",
-                    "message": f"Event with slug {event_slug} not found.",
-                },
-                status=HTTPStatus.NOT_FOUND,
-            )
-        except ValueError as e:
+            logger.error("Event does not exist.")
+            raise Http404("Event does not exist")
+        except VideoIntegrationError as e:
             logger.error("Error configuring video settings: %s", e)
-            return Response(
-                {"status": "error", "message": str(e)},
-                status=HTTPStatus.BAD_REQUEST,
-            )
+            return HttpResponseServerError(
+                "Video settings are missing or secret is not provided", status=HTTPStatus.SERVICE_UNAVAILABLE)
         except AuthenticationFailed as e:
             logger.error("Authentication failed: %s", e)
-            return Response(
-                {"status": "error", "message": "Authentication failed."},
-                status=HTTPStatus.UNAUTHORIZED,
-            )
+            raise AuthenticationFailed("Authentication failed.")
 
 
 def get_payload_from_token(request, video_settings):
@@ -142,7 +133,7 @@ def save_video_settings_information(event_slug, video_tokens, event_instance):
     """
 
     if not video_tokens:
-        raise ValueError("Video tokens list is empty")
+        raise VideoIntegrationError("Video tokens list is empty")
 
     video_settings_data = {
         "token": video_tokens[0],
