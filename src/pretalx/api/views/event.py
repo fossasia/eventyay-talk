@@ -83,10 +83,7 @@ class ConfigureVideoSettingsView(APIView):
             raise Http404("Event does not exist")
         except ValidationError as e:
             logger.error("Validation error: %s", e)
-            return HttpResponseBadRequest(
-                "Failed to configure video settings - Validation errors: %s." % e,
-                status=HTTPStatus.BAD_REQUEST,
-            )
+            return HttpResponseBadRequest(e, status=HTTPStatus.BAD_REQUEST)
         except VideoIntegrationError as e:
             logger.error("Error configuring video settings: %s", e)
             return HttpResponseServerError(
@@ -165,7 +162,4 @@ def save_video_settings_information(event_slug, video_tokens, event_instance):
             event_slug,
             video_settings_form.errors,
         )
-        raise ValidationError(
-            "Failed to configure video settings for event %s - Validation errors: %s."
-            % (event_slug, video_settings_form.errors)
-        )
+        raise ValidationError("Validation errors: %s " % video_settings_form.errors)
