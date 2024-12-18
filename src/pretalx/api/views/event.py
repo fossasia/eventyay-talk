@@ -4,7 +4,7 @@ from http import HTTPStatus
 import jwt
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.http import Http404, HttpResponseServerError, HttpResponseBadRequest
+from django.http import Http404, HttpResponseBadRequest, HttpResponseServerError
 from django_scopes import scopes_disabled
 from pretalx_venueless.forms import VenuelessSettingsForm
 from rest_framework import viewsets
@@ -61,7 +61,8 @@ class ConfigureVideoSettingsView(APIView):
             video_settings = request.data.get("video_settings")
             if not video_settings or "secret" not in video_settings:
                 raise VideoIntegrationError(
-                    "Video settings are missing or secret is not provided")
+                    "Video settings are missing or secret is not provided"
+                )
             payload = get_payload_from_token(request, video_settings)
             event_slug = payload.get("event_slug")
             video_tokens = payload.get("video_tokens")
@@ -84,12 +85,14 @@ class ConfigureVideoSettingsView(APIView):
             logger.error("Validation error: %s", e)
             return HttpResponseBadRequest(
                 "Failed to configure video settings - Validation errors: %s." % e,
-                status=HTTPStatus.BAD_REQUEST)
+                status=HTTPStatus.BAD_REQUEST,
+            )
         except VideoIntegrationError as e:
             logger.error("Error configuring video settings: %s", e)
             return HttpResponseServerError(
                 "Video settings are missing or secret is not provided",
-                status=HTTPStatus.SERVICE_UNAVAILABLE)
+                status=HTTPStatus.SERVICE_UNAVAILABLE,
+            )
         except AuthenticationFailed as e:
             logger.error("Authentication failed: %s", e)
             raise AuthenticationFailed("Authentication failed.")
@@ -163,6 +166,6 @@ def save_video_settings_information(event_slug, video_tokens, event_instance):
             video_settings_form.errors,
         )
         raise ValidationError(
-            "Failed to configure video settings for event %s - Validation errors: %s." % (
-                event_slug, video_settings_form.errors)
+            "Failed to configure video settings for event %s - Validation errors: %s."
+            % (event_slug, video_settings_form.errors)
         )
