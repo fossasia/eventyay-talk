@@ -82,7 +82,8 @@ class ConfigureVideoSettingsView(APIView):
         except VideoIntegrationError as e:
             logger.error("Error configuring video settings: %s", e)
             return HttpResponseServerError(
-                "Video settings are missing or secret is not provided", status=HTTPStatus.SERVICE_UNAVAILABLE)
+                "Video settings are missing or secret is not provided",
+                status=HTTPStatus.SERVICE_UNAVAILABLE)
         except AuthenticationFailed as e:
             logger.error("Authentication failed: %s", e)
             raise AuthenticationFailed("Authentication failed.")
