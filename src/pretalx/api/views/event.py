@@ -4,7 +4,7 @@ from http import HTTPStatus
 import jwt
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.http import Http404, HttpResponseBadRequest, HttpResponseServerError
+from django.http import Http404
 from django_scopes import scopes_disabled
 from pretalx_venueless.forms import VenuelessSettingsForm
 from rest_framework import viewsets
@@ -87,7 +87,8 @@ class ConfigureVideoSettingsView(APIView):
             logger.error("Error configuring video settings: %s", e)
             return Response(
                 {"detail": "Video settings are missing, please try after sometime."},
-                status=HTTPStatus.SERVICE_UNAVAILABLE)
+                status=HTTPStatus.SERVICE_UNAVAILABLE,
+            )
         except AuthenticationFailed as e:
             logger.error("Authentication failed: %s", e)
             raise AuthenticationFailed("Authentication failed.")
