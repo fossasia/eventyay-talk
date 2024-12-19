@@ -156,9 +156,12 @@ def save_video_settings_information(event_slug, video_tokens, event_instance):
         video_settings_form.save()
         logger.info("Video settings configured successfully for event %s.", event_slug)
     else:
+        errors = video_settings_form.errors.get_json_data()
+        formatted_errors = {field: [error['message'] for error in error_list] for
+                            field, error_list in errors.items()}
         logger.error(
             "Failed to configure video settings for event %s - Validation errors: %s.",
             event_slug,
-            video_settings_form.errors,
+            formatted_errors,
         )
-        raise ValidationError(video_settings_form.errors.get_json_data())
+        raise ValidationError(formatted_errors)
