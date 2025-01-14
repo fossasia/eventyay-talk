@@ -22,10 +22,10 @@ jobs:
 
       - name: Build documentation
         run: make html
-        working-directory: docs  # Adjust to your Sphinx docs directory
+        working-directory: doc  # Adjust to your Sphinx docs directory
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/_build/html
+          publish_dir: doc/_build/html
