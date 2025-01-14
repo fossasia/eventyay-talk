@@ -3,6 +3,7 @@
 Release Notes
 =============
 
+- :feature:`orga:submission` Organisers and reviewers can now leave comments on proposals. Comments are shown in chronological order, and users can of course comment multiple times, rather than leaving a single review.
 - :feature:`schedule` When you embed the pretalx widget on an external page, clicking on session links will open the sessions in a new tab, so attendees won't have to try to navigate back to your home page.
 - :feature:`schedule` Organisers can now configure additional links to show in the top menu next to "Schedule", "Sessions", "Speakers", handy for links back to the conference website, streams, etc.
 - :feature:`orga` Organisers can now configure footer links that will be shown on all schedule pages.

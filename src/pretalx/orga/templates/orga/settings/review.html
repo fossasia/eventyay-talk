@@ -33,6 +33,7 @@
 
         <section role="tabpanel" id="tabpanel-general" aria-labelledby="tab-general" tabindex="0" aria-hidden="false">
             {% include "common/forms/errors.html" %}
+            {{ form.use_submission_comments.as_field_group }}
             {{ form.score_mandatory.as_field_group }}
             {{ form.text_mandatory.as_field_group }}
             <div class="col-md-9 flip ml-auto mb-4">

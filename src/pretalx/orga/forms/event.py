@@ -503,6 +503,13 @@ class ReviewSettingsForm(
     JsonSubfieldMixin,
     forms.Form,
 ):
+    use_submission_comments = forms.BooleanField(
+        label=_("Enable submission comments"),
+        help_text=_(
+            "Allow organisers and reviewers to comment on submissions, separate from reviews."
+        ),
+        required=False,
+    )
     score_mandatory = forms.BooleanField(
         label=_("Require a review score"), required=False
     )
@@ -547,6 +554,7 @@ class ReviewSettingsForm(
             "text_mandatory": "review_settings",
             "aggregate_method": "review_settings",
             "score_format": "review_settings",
+            "use_submission_comments": "feature_flags",
         }
         hierarkey_fields = ("review_help_text",)
 
