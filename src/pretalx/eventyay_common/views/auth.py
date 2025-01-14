@@ -26,12 +26,16 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = (
 
 def register(request: HttpRequest) -> HttpResponse:
     """
-    Register a new user account, redirects to previous page
+    Register a new user account and redirect to the previous page.
+    
+    This function constructs a registration URL with a 'next' parameter
+    to ensure the user is redirected back to their original location
+    after registration.
     """
     register_url = urljoin(settings.EVENTYAY_TICKET_BASE_PATH, "/control/register")
-    next = request.GET.get('next') or request.POST.get('next')
-    next_url = request.build_absolute_uri(next)
-    next_param = f"?next={quote(next_url)}"
+    next_url = request.GET.get('next') or request.POST.get('next')
+    full_next_url = request.build_absolute_uri(next_url)
+    next_param = f"?next={quote(full_next_url)}"
     return redirect(f"{register_url}{next_param}")
 
 
@@ -45,7 +49,6 @@ class OAuth2LoginView(View):
         sso_provider = self.get_sso_provider()
         if not sso_provider:
             return self.handle_sso_not_configured(request)
-
         oauth2_session = self.create_oauth2_session(sso_provider)
         authorization_url, state = self.get_authorization_url(oauth2_session)
         request.session["oauth2_state"] = state
@@ -75,7 +78,9 @@ class OAuth2LoginView(View):
 
     @staticmethod
     def get_authorization_url(oauth2_session: OAuth2Session) -> Tuple[str, str]:
-        return oauth2_session.authorization_url(settings.OAUTH2_PROVIDER["AUTHORIZE_URL"])
+        return oauth2_session.authorization_url(
+            settings.OAUTH2_PROVIDER["AUTHORIZE_URL"]
+        )
 
 
 def oauth2_callback(request):
@@ -126,5 +131,6 @@ def oauth2_callback(request):
 
     # Log the user into the session
     login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+    # If a 'next' URL was stored in the session, use it for redirecting user back after login
     next_url = request.session.pop('next', None)
     return redirect(next_url or reverse('cfp:root.main'))

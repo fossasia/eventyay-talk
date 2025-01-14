@@ -26,7 +26,8 @@
     {% if not hide_login %}
         <div class="panel panel-default">
             <div class="panel-heading text-center" id="headingOne">
-                <a class="btn btn-lg btn-primary btn-block mt-3" href='{% url "eventyay_common:oauth2_provider.login" %}?next={{ next_url|urlencode }}'>
+                <a class="btn btn-lg btn-primary btn-block mt-3" 
+                   href='{% url "eventyay_common:oauth2_provider.login" %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}'>
                     {% translate "Login with SSO" %}
                 </a>
             </div>
@@ -36,7 +37,8 @@
         <hr>
         <div class="panel panel-default">
             <div class="panel-heading text-center" id="headingTwo">
-                <a class="btn btn-lg btn-primary btn-block mt-3" href='{% url "eventyay_common:register.account"" %}?next={{ next_url|urlencode }}'>
+                <a class="btn btn-lg btn-primary btn-block mt-3" 
+                   href='{% url "eventyay_common:register.account" %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}'>
                     {% translate "Register Speaker Account" %}
                 </a>
             </div>
