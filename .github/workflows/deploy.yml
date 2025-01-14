@@ -18,7 +18,7 @@ jobs:
           python-version: '3.9'
 
       - name: Install dependencies
-        run: pip install sphinx sphinx-rtd-theme
+        run: pip install --upgrade-strategy eager -Ur doc/requirements.txt
 
       - name: Build documentation
         run: make html
