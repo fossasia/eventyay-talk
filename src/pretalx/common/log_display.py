@@ -16,6 +16,7 @@ from pretalx.submission.models import (
     CfP,
     Question,
     Submission,
+    SubmissionComment,
     SubmissionStates,
 )
 
@@ -97,6 +98,8 @@ LOG_NAMES = {
     "pretalx.submission.withdraw": _("The proposal was withdrawn."),
     "pretalx.submission.answer.update": _("A proposal answer was modified."),
     "pretalx.submission.answer.create": _("A proposal answer was added."),
+    "pretalx.submission.comment.create": _("A proposal comment was added."),
+    "pretalx.submission.comment.delete": _("A proposal comment was deleted."),
     "pretalx.submission_type.create": _("A session type was added."),
     "pretalx.submission_type.delete": _("A session type was deleted."),
     "pretalx.submission_type.make_default": _("The session type was made default."),
@@ -129,6 +132,16 @@ def default_activitylog_display(sender: Event, activitylog: ActivityLog, **kwarg
     return LOG_NAMES.get(action_type)
 
 
+def _submission_label_text(submission: Submission) -> str:
+    if submission.state in (
+        SubmissionStates.ACCEPTED,
+        SubmissionStates.CONFIRMED,
+    ):
+        return _n("Session", "Sessions", 1)
+    else:
+        return _n("Proposal", "Proposals", 1)
+
+
 @receiver(activitylog_object_link)
 def default_activitylog_object_link(sender: Event, activitylog: ActivityLog, **kwargs):
     if not activitylog.content_object:
@@ -139,13 +152,14 @@ def default_activitylog_object_link(sender: Event, activitylog: ActivityLog, **k
     if isinstance(activitylog.content_object, Submission):
         url = activitylog.content_object.orga_urls.base
         link_text = escape(activitylog.content_object.title)
-        if activitylog.content_object.state in (
-            SubmissionStates.ACCEPTED,
-            SubmissionStates.CONFIRMED,
-        ):
-            text = _n("Session", "Sessions", 1)
-        else:
-            text = _n("Proposal", "Proposals", 1)
+        text = _submission_label_text(activitylog.content_object)
+    if isinstance(activitylog.content_object, SubmissionComment):
+        url = (
+            activitylog.content_object.submission.orga_urls.comments
+            + f"#comment-{activitylog.content_object.pk}"
+        )
+        link_text = escape(activitylog.content_object.submission.title)
+        text = _submission_label_text(activitylog.content_object.submission)
     if isinstance(activitylog.content_object, Question):
         url = activitylog.content_object.urls.base
         link_text = escape(activitylog.content_object.question)

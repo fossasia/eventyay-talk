@@ -44,6 +44,7 @@ from pretalx.person.models import User
 from pretalx.submission.forms import (
     QuestionsForm,
     ResourceForm,
+    SubmissionCommentForm,
     SubmissionFilterForm,
     TagForm,
 )
@@ -51,6 +52,7 @@ from pretalx.submission.models import (
     Feedback,
     Resource,
     Submission,
+    SubmissionComment,
     SubmissionStates,
     Tag,
 )
@@ -955,6 +957,57 @@ class TagDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
             action = "pretalx.tag." + ("update" if self.object else "create")
             form.instance.log_action(action, person=self.request.user, orga=True)
         return result
+
+
+class CommentList(SubmissionViewMixin, FormView):
+    template_name = "orga/submission/comments.html"
+    permission_required = "submission.view_submission_comments"
+    write_permission_required = "submission.add_submission_comments"
+    form_class = SubmissionCommentForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["submission"] = self.object
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    @context
+    @cached_property
+    def comments(self):
+        return self.object.comments.all().select_related("user").order_by("created")
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, phrases.base.saved)
+        return redirect(self.object.orga_urls.comments)
+
+
+class CommentDelete(SubmissionViewMixin, ActionConfirmMixin, TemplateView):
+    permission_required = "submission.delete_submission_comment"
+
+    @property
+    def action_back_url(self):
+        return self.object.submission.orga_urls.comments
+
+    @property
+    def action_object_name(self):
+        return _("Your comment on “{title}”").format(title=self.object.submission.title)
+
+    def get_object(self):
+        return get_object_or_404(
+            SubmissionComment,
+            submission__code__iexact=self.kwargs["code"],
+            pk=self.kwargs["pk"],
+        )
+
+    def post(self, request, *args, **kwargs):
+        comment = self.get_object()
+        comment.submission.log_action(
+            "pretalx.submission.comment.delete", person=request.user, orga=True
+        )
+        comment.delete()
+        messages.success(request, _("The comment has been deleted."))
+        return redirect(comment.submission.orga_urls.comments)
 
 
 class TagDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
