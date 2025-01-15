@@ -1,7 +1,7 @@
 import logging
 import os
 from typing import Optional, Tuple
-from urllib.parse import quote, urljoin
+from urllib.parse import quote, urljoin, urlparse
 
 from allauth.socialaccount.models import SocialApp
 from django.conf import settings
@@ -24,6 +24,14 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = (
 )
 
 
+def validate_relative_url(next_url: str) -> Optional[str]:
+    parsed = urlparse(next_url)
+    # Allow relative URLs
+    if not parsed.netloc:
+        return next_url
+    return
+
+
 def register(request: HttpRequest) -> HttpResponse:
     """
     Register a new user account and redirect to the previous page.
@@ -34,9 +42,14 @@ def register(request: HttpRequest) -> HttpResponse:
     """
     register_url = urljoin(settings.EVENTYAY_TICKET_BASE_PATH, "/control/register")
     next_url = request.GET.get("next") or request.POST.get("next")
-    full_next_url = request.build_absolute_uri(next_url)
-    next_param = f"?next={quote(full_next_url)}"
-    return redirect(f"{register_url}{next_param}")
+
+    validated_next_url = validate_relative_url(next_url)
+    if validated_next_url:
+        full_next_url = request.build_absolute_uri(validated_next_url)
+        next_param = f"?next={quote(full_next_url)}"
+        return redirect(f"{register_url}{next_param}")
+
+    return redirect(register_url)
 
 
 class OAuth2LoginView(View):
@@ -133,4 +146,7 @@ def oauth2_callback(request):
     login(request, user, backend="django.contrib.auth.backends.ModelBackend")
     # If a 'next' URL was stored in the session, use it for redirecting user back after login
     next_url = request.session.pop("next", None)
-    return redirect(next_url or reverse("cfp:root.main"))
+    validated_next_url = validate_relative_url(next_url)
+    if validated_next_url:
+        return redirect(validated_next_url)
+    return redirect(reverse("cfp:root.main"))
