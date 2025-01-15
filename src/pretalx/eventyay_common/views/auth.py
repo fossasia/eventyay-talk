@@ -1,7 +1,7 @@
 import logging
 import os
 from typing import Optional, Tuple
-from urllib.parse import urljoin, quote
+from urllib.parse import quote, urljoin
 
 from allauth.socialaccount.models import SocialApp
 from django.conf import settings
@@ -27,7 +27,7 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = (
 def register(request: HttpRequest) -> HttpResponse:
     """
     Register a new user account and redirect to the previous page.
-    
+
     This function constructs a registration URL with a 'next' parameter
     to ensure the user is redirected back to their original location
     after registration.
