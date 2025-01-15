@@ -33,7 +33,7 @@ def register(request: HttpRequest) -> HttpResponse:
     after registration.
     """
     register_url = urljoin(settings.EVENTYAY_TICKET_BASE_PATH, "/control/register")
-    next_url = request.GET.get('next') or request.POST.get('next')
+    next_url = request.GET.get("next") or request.POST.get("next")
     full_next_url = request.build_absolute_uri(next_url)
     next_param = f"?next={quote(full_next_url)}"
     return redirect(f"{register_url}{next_param}")
@@ -42,9 +42,9 @@ def register(request: HttpRequest) -> HttpResponse:
 class OAuth2LoginView(View):
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         # Store the 'next' URL in the session, for redirecting user back after login
-        next_url = request.GET.get('next') or request.POST.get('next')
+        next_url = request.GET.get("next") or request.POST.get("next")
         if next_url:
-            request.session['next'] = next_url
+            request.session["next"] = next_url
 
         sso_provider = self.get_sso_provider()
         if not sso_provider:
@@ -132,5 +132,5 @@ def oauth2_callback(request):
     # Log the user into the session
     login(request, user, backend="django.contrib.auth.backends.ModelBackend")
     # If a 'next' URL was stored in the session, use it for redirecting user back after login
-    next_url = request.session.pop('next', None)
-    return redirect(next_url or reverse('cfp:root.main'))
+    next_url = request.session.pop("next", None)
+    return redirect(next_url or reverse("cfp:root.main"))
