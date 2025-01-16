@@ -14,7 +14,6 @@ def oauth_login_url(next_url: Optional[str] = None) -> str:
     Usage: {% oauth_login_url next_url %}
     """
     base_url = reverse('eventyay_common:oauth2_provider.login')
-
     if next_url:
         return f"{base_url}?next={quote(next_url)}"
     return base_url
