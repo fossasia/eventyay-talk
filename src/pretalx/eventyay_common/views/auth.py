@@ -24,12 +24,15 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = (
 )
 
 
-def validate_relative_url(next_url: str) -> Optional[str]:
+def validate_relative_url(next_url: str) -> bool:
+    """
+    Only allow relative urls
+    """
     parsed = urlparse(next_url)
-    # Allow relative URLs
-    if not parsed.netloc:
-        return next_url
-    return
+    if parsed.scheme or parsed.netloc:
+        return False
+
+    return True
 
 
 def register(request: HttpRequest) -> HttpResponse:
@@ -42,10 +45,8 @@ def register(request: HttpRequest) -> HttpResponse:
     """
     register_url = urljoin(settings.EVENTYAY_TICKET_BASE_PATH, "/control/register")
     next_url = request.GET.get("next") or request.POST.get("next")
-
-    validated_next_url = validate_relative_url(next_url)
-    if validated_next_url:
-        full_next_url = request.build_absolute_uri(validated_next_url)
+    if next_url and validate_relative_url(next_url):
+        full_next_url = request.build_absolute_uri(next_url)
         next_param = f"?next={quote(full_next_url)}"
         return redirect(f"{register_url}{next_param}")
 
@@ -56,7 +57,7 @@ class OAuth2LoginView(View):
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         # Store the 'next' URL in the session, for redirecting user back after login
         next_url = request.GET.get("next") or request.POST.get("next")
-        if next_url:
+        if next_url and validate_relative_url(next_url):
             request.session["next"] = next_url
 
         sso_provider = self.get_sso_provider()
@@ -146,7 +147,6 @@ def oauth2_callback(request):
     login(request, user, backend="django.contrib.auth.backends.ModelBackend")
     # If a 'next' URL was stored in the session, use it for redirecting user back after login
     next_url = request.session.pop("next", None)
-    validated_next_url = validate_relative_url(next_url)
-    if validated_next_url:
-        return redirect(validated_next_url)
+    if next_url and validate_relative_url(next_url):
+        return redirect(next_url)
     return redirect(reverse("cfp:root.main"))
