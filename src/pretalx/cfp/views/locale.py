@@ -2,11 +2,8 @@ import datetime as dt
 from urllib.parse import parse_qs, urlencode, urlparse
 
 from django.conf import settings
-from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.utils.http import url_has_allowed_host_and_scheme
-from django.utils.translation import gettext_lazy as _
-from django.utils.translation import override
 from django.views.generic import View
 
 
@@ -46,15 +43,4 @@ class LocaleSet(View):
                 expires=expires.strftime("%a, %d-%b-%Y %H:%M:%S GMT"),
                 domain=settings.SESSION_COOKIE_DOMAIN,
             )
-            with override(locale):
-                messages.success(
-                    request,
-                    str(
-                        _(
-                            "Your locale preferences have been saved. We like to think that we have excellent support "
-                            "for English in pretalx, but if you encounter issues or errors, please contact us!"
-                        )
-                    ),
-                )
-
         return resp
