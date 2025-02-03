@@ -455,6 +455,7 @@ class SubmissionContent(
         self.object = form.instance
         self._questions_form.submission = self.object
         if not self._questions_form.is_valid():
+            messages.error(self.request, phrases.base.error_saving_changes)
             return self.get(self.request, *self.args, **self.kwargs)
         form.instance.event = self.request.event
         form.save()
