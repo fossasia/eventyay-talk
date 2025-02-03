@@ -368,13 +368,13 @@ class SubmissionContent(
     def _questions_form(self):
         submission = self.get_object()
         form_kwargs = self.get_form_kwargs()
-        return QuestionsForm(
-            self.request.POST if self.request.method == "POST" else None,
-            files=self.request.FILES if self.request.method == "POST" else None,
-            target="submission",
-            submission=submission,
-            event=self.request.event,
-            for_reviewers=(
+        kwargs = {
+            "data": self.request.POST if self.request.method == "POST" else None,
+            "files": self.request.FILES if self.request.method == "POST" else None,
+            "target": "submission",
+            "submission": submission,
+            "event": self.request.event,
+            "for_reviewers": (
                 not self.request.user.has_perm(
                     "orga.change_submissions", self.request.event
                 )
@@ -382,8 +382,12 @@ class SubmissionContent(
                     "orga.view_review_dashboard", self.request.event
                 )
             ),
-            readonly=form_kwargs["read_only"],
-        )
+            "readonly": form_kwargs["read_only"],
+        }
+        # When creating a new submission, filter out track/type specific questions
+        if not submission:
+            kwargs["skip_limited_questions"] = True
+        return QuestionsForm(**kwargs)
 
     @context
     def questions_form(self):
