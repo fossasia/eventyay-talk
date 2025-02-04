@@ -290,10 +290,13 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
             )
 
         talk_count = event.talks.count()
+        accepted_count = event.submissions.filter(
+            state=SubmissionStates.ACCEPTED
+        ).count()
         submission_count = event.submissions.count()
-        if talk_count:
-            accepted_count = event.submissions.filter(
-                state=SubmissionStates.ACCEPTED
+        if talk_count or accepted_count:
+            confirmed_count = event.submissions.filter(
+                state=SubmissionStates.CONFIRMED
             ).count()
             result["tiles"].append(
                 {
@@ -309,8 +312,7 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
                         "color": "error" if accepted_count else "info",
                     },
                     "left": {
-                        "text": str(phrases.submission.submitted)
-                        + f": {submission_count}",
+                        "text": str(_("confirmed")) + f": {confirmed_count}",
                         "url": event.orga_urls.submissions,
                         "color": "success",
                     },
