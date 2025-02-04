@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 10:43+0000\n"
+"POT-Creation-Date: 2025-02-04 15:33+0000\n"
 "PO-Revision-Date: 2024-12-21 11:35+0000\n"
 "Last-Translator: Michal Stanke <michal@stanke.cz>\n"
 "Language-Team: none\n"
@@ -261,6 +261,12 @@ msgstr ""
 "Jsme rádi, že se chcete svým příspěvkem podílet na naší události. Dáme se do "
 "toho, zabere to jen chvilku."
 
+#: pretalx/cfp/flow.py:446
+#, fuzzy
+#| msgid "Admin information"
+msgid "Additional information"
+msgstr "Informace pro správce"
+
 #: pretalx/cfp/flow.py:450
 msgid "Tell us more!"
 msgstr "Řekněte nám více!"
@@ -434,14 +440,11 @@ msgid ""
 msgstr ""
 "Máme potíže s rozesíláním e-mailů, ale vaše přihláška byla úspěšně poslána!"
 
-#. Translators: This string is used for headings and refers to the custom questions
-#. organisers can create for their CfP.
-#: pretalx/cfp/phrases.py:66
-#: pretalx/orga/templates/orga/cfp/question_view.html:7
-#: pretalx/orga/templates/orga/cfp/question_view.html:26
-#: pretalx/orga/templates/orga/submission/content.html:88
-msgid "Questions"
-msgstr "Otázky"
+#: pretalx/cfp/phrases.py:64
+#, fuzzy
+#| msgid "Custom Mail"
+msgid "Custom fields"
+msgstr "Vlastní e-mail"
 
 #: pretalx/cfp/templates/cfp/event/cfp.html:24
 #, python-format
@@ -473,6 +476,7 @@ msgid "accepted"
 msgstr "přijato"
 
 #: pretalx/cfp/templates/cfp/event/fragment_state.html:13
+#: pretalx/orga/views/dashboard.py:315
 #: pretalx/submission/models/submission.py:51
 msgid "confirmed"
 msgstr "potvrzeno"
@@ -1225,27 +1229,39 @@ msgid "A mail template was modified."
 msgstr "E-mailová šablona byla upravena."
 
 #: pretalx/common/log_display.py:73
-msgid "A question was added."
+#, fuzzy
+#| msgid "A question was added."
+msgid "A custom field was added."
 msgstr "Otázka byla přidána."
 
 #: pretalx/common/log_display.py:74
-msgid "A question was deleted."
+#, fuzzy
+#| msgid "A question was deleted."
+msgid "A custom field was deleted."
 msgstr "Otázka byla smazána."
 
 #: pretalx/common/log_display.py:75
-msgid "A question was modified."
+#, fuzzy
+#| msgid "A question was modified."
+msgid "A custom field was modified."
 msgstr "Otázka byla upravena."
 
 #: pretalx/common/log_display.py:76
-msgid "A question option was added."
+#, fuzzy
+#| msgid "A question option was added."
+msgid "A custom field option was added."
 msgstr "Možnost odpovědi byla přidána."
 
 #: pretalx/common/log_display.py:77
-msgid "A question option was deleted."
+#, fuzzy
+#| msgid "A question option was deleted."
+msgid "A custom field option was deleted."
 msgstr "Možnost odpovědi byla smazána."
 
 #: pretalx/common/log_display.py:78
-msgid "A question option was modified."
+#, fuzzy
+#| msgid "A question option was modified."
+msgid "A custom field option was modified."
 msgstr "Možnost odpovědi byla upravena."
 
 #: pretalx/common/log_display.py:79
@@ -1329,12 +1345,16 @@ msgid "The proposal was withdrawn."
 msgstr "Přihláška byla stažena."
 
 #: pretalx/common/log_display.py:99
-msgid "A proposal answer was modified."
-msgstr "Odpověď v přihlášce byla upravena."
+#, fuzzy
+#| msgid "A question was modified."
+msgid "A custom field response was modified."
+msgstr "Otázka byla upravena."
 
 #: pretalx/common/log_display.py:100
-msgid "A proposal answer was added."
-msgstr "Odpověď v přihlášce byla přidána."
+#, fuzzy
+#| msgid "A question was added."
+msgid "A custom field response was added."
+msgstr "Otázka byla přidána."
 
 #: pretalx/common/log_display.py:101
 #, fuzzy
@@ -1417,12 +1437,14 @@ msgstr "Profil byl upraven."
 #: pretalx/orga/templates/orga/cfp/question_view.html:58
 #: pretalx/orga/templates/orga/review/dashboard.html:84
 #: pretalx/orga/views/cfp.py:354
-msgid "Question"
-msgstr "Otázka"
+#, fuzzy
+#| msgid "Custom Mail"
+msgid "Custom field"
+msgstr "Vlastní e-mail"
 
 #: pretalx/common/log_display.py:177
-msgid "Answer to question"
-msgstr "Odpověď na otázku"
+msgid "Response to custom field"
+msgstr ""
 
 #: pretalx/common/log_display.py:180 pretalx/orga/templates/orga/base.html:245
 #: pretalx/orga/templates/orga/cfp/text.html:20
@@ -1712,8 +1734,8 @@ msgid "No file provided"
 msgstr "Nebyl poskytnut žádný soubor"
 
 #: pretalx/common/templates/common/question_answer.html:16
-msgid "Not answered"
-msgstr "Nezodpovězeno"
+msgid "No response"
+msgstr ""
 
 #: pretalx/common/templates/common/redirect.html:7
 #: pretalx/common/templates/common/redirect.html:13
@@ -3025,8 +3047,10 @@ msgstr ""
 #: pretalx/mail/models.py:40
 #: pretalx/orga/templates/orga/cfp/question_remind.html:18
 #: pretalx/orga/templates/orga/includes/mail_template_role.html:9
-msgid "Unanswered questions reminder"
-msgstr "Připomínka nezodpovězených otázek"
+#, fuzzy
+#| msgid "Send reminder"
+msgid "Custom fields reminder"
+msgstr "Odeslat připomenutí"
 
 #: pretalx/mail/models.py:41
 #, fuzzy
@@ -3188,13 +3212,18 @@ msgid "Words"
 msgstr "slova"
 
 #: pretalx/orga/forms/cfp.py:171
+#: pretalx/orga/templates/orga/cfp/question_form.html:114
 msgid "Upload options"
 msgstr "Možnosti nahrávání"
 
 #: pretalx/orga/forms/cfp.py:173
+#, fuzzy
+#| msgid ""
+#| "You can upload question options here, one option per line. To use "
+#| "multiple languages, please upload a JSON file with a list of options:"
 msgid ""
-"You can upload question options here, one option per line. To use multiple "
-"languages, please upload a JSON file with a list of options:"
+"You can upload options here, one option per line. To use multiple languages, "
+"please upload a JSON file with a list of options:"
 msgstr ""
 "Tady můžete nahrát možnosti odpovědí na otázky, jednu na každý řádek. Pro "
 "více jazyků, použijte prosím soubor typu JSON se seznamem možností:"
@@ -3204,11 +3233,17 @@ msgid "Replace existing options"
 msgstr "Přepsat existující možnosti"
 
 #: pretalx/orga/forms/cfp.py:183
+#, fuzzy
+#| msgid ""
+#| "If you upload new options, do you want to replace the existing ones? "
+#| "Please note that this will DELETE all existing answers to this question! "
+#| "If you do not check this, the uploaded options will be added to the "
+#| "existing ones, without adding duplicates."
 msgid ""
 "If you upload new options, do you want to replace the existing ones? Please "
-"note that this will DELETE all existing answers to this question! If you do "
-"not check this, the uploaded options will be added to the existing ones, "
-"without adding duplicates."
+"note that this will DELETE all existing responses to this custom field! If "
+"you do not check this, the uploaded options will be added to the existing "
+"ones, without adding duplicates."
 msgstr ""
 "Pokud nahrajete nové možnosti, chcete nahradit ty stávající? Pamatujte, že "
 "tím dojde ke SMAZÁNÍ všech dosavadních odpovědí na tuto otázku. Pokud toto "
@@ -3228,12 +3263,16 @@ msgid "JSON file does not contain a list of objects."
 msgstr "JSON soubor neobsahuje seznam objektů."
 
 #: pretalx/orga/forms/cfp.py:243
-msgid ""
-"Please select a deadline after which the question should become mandatory."
+#, fuzzy
+#| msgid ""
+#| "Please select a deadline after which the question should become mandatory."
+msgid "Please select a deadline after which the field should become mandatory."
 msgstr "Vyberte prosím termín po kterém bude otázka povinná."
 
 #: pretalx/orga/forms/cfp.py:255
-msgid "You cannot replace answer options without uploading new ones."
+#, fuzzy
+#| msgid "You cannot replace answer options without uploading new ones."
+msgid "You cannot replace options without uploading new ones."
 msgstr "Nelze přepsat možné odpovědi bez nahrání nových."
 
 #: pretalx/orga/forms/cfp.py:360
@@ -3321,7 +3360,9 @@ msgid "Recipients"
 msgstr "Příjemci"
 
 #: pretalx/orga/forms/cfp.py:596
-msgid "If you select no question, all questions will be used."
+#, fuzzy
+#| msgid "If you select no question, all questions will be used."
+msgid "If you select no custom field, all will be used."
 msgstr "Pokud nevyberete žádnou otázku, budou použity všechny."
 
 #: pretalx/orga/forms/event.py:42
@@ -3709,27 +3750,27 @@ msgstr "Jazyk widgetu"
 msgid "The end of a phase has to be after its start."
 msgstr "Konec fáze musí následovat až po jejím začátku."
 
-#: pretalx/orga/forms/export.py:15
+#: pretalx/orga/forms/export.py:17
 msgid "Export format"
 msgstr "Formát exportu"
 
-#: pretalx/orga/forms/export.py:17
+#: pretalx/orga/forms/export.py:19
 msgid "A CSV export can be opened directly in Excel and similar applications."
 msgstr "CSV export můžete být otevřen pomocí Excelu a podobných aplikací."
 
-#: pretalx/orga/forms/export.py:20
+#: pretalx/orga/forms/export.py:22
 msgid "CSV export"
 msgstr "CSV export"
 
-#: pretalx/orga/forms/export.py:21
+#: pretalx/orga/forms/export.py:23
 msgid "JSON export"
 msgstr "JSON export"
 
-#: pretalx/orga/forms/export.py:27
+#: pretalx/orga/forms/export.py:29
 msgid "Data delimiter"
 msgstr "Oddělovač dat"
 
-#: pretalx/orga/forms/export.py:29
+#: pretalx/orga/forms/export.py:31
 msgid ""
 "How do you want to separate data within a single cell (for example, multiple "
 "speakers in one session)?"
@@ -3737,33 +3778,37 @@ msgstr ""
 "Jak chcete oddělit data v rámci jedné buňky (např. více přednášejících jedné "
 "přednášky)?"
 
-#: pretalx/orga/forms/export.py:32
+#: pretalx/orga/forms/export.py:34
 msgid "Newline"
 msgstr "Nový řádek"
 
-#: pretalx/orga/forms/export.py:33
+#: pretalx/orga/forms/export.py:35
 msgid "Comma"
 msgstr "Čárka"
-
-#: pretalx/orga/forms/export.py:74
-#, python-brace-format
-msgid "Answer to the question “{q}”"
-msgstr "Odpověď na otázku „{q}“"
 
 #: pretalx/orga/forms/export.py:89
 msgid "Please select a delimiter for your CSV export."
 msgstr "Vyberte prosím oddělovač pro CSV export."
 
 #: pretalx/orga/forms/mails.py:85
+#, fuzzy
+#| msgid ""
+#| "- First missing question\n"
+#| "- Second missing question"
 msgid ""
-"- First missing question\n"
-"- Second missing question"
+"- First missing field\n"
+"- Second missing field"
 msgstr ""
 "- První chybějící otázka\n"
 "- Druhá chybějící otázka"
 
 #: pretalx/orga/forms/mails.py:87
-msgid "The list of questions that the user has not answered, as bullet points"
+#, fuzzy
+#| msgid ""
+#| "The list of questions that the user has not answered, as bullet points"
+msgid ""
+"The list of custom fields that the user has not responded to, as bullet "
+"points"
 msgstr "Seznam otázek, na které uživatel neodpověděl"
 
 #: pretalx/orga/forms/mails.py:145
@@ -4676,54 +4721,73 @@ msgstr "Filtrovat"
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:41
 #: pretalx/orga/templates/orga/cfp/question_form.html:51
-msgid "This question is currently active, it will be asked during submission."
+#, fuzzy
+#| msgid ""
+#| "This question is currently active, it will be asked during submission."
+msgid "This field is currently active, it will be asked during submission."
 msgstr "Tato otázka je nyní aktivní a bude položena jako součást přihlášky."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:42
 #: pretalx/orga/templates/orga/cfp/question_form.html:53
-msgid "Hide question"
-msgstr "Skrýt otázku"
+#, fuzzy
+#| msgid "Hide schedule"
+msgid "Hide field"
+msgstr "Skrýt program"
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:44
 #: pretalx/orga/templates/orga/cfp/question_form.html:59
+#, fuzzy
+#| msgid ""
+#| "This question is currently inactive, and will not be asked during "
+#| "submission."
 msgid ""
-"This question is currently inactive, and will not be asked during submission."
+"This field is currently inactive, and will not be asked during submission."
 msgstr ""
 "Tato otázka teď není aktivní a nebude pokládána jako součást přihlášky."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:45
 #: pretalx/orga/templates/orga/cfp/question_form.html:60
-msgid "Activate question"
-msgstr "Aktivovat otázku"
+#, fuzzy
+#| msgid "Activate phase"
+msgid "Activate field"
+msgstr "Aktivovat fázi"
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:50
-msgid "Nobody has answered this question at the moment."
+#, fuzzy
+#| msgid "Nobody has answered this question at the moment."
+msgid "Nobody has responded to this field at the moment."
 msgstr "Na tuto otázku zatím nikdo neodpověděl."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:54
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "This question has been answered <strong>%(count)s</strong>, "
+#| "<strong>%(missing)s</strong> answers <a "
+#| "href=\"%(base_search_url)sunanswered=1\">are still missing</a>."
 msgid ""
-"This question has been answered <strong>%(count)s</strong>, "
-"<strong>%(missing)s</strong> answers <a "
-"href=\"%(base_search_url)sunanswered=1\">are still missing</a>."
+"This field has <strong>%(count)s</strong> responses, <strong>%(missing)s</"
+"strong> <a href=\"%(base_search_url)sunanswered=1\">are still missing</a>."
 msgstr ""
 "Tato otázka byla zatím odpovězena <strong>%(count)skrát</strong>, "
 "<strong>%(missing)s</strong> odpovědí <a "
 "href=\"%(base_search_url)sunanswered=1\">stále chybí</a>."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:58
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "This question has been answered <strong>%(count)s</strong>, and no "
+#| "answers are missing."
 msgid ""
-"This question has been answered <strong>%(count)s</strong>, and no answers "
-"are missing."
+"This field has <strong>%(count)s</strong> responses, and no answers are "
+"missing."
 msgstr ""
 "Tato otázka byla odpovězena <strong>%(count)skrát</strong>, žádná odpověď "
 "nechybí."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:74
 #: pretalx/submission/models/question.py:335
-msgid "Answer"
-msgstr "Odpověď"
+msgid "Response"
+msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:75
 msgid "Count"
@@ -4736,24 +4800,37 @@ msgstr "%%"
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:8
 #: pretalx/orga/templates/orga/cfp/question_form.html:31
-msgid "New question"
-msgstr "Nová otázka"
+#: pretalx/orga/templates/orga/cfp/question_view.html:49
+#, fuzzy
+#| msgid "New custom template"
+msgid "New custom field"
+msgstr "Nová vlastní šablona"
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:39
+#, fuzzy
+#| msgid ""
+#| "This question has already been answered by some speakers – please "
+#| "consider carefully if modifying it would render those answers obsolete. "
+#| "You could also deactivate this question and start a new one instead."
 msgid ""
-"This question has already been answered by some speakers – please consider "
+"This custom field already has responses from some speakers – please consider "
 "carefully if modifying it would render those answers obsolete. You could "
-"also deactivate this question and start a new one instead."
+"also deactivate this field and create a new one instead."
 msgstr ""
 "Na tuto otázku už odpověděli někteří přednášející – pečlivě zvažte, jestli "
 "její změna nezmění smysl těchto odpovědí. Můžete také tuto otázku "
 "deaktivovat a připravit místo ní novou."
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:71
+#, fuzzy
+#| msgid ""
+#| "If you mark a Yes/No question as required, it means that the user has to "
+#| "select Yes and No is not accepted. If you want to allow both options, do "
+#| "not make this field required."
 msgid ""
-"If you mark a Yes/No question as required, it means that the user has to "
-"select Yes and No is not accepted. If you want to allow both options, do not "
-"make this field required."
+"If you mark a Yes/No field as required, it means that the user has to select "
+"Yes and No is not accepted. If you want to allow both options, do not make "
+"this field required."
 msgstr ""
 "Pokud označíte otázku typu Ano/Ne jako povinnou, znamená to, že uživatel "
 "musí vybrat „Ano“. Odpověď „Ne“ nebude přijata. Pokud chcete povolit obě "
@@ -4768,12 +4845,10 @@ msgid "Input validation"
 msgstr "Kontrola vstupu"
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:112
-msgid "Answer options"
+#, fuzzy
+#| msgid "Answer options"
+msgid "Response options"
 msgstr "Možnosti odpovědi"
-
-#: pretalx/orga/templates/orga/cfp/question_form.html:114
-msgid "Upload answer options"
-msgstr "Nahrát možnosti odpovědí"
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:137
 #: pretalx/orga/templates/orga/cfp/question_view.html:86
@@ -4802,11 +4877,17 @@ msgstr ""
 "před odesláním zkontrolovat."
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:33
+#, fuzzy
+#| msgid ""
+#| "Questions can help you sort out additional details with speakers, such as "
+#| "clothing sizes, special requirements such as dietary needs, or "
+#| "accommodation. Questions can be asked either on a per-proposal level, or "
+#| "per speaker, as you see fit."
 msgid ""
-"Questions can help you sort out additional details with speakers, such as "
-"clothing sizes, special requirements such as dietary needs, or "
-"accommodation. Questions can be asked either on a per-proposal level, or per "
-"speaker, as you see fit."
+"Custom fields can help you sort out additional details with speakers, such "
+"as clothing sizes, special requirements such as dietary needs, or "
+"accommodation. Custom fields can be configured either on a per-proposal "
+"level, or per speaker, as you see fit."
 msgstr ""
 "Otázky vám pomohou vyřešit s přednášejícími podrobnosti jako je velikost "
 "trička, případně alergie pro stravování nebo zda mají zájem o zajištění "
@@ -4814,12 +4895,10 @@ msgstr ""
 "přednášejícímu, jak potřebujete."
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:45
-msgid "Send out reminders for unanswered questions"
+#, fuzzy
+#| msgid "Send out reminders for unanswered questions"
+msgid "Send out reminders for custom fields without responses"
 msgstr "Odeslat připomenutí na nezodpovězené otázky"
-
-#: pretalx/orga/templates/orga/cfp/question_view.html:49
-msgid "Add a new question"
-msgstr "Přidat novou otázku"
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:59
 msgid "Target"
@@ -4835,16 +4914,20 @@ msgid "active"
 msgstr "aktivní"
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:62
-msgid "Answers"
-msgstr "Odpovědi"
+msgid "Responses"
+msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:77
-msgid "This question’s availability depends on a deadline."
+#, fuzzy
+#| msgid "This question’s availability depends on a deadline."
+msgid "This field’s availability depends on a deadline."
 msgstr "Dostupnost této otázky je omezena termínem uzávěrky."
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:100
 #: pretalx/orga/views/event.py:194
-msgid "You have configured no questions yet."
+#, fuzzy
+#| msgid "You have configured no questions yet."
+msgid "You have configured no custom fields yet."
 msgstr "Nenastavili jste zatím žádné otázky."
 
 #: pretalx/orga/templates/orga/cfp/submission_type_form.html:7
@@ -5023,10 +5106,15 @@ msgid "Color"
 msgstr "Barva"
 
 #: pretalx/orga/templates/orga/event/dashboard.html:20
+#, fuzzy
+#| msgid ""
+#| "Your event has been created and you’re ready to go! Check out the event "
+#| "settings, set up your Call for Papers with session types and questions, "
+#| "and you’re ready to go!"
 msgid ""
 "Your event has been created and you’re ready to go! Check out the event "
-"settings, set up your Call for Papers with session types and questions, and "
-"you’re ready to go!"
+"settings, set up your Call for Papers with session types and custom fields, "
+"and you’re ready to go!"
 msgstr ""
 "Vaše událost byla vytvořena. Zkontrolujte její nastavení, nastavte Call for "
 "Papers s typy přednášek a otázkami, a můžete začít."
@@ -5152,7 +5240,7 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/includes/dashboard_block_event.html:13
 #: pretalx/orga/templates/orga/speaker/form.html:37
-#: pretalx/orga/views/dashboard.py:324
+#: pretalx/orga/views/dashboard.py:326
 msgid "proposal"
 msgid_plural "proposals"
 msgstr[0] "přihláška"
@@ -5205,8 +5293,9 @@ msgstr "Počet kontrol"
 
 #: pretalx/orga/templates/orga/includes/submission_filter_form.html:26
 #: pretalx/orga/templates/orga/speaker/list.html:23
-#, python-format
-msgid "List filtered by answers to question “%(question)s”."
+#, fuzzy, python-format
+#| msgid "List filtered by answers to question “%(question)s”."
+msgid "List filtered by responses to custom field “%(question)s”."
 msgstr "Seznam filtrovaný podle odpovědí na otázku „%(question)s“."
 
 #: pretalx/orga/templates/orga/includes/submission_filter_form.html:31
@@ -5358,8 +5447,9 @@ msgstr ""
 "odeslaných e-mailů."
 
 #: pretalx/orga/templates/orga/mails/compose_session_mail_form.html:16
-#, python-format
-msgid "Recipients filtered by answers to question “%(question)s”."
+#, fuzzy, python-format
+#| msgid "Recipients filtered by answers to question “%(question)s”."
+msgid "Recipients filtered by responses to the custom field “%(question)s”."
 msgstr "Seznam příjemců filtrovaný podle odpovědí na otázku „%(question)s“."
 
 #: pretalx/orga/templates/orga/mails/compose_session_mail_form.html:28
@@ -5535,7 +5625,7 @@ msgstr "Nejsou zde žádní organizátoři, které můžete upravit."
 
 #: pretalx/orga/templates/orga/organiser/speaker_list.html:6
 #: pretalx/orga/templates/orga/organiser/speaker_list.html:22
-#: pretalx/orga/views/dashboard.py:340
+#: pretalx/orga/views/dashboard.py:342
 msgid "speaker"
 msgid_plural "speakers"
 msgstr[0] "přednášející"
@@ -6470,7 +6560,7 @@ msgstr "Přidat novou poznámku"
 
 #: pretalx/orga/templates/orga/speaker/list.html:6
 #: pretalx/orga/templates/orga/speaker/list.html:11
-#: pretalx/orga/views/dashboard.py:359
+#: pretalx/orga/views/dashboard.py:361
 msgid "submitter"
 msgid_plural "submitters"
 msgstr[0] "odesilatel"
@@ -6610,7 +6700,7 @@ msgstr "Kanál přihlášek"
 
 #: pretalx/orga/templates/orga/submission/list.html:21
 #: pretalx/orga/templates/orga/submission/list.html:31
-#: pretalx/orga/views/dashboard.py:301
+#: pretalx/orga/views/dashboard.py:304
 msgid "session"
 msgid_plural "sessions"
 msgstr[0] "přednáška"
@@ -6810,21 +6900,30 @@ msgid "Fields"
 msgstr ""
 
 #: pretalx/orga/views/cfp.py:310
+#, fuzzy
+#| msgid ""
+#| "You cannot change the question options and upload a question option file "
+#| "at the same time."
 msgid ""
-"You cannot change the question options and upload a question option file at "
-"the same time."
+"You cannot change the options and upload an option file at the same time."
 msgstr ""
 "Změnit možnosti odpovědí a zároveň nahrát soubor s možnostmi odpovědí není "
 "možné."
 
 #: pretalx/orga/views/cfp.py:371
-msgid "The question has been deleted."
-msgstr "Otázka byla smazána."
+#, fuzzy
+#| msgid "The user has been deleted."
+msgid "The custom field has been deleted."
+msgstr "Uživatel byl smazán."
 
 #: pretalx/orga/views/cfp.py:378
+#, fuzzy
+#| msgid ""
+#| "You cannot delete a question that has already been answered. We have "
+#| "deactivated the question instead."
 msgid ""
-"You cannot delete a question that has already been answered. We have "
-"deactivated the question instead."
+"You cannot delete a custom field that has any responses. We have deactivated "
+"the field instead."
 msgstr ""
 "Nemůžete smazat otázku, která byla odpovězena. Otázku jsme místo toho "
 "deaktivovali."
@@ -6939,16 +7038,16 @@ msgstr "z {total_days} dní"
 msgid "current schedule"
 msgstr "současný program"
 
-#: pretalx/orga/views/dashboard.py:306
+#: pretalx/orga/views/dashboard.py:309
 msgid "unconfirmed"
 msgstr "nepotvrzeno"
 
-#: pretalx/orga/views/dashboard.py:344
+#: pretalx/orga/views/dashboard.py:346
 #: pretalx/submission/models/submission.py:52
 msgid "rejected"
 msgstr "odmítnuto"
 
-#: pretalx/orga/views/dashboard.py:368
+#: pretalx/orga/views/dashboard.py:370
 msgid "sent email"
 msgid_plural "sent emails"
 msgstr[0] "odeslaný e-mail"
@@ -7887,13 +7986,24 @@ msgstr "tradiční čínština (Tchaj-wan)"
 msgid "Simplified Chinese"
 msgstr "zjednodušená čínština"
 
+#: pretalx/submission/exporters.py:18 pretalx/submission/exporters.py:63
+#, fuzzy
+#| msgid "Custom Mail"
+msgid "Custom fields data"
+msgstr "Vlastní e-mail"
+
 #: pretalx/submission/exporters.py:18
-msgid "Answered speaker questions"
-msgstr "Odpovědi od přednášejícího"
+#, fuzzy
+#| msgid "speaker"
+#| msgid_plural "speakers"
+msgid "speakers"
+msgstr "přednášející"
 
 #: pretalx/submission/exporters.py:63
-msgid "Answered session questions"
-msgstr "Odpovědi k přednášce"
+#, fuzzy
+#| msgid "Submissions"
+msgid "submissions"
+msgstr "Přihlášky"
 
 #: pretalx/submission/forms/feedback.py:17
 msgid "All speakers"
@@ -8080,15 +8190,19 @@ msgid "required after a deadline"
 msgstr "vyžadováno po termínu uzávěrky"
 
 #: pretalx/submission/models/question.py:125
-msgid "question type"
-msgstr "typ otázky"
+#, fuzzy
+#| msgid "New type"
+msgid "Field type"
+msgstr "Nový typ"
 
 #: pretalx/submission/models/question.py:127
 msgid "Do you require an answer from every speaker or for every session?"
 msgstr "Chcete odpověď pro každého přednášejícího, nebo každou přednášku?"
 
 #: pretalx/submission/models/question.py:135
-msgid "Set a deadline to make this question required after the given date."
+#, fuzzy
+#| msgid "Set a deadline to make this question required after the given date."
+msgid "Set a deadline to make this field required after the given date."
 msgstr "Vyberte termín, od kdy bude odpověď na tuto otázku vyžadována."
 
 #: pretalx/submission/models/question.py:141
@@ -8096,25 +8210,36 @@ msgid "freeze after"
 msgstr "zmrazit po"
 
 #: pretalx/submission/models/question.py:142
-msgid "Set a deadline to stop changes to answers after the given date."
+#, fuzzy
+#| msgid "Set a deadline to stop changes to answers after the given date."
+msgid "Set a deadline to stop changes to responses after the given date."
 msgstr "Vyberte termín, po kterém nebude možné měnit odpovědi."
 
 #: pretalx/submission/models/question.py:148
-msgid "question required"
-msgstr "otázka je povinná"
+#, fuzzy
+#| msgid "required"
+msgid "Field required"
+msgstr "vyžadováno"
 
 #: pretalx/submission/models/question.py:154
+#, fuzzy
+#| msgid ""
+#| "You can limit this question to some tracks. Leave this field empty to "
+#| "apply to all tracks."
 msgid ""
-"You can limit this question to some tracks. Leave this field empty to apply "
-"to all tracks."
+"You can limit this field to some tracks. Leave empty to apply to all tracks."
 msgstr ""
 "Tuto otázku můžete omezit pro některé tracky. Pro její použití pro všechny "
 "tracky toto pole ponechte prázdné."
 
 #: pretalx/submission/models/question.py:163
+#, fuzzy
+#| msgid ""
+#| "You can limit this question to some session types. Leave this field empty "
+#| "to apply to all session types."
 msgid ""
-"You can limit this question to some session types. Leave this field empty to "
-"apply to all session types."
+"You can limit this field to some session types. Leave empty to apply to all "
+"session types."
 msgstr ""
 "Otázku můžete omezit jen pro některé typy přednášek. Pro všechny typy "
 "přednášek ponechte toto pole prázdné."
@@ -8124,15 +8249,17 @@ msgid "Session Types"
 msgstr "Typy přednášek"
 
 #: pretalx/submission/models/question.py:168
-msgid "question"
-msgstr "otázka"
+msgid "Label"
+msgstr ""
 
 #: pretalx/submission/models/question.py:173
 msgid "help text"
 msgstr "nápověda"
 
 #: pretalx/submission/models/question.py:174
-msgid "Will appear just like this text below the question input field."
+#, fuzzy
+#| msgid "Will appear just like this text below the question input field."
+msgid "Will appear just like this text below the custom input field."
 msgstr "Zobrazí se jako tento text pod vstupním polem pro otázku."
 
 #: pretalx/submission/models/question.py:179
@@ -8140,17 +8267,25 @@ msgid "default answer"
 msgstr "výchozí odpověď"
 
 #: pretalx/submission/models/question.py:185
-msgid "Inactive questions will no longer be asked."
+#, fuzzy
+#| msgid "Inactive questions will no longer be asked."
+msgid "Inactive fields will no longer be shown."
 msgstr "Neaktivní otázky už nebudou pokládány."
 
 #: pretalx/submission/models/question.py:189
-msgid "Answers contain personal data"
+#, fuzzy
+#| msgid "Answers contain personal data"
+msgid "Responses contain personal data"
 msgstr "Odpovědi obsahují osobní informace"
 
 #: pretalx/submission/models/question.py:191
+#, fuzzy
+#| msgid ""
+#| "If a user deletes their account, answers of questions for personal data "
+#| "will be removed, too."
 msgid ""
-"If a user deletes their account, answers of questions for personal data will "
-"be removed, too."
+"If a user deletes their account, responses containing personal data will be "
+"removed, too."
 msgstr ""
 "Pokud uživatel smaže svůj účet, odpovědi na otázky s osobními informacemi "
 "budou smazány také."
@@ -8191,10 +8326,16 @@ msgid "Publish answers"
 msgstr "Zveřejnit odpovědi"
 
 #: pretalx/submission/models/question.py:246
+#, fuzzy
+#| msgid ""
+#| "Answers will be shown on session or speaker pages as appropriate. Please "
+#| "note that you cannot make a question public after the first answers have "
+#| "been given, to allow speakers explicit consent before publishing "
+#| "information."
 msgid ""
-"Answers will be shown on session or speaker pages as appropriate. Please "
-"note that you cannot make a question public after the first answers have "
-"been given, to allow speakers explicit consent before publishing information."
+"Responses will be shown on session or speaker pages as appropriate. Please "
+"note that you cannot make a field public after the first answers have been "
+"given, to allow speakers explicit consent before publishing information."
 msgstr ""
 "Odpovědi se zobrazí odpovídajícím způsobem na stránkách přednášky a "
 "přednášejícího. Pamatujte, že po první odpovědi už nepůjde otázku zveřejnit, "
@@ -8205,9 +8346,13 @@ msgid "Show answers to reviewers"
 msgstr "Zobrazovat odpovědi při kontrole"
 
 #: pretalx/submission/models/question.py:253
+#, fuzzy
+#| msgid ""
+#| "Should answers to this question be shown to reviewers? This is helpful if "
+#| "you want to collect personal information, but use anonymous reviews."
 msgid ""
-"Should answers to this question be shown to reviewers? This is helpful if "
-"you want to collect personal information, but use anonymous reviews."
+"Should responses to this field be shown to reviewers? This is helpful if you "
+"want to collect personal information, but use anonymous reviews."
 msgstr ""
 "Mají být odpovědi na tyto otázky zobrazeny během kontroly? Nastavení se může "
 "hodit, pokud chcete sbírat osobní informace, které mají při kontrole zůstat "
@@ -8484,6 +8629,70 @@ msgstr ""
 
 msgid "Drag the box to the schedule to create a new break"
 msgstr ""
+
+#~ msgid "Questions"
+#~ msgstr "Otázky"
+
+#~ msgid "A proposal answer was modified."
+#~ msgstr "Odpověď v přihlášce byla upravena."
+
+#~ msgid "A proposal answer was added."
+#~ msgstr "Odpověď v přihlášce byla přidána."
+
+#~ msgid "Question"
+#~ msgstr "Otázka"
+
+#~ msgid "Answer to question"
+#~ msgstr "Odpověď na otázku"
+
+#~ msgid "Not answered"
+#~ msgstr "Nezodpovězeno"
+
+#~ msgid "Unanswered questions reminder"
+#~ msgstr "Připomínka nezodpovězených otázek"
+
+#, python-brace-format
+#~ msgid "Answer to the question “{q}”"
+#~ msgstr "Odpověď na otázku „{q}“"
+
+#~ msgid "Hide question"
+#~ msgstr "Skrýt otázku"
+
+#~ msgid "Activate question"
+#~ msgstr "Aktivovat otázku"
+
+#~ msgid "Answer"
+#~ msgstr "Odpověď"
+
+#~ msgid "New question"
+#~ msgstr "Nová otázka"
+
+#~ msgid "Upload answer options"
+#~ msgstr "Nahrát možnosti odpovědí"
+
+#~ msgid "Add a new question"
+#~ msgstr "Přidat novou otázku"
+
+#~ msgid "Answers"
+#~ msgstr "Odpovědi"
+
+#~ msgid "The question has been deleted."
+#~ msgstr "Otázka byla smazána."
+
+#~ msgid "Answered speaker questions"
+#~ msgstr "Odpovědi od přednášejícího"
+
+#~ msgid "Answered session questions"
+#~ msgstr "Odpovědi k přednášce"
+
+#~ msgid "question type"
+#~ msgstr "typ otázky"
+
+#~ msgid "question required"
+#~ msgstr "otázka je povinná"
+
+#~ msgid "question"
+#~ msgstr "otázka"
 
 #~ msgid ""
 #~ "Your locale preferences have been saved. We like to think that we have "

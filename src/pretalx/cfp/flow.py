@@ -443,7 +443,7 @@ class QuestionsStep(GenericFlowStep, FormFlowStep):
 
     @property
     def label(self):
-        return phrases.cfp.questions
+        return _("Additional information")
 
     @property
     def _title(self):

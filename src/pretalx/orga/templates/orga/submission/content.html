@@ -85,7 +85,7 @@
                 {% include "cfp/includes/submission_resources_form.html" %}
             {% endif %}
             {% if questions_form and questions_form.fields %}
-                <div><legend>{% translate "Questions" %}</legend></div>
+                <div><legend>{{ phrases.cfp.custom_fields }}</legend></div>
                 {{ questions_form }}
             {% endif %}
 

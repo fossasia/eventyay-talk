@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 10:43+0000\n"
+"POT-Creation-Date: 2025-02-04 15:33+0000\n"
 "PO-Revision-Date: 2025-01-15 10:49+0000\n"
 "Last-Translator: Tobias Kunze <r@rixx.de>\n"
 "Language-Team: none\n"
@@ -268,6 +268,12 @@ msgstr ""
 "نحن سعداء أنك تريد المساهمة في طرح طلبك (مقترحك) في هذا الحدث. لنبدأ ، لن "
 "يستغرق الأمر وقتًا طويلاً."
 
+#: pretalx/cfp/flow.py:446
+#, fuzzy
+#| msgid "Admin information"
+msgid "Additional information"
+msgstr "معلومات المسوؤل"
+
 #: pretalx/cfp/flow.py:450
 msgid "Tell us more!"
 msgstr "أخبرنا المزيد!"
@@ -444,14 +450,11 @@ msgid ""
 msgstr ""
 "نحن نواجه تحديات عند إرسال البريد الإلكتروني ، ولكن تم إرسال جلستك بنجاح!"
 
-#. Translators: This string is used for headings and refers to the custom questions
-#. organisers can create for their CfP.
-#: pretalx/cfp/phrases.py:66
-#: pretalx/orga/templates/orga/cfp/question_view.html:7
-#: pretalx/orga/templates/orga/cfp/question_view.html:26
-#: pretalx/orga/templates/orga/submission/content.html:88
-msgid "Questions"
-msgstr "الأسئلة"
+#: pretalx/cfp/phrases.py:64
+#, fuzzy
+#| msgid "Custom Mail"
+msgid "Custom fields"
+msgstr "ايميل مخصص"
 
 #: pretalx/cfp/templates/cfp/event/cfp.html:24
 #, python-format
@@ -481,6 +484,7 @@ msgid "accepted"
 msgstr "تمت الموافقة"
 
 #: pretalx/cfp/templates/cfp/event/fragment_state.html:13
+#: pretalx/orga/views/dashboard.py:315
 #: pretalx/submission/models/submission.py:51
 msgid "confirmed"
 msgstr "تم التأكيد"
@@ -1261,27 +1265,39 @@ msgid "A mail template was modified."
 msgstr "تم تعديل الايميل الموقت."
 
 #: pretalx/common/log_display.py:73
-msgid "A question was added."
+#, fuzzy
+#| msgid "A question was added."
+msgid "A custom field was added."
 msgstr "تم إضافة السؤال."
 
 #: pretalx/common/log_display.py:74
-msgid "A question was deleted."
+#, fuzzy
+#| msgid "A question was deleted."
+msgid "A custom field was deleted."
 msgstr "تم حذف السؤال."
 
 #: pretalx/common/log_display.py:75
-msgid "A question was modified."
+#, fuzzy
+#| msgid "A question was modified."
+msgid "A custom field was modified."
 msgstr "تم تعديل السؤال."
 
 #: pretalx/common/log_display.py:76
-msgid "A question option was added."
+#, fuzzy
+#| msgid "A question option was added."
+msgid "A custom field option was added."
 msgstr "تمت إضافة خيار السؤال."
 
 #: pretalx/common/log_display.py:77
-msgid "A question option was deleted."
+#, fuzzy
+#| msgid "A question option was deleted."
+msgid "A custom field option was deleted."
 msgstr "تمت حذف خيار السؤال."
 
 #: pretalx/common/log_display.py:78
-msgid "A question option was modified."
+#, fuzzy
+#| msgid "A question option was modified."
+msgid "A custom field option was modified."
 msgstr "تم تعديل خيار السؤال."
 
 #: pretalx/common/log_display.py:79
@@ -1371,12 +1387,16 @@ msgid "The proposal was withdrawn."
 msgstr "تم حذف الطلب (المقترح)."
 
 #: pretalx/common/log_display.py:99
-msgid "A proposal answer was modified."
-msgstr "تمت تعديل إجابة المقترح."
+#, fuzzy
+#| msgid "A question was modified."
+msgid "A custom field response was modified."
+msgstr "تم تعديل السؤال."
 
 #: pretalx/common/log_display.py:100
-msgid "A proposal answer was added."
-msgstr "تمت أضافة إجابة المقترح."
+#, fuzzy
+#| msgid "A question was added."
+msgid "A custom field response was added."
+msgstr "تم إضافة السؤال."
 
 #: pretalx/common/log_display.py:101
 #, fuzzy
@@ -1459,14 +1479,14 @@ msgstr "تم تعديل الملف التعريفي."
 #: pretalx/orga/templates/orga/cfp/question_view.html:58
 #: pretalx/orga/templates/orga/review/dashboard.html:84
 #: pretalx/orga/views/cfp.py:354
-msgid "Question"
-msgstr "السؤال"
+#, fuzzy
+#| msgid "Custom Mail"
+msgid "Custom field"
+msgstr "ايميل مخصص"
 
 #: pretalx/common/log_display.py:177
-#, fuzzy
-#| msgid "Answer to the question “{q}”"
-msgid "Answer to question"
-msgstr "إجابة عن السؤال \"{q}\""
+msgid "Response to custom field"
+msgstr ""
 
 #: pretalx/common/log_display.py:180 pretalx/orga/templates/orga/base.html:245
 #: pretalx/orga/templates/orga/cfp/text.html:20
@@ -1786,8 +1806,8 @@ msgid "No file provided"
 msgstr "لم يتم تقديم ملف"
 
 #: pretalx/common/templates/common/question_answer.html:16
-msgid "Not answered"
-msgstr "لا يوجد جواب"
+msgid "No response"
+msgstr ""
 
 #: pretalx/common/templates/common/redirect.html:7
 #: pretalx/common/templates/common/redirect.html:13
@@ -3085,8 +3105,10 @@ msgstr ""
 #: pretalx/mail/models.py:40
 #: pretalx/orga/templates/orga/cfp/question_remind.html:18
 #: pretalx/orga/templates/orga/includes/mail_template_role.html:9
-msgid "Unanswered questions reminder"
-msgstr "تذكير بالأسئلة التي لم يتم الرد عليها"
+#, fuzzy
+#| msgid "Send out reminders"
+msgid "Custom fields reminder"
+msgstr "إرسال تذكير"
 
 #: pretalx/mail/models.py:41
 #, fuzzy
@@ -3248,6 +3270,7 @@ msgid "Words"
 msgstr "الكلمات"
 
 #: pretalx/orga/forms/cfp.py:171
+#: pretalx/orga/templates/orga/cfp/question_form.html:114
 #, fuzzy
 #| msgid "always optional"
 msgid "Upload options"
@@ -3255,8 +3278,8 @@ msgstr "اختياري (دائما)"
 
 #: pretalx/orga/forms/cfp.py:173
 msgid ""
-"You can upload question options here, one option per line. To use multiple "
-"languages, please upload a JSON file with a list of options:"
+"You can upload options here, one option per line. To use multiple languages, "
+"please upload a JSON file with a list of options:"
 msgstr ""
 
 #: pretalx/orga/forms/cfp.py:181
@@ -3266,9 +3289,9 @@ msgstr ""
 #: pretalx/orga/forms/cfp.py:183
 msgid ""
 "If you upload new options, do you want to replace the existing ones? Please "
-"note that this will DELETE all existing answers to this question! If you do "
-"not check this, the uploaded options will be added to the existing ones, "
-"without adding duplicates."
+"note that this will DELETE all existing responses to this custom field! If "
+"you do not check this, the uploaded options will be added to the existing "
+"ones, without adding duplicates."
 msgstr ""
 
 #: pretalx/orga/forms/cfp.py:222
@@ -3284,12 +3307,14 @@ msgid "JSON file does not contain a list of objects."
 msgstr ""
 
 #: pretalx/orga/forms/cfp.py:243
-msgid ""
-"Please select a deadline after which the question should become mandatory."
+#, fuzzy
+#| msgid ""
+#| "Please select a deadline after which the question should become mandatory."
+msgid "Please select a deadline after which the field should become mandatory."
 msgstr "الرجاء تحديد موعد نهائي يصبح السؤال بعده إلزاميًا."
 
 #: pretalx/orga/forms/cfp.py:255
-msgid "You cannot replace answer options without uploading new ones."
+msgid "You cannot replace options without uploading new ones."
 msgstr ""
 
 #: pretalx/orga/forms/cfp.py:360
@@ -3380,7 +3405,9 @@ msgid "Recipients"
 msgstr "المستلمون"
 
 #: pretalx/orga/forms/cfp.py:596
-msgid "If you select no question, all questions will be used."
+#, fuzzy
+#| msgid "If you select no question, all questions will be used."
+msgid "If you select no custom field, all will be used."
 msgstr "إذا لم تقم بتحدد أي سؤال ، فسيتم استخدام جميع الأسئلة."
 
 #: pretalx/orga/forms/event.py:42
@@ -3769,27 +3796,27 @@ msgstr "لغة Widget"
 msgid "The end of a phase has to be after its start."
 msgstr "يجب أن تكون نهاية المرحلة بعد بدايتها."
 
-#: pretalx/orga/forms/export.py:15
+#: pretalx/orga/forms/export.py:17
 msgid "Export format"
 msgstr "قم بتصدير التنسيق"
 
-#: pretalx/orga/forms/export.py:17
+#: pretalx/orga/forms/export.py:19
 msgid "A CSV export can be opened directly in Excel and similar applications."
 msgstr "يمكن فتح خاصية التصدير CSV مباشرة في تطبيق Excel والتطبيقات المماثلة."
 
-#: pretalx/orga/forms/export.py:20
+#: pretalx/orga/forms/export.py:22
 msgid "CSV export"
 msgstr "تصدير CSV"
 
-#: pretalx/orga/forms/export.py:21
+#: pretalx/orga/forms/export.py:23
 msgid "JSON export"
 msgstr "خبير JSON"
 
-#: pretalx/orga/forms/export.py:27
+#: pretalx/orga/forms/export.py:29
 msgid "Data delimiter"
 msgstr "محدد البيانات"
 
-#: pretalx/orga/forms/export.py:29
+#: pretalx/orga/forms/export.py:31
 msgid ""
 "How do you want to separate data within a single cell (for example, multiple "
 "speakers in one session)?"
@@ -3797,18 +3824,13 @@ msgstr ""
 "كيف تريد فصل البيانات داخل خلية واحدة (على سبيل المثال ، عدة متحدثين في جلسة "
 "واحدة)؟"
 
-#: pretalx/orga/forms/export.py:32
+#: pretalx/orga/forms/export.py:34
 msgid "Newline"
 msgstr "خط جديد"
 
-#: pretalx/orga/forms/export.py:33
+#: pretalx/orga/forms/export.py:35
 msgid "Comma"
 msgstr "فاصلة"
-
-#: pretalx/orga/forms/export.py:74
-#, python-brace-format
-msgid "Answer to the question “{q}”"
-msgstr "إجابة عن السؤال \"{q}\""
 
 #: pretalx/orga/forms/export.py:89
 msgid "Please select a delimiter for your CSV export."
@@ -3816,12 +3838,14 @@ msgstr "الرجاء تحديد محدد لتصدير ملف CSV."
 
 #: pretalx/orga/forms/mails.py:85
 msgid ""
-"- First missing question\n"
-"- Second missing question"
+"- First missing field\n"
+"- Second missing field"
 msgstr ""
 
 #: pretalx/orga/forms/mails.py:87
-msgid "The list of questions that the user has not answered, as bullet points"
+msgid ""
+"The list of custom fields that the user has not responded to, as bullet "
+"points"
 msgstr ""
 
 #: pretalx/orga/forms/mails.py:145
@@ -4779,53 +4803,72 @@ msgstr "فلتر"
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:41
 #: pretalx/orga/templates/orga/cfp/question_form.html:51
-msgid "This question is currently active, it will be asked during submission."
+#, fuzzy
+#| msgid ""
+#| "This question is currently active, it will be asked during submission."
+msgid "This field is currently active, it will be asked during submission."
 msgstr "هذا السؤال نشط حاليًا ، وسيتم طرحه أثناء الإرسال."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:42
 #: pretalx/orga/templates/orga/cfp/question_form.html:53
-msgid "Hide question"
-msgstr "إخفاء السؤال"
+#, fuzzy
+#| msgid "Hide schedule"
+msgid "Hide field"
+msgstr "إخفاء الجدول"
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:44
 #: pretalx/orga/templates/orga/cfp/question_form.html:59
+#, fuzzy
+#| msgid ""
+#| "This question is currently inactive, and will not be asked during "
+#| "submission."
 msgid ""
-"This question is currently inactive, and will not be asked during submission."
+"This field is currently inactive, and will not be asked during submission."
 msgstr "هذا السؤال غير نشط حاليًا ، ولن يتم طرحه أثناء الإرسال."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:45
 #: pretalx/orga/templates/orga/cfp/question_form.html:60
-msgid "Activate question"
-msgstr "تفعيل السؤال"
+#, fuzzy
+#| msgid "Activate phase"
+msgid "Activate field"
+msgstr "تنشيط المرحلة"
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:50
-msgid "Nobody has answered this question at the moment."
+#, fuzzy
+#| msgid "Nobody has answered this question at the moment."
+msgid "Nobody has responded to this field at the moment."
 msgstr "لم يجيب أحد على هذا السؤال في الوقت الحالي."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:54
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "This question has been answered <strong>%(count)s</strong>, "
+#| "<strong>%(missing)s</strong> answers <a "
+#| "href=\"%(base_search_url)sunanswered=1\">are still missing</a>."
 msgid ""
-"This question has been answered <strong>%(count)s</strong>, "
-"<strong>%(missing)s</strong> answers <a "
-"href=\"%(base_search_url)sunanswered=1\">are still missing</a>."
+"This field has <strong>%(count)s</strong> responses, <strong>%(missing)s</"
+"strong> <a href=\"%(base_search_url)sunanswered=1\">are still missing</a>."
 msgstr ""
 "تمت الإجابة على هذا السؤال <strong>%(count)s</strong>, <strong>%(missing)s</"
 "strong> answers <a href=\"%(base_search_url)sunanswered=1\"> ماتزال مفقودة </"
 "a>."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:58
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "This question has been answered <strong>%(count)s</strong>, and no "
+#| "answers are missing."
 msgid ""
-"This question has been answered <strong>%(count)s</strong>, and no answers "
-"are missing."
+"This field has <strong>%(count)s</strong> responses, and no answers are "
+"missing."
 msgstr ""
 "تمت الإجابة على هذا السؤال <strong>%(count)s</strong>: ولا توجد إجابات "
 "مفقودة."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:74
 #: pretalx/submission/models/question.py:335
-msgid "Answer"
-msgstr "الإجابة"
+msgid "Response"
+msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:75
 msgid "Count"
@@ -4838,24 +4881,37 @@ msgstr "%%"
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:8
 #: pretalx/orga/templates/orga/cfp/question_form.html:31
-msgid "New question"
-msgstr "سؤال جديد"
+#: pretalx/orga/templates/orga/cfp/question_view.html:49
+#, fuzzy
+#| msgid "New custom template"
+msgid "New custom field"
+msgstr "نموذج مخصص جديد"
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:39
+#, fuzzy
+#| msgid ""
+#| "This question has already been answered by some speakers – please "
+#| "consider carefully if modifying it would render those answers obsolete. "
+#| "You could also deactivate this question and start a new one instead."
 msgid ""
-"This question has already been answered by some speakers – please consider "
+"This custom field already has responses from some speakers – please consider "
 "carefully if modifying it would render those answers obsolete. You could "
-"also deactivate this question and start a new one instead."
+"also deactivate this field and create a new one instead."
 msgstr ""
 "تمت الإجابة على هذا السؤال مسبقا من قبل بعض المتحدثين - يرجى التفكير مليًا "
 "إذا كان تعديله سيجعل هذه الإجابات قديمة. يمكنك أيضًا إلغاء تنشيط هذا السؤال "
 "وبدء سؤال جديد بدلاً من ذلك."
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:71
+#, fuzzy
+#| msgid ""
+#| "If you mark a Yes/No question as required, it means that the user has to "
+#| "select Yes and No is not accepted. If you want to allow both options, do "
+#| "not make this field required."
 msgid ""
-"If you mark a Yes/No question as required, it means that the user has to "
-"select Yes and No is not accepted. If you want to allow both options, do not "
-"make this field required."
+"If you mark a Yes/No field as required, it means that the user has to select "
+"Yes and No is not accepted. If you want to allow both options, do not make "
+"this field required."
 msgstr ""
 "إذا قمت بتعيين سؤال \"نعم / لا\" كحقل مطلوب الإجابة عمه ، فهذا يعني أنه "
 "يتوجب على المستخدم تحديد \"نعم\" أو \"لا\" . إذا كنت تريد السماح لكلا "
@@ -4874,13 +4930,9 @@ msgid "Input validation"
 msgstr "الدعوة"
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:112
-msgid "Answer options"
-msgstr "خيارات الإجابة"
-
-#: pretalx/orga/templates/orga/cfp/question_form.html:114
 #, fuzzy
 #| msgid "Answer options"
-msgid "Upload answer options"
+msgid "Response options"
 msgstr "خيارات الإجابة"
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:137
@@ -4910,11 +4962,17 @@ msgstr ""
 "رسائل البريد الإلكتروني قبل إرسالها."
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:33
+#, fuzzy
+#| msgid ""
+#| "Questions can help you sort out additional details with speakers, such as "
+#| "clothing sizes, special requirements such as dietary needs, or "
+#| "accommodation. Questions can be asked either on a per-proposal level, or "
+#| "per speaker, as you see fit."
 msgid ""
-"Questions can help you sort out additional details with speakers, such as "
-"clothing sizes, special requirements such as dietary needs, or "
-"accommodation. Questions can be asked either on a per-proposal level, or per "
-"speaker, as you see fit."
+"Custom fields can help you sort out additional details with speakers, such "
+"as clothing sizes, special requirements such as dietary needs, or "
+"accommodation. Custom fields can be configured either on a per-proposal "
+"level, or per speaker, as you see fit."
 msgstr ""
 "يمكن أن تساعدك الأسئلة في ترتيب تفاصيل إضافية مع المتحدث ، مثل مقاسات "
 "الملابس ، والمتطلبات الخاصة مثل الاحتياجات الغذائية ، أو الإقامة. يمكن طرح "
@@ -4922,12 +4980,10 @@ msgstr ""
 "مناسبًا."
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:45
-msgid "Send out reminders for unanswered questions"
+#, fuzzy
+#| msgid "Send out reminders for unanswered questions"
+msgid "Send out reminders for custom fields without responses"
 msgstr "إرسال تذكير للأسئلة التي لم يتم الرد عليها"
-
-#: pretalx/orga/templates/orga/cfp/question_view.html:49
-msgid "Add a new question"
-msgstr "أضف سؤال جديد"
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:59
 msgid "Target"
@@ -4943,18 +4999,20 @@ msgid "active"
 msgstr "نشط"
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:62
-#, fuzzy
-#| msgid "Answer"
-msgid "Answers"
-msgstr "الإجابة"
+msgid "Responses"
+msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:77
-msgid "This question’s availability depends on a deadline."
+#, fuzzy
+#| msgid "This question’s availability depends on a deadline."
+msgid "This field’s availability depends on a deadline."
 msgstr "هذا السؤال مطروح بموعد نهائي."
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:100
 #: pretalx/orga/views/event.py:194
-msgid "You have configured no questions yet."
+#, fuzzy
+#| msgid "You have configured no questions yet."
+msgid "You have configured no custom fields yet."
 msgstr "لم تقم بتكوين أي أسئلة حتى الآن."
 
 #: pretalx/orga/templates/orga/cfp/submission_type_form.html:7
@@ -5129,10 +5187,15 @@ msgid "Color"
 msgstr "اللون"
 
 #: pretalx/orga/templates/orga/event/dashboard.html:20
+#, fuzzy
+#| msgid ""
+#| "Your event has been created and you’re ready to go! Check out the event "
+#| "settings, set up your Call for Papers with session types and questions, "
+#| "and you’re ready to go!"
 msgid ""
 "Your event has been created and you’re ready to go! Check out the event "
-"settings, set up your Call for Papers with session types and questions, and "
-"you’re ready to go!"
+"settings, set up your Call for Papers with session types and custom fields, "
+"and you’re ready to go!"
 msgstr ""
 "تم إنشاء الحدث الخاص بك وأنت على جاهز للذنطلاق! تحقق من إعدادات الحدث ، وقم "
 "بإعداد Call for Papers بأنواع الجلسات والأسئلة ، وستكون جاهزًا للانطلاق!"
@@ -5256,7 +5319,7 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/includes/dashboard_block_event.html:13
 #: pretalx/orga/templates/orga/speaker/form.html:37
-#: pretalx/orga/views/dashboard.py:324
+#: pretalx/orga/views/dashboard.py:326
 msgid "proposal"
 msgid_plural "proposals"
 msgstr[0] "مقترح"
@@ -5320,8 +5383,9 @@ msgstr "عدد المتقييمات"
 
 #: pretalx/orga/templates/orga/includes/submission_filter_form.html:26
 #: pretalx/orga/templates/orga/speaker/list.html:23
-#, python-format
-msgid "List filtered by answers to question “%(question)s”."
+#, fuzzy, python-format
+#| msgid "List filtered by answers to question “%(question)s”."
+msgid "List filtered by responses to custom field “%(question)s”."
 msgstr "قائمة تمت فرزها من خلال إجابات السؤال “%(question)s”."
 
 #: pretalx/orga/templates/orga/includes/submission_filter_form.html:31
@@ -5481,7 +5545,7 @@ msgstr ""
 #: pretalx/orga/templates/orga/mails/compose_session_mail_form.html:16
 #, fuzzy, python-format
 #| msgid "List filtered by answers to question “%(question)s”."
-msgid "Recipients filtered by answers to question “%(question)s”."
+msgid "Recipients filtered by responses to the custom field “%(question)s”."
 msgstr "قائمة تمت فرزها من خلال إجابات السؤال “%(question)s”."
 
 #: pretalx/orga/templates/orga/mails/compose_session_mail_form.html:28
@@ -5668,7 +5732,7 @@ msgstr "لا يوجد منظمون يمكنك تعديلهم."
 
 #: pretalx/orga/templates/orga/organiser/speaker_list.html:6
 #: pretalx/orga/templates/orga/organiser/speaker_list.html:22
-#: pretalx/orga/views/dashboard.py:340
+#: pretalx/orga/views/dashboard.py:342
 msgid "speaker"
 msgid_plural "speakers"
 msgstr[0] ""
@@ -6671,7 +6735,7 @@ msgstr "إضافة ملاحظة جديدة"
 
 #: pretalx/orga/templates/orga/speaker/list.html:6
 #: pretalx/orga/templates/orga/speaker/list.html:11
-#: pretalx/orga/views/dashboard.py:359
+#: pretalx/orga/views/dashboard.py:361
 msgid "submitter"
 msgid_plural "submitters"
 msgstr[0] "مقدم الطلب"
@@ -6820,7 +6884,7 @@ msgstr "مرجعية الاقتراح"
 
 #: pretalx/orga/templates/orga/submission/list.html:21
 #: pretalx/orga/templates/orga/submission/list.html:31
-#: pretalx/orga/views/dashboard.py:301
+#: pretalx/orga/views/dashboard.py:304
 msgid "session"
 msgid_plural "sessions"
 msgstr[0] ""
@@ -7031,19 +7095,26 @@ msgid "Fields"
 msgstr ""
 
 #: pretalx/orga/views/cfp.py:310
+#, fuzzy
+#| msgid "You can set or change this date later to invalidate the access code."
 msgid ""
-"You cannot change the question options and upload a question option file at "
-"the same time."
-msgstr ""
+"You cannot change the options and upload an option file at the same time."
+msgstr "يمكنك تعيين هذا التاريخ أو تغييره لاحقًا لإبطال رمز الدخول."
 
 #: pretalx/orga/views/cfp.py:371
-msgid "The question has been deleted."
-msgstr "تم حذف السؤال."
+#, fuzzy
+#| msgid "The track has been deleted."
+msgid "The custom field has been deleted."
+msgstr "تم حذف المسار."
 
 #: pretalx/orga/views/cfp.py:378
+#, fuzzy
+#| msgid ""
+#| "You cannot delete a question that has already been answered. We have "
+#| "deactivated the question instead."
 msgid ""
-"You cannot delete a question that has already been answered. We have "
-"deactivated the question instead."
+"You cannot delete a custom field that has any responses. We have deactivated "
+"the field instead."
 msgstr ""
 "لا يمكنك حذف سؤال الذي تمت الإجابة مسبقا. لقد قمنا بإلغاء تنشيط السؤال بدلاً "
 "من ذلك."
@@ -7172,18 +7243,18 @@ msgstr ""
 msgid "current schedule"
 msgstr ""
 
-#: pretalx/orga/views/dashboard.py:306
+#: pretalx/orga/views/dashboard.py:309
 #, fuzzy
 #| msgid "confirmed"
 msgid "unconfirmed"
 msgstr "تم التأكيد"
 
-#: pretalx/orga/views/dashboard.py:344
+#: pretalx/orga/views/dashboard.py:346
 #: pretalx/submission/models/submission.py:52
 msgid "rejected"
 msgstr "لم يتم الموافقة"
 
-#: pretalx/orga/views/dashboard.py:368
+#: pretalx/orga/views/dashboard.py:370
 msgid "sent email"
 msgid_plural "sent emails"
 msgstr[0] ""
@@ -8138,13 +8209,23 @@ msgstr "الصينية (تايوان)"
 msgid "Simplified Chinese"
 msgstr ""
 
+#: pretalx/submission/exporters.py:18 pretalx/submission/exporters.py:63
+#, fuzzy
+#| msgid "Custom Mail"
+msgid "Custom fields data"
+msgstr "ايميل مخصص"
+
 #: pretalx/submission/exporters.py:18
-msgid "Answered speaker questions"
-msgstr "قم بالإجلبة على أسئلة المتحدث"
+#, fuzzy
+#| msgid "Speakers"
+msgid "speakers"
+msgstr "المحاضرون"
 
 #: pretalx/submission/exporters.py:63
-msgid "Answered session questions"
-msgstr "قم بالاجابة على الإسئلة المطروحة ضمن الجلسة"
+#, fuzzy
+#| msgid "Sessions"
+msgid "submissions"
+msgstr "الجلسات"
 
 #: pretalx/submission/forms/feedback.py:17
 msgid "All speakers"
@@ -8337,15 +8418,19 @@ msgid "required after a deadline"
 msgstr "مطلوب بعد الموعد النهائي"
 
 #: pretalx/submission/models/question.py:125
-msgid "question type"
-msgstr "نوع السؤال"
+#, fuzzy
+#| msgid "New type"
+msgid "Field type"
+msgstr "تموذج جديد"
 
 #: pretalx/submission/models/question.py:127
 msgid "Do you require an answer from every speaker or for every session?"
 msgstr "هل تطلب إجابة من كل متحدث أم لكل جلسة؟"
 
 #: pretalx/submission/models/question.py:135
-msgid "Set a deadline to make this question required after the given date."
+#, fuzzy
+#| msgid "Set a deadline to make this question required after the given date."
+msgid "Set a deadline to make this field required after the given date."
 msgstr "وضع موعدًا نهائي لجعل هذا السؤال مطلوبًا بعد التاريخ المحدد."
 
 #: pretalx/submission/models/question.py:141
@@ -8353,25 +8438,36 @@ msgid "freeze after"
 msgstr "بعد التعليق"
 
 #: pretalx/submission/models/question.py:142
-msgid "Set a deadline to stop changes to answers after the given date."
+#, fuzzy
+#| msgid "Set a deadline to stop changes to answers after the given date."
+msgid "Set a deadline to stop changes to responses after the given date."
 msgstr "تحدد موعدًا نهائيًا لإيقاف التغييرات على الإجابات بعد التاريخ المحدد."
 
 #: pretalx/submission/models/question.py:148
-msgid "question required"
-msgstr "السؤال مطلوب"
+#, fuzzy
+#| msgid "required"
+msgid "Field required"
+msgstr "المتطلبات"
 
 #: pretalx/submission/models/question.py:154
+#, fuzzy
+#| msgid ""
+#| "You can limit this question to some tracks. Leave this field empty to "
+#| "apply to all tracks."
 msgid ""
-"You can limit this question to some tracks. Leave this field empty to apply "
-"to all tracks."
+"You can limit this field to some tracks. Leave empty to apply to all tracks."
 msgstr ""
 "يمكنك تحديد هذا السؤال على بعض المسارات. اترك هذا الحقل فارغًا ليتم تطبيقه "
 "على جميع المسارات."
 
 #: pretalx/submission/models/question.py:163
+#, fuzzy
+#| msgid ""
+#| "You can limit this question to some session types. Leave this field empty "
+#| "to apply to all session types."
 msgid ""
-"You can limit this question to some session types. Leave this field empty to "
-"apply to all session types."
+"You can limit this field to some session types. Leave empty to apply to all "
+"session types."
 msgstr ""
 "يمكنك طرح هذا السؤال ضمن أنواع الجلسات محددة. اترك هذا الحقل فارغًا لتطبيقه "
 "على جميع أنواع الجلسات."
@@ -8381,15 +8477,17 @@ msgid "Session Types"
 msgstr "أنواع الجلسات"
 
 #: pretalx/submission/models/question.py:168
-msgid "question"
-msgstr "السؤال"
+msgid "Label"
+msgstr ""
 
 #: pretalx/submission/models/question.py:173
 msgid "help text"
 msgstr "النص المساعد"
 
 #: pretalx/submission/models/question.py:174
-msgid "Will appear just like this text below the question input field."
+#, fuzzy
+#| msgid "Will appear just like this text below the question input field."
+msgid "Will appear just like this text below the custom input field."
 msgstr "سيظهر تمامًا مثل هذا النص أسفل حقل إدخال السؤال."
 
 #: pretalx/submission/models/question.py:179
@@ -8397,17 +8495,25 @@ msgid "default answer"
 msgstr "الإجابة الافتراضية"
 
 #: pretalx/submission/models/question.py:185
-msgid "Inactive questions will no longer be asked."
+#, fuzzy
+#| msgid "Inactive questions will no longer be asked."
+msgid "Inactive fields will no longer be shown."
 msgstr "لن يتم طرح الأسئلة غير النشطة بعد الآن."
 
 #: pretalx/submission/models/question.py:189
-msgid "Answers contain personal data"
+#, fuzzy
+#| msgid "Answers contain personal data"
+msgid "Responses contain personal data"
 msgstr "تحتوي الإجابات على بيانات شخصية"
 
 #: pretalx/submission/models/question.py:191
+#, fuzzy
+#| msgid ""
+#| "If a user deletes their account, answers of questions for personal data "
+#| "will be removed, too."
 msgid ""
-"If a user deletes their account, answers of questions for personal data will "
-"be removed, too."
+"If a user deletes their account, responses containing personal data will be "
+"removed, too."
 msgstr ""
 "إذا قام أحد المستخدمين بحذف حسابه ، فستتم أيضًا إزالة إجابات الأسئلة الخاصة "
 "بالبيانات الشخصية."
@@ -8452,10 +8558,16 @@ msgid "Publish answers"
 msgstr "انشر الإجابات"
 
 #: pretalx/submission/models/question.py:246
+#, fuzzy
+#| msgid ""
+#| "Answers will be shown on session or speaker pages as appropriate. Please "
+#| "note that you cannot make a question public after the first answers have "
+#| "been given, to allow speakers explicit consent before publishing "
+#| "information."
 msgid ""
-"Answers will be shown on session or speaker pages as appropriate. Please "
-"note that you cannot make a question public after the first answers have "
-"been given, to allow speakers explicit consent before publishing information."
+"Responses will be shown on session or speaker pages as appropriate. Please "
+"note that you cannot make a field public after the first answers have been "
+"given, to allow speakers explicit consent before publishing information."
 msgstr ""
 "سيتم عرض الإجابات على صفحات الجلسة أو المتحدث حسب الاقتضاء. يرجى ملاحظة أنه "
 "لا يمكنك جعل السؤال علنيًا بعد إعطاء الإجابات الأولى ، يجب إعلام للمتحدثين "
@@ -8466,9 +8578,13 @@ msgid "Show answers to reviewers"
 msgstr "عرض الإجابات للمراجعين"
 
 #: pretalx/submission/models/question.py:253
+#, fuzzy
+#| msgid ""
+#| "Should answers to this question be shown to reviewers? This is helpful if "
+#| "you want to collect personal information, but use anonymous reviews."
 msgid ""
-"Should answers to this question be shown to reviewers? This is helpful if "
-"you want to collect personal information, but use anonymous reviews."
+"Should responses to this field be shown to reviewers? This is helpful if you "
+"want to collect personal information, but use anonymous reviews."
 msgstr ""
 "هل يجب عرض الإجابات على هذا السؤال للمشاركين؟ هذا مفيد إذا كنت ترغب في جمع "
 "المعلومات الشخصية ، ولكن استخدام المراجعات مجهولة المصدر."
@@ -8749,6 +8865,76 @@ msgstr ""
 
 msgid "Hidden rooms"
 msgstr ""
+
+#~ msgid "Questions"
+#~ msgstr "الأسئلة"
+
+#~ msgid "A proposal answer was modified."
+#~ msgstr "تمت تعديل إجابة المقترح."
+
+#~ msgid "A proposal answer was added."
+#~ msgstr "تمت أضافة إجابة المقترح."
+
+#~ msgid "Question"
+#~ msgstr "السؤال"
+
+#, fuzzy
+#~| msgid "Answer to the question “{q}”"
+#~ msgid "Answer to question"
+#~ msgstr "إجابة عن السؤال \"{q}\""
+
+#~ msgid "Not answered"
+#~ msgstr "لا يوجد جواب"
+
+#~ msgid "Unanswered questions reminder"
+#~ msgstr "تذكير بالأسئلة التي لم يتم الرد عليها"
+
+#, python-brace-format
+#~ msgid "Answer to the question “{q}”"
+#~ msgstr "إجابة عن السؤال \"{q}\""
+
+#~ msgid "Hide question"
+#~ msgstr "إخفاء السؤال"
+
+#~ msgid "Activate question"
+#~ msgstr "تفعيل السؤال"
+
+#~ msgid "Answer"
+#~ msgstr "الإجابة"
+
+#~ msgid "New question"
+#~ msgstr "سؤال جديد"
+
+#, fuzzy
+#~| msgid "Answer options"
+#~ msgid "Upload answer options"
+#~ msgstr "خيارات الإجابة"
+
+#~ msgid "Add a new question"
+#~ msgstr "أضف سؤال جديد"
+
+#, fuzzy
+#~| msgid "Answer"
+#~ msgid "Answers"
+#~ msgstr "الإجابة"
+
+#~ msgid "The question has been deleted."
+#~ msgstr "تم حذف السؤال."
+
+#~ msgid "Answered speaker questions"
+#~ msgstr "قم بالإجلبة على أسئلة المتحدث"
+
+#~ msgid "Answered session questions"
+#~ msgstr "قم بالاجابة على الإسئلة المطروحة ضمن الجلسة"
+
+#~ msgid "question type"
+#~ msgstr "نوع السؤال"
+
+#~ msgid "question required"
+#~ msgstr "السؤال مطلوب"
+
+#~ msgid "question"
+#~ msgstr "السؤال"
 
 #~ msgid ""
 #~ "Your locale preferences have been saved. We like to think that we have "

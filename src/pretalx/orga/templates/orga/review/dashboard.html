@@ -81,7 +81,7 @@
                 {% for question in short_questions %}
                     <li class="dropdown-item form-check" role="menuitem" tabindex="-1">
                         <input type="checkbox" id="col-question-{{ question.id }}" autocomplete=off>
-                        <label for="col-question-{{ question.id }}">{% translate "Question" %}: {{ question.question }}</label>
+                        <label for="col-question-{{ question.id }}">{% translate "Custom field" %}: {{ question.question }}</label>
                     </li>
                 {% endfor %}
                 <li class="dropdown-item form-check" role="menuitem" tabindex="-1">

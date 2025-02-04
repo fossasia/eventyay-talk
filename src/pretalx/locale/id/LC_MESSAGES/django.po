@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 10:43+0000\n"
+"POT-Creation-Date: 2025-02-04 15:33+0000\n"
 "PO-Revision-Date: 2023-02-28 19:43+0000\n"
 "Last-Translator: Robert Sim <contact@robertsky.com>\n"
 "Language-Team: none\n"
@@ -235,6 +235,10 @@ msgid ""
 "Let’s get started, this won’t take long."
 msgstr ""
 
+#: pretalx/cfp/flow.py:446
+msgid "Additional information"
+msgstr ""
+
 #: pretalx/cfp/flow.py:450
 msgid "Tell us more!"
 msgstr ""
@@ -380,13 +384,8 @@ msgid ""
 "submitted successfully!"
 msgstr ""
 
-#. Translators: This string is used for headings and refers to the custom questions
-#. organisers can create for their CfP.
-#: pretalx/cfp/phrases.py:66
-#: pretalx/orga/templates/orga/cfp/question_view.html:7
-#: pretalx/orga/templates/orga/cfp/question_view.html:26
-#: pretalx/orga/templates/orga/submission/content.html:88
-msgid "Questions"
+#: pretalx/cfp/phrases.py:64
+msgid "Custom fields"
 msgstr ""
 
 #: pretalx/cfp/templates/cfp/event/cfp.html:24
@@ -415,6 +414,7 @@ msgid "accepted"
 msgstr ""
 
 #: pretalx/cfp/templates/cfp/event/fragment_state.html:13
+#: pretalx/orga/views/dashboard.py:315
 #: pretalx/submission/models/submission.py:51
 msgid "confirmed"
 msgstr ""
@@ -1096,27 +1096,27 @@ msgid "A mail template was modified."
 msgstr ""
 
 #: pretalx/common/log_display.py:73
-msgid "A question was added."
+msgid "A custom field was added."
 msgstr ""
 
 #: pretalx/common/log_display.py:74
-msgid "A question was deleted."
+msgid "A custom field was deleted."
 msgstr ""
 
 #: pretalx/common/log_display.py:75
-msgid "A question was modified."
+msgid "A custom field was modified."
 msgstr ""
 
 #: pretalx/common/log_display.py:76
-msgid "A question option was added."
+msgid "A custom field option was added."
 msgstr ""
 
 #: pretalx/common/log_display.py:77
-msgid "A question option was deleted."
+msgid "A custom field option was deleted."
 msgstr ""
 
 #: pretalx/common/log_display.py:78
-msgid "A question option was modified."
+msgid "A custom field option was modified."
 msgstr ""
 
 #: pretalx/common/log_display.py:79
@@ -1200,11 +1200,11 @@ msgid "The proposal was withdrawn."
 msgstr ""
 
 #: pretalx/common/log_display.py:99
-msgid "A proposal answer was modified."
+msgid "A custom field response was modified."
 msgstr ""
 
 #: pretalx/common/log_display.py:100
-msgid "A proposal answer was added."
+msgid "A custom field response was added."
 msgstr ""
 
 #: pretalx/common/log_display.py:101
@@ -1284,11 +1284,11 @@ msgstr ""
 #: pretalx/orga/templates/orga/cfp/question_view.html:58
 #: pretalx/orga/templates/orga/review/dashboard.html:84
 #: pretalx/orga/views/cfp.py:354
-msgid "Question"
+msgid "Custom field"
 msgstr ""
 
 #: pretalx/common/log_display.py:177
-msgid "Answer to question"
+msgid "Response to custom field"
 msgstr ""
 
 #: pretalx/common/log_display.py:180 pretalx/orga/templates/orga/base.html:245
@@ -1532,7 +1532,7 @@ msgid "No file provided"
 msgstr ""
 
 #: pretalx/common/templates/common/question_answer.html:16
-msgid "Not answered"
+msgid "No response"
 msgstr ""
 
 #: pretalx/common/templates/common/redirect.html:7
@@ -2665,7 +2665,7 @@ msgstr ""
 #: pretalx/mail/models.py:40
 #: pretalx/orga/templates/orga/cfp/question_remind.html:18
 #: pretalx/orga/templates/orga/includes/mail_template_role.html:9
-msgid "Unanswered questions reminder"
+msgid "Custom fields reminder"
 msgstr ""
 
 #: pretalx/mail/models.py:41
@@ -2811,13 +2811,14 @@ msgid "Words"
 msgstr ""
 
 #: pretalx/orga/forms/cfp.py:171
+#: pretalx/orga/templates/orga/cfp/question_form.html:114
 msgid "Upload options"
 msgstr ""
 
 #: pretalx/orga/forms/cfp.py:173
 msgid ""
-"You can upload question options here, one option per line. To use multiple "
-"languages, please upload a JSON file with a list of options:"
+"You can upload options here, one option per line. To use multiple languages, "
+"please upload a JSON file with a list of options:"
 msgstr ""
 
 #: pretalx/orga/forms/cfp.py:181
@@ -2827,9 +2828,9 @@ msgstr ""
 #: pretalx/orga/forms/cfp.py:183
 msgid ""
 "If you upload new options, do you want to replace the existing ones? Please "
-"note that this will DELETE all existing answers to this question! If you do "
-"not check this, the uploaded options will be added to the existing ones, "
-"without adding duplicates."
+"note that this will DELETE all existing responses to this custom field! If "
+"you do not check this, the uploaded options will be added to the existing "
+"ones, without adding duplicates."
 msgstr ""
 
 #: pretalx/orga/forms/cfp.py:222
@@ -2845,12 +2846,11 @@ msgid "JSON file does not contain a list of objects."
 msgstr ""
 
 #: pretalx/orga/forms/cfp.py:243
-msgid ""
-"Please select a deadline after which the question should become mandatory."
+msgid "Please select a deadline after which the field should become mandatory."
 msgstr ""
 
 #: pretalx/orga/forms/cfp.py:255
-msgid "You cannot replace answer options without uploading new ones."
+msgid "You cannot replace options without uploading new ones."
 msgstr ""
 
 #: pretalx/orga/forms/cfp.py:360
@@ -2928,7 +2928,7 @@ msgid "Recipients"
 msgstr ""
 
 #: pretalx/orga/forms/cfp.py:596
-msgid "If you select no question, all questions will be used."
+msgid "If you select no custom field, all will be used."
 msgstr ""
 
 #: pretalx/orga/forms/event.py:42
@@ -3268,43 +3268,38 @@ msgstr ""
 msgid "The end of a phase has to be after its start."
 msgstr ""
 
-#: pretalx/orga/forms/export.py:15
+#: pretalx/orga/forms/export.py:17
 msgid "Export format"
 msgstr ""
 
-#: pretalx/orga/forms/export.py:17
+#: pretalx/orga/forms/export.py:19
 msgid "A CSV export can be opened directly in Excel and similar applications."
 msgstr ""
 
-#: pretalx/orga/forms/export.py:20
+#: pretalx/orga/forms/export.py:22
 msgid "CSV export"
 msgstr ""
 
-#: pretalx/orga/forms/export.py:21
+#: pretalx/orga/forms/export.py:23
 msgid "JSON export"
 msgstr ""
 
-#: pretalx/orga/forms/export.py:27
+#: pretalx/orga/forms/export.py:29
 msgid "Data delimiter"
 msgstr ""
 
-#: pretalx/orga/forms/export.py:29
+#: pretalx/orga/forms/export.py:31
 msgid ""
 "How do you want to separate data within a single cell (for example, multiple "
 "speakers in one session)?"
 msgstr ""
 
-#: pretalx/orga/forms/export.py:32
+#: pretalx/orga/forms/export.py:34
 msgid "Newline"
 msgstr ""
 
-#: pretalx/orga/forms/export.py:33
+#: pretalx/orga/forms/export.py:35
 msgid "Comma"
-msgstr ""
-
-#: pretalx/orga/forms/export.py:74
-#, python-brace-format
-msgid "Answer to the question “{q}”"
 msgstr ""
 
 #: pretalx/orga/forms/export.py:89
@@ -3313,12 +3308,14 @@ msgstr ""
 
 #: pretalx/orga/forms/mails.py:85
 msgid ""
-"- First missing question\n"
-"- Second missing question"
+"- First missing field\n"
+"- Second missing field"
 msgstr ""
 
 #: pretalx/orga/forms/mails.py:87
-msgid "The list of questions that the user has not answered, as bullet points"
+msgid ""
+"The list of custom fields that the user has not responded to, as bullet "
+"points"
 msgstr ""
 
 #: pretalx/orga/forms/mails.py:145
@@ -4177,47 +4174,46 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:41
 #: pretalx/orga/templates/orga/cfp/question_form.html:51
-msgid "This question is currently active, it will be asked during submission."
+msgid "This field is currently active, it will be asked during submission."
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:42
 #: pretalx/orga/templates/orga/cfp/question_form.html:53
-msgid "Hide question"
+msgid "Hide field"
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:44
 #: pretalx/orga/templates/orga/cfp/question_form.html:59
 msgid ""
-"This question is currently inactive, and will not be asked during submission."
+"This field is currently inactive, and will not be asked during submission."
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:45
 #: pretalx/orga/templates/orga/cfp/question_form.html:60
-msgid "Activate question"
+msgid "Activate field"
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:50
-msgid "Nobody has answered this question at the moment."
+msgid "Nobody has responded to this field at the moment."
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:54
 #, python-format
 msgid ""
-"This question has been answered <strong>%(count)s</strong>, "
-"<strong>%(missing)s</strong> answers <a "
-"href=\"%(base_search_url)sunanswered=1\">are still missing</a>."
+"This field has <strong>%(count)s</strong> responses, <strong>%(missing)s</"
+"strong> <a href=\"%(base_search_url)sunanswered=1\">are still missing</a>."
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:58
 #, python-format
 msgid ""
-"This question has been answered <strong>%(count)s</strong>, and no answers "
-"are missing."
+"This field has <strong>%(count)s</strong> responses, and no answers are "
+"missing."
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:74
 #: pretalx/submission/models/question.py:335
-msgid "Answer"
+msgid "Response"
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:75
@@ -4231,21 +4227,22 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:8
 #: pretalx/orga/templates/orga/cfp/question_form.html:31
-msgid "New question"
+#: pretalx/orga/templates/orga/cfp/question_view.html:49
+msgid "New custom field"
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:39
 msgid ""
-"This question has already been answered by some speakers – please consider "
+"This custom field already has responses from some speakers – please consider "
 "carefully if modifying it would render those answers obsolete. You could "
-"also deactivate this question and start a new one instead."
+"also deactivate this field and create a new one instead."
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:71
 msgid ""
-"If you mark a Yes/No question as required, it means that the user has to "
-"select Yes and No is not accepted. If you want to allow both options, do not "
-"make this field required."
+"If you mark a Yes/No field as required, it means that the user has to select "
+"Yes and No is not accepted. If you want to allow both options, do not make "
+"this field required."
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:80
@@ -4257,11 +4254,7 @@ msgid "Input validation"
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:112
-msgid "Answer options"
-msgstr ""
-
-#: pretalx/orga/templates/orga/cfp/question_form.html:114
-msgid "Upload answer options"
+msgid "Response options"
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:137
@@ -4288,18 +4281,14 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:33
 msgid ""
-"Questions can help you sort out additional details with speakers, such as "
-"clothing sizes, special requirements such as dietary needs, or "
-"accommodation. Questions can be asked either on a per-proposal level, or per "
-"speaker, as you see fit."
+"Custom fields can help you sort out additional details with speakers, such "
+"as clothing sizes, special requirements such as dietary needs, or "
+"accommodation. Custom fields can be configured either on a per-proposal "
+"level, or per speaker, as you see fit."
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:45
-msgid "Send out reminders for unanswered questions"
-msgstr ""
-
-#: pretalx/orga/templates/orga/cfp/question_view.html:49
-msgid "Add a new question"
+msgid "Send out reminders for custom fields without responses"
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:59
@@ -4316,16 +4305,16 @@ msgid "active"
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:62
-msgid "Answers"
+msgid "Responses"
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:77
-msgid "This question’s availability depends on a deadline."
+msgid "This field’s availability depends on a deadline."
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:100
 #: pretalx/orga/views/event.py:194
-msgid "You have configured no questions yet."
+msgid "You have configured no custom fields yet."
 msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/submission_type_form.html:7
@@ -4492,8 +4481,8 @@ msgstr ""
 #: pretalx/orga/templates/orga/event/dashboard.html:20
 msgid ""
 "Your event has been created and you’re ready to go! Check out the event "
-"settings, set up your Call for Papers with session types and questions, and "
-"you’re ready to go!"
+"settings, set up your Call for Papers with session types and custom fields, "
+"and you’re ready to go!"
 msgstr ""
 
 #: pretalx/orga/templates/orga/event/dashboard.html:62
@@ -4610,7 +4599,7 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/includes/dashboard_block_event.html:13
 #: pretalx/orga/templates/orga/speaker/form.html:37
-#: pretalx/orga/views/dashboard.py:324
+#: pretalx/orga/views/dashboard.py:326
 msgid "proposal"
 msgid_plural "proposals"
 msgstr[0] ""
@@ -4662,7 +4651,7 @@ msgstr ""
 #: pretalx/orga/templates/orga/includes/submission_filter_form.html:26
 #: pretalx/orga/templates/orga/speaker/list.html:23
 #, python-format
-msgid "List filtered by answers to question “%(question)s”."
+msgid "List filtered by responses to custom field “%(question)s”."
 msgstr ""
 
 #: pretalx/orga/templates/orga/includes/submission_filter_form.html:31
@@ -4797,7 +4786,7 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/mails/compose_session_mail_form.html:16
 #, python-format
-msgid "Recipients filtered by answers to question “%(question)s”."
+msgid "Recipients filtered by responses to the custom field “%(question)s”."
 msgstr ""
 
 #: pretalx/orga/templates/orga/mails/compose_session_mail_form.html:28
@@ -4954,7 +4943,7 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/organiser/speaker_list.html:6
 #: pretalx/orga/templates/orga/organiser/speaker_list.html:22
-#: pretalx/orga/views/dashboard.py:340
+#: pretalx/orga/views/dashboard.py:342
 msgid "speaker"
 msgid_plural "speakers"
 msgstr[0] ""
@@ -5766,7 +5755,7 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/speaker/list.html:6
 #: pretalx/orga/templates/orga/speaker/list.html:11
-#: pretalx/orga/views/dashboard.py:359
+#: pretalx/orga/views/dashboard.py:361
 msgid "submitter"
 msgid_plural "submitters"
 msgstr[0] ""
@@ -5893,7 +5882,7 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/submission/list.html:21
 #: pretalx/orga/templates/orga/submission/list.html:31
-#: pretalx/orga/views/dashboard.py:301
+#: pretalx/orga/views/dashboard.py:304
 msgid "session"
 msgid_plural "sessions"
 msgstr[0] ""
@@ -6082,18 +6071,17 @@ msgstr ""
 
 #: pretalx/orga/views/cfp.py:310
 msgid ""
-"You cannot change the question options and upload a question option file at "
-"the same time."
+"You cannot change the options and upload an option file at the same time."
 msgstr ""
 
 #: pretalx/orga/views/cfp.py:371
-msgid "The question has been deleted."
+msgid "The custom field has been deleted."
 msgstr ""
 
 #: pretalx/orga/views/cfp.py:378
 msgid ""
-"You cannot delete a question that has already been answered. We have "
-"deactivated the question instead."
+"You cannot delete a custom field that has any responses. We have deactivated "
+"the field instead."
 msgstr ""
 
 #: pretalx/orga/views/cfp.py:432
@@ -6194,16 +6182,16 @@ msgstr ""
 msgid "current schedule"
 msgstr ""
 
-#: pretalx/orga/views/dashboard.py:306
+#: pretalx/orga/views/dashboard.py:309
 msgid "unconfirmed"
 msgstr ""
 
-#: pretalx/orga/views/dashboard.py:344
+#: pretalx/orga/views/dashboard.py:346
 #: pretalx/submission/models/submission.py:52
 msgid "rejected"
 msgstr ""
 
-#: pretalx/orga/views/dashboard.py:368
+#: pretalx/orga/views/dashboard.py:370
 msgid "sent email"
 msgid_plural "sent emails"
 msgstr[0] ""
@@ -7061,13 +7049,19 @@ msgstr ""
 msgid "Simplified Chinese"
 msgstr ""
 
+#: pretalx/submission/exporters.py:18 pretalx/submission/exporters.py:63
+msgid "Custom fields data"
+msgstr ""
+
 #: pretalx/submission/exporters.py:18
-msgid "Answered speaker questions"
+msgid "speakers"
 msgstr ""
 
 #: pretalx/submission/exporters.py:63
-msgid "Answered session questions"
-msgstr ""
+#, fuzzy
+#| msgid "Session type"
+msgid "submissions"
+msgstr "Jenis acara"
 
 #: pretalx/submission/forms/feedback.py:17
 msgid "All speakers"
@@ -7240,7 +7234,7 @@ msgid "required after a deadline"
 msgstr ""
 
 #: pretalx/submission/models/question.py:125
-msgid "question type"
+msgid "Field type"
 msgstr ""
 
 #: pretalx/submission/models/question.py:127
@@ -7248,7 +7242,7 @@ msgid "Do you require an answer from every speaker or for every session?"
 msgstr ""
 
 #: pretalx/submission/models/question.py:135
-msgid "Set a deadline to make this question required after the given date."
+msgid "Set a deadline to make this field required after the given date."
 msgstr ""
 
 #: pretalx/submission/models/question.py:141
@@ -7256,23 +7250,22 @@ msgid "freeze after"
 msgstr ""
 
 #: pretalx/submission/models/question.py:142
-msgid "Set a deadline to stop changes to answers after the given date."
+msgid "Set a deadline to stop changes to responses after the given date."
 msgstr ""
 
 #: pretalx/submission/models/question.py:148
-msgid "question required"
+msgid "Field required"
 msgstr ""
 
 #: pretalx/submission/models/question.py:154
 msgid ""
-"You can limit this question to some tracks. Leave this field empty to apply "
-"to all tracks."
+"You can limit this field to some tracks. Leave empty to apply to all tracks."
 msgstr ""
 
 #: pretalx/submission/models/question.py:163
 msgid ""
-"You can limit this question to some session types. Leave this field empty to "
-"apply to all session types."
+"You can limit this field to some session types. Leave empty to apply to all "
+"session types."
 msgstr ""
 
 #: pretalx/submission/models/question.py:165
@@ -7280,7 +7273,7 @@ msgid "Session Types"
 msgstr ""
 
 #: pretalx/submission/models/question.py:168
-msgid "question"
+msgid "Label"
 msgstr ""
 
 #: pretalx/submission/models/question.py:173
@@ -7288,7 +7281,7 @@ msgid "help text"
 msgstr ""
 
 #: pretalx/submission/models/question.py:174
-msgid "Will appear just like this text below the question input field."
+msgid "Will appear just like this text below the custom input field."
 msgstr ""
 
 #: pretalx/submission/models/question.py:179
@@ -7296,17 +7289,17 @@ msgid "default answer"
 msgstr ""
 
 #: pretalx/submission/models/question.py:185
-msgid "Inactive questions will no longer be asked."
+msgid "Inactive fields will no longer be shown."
 msgstr ""
 
 #: pretalx/submission/models/question.py:189
-msgid "Answers contain personal data"
+msgid "Responses contain personal data"
 msgstr ""
 
 #: pretalx/submission/models/question.py:191
 msgid ""
-"If a user deletes their account, answers of questions for personal data will "
-"be removed, too."
+"If a user deletes their account, responses containing personal data will be "
+"removed, too."
 msgstr ""
 
 #: pretalx/submission/models/question.py:197
@@ -7344,9 +7337,9 @@ msgstr ""
 
 #: pretalx/submission/models/question.py:246
 msgid ""
-"Answers will be shown on session or speaker pages as appropriate. Please "
-"note that you cannot make a question public after the first answers have "
-"been given, to allow speakers explicit consent before publishing information."
+"Responses will be shown on session or speaker pages as appropriate. Please "
+"note that you cannot make a field public after the first answers have been "
+"given, to allow speakers explicit consent before publishing information."
 msgstr ""
 
 #: pretalx/submission/models/question.py:251
@@ -7355,8 +7348,8 @@ msgstr ""
 
 #: pretalx/submission/models/question.py:253
 msgid ""
-"Should answers to this question be shown to reviewers? This is helpful if "
-"you want to collect personal information, but use anonymous reviews."
+"Should responses to this field be shown to reviewers? This is helpful if you "
+"want to collect personal information, but use anonymous reviews."
 msgstr ""
 
 #: pretalx/submission/models/review.py:24

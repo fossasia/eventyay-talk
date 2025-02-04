@@ -8,6 +8,8 @@ from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from i18nfield.utils import I18nJSONEncoder
 
+from pretalx.common.text.phrases import phrases
+
 
 class ExportForm(forms.Form):
     export_format = forms.ChoiceField(
@@ -71,9 +73,7 @@ class ExportForm(forms.Form):
         for question in self.questions:
             self.fields[f"question_{question.pk}"] = forms.BooleanField(
                 required=False,
-                label=str(_("Answer to the question “{q}”")).format(
-                    q=question.question
-                ),
+                label=f"{phrases.quotation.open}{question.question}{phrases.quotation.close}",
             )
 
     def clean(self):

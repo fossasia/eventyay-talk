@@ -82,9 +82,9 @@ class MailTemplateForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
                     "questions",
                     ["user"],
                     None,
-                    _("- First missing question\n- Second missing question"),
+                    _("- First missing field\n- Second missing field"),
                     _(
-                        "The list of questions that the user has not answered, as bullet points"
+                        "The list of custom fields that the user has not responded to, as bullet points"
                     ),
                 )
                 valid_placeholders["url"] = SimpleFunctionalMailTextPlaceholder(

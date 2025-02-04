@@ -37,7 +37,7 @@ class MailTemplateRoles(models.TextChoices):
     EXISTING_SPEAKER_INVITE = "speaker.invite.existing", _(
         "Add a speaker to a proposal (existing account)"
     )
-    QUESTION_REMINDER = "question.reminder", _("Unanswered questions reminder")
+    QUESTION_REMINDER = "question.reminder", _("Custom fields reminder")
     NEW_SCHEDULE = "schedule.new", _("New schedule published")
 
 

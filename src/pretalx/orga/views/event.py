@@ -191,7 +191,7 @@ class EventLive(EventSettingsPermission, TemplateView):
         if not self.request.event.questions.exists():
             suggestions.append(
                 {
-                    "text": _("You have configured no questions yet."),
+                    "text": _("You have configured no custom fields yet."),
                     "url": self.request.event.cfp.urls.new_question,
                 }
             )

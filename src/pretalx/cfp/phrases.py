@@ -61,6 +61,4 @@ I’m looking forward to it!
         "We are experiencing difficulties when sending mails, but your session was submitted successfully!"
     )
 
-    # Translators: This string is used for headings and refers to the custom questions
-    # organisers can create for their CfP.
-    questions = _("Questions")
+    custom_fields = _("Custom fields")
