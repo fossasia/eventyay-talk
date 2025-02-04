@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-15 10:52+0000\n"
+"POT-Creation-Date: 2025-02-04 10:43+0000\n"
 "PO-Revision-Date: 2023-05-27 12:16+0000\n"
 "Last-Translator: Joel (Jiawei) Wang <joel.bradley.w@gmail.com>\n"
 "Language-Team: none\n"
@@ -501,8 +501,8 @@ msgid "Abstract:"
 msgstr "抽象："
 
 #: pretalx/cfp/templates/cfp/event/invitation.html:43
-#: pretalx/event/models/event.py:584 pretalx/submission/models/question.py:424
-#: pretalx/submission/models/submission.py:938
+#: pretalx/event/models/event.py:585 pretalx/submission/models/question.py:424
+#: pretalx/submission/models/submission.py:939
 msgid "No"
 msgstr "不。"
 
@@ -999,13 +999,6 @@ msgstr "即将到来的活动"
 msgid "Past events"
 msgstr "过去的事件"
 
-#: pretalx/cfp/views/locale.py:54
-msgid ""
-"Your locale preferences have been saved. We like to think that we have "
-"excellent support for English in pretalx, but if you encounter issues or "
-"errors, please contact us!"
-msgstr "您的本地设置已保存。"
-
 #: pretalx/cfp/views/user.py:270
 #, fuzzy
 #| msgid "Your drafts"
@@ -1109,276 +1102,288 @@ msgstr "警告"
 msgid "Your passwords don’t match."
 msgstr "您的密码不匹配。"
 
-#: pretalx/common/log_display.py:28
+#: pretalx/common/log_display.py:29
 #, python-brace-format
 msgid "The event {name} ({slug}) by {organiser} was deleted."
 msgstr ""
 
-#: pretalx/common/log_display.py:29
+#: pretalx/common/log_display.py:30
 #, fuzzy, python-brace-format
 #| msgid "The proposal was deleted."
 msgid "The organiser {name} was deleted."
 msgstr "这个提议被删除了。"
 
-#: pretalx/common/log_display.py:50
+#: pretalx/common/log_display.py:51
 msgid "The CfP has been modified."
 msgstr "\"征稿启事已经修改。\""
 
-#: pretalx/common/log_display.py:51
+#: pretalx/common/log_display.py:52
 msgid "The event has been added."
 msgstr "该事件已添加。"
 
-#: pretalx/common/log_display.py:52
+#: pretalx/common/log_display.py:53
 msgid "The event was modified."
 msgstr "该事件已被修改。"
 
-#: pretalx/common/log_display.py:53
+#: pretalx/common/log_display.py:54
 msgid "The event was made public."
 msgstr "这个事件已经被公开。"
 
-#: pretalx/common/log_display.py:54
+#: pretalx/common/log_display.py:55
 msgid "The event was deactivated."
 msgstr "该事件已被停用。"
 
-#: pretalx/common/log_display.py:55
+#: pretalx/common/log_display.py:56
 msgid "A plugin was enabled."
 msgstr "一个插件已启用。"
 
-#: pretalx/common/log_display.py:56
+#: pretalx/common/log_display.py:57
 msgid "A plugin was disabled."
 msgstr "一个插件已被禁用。"
 
-#: pretalx/common/log_display.py:57
+#: pretalx/common/log_display.py:58
 msgid "The invitation to the event orga was accepted."
 msgstr "活动orga的邀请被接受了。”"
 
-#: pretalx/common/log_display.py:58
+#: pretalx/common/log_display.py:59
 msgid "An invitation to the event orga was retracted."
 msgstr "\"活动 orga 的邀请被撤回了。\""
 
-#: pretalx/common/log_display.py:59
+#: pretalx/common/log_display.py:60
 msgid "An invitation to the event orga was sent."
 msgstr "一份邀请函已经发送至orga的活动。"
 
-#: pretalx/common/log_display.py:61
+#: pretalx/common/log_display.py:62
 msgid "The invitation to the review team was retracted."
 msgstr "邀请复核团队已被撤回。"
 
-#: pretalx/common/log_display.py:63
+#: pretalx/common/log_display.py:64
 msgid "The invitation to the review team was sent."
 msgstr "审核团队的邀请已发送。"
 
-#: pretalx/common/log_display.py:64
+#: pretalx/common/log_display.py:65
 #, fuzzy
 #| msgid "An email was sent."
 msgid "An email was created."
 msgstr "一封电子邮件被发送了。"
 
-#: pretalx/common/log_display.py:65
+#: pretalx/common/log_display.py:66
 msgid "A pending email was deleted."
 msgstr "一封待处理的电子邮件被删除了。"
 
-#: pretalx/common/log_display.py:66
+#: pretalx/common/log_display.py:67
 msgid "All pending emails were deleted."
 msgstr "所有待处理的电子邮件都已被删除。"
 
-#: pretalx/common/log_display.py:67
+#: pretalx/common/log_display.py:68
 msgid "An email was sent."
 msgstr "一封电子邮件被发送了。"
 
-#: pretalx/common/log_display.py:68
+#: pretalx/common/log_display.py:69
 msgid "An email was modified."
 msgstr "一封电子邮件被修改了。"
 
-#: pretalx/common/log_display.py:69
+#: pretalx/common/log_display.py:70
 msgid "A mail template was added."
 msgstr "\"添加了一封邮件模板。\""
 
-#: pretalx/common/log_display.py:70
+#: pretalx/common/log_display.py:71
 msgid "A mail template was deleted."
 msgstr "一封邮件模板被删除了。"
 
-#: pretalx/common/log_display.py:71
+#: pretalx/common/log_display.py:72
 msgid "A mail template was modified."
 msgstr "邮件模板已修改。"
 
-#: pretalx/common/log_display.py:72
+#: pretalx/common/log_display.py:73
 msgid "A question was added."
 msgstr "一个问题被添加了。"
 
-#: pretalx/common/log_display.py:73
+#: pretalx/common/log_display.py:74
 msgid "A question was deleted."
 msgstr "一个问题被删除了。"
 
-#: pretalx/common/log_display.py:74
+#: pretalx/common/log_display.py:75
 msgid "A question was modified."
 msgstr "一个问题被修改了。"
 
-#: pretalx/common/log_display.py:75
+#: pretalx/common/log_display.py:76
 msgid "A question option was added."
 msgstr "添加了一个问题选项。"
 
-#: pretalx/common/log_display.py:76
+#: pretalx/common/log_display.py:77
 msgid "A question option was deleted."
 msgstr "一个问题选项被删除了。"
 
-#: pretalx/common/log_display.py:77
+#: pretalx/common/log_display.py:78
 msgid "A question option was modified."
 msgstr "一个问题选项被修改了。"
 
-#: pretalx/common/log_display.py:78
+#: pretalx/common/log_display.py:79
 msgid "A tag was added."
 msgstr "添加了一个标签。"
 
-#: pretalx/common/log_display.py:79
+#: pretalx/common/log_display.py:80
 msgid "A tag was deleted."
 msgstr "一个标签已被删除。"
 
-#: pretalx/common/log_display.py:80
+#: pretalx/common/log_display.py:81
 msgid "A tag was modified."
 msgstr "一个标签被修改了。"
 
-#: pretalx/common/log_display.py:81
+#: pretalx/common/log_display.py:82
 msgid "A new room was added."
 msgstr "新增了一个房间。"
 
-#: pretalx/common/log_display.py:82
+#: pretalx/common/log_display.py:83
 msgid "A new schedule version was released."
 msgstr "发布了新的时间表版本。"
 
-#: pretalx/common/log_display.py:83
+#: pretalx/common/log_display.py:84
 msgid "The proposal was accepted."
 msgstr "提议被接受了。"
 
-#: pretalx/common/log_display.py:84
+#: pretalx/common/log_display.py:85
 msgid "The proposal was cancelled."
 msgstr "这个提案被取消了。"
 
-#: pretalx/common/log_display.py:85
+#: pretalx/common/log_display.py:86
 msgid "The proposal was confirmed."
 msgstr "这个提议已经确认。"
 
-#: pretalx/common/log_display.py:86
+#: pretalx/common/log_display.py:87
 msgid "The proposal was added."
 msgstr "这个提案被添加了。"
 
-#: pretalx/common/log_display.py:87
+#: pretalx/common/log_display.py:88
 msgid "The proposal was deleted."
 msgstr "这个提议被删除了。"
 
-#: pretalx/common/log_display.py:88
+#: pretalx/common/log_display.py:89
 msgid "The proposal was rejected."
 msgstr "该提议被拒绝。"
 
-#: pretalx/common/log_display.py:89
+#: pretalx/common/log_display.py:90
 msgid "A proposal resource was added."
 msgstr "添加了一个提案资源。"
 
-#: pretalx/common/log_display.py:90
+#: pretalx/common/log_display.py:91
 msgid "A proposal resource was deleted."
 msgstr "一个提案资源被删除了。"
 
-#: pretalx/common/log_display.py:91
+#: pretalx/common/log_display.py:92
 msgid "A proposal resource was modified."
 msgstr "一个建议资源被修改了。"
 
-#: pretalx/common/log_display.py:92
+#: pretalx/common/log_display.py:93
 msgid "A speaker was added to the proposal."
 msgstr "提案增加了一个演讲者。"
 
-#: pretalx/common/log_display.py:93
+#: pretalx/common/log_display.py:94
 msgid "A speaker was invited to the proposal."
 msgstr "一位演讲者被邀请参加提案。"
 
-#: pretalx/common/log_display.py:94
+#: pretalx/common/log_display.py:95
 msgid "A speaker was removed from the proposal."
 msgstr "议案中的一个发言者被取消了。"
 
-#: pretalx/common/log_display.py:95
+#: pretalx/common/log_display.py:96
 msgid "The proposal was unconfirmed."
 msgstr "这个提议没有得到确认。"
 
-#: pretalx/common/log_display.py:96
+#: pretalx/common/log_display.py:97
 msgid "The proposal was modified."
 msgstr "这个提案被修改了。"
 
-#: pretalx/common/log_display.py:97
+#: pretalx/common/log_display.py:98
 msgid "The proposal was withdrawn."
 msgstr "这项提案被撤回了。"
 
-#: pretalx/common/log_display.py:98
+#: pretalx/common/log_display.py:99
 msgid "A proposal answer was modified."
 msgstr "一份提案答案被修改。"
 
-#: pretalx/common/log_display.py:99
+#: pretalx/common/log_display.py:100
 msgid "A proposal answer was added."
 msgstr "添加了一个提案答案。"
 
-#: pretalx/common/log_display.py:100
+#: pretalx/common/log_display.py:101
+#, fuzzy
+#| msgid "A proposal resource was added."
+msgid "A proposal comment was added."
+msgstr "添加了一个提案资源。"
+
+#: pretalx/common/log_display.py:102
+#, fuzzy
+#| msgid "A proposal resource was deleted."
+msgid "A proposal comment was deleted."
+msgstr "一个提案资源被删除了。"
+
+#: pretalx/common/log_display.py:103
 msgid "A session type was added."
 msgstr "添加了会话类型。"
 
-#: pretalx/common/log_display.py:101
+#: pretalx/common/log_display.py:104
 msgid "A session type was deleted."
 msgstr "一个会话类型被删除了。"
 
-#: pretalx/common/log_display.py:102
+#: pretalx/common/log_display.py:105
 msgid "The session type was made default."
 msgstr "会话类型已默认设置。"
 
-#: pretalx/common/log_display.py:103
+#: pretalx/common/log_display.py:106
 msgid "A session type was modified."
 msgstr "一个会话类型被修改了。"
 
-#: pretalx/common/log_display.py:104
+#: pretalx/common/log_display.py:107
 msgid "An access code was added."
 msgstr "已添加访问代码。"
 
-#: pretalx/common/log_display.py:105
+#: pretalx/common/log_display.py:108
 msgid "An access code was sent."
 msgstr "一个访问代码已被发送。"
 
-#: pretalx/common/log_display.py:106
+#: pretalx/common/log_display.py:109
 msgid "An access code was modified."
 msgstr "一个访问代码已经修改。"
 
-#: pretalx/common/log_display.py:107
+#: pretalx/common/log_display.py:110
 msgid "An access code was deleted."
 msgstr "访问码已删除。"
 
-#: pretalx/common/log_display.py:108
+#: pretalx/common/log_display.py:111
 msgid "A track was added."
 msgstr "一条轨迹被添加了。"
 
-#: pretalx/common/log_display.py:109
+#: pretalx/common/log_display.py:112
 msgid "A track was deleted."
 msgstr "一条轨迹被删除。"
 
-#: pretalx/common/log_display.py:110
+#: pretalx/common/log_display.py:113
 msgid "A track was modified."
 msgstr "一条轨迹被修改了。"
 
-#: pretalx/common/log_display.py:111
+#: pretalx/common/log_display.py:114
 msgid "A speaker has been marked as arrived."
 msgstr "一个演讲者已被标记为已到达。"
 
-#: pretalx/common/log_display.py:112
+#: pretalx/common/log_display.py:115
 msgid "A speaker has been marked as not arrived."
 msgstr "演讲者已标记为未到达。"
 
-#: pretalx/common/log_display.py:113
+#: pretalx/common/log_display.py:116
 msgid "The API token was reset."
 msgstr "API令牌已重置。"
 
-#: pretalx/common/log_display.py:115
+#: pretalx/common/log_display.py:118
 msgid "The password was modified."
 msgstr "密码已修改。"
 
-#: pretalx/common/log_display.py:116
+#: pretalx/common/log_display.py:119
 msgid "The profile was modified."
 msgstr "个人资料已修改。"
 
-#: pretalx/common/log_display.py:152 pretalx/common/log_display.py:156
+#: pretalx/common/log_display.py:166 pretalx/common/log_display.py:170
 #: pretalx/orga/templates/orga/cfp/question_form.html:29
 #: pretalx/orga/templates/orga/cfp/question_view.html:58
 #: pretalx/orga/templates/orga/review/dashboard.html:84
@@ -1386,13 +1391,13 @@ msgstr "个人资料已修改。"
 msgid "Question"
 msgstr "问题"
 
-#: pretalx/common/log_display.py:163
+#: pretalx/common/log_display.py:177
 #, fuzzy
 #| msgid "Answer to the question “{q}”"
 msgid "Answer to question"
 msgstr "\"回答问题 “{q}”\" (Huídá wèntí “{q}”)"
 
-#: pretalx/common/log_display.py:166 pretalx/orga/templates/orga/base.html:245
+#: pretalx/common/log_display.py:180 pretalx/orga/templates/orga/base.html:245
 #: pretalx/orga/templates/orga/cfp/text.html:20
 #: pretalx/orga/templates/orga/cfp/text.html:24
 #, fuzzy
@@ -1400,13 +1405,13 @@ msgstr "\"回答问题 “{q}”\" (Huídá wèntí “{q}”)"
 msgid "Call for Proposals"
 msgstr "所有提议"
 
-#: pretalx/common/log_display.py:169
+#: pretalx/common/log_display.py:183
 #, fuzzy
 #| msgid "Edit template"
 msgid "Mail template"
 msgstr "编辑模板"
 
-#: pretalx/common/log_display.py:173 pretalx/event/models/organiser.py:250
+#: pretalx/common/log_display.py:187 pretalx/event/models/organiser.py:250
 #: pretalx/orga/templates/orga/admin/user_detail.html:49
 #: pretalx/orga/templates/orga/admin/user_list.html:30
 #: pretalx/orga/templates/orga/base.html:226
@@ -1808,6 +1813,7 @@ msgstr "取消"
 
 #. Translators: This is the label on edit buttons.
 #: pretalx/common/text/phrases.py:50
+#: pretalx/orga/templatetags/orga_edit_link.py:12
 msgid "Edit"
 msgstr "编辑"
 
@@ -2121,7 +2127,7 @@ msgstr "不要复制"
 msgid "Invalid event slug – this slug is reserved: {value}."
 msgstr "无效的事件代码 - 此代码已被保留：{value}。"
 
-#: pretalx/event/models/event.py:156 pretalx/event/models/organiser.py:88
+#: pretalx/event/models/event.py:157 pretalx/event/models/organiser.py:88
 #: pretalx/orga/templates/orga/admin/admin.html:59
 #: pretalx/orga/templates/orga/admin/user_list.html:29
 #: pretalx/orga/templates/orga/organiser/speaker_list.html:36
@@ -2134,74 +2140,74 @@ msgstr "无效的事件代码 - 此代码已被保留：{value}。"
 msgid "Name"
 msgstr "名称"
 
-#: pretalx/event/models/event.py:165 pretalx/event/models/event.py:171
+#: pretalx/event/models/event.py:166 pretalx/event/models/event.py:172
 #: pretalx/event/models/organiser.py:97
 msgid "The slug may only contain letters, numbers, dots and dashes."
 msgstr "该Slug只能包含字母、数字、点和破折号。"
 
-#: pretalx/event/models/event.py:170 pretalx/event/models/organiser.py:101
+#: pretalx/event/models/event.py:171 pretalx/event/models/organiser.py:101
 msgid "Short form"
 msgstr "简称"
 
-#: pretalx/event/models/event.py:179
+#: pretalx/event/models/event.py:180
 msgid "Event is public"
 msgstr "事件是公共的。"
 
-#: pretalx/event/models/event.py:180
+#: pretalx/event/models/event.py:181
 msgid "Event start date"
 msgstr "活动开始日期"
 
-#: pretalx/event/models/event.py:181
+#: pretalx/event/models/event.py:182
 msgid "Event end date"
 msgstr "事件结束日期"
 
-#: pretalx/event/models/event.py:187
+#: pretalx/event/models/event.py:188
 msgid ""
 "All event dates will be localised and interpreted to be in this timezone."
 msgstr "所有活动的日期将会被本地化和解释为该时区的时间。"
 
-#: pretalx/event/models/event.py:191
+#: pretalx/event/models/event.py:192
 msgid "Organiser email address"
 msgstr "组织者电子邮件地址"
 
-#: pretalx/event/models/event.py:192
+#: pretalx/event/models/event.py:193
 msgid "Will be used as Reply-To in emails."
 msgstr "将用作电子邮件中的回复地址。"
 
-#: pretalx/event/models/event.py:195
+#: pretalx/event/models/event.py:196
 msgid "Custom domain"
 msgstr "自定义域名"
 
-#: pretalx/event/models/event.py:196
+#: pretalx/event/models/event.py:197
 msgid "Enter a custom domain, such as https://my.event.example.org"
 msgstr "输入自定义域名，例如 https://my.event.example.org。"
 
-#: pretalx/event/models/event.py:211
+#: pretalx/event/models/event.py:212
 msgid "Main event colour"
 msgstr "主要活动颜色"
 
-#: pretalx/event/models/event.py:213
+#: pretalx/event/models/event.py:214
 msgid ""
 "Provide a hex value like #00ff00 if you want to style pretalx in your "
 "event’s colour scheme."
 msgstr ""
 "如果您想要使用活动颜色方案样式化Pretalx，请提供类似#00ff00的十六进制值。"
 
-#: pretalx/event/models/event.py:220
+#: pretalx/event/models/event.py:221
 msgid "Custom Event CSS"
 msgstr "自定义事件CSS"
 
-#: pretalx/event/models/event.py:222
+#: pretalx/event/models/event.py:223
 msgid ""
 "Upload a custom CSS file if changing the primary colour is not sufficient "
 "for you."
 msgstr "如果更改主色不足以满足您的需求，上传自定义CSS文件。"
 
-#: pretalx/event/models/event.py:229
+#: pretalx/event/models/event.py:230
 msgid "Logo"
 msgstr "标志"
 
-#: pretalx/event/models/event.py:231
+#: pretalx/event/models/event.py:232
 msgid ""
 "If you provide a logo image, your event’s name will not be shown in the "
 "event header. The logo will be scaled down to a height of 140px."
@@ -2209,11 +2215,11 @@ msgstr ""
 "如果您提供了一个标志图像，您的活动名称将不会显示在活动页眉中。该标志将缩小到"
 "高度为150px。"
 
-#: pretalx/event/models/event.py:239
+#: pretalx/event/models/event.py:240
 msgid "Header image"
 msgstr "标题图片 (Biaoti tupian)"
 
-#: pretalx/event/models/event.py:241
+#: pretalx/event/models/event.py:242
 msgid ""
 "If you provide a header image, it will be displayed instead of your event’s "
 "color and/or header pattern at the top of all event pages. It will be center-"
@@ -2224,31 +2230,31 @@ msgstr ""
 "和/或标题样式。它将居中对齐，因此当窗口缩小时，中心部分将继续显示，而不会被拉"
 "伸。"
 
-#: pretalx/event/models/event.py:252
+#: pretalx/event/models/event.py:253
 msgid "Default language"
 msgstr "默认语言"
 
-#: pretalx/event/models/event.py:255
+#: pretalx/event/models/event.py:256
 msgid "Landing page text"
 msgstr "登陆页面文本"
 
-#: pretalx/event/models/event.py:257
+#: pretalx/event/models/event.py:258
 msgid ""
 "This text will be shown on the landing page, alongside with links to the CfP "
 "and schedule, if appropriate."
 msgstr "如果可用，此文本将与CfP和日程链接一起显示在登录页面上。"
 
-#: pretalx/event/models/event.py:265
+#: pretalx/event/models/event.py:266
 msgid "Featured sessions text"
 msgstr "特色会议环节注释"
 
-#: pretalx/event/models/event.py:267
+#: pretalx/event/models/event.py:268
 msgid ""
 "This text will be shown at the top of the featured sessions page instead of "
 "the default text."
 msgstr "此文本将显示在特色会议环节页面的顶部，而不是默认文本。"
 
-#: pretalx/event/models/event.py:274
+#: pretalx/event/models/event.py:275
 #: pretalx/orga/templates/orga/admin/admin.html:106
 #: pretalx/orga/templates/orga/base.html:232
 #: pretalx/orga/templates/orga/plugins.html:5
@@ -2256,70 +2262,70 @@ msgstr "此文本将显示在特色会议环节页面的顶部，而不是默认
 msgid "Plugins"
 msgstr "插件"
 
-#: pretalx/event/models/event.py:277
+#: pretalx/event/models/event.py:278
 msgid "Plain"
 msgstr "Plain"
 
-#: pretalx/event/models/event.py:278
+#: pretalx/event/models/event.py:279
 msgid "Circuits"
 msgstr "Circuits"
 
-#: pretalx/event/models/event.py:279
+#: pretalx/event/models/event.py:280
 msgid "Circles"
 msgstr "Circles"
 
-#: pretalx/event/models/event.py:280
+#: pretalx/event/models/event.py:281
 msgid "Signal"
 msgstr "Signal"
 
-#: pretalx/event/models/event.py:281
+#: pretalx/event/models/event.py:282
 msgid "Topography"
 msgstr "Topography"
 
-#: pretalx/event/models/event.py:282
+#: pretalx/event/models/event.py:283
 msgid "Graph Paper"
 msgstr "Graph Paper"
 
-#: pretalx/event/models/event.py:558 pretalx/event/models/event.py:869
+#: pretalx/event/models/event.py:559 pretalx/event/models/event.py:870
 #: pretalx/event/stages.py:70 pretalx/orga/templates/orga/base.html:223
 #: pretalx/orga/templates/orga/base.html:312
 #: pretalx/orga/templates/orga/base.html:320
 #: pretalx/orga/templates/orga/base.html:333
-#: pretalx/orga/templates/orga/submission/review.html:174
+#: pretalx/orga/templates/orga/submission/review.html:175
 msgid "Review"
 msgstr "审查"
 
-#: pretalx/event/models/event.py:566
+#: pretalx/event/models/event.py:567
 msgid "Selection"
 msgstr "选择"
 
-#: pretalx/event/models/event.py:579
+#: pretalx/event/models/event.py:580
 #: pretalx/orga/templates/orga/review/dashboard.html:60
-#: pretalx/orga/templates/orga/submission/review.html:169
+#: pretalx/orga/templates/orga/submission/review.html:170
 #: pretalx/submission/models/review.py:133
 msgid "Score"
 msgstr "得分"
 
-#: pretalx/event/models/event.py:589
+#: pretalx/event/models/event.py:590
 msgid "Maybe"
 msgstr "可能"
 
-#: pretalx/event/models/event.py:594 pretalx/submission/models/question.py:422
-#: pretalx/submission/models/submission.py:938
+#: pretalx/event/models/event.py:595 pretalx/submission/models/question.py:422
+#: pretalx/submission/models/submission.py:939
 msgid "Yes"
 msgstr "是"
 
-#: pretalx/event/models/event.py:1019
+#: pretalx/event/models/event.py:1020
 msgid "News from your content system"
 msgstr "来自您内容系统的新闻"
 
-#: pretalx/event/models/event.py:1096
+#: pretalx/event/models/event.py:1097
 #, fuzzy
 #| msgid "Landing page text"
 msgid "Link text"
 msgstr "登陆页面文本"
 
-#: pretalx/event/models/event.py:1097
+#: pretalx/event/models/event.py:1098
 #, fuzzy
 #| msgid "Imprint URL"
 msgid "Link URL"
@@ -3545,79 +3551,89 @@ msgstr ""
 "私政策。"
 
 #: pretalx/orga/forms/event.py:507
+msgid "Enable submission comments"
+msgstr ""
+
+#: pretalx/orga/forms/event.py:509
+msgid ""
+"Allow organisers and reviewers to comment on submissions, separate from "
+"reviews."
+msgstr ""
+
+#: pretalx/orga/forms/event.py:514
 msgid "Require a review score"
 msgstr "必须提交审查分数"
 
-#: pretalx/orga/forms/event.py:510
+#: pretalx/orga/forms/event.py:517
 msgid "Require a review text"
 msgstr "必须提交审查报告"
 
-#: pretalx/orga/forms/event.py:513
+#: pretalx/orga/forms/event.py:520
 msgid "Score display"
 msgstr "得分显示"
 
-#: pretalx/orga/forms/event.py:516
+#: pretalx/orga/forms/event.py:523
 msgid "Text and score, e.g “Good (3)”"
 msgstr "文本和分数，例如“好（3）”。"
 
-#: pretalx/orga/forms/event.py:517
+#: pretalx/orga/forms/event.py:524
 msgid "Score and text, e.g “3 (good)”"
 msgstr "得分和文本，例如“3（好）”。"
 
-#: pretalx/orga/forms/event.py:518
+#: pretalx/orga/forms/event.py:525
 msgid "Just scores"
 msgstr "只有分数"
 
-#: pretalx/orga/forms/event.py:519
+#: pretalx/orga/forms/event.py:526
 msgid "Just text"
 msgstr "只是文本"
 
-#: pretalx/orga/forms/event.py:523
+#: pretalx/orga/forms/event.py:530
 msgid ""
 "This is how the score will look like on the review interface. The dashboard "
 "will always show numerical scores."
 msgstr "这就是审核界面上得分的样子。仪表板始终会显示数值分数。"
 
-#: pretalx/orga/forms/event.py:528
+#: pretalx/orga/forms/event.py:535
 msgid "Score aggregation method"
 msgstr "得分汇总方法"
 
-#: pretalx/orga/forms/event.py:530
+#: pretalx/orga/forms/event.py:537
 #: pretalx/orga/templates/orga/review/dashboard.html:160
 msgid "Median"
 msgstr "中位数"
 
-#: pretalx/orga/forms/event.py:530
+#: pretalx/orga/forms/event.py:537
 msgid "Average (mean)"
 msgstr "平均值 (均值)"
 
-#: pretalx/orga/forms/event.py:534
+#: pretalx/orga/forms/event.py:541
 msgid "Help text for reviewers"
 msgstr "审核人员的帮助文本"
 
-#: pretalx/orga/forms/event.py:536
+#: pretalx/orga/forms/event.py:543
 msgid ""
 "This text will be shown at the top of every review, as long as reviews can "
 "be created or edited."
 msgstr "只要还可以创建或编辑评论，这段文本将显示在每一篇评论的顶部。"
 
-#: pretalx/orga/forms/event.py:556
+#: pretalx/orga/forms/event.py:564
 msgid "Show the widget even if the schedule is not public"
 msgstr "即使日程不公开也显示小部件。"
 
-#: pretalx/orga/forms/event.py:558
+#: pretalx/orga/forms/event.py:566
 msgid ""
 "Set to allow external pages to show the schedule widget, even if the "
 "schedule is not shown here using pretalx."
 msgstr "设置允许外部页面显示日程小部件，即使在此处未使用 pretalx 显示日程。"
 
-#: pretalx/orga/forms/event.py:574
+#: pretalx/orga/forms/event.py:582
 #, fuzzy
 #| msgid "Limit to tracks"
 msgid "Limit days"
 msgstr "限制为轨道"
 
-#: pretalx/orga/forms/event.py:579
+#: pretalx/orga/forms/event.py:587
 #, fuzzy
 #| msgid ""
 #| "You can limit this question to some tracks. Leave this field empty to "
@@ -3627,11 +3643,11 @@ msgid ""
 msgstr ""
 "你可以将这个问题限制在某些曲目上。如果要适用于所有曲目，请将此字段留空。"
 
-#: pretalx/orga/forms/event.py:585
+#: pretalx/orga/forms/event.py:593
 msgid "Widget language"
 msgstr "部件语言"
 
-#: pretalx/orga/forms/event.py:611
+#: pretalx/orga/forms/event.py:619
 msgid "The end of a phase has to be after its start."
 msgstr "一个阶段的结束必须在它的开始之后。"
 
@@ -3859,6 +3875,16 @@ msgstr "未知提案：{}"
 #: pretalx/orga/forms/schedule.py:21
 msgid "Notify speakers of changes"
 msgstr "通知演讲者有关变更。"
+
+#: pretalx/orga/forms/schedule.py:31
+#: pretalx/orga/templates/orga/cfp/question_remind.html:17
+#: pretalx/orga/templates/orga/mails/template_form.html:5
+#: pretalx/orga/templates/orga/mails/template_form.html:7
+#: pretalx/orga/templates/orga/schedule/release.html:51
+#, fuzzy
+#| msgid "Edit template"
+msgid "Email template"
+msgstr "编辑模板"
 
 #: pretalx/orga/forms/schedule.py:36
 msgid "We released a new schedule version!"
@@ -4209,7 +4235,7 @@ msgid "Current queue length"
 msgstr "当前队列长度"
 
 #: pretalx/orga/templates/orga/admin/admin.html:152
-#: pretalx/orga/templates/orga/submission/base.html:85
+#: pretalx/orga/templates/orga/submission/base.html:95
 msgid "Links"
 msgstr "链接"
 
@@ -4733,15 +4759,6 @@ msgid ""
 msgstr ""
 "在这里，您可以限制谁可以收到提醒邮件。在邮件发送出去之前，您将有机会审核这些"
 "邮件。"
-
-#: pretalx/orga/templates/orga/cfp/question_remind.html:17
-#: pretalx/orga/templates/orga/mails/template_form.html:5
-#: pretalx/orga/templates/orga/mails/template_form.html:7
-#: pretalx/orga/templates/orga/schedule/release.html:51
-#, fuzzy
-#| msgid "Edit template"
-msgid "Email template"
-msgstr "编辑模板"
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:33
 msgid ""
@@ -5643,6 +5660,7 @@ msgid "You’ve got no proposals left to review!"
 msgstr "你没有剩余的提案需要审查。"
 
 #: pretalx/orga/templates/orga/review/bulk.html:50
+#: pretalx/submission/models/comment.py:24
 #, fuzzy
 #| msgid "Comma"
 msgid "Comment"
@@ -5666,7 +5684,7 @@ msgid "Click here to get started!"
 msgstr "点击这里开始"
 
 #: pretalx/orga/templates/orga/review/dashboard.html:38
-#: pretalx/orga/templates/orga/submission/review.html:216
+#: pretalx/orga/templates/orga/submission/review.html:218
 #, fuzzy
 #| msgid "After reviewing the proposal"
 msgid "Or review all proposals at once."
@@ -6108,8 +6126,8 @@ msgstr "标题图片 (Biaoti tupian)"
 
 #: pretalx/orga/templates/orga/settings/form.html:96
 msgid ""
-"These links will be shown at the top of all your schedule-related pages, e."
-"g. the schedule itself, speaker pages, session pages, etc. You could for "
+"These links will be shown at the top of all your schedule-related pages, "
+"e.g. the schedule itself, speaker pages, session pages, etc. You could for "
 "example link to your home page, your registration page, or your livestream "
 "here."
 msgstr ""
@@ -6152,7 +6170,7 @@ msgstr "保存并测试自定义SMTP连接"
 msgid "Review settings"
 msgstr "审核设置"
 
-#: pretalx/orga/templates/orga/settings/review.html:40
+#: pretalx/orga/templates/orga/settings/review.html:41
 #, python-format
 msgid ""
 "If you require neither a review score nor a review text, reviewers will be "
@@ -6162,7 +6180,7 @@ msgstr ""
 "如果您不需要评审分数或评审文本，评审人在评审提案时将可选择添加额外"
 "的%(quotation_open)s放弃%(quotation_close)s按键。"
 
-#: pretalx/orga/templates/orga/settings/review.html:56
+#: pretalx/orga/templates/orga/settings/review.html:57
 msgid ""
 "You can ask reviewers to provide one or multiple scores. If you ask for "
 "multiple scores, they will be added up to a final total score. If you want, "
@@ -6172,25 +6190,25 @@ msgstr ""
 "你可以要求评审人提供一个或多个分数。如果您要求多个分数，则它们将加起来形成最"
 "终总分。如果您愿意，可以对总分进行加权。当前，总分的计算方式如下："
 
-#: pretalx/orga/templates/orga/settings/review.html:75
+#: pretalx/orga/templates/orga/settings/review.html:76
 msgid "Review Score category"
 msgstr "评论分数类别"
 
-#: pretalx/orga/templates/orga/settings/review.html:108
-#: pretalx/orga/templates/orga/settings/review.html:126
-#: pretalx/orga/templates/orga/settings/review.html:162
+#: pretalx/orga/templates/orga/settings/review.html:109
+#: pretalx/orga/templates/orga/settings/review.html:127
+#: pretalx/orga/templates/orga/settings/review.html:163
 msgid "Scores"
 msgstr "分数"
 
-#: pretalx/orga/templates/orga/settings/review.html:141
+#: pretalx/orga/templates/orga/settings/review.html:142
 msgid "Score Category"
 msgstr "得分类别"
 
-#: pretalx/orga/templates/orga/settings/review.html:177
+#: pretalx/orga/templates/orga/settings/review.html:178
 msgid "Add another score category"
 msgstr "添加另一个得分类别。"
 
-#: pretalx/orga/templates/orga/settings/review.html:186
+#: pretalx/orga/templates/orga/settings/review.html:187
 msgid ""
 "Review phases allow you to structure your review process. By default, there "
 "are two review phases: The review itself, and the selection process once the "
@@ -6201,20 +6219,20 @@ msgstr ""
 "段结束后的选择过程。但是，如果您需要额外的审核轮次，例如，您可以在此之后添加"
 "另一个审核和选择阶段。"
 
-#: pretalx/orga/templates/orga/settings/review.html:202
-#: pretalx/orga/templates/orga/settings/review.html:250
+#: pretalx/orga/templates/orga/settings/review.html:203
+#: pretalx/orga/templates/orga/settings/review.html:251
 msgid "Review Phase"
 msgstr "审核阶段"
 
-#: pretalx/orga/templates/orga/settings/review.html:214
+#: pretalx/orga/templates/orga/settings/review.html:215
 msgid "Activate phase"
 msgstr "激活阶段"
 
-#: pretalx/orga/templates/orga/settings/review.html:220
+#: pretalx/orga/templates/orga/settings/review.html:221
 msgid "Phase is active"
 msgstr "阶段正在进行"
 
-#: pretalx/orga/templates/orga/settings/review.html:275
+#: pretalx/orga/templates/orga/settings/review.html:276
 msgid "Add another phase"
 msgstr "添加另一个阶段"
 
@@ -6436,25 +6454,41 @@ msgstr "做吧"
 msgid "There are no pending changes to apply right now."
 msgstr "当前没有待处理的更改。"
 
-#: pretalx/orga/templates/orga/submission/base.html:79
+#: pretalx/orga/templates/orga/submission/base.html:77
+#, fuzzy
+#| msgid "Comma"
+msgid "Comments"
+msgstr "逗号"
+
+#: pretalx/orga/templates/orga/submission/base.html:89
 #, fuzzy
 #| msgid "Send mail to speakers"
 msgid "Send email to speakers"
 msgstr "给发言者发送邮件"
 
-#: pretalx/orga/templates/orga/submission/base.html:91
+#: pretalx/orga/templates/orga/submission/base.html:101
 msgid "Public link"
 msgstr "公共链接"
 
-#: pretalx/orga/templates/orga/submission/base.html:93
+#: pretalx/orga/templates/orga/submission/base.html:103
 #, fuzzy
 #| msgid "Not public"
 msgid "not public yet"
 msgstr "不公开"
 
-#: pretalx/orga/templates/orga/submission/base.html:100
+#: pretalx/orga/templates/orga/submission/base.html:110
 msgid "Secret public link"
 msgstr "秘密公共链接"
+
+#: pretalx/orga/templates/orga/submission/comments.html:21
+msgid "No comments yet."
+msgstr ""
+
+#: pretalx/orga/templates/orga/submission/comments.html:63
+#, fuzzy
+#| msgid "Comma"
+msgid "Add comment"
+msgstr "逗号"
 
 #: pretalx/orga/templates/orga/submission/content.html:32
 msgid "This proposal was created using an access code:"
@@ -6531,37 +6565,37 @@ msgstr "一旦您发表评论，您就可以看到其他评论。"
 msgid "Other proposals"
 msgstr "其他提议"
 
-#: pretalx/orga/templates/orga/submission/review.html:190
+#: pretalx/orga/templates/orga/submission/review.html:192
 msgid "Nobody else has submitted a review yet."
 msgstr "目前还没有其他人提交评论。"
 
-#: pretalx/orga/templates/orga/submission/review.html:200
-#: pretalx/orga/templates/orga/submission/review.html:201
+#: pretalx/orga/templates/orga/submission/review.html:202
+#: pretalx/orga/templates/orga/submission/review.html:203
 msgid "Review progress"
 msgstr "审查进展"
 
-#: pretalx/orga/templates/orga/submission/review.html:208
 #: pretalx/orga/templates/orga/submission/review.html:210
+#: pretalx/orga/templates/orga/submission/review.html:212
 msgid "Go to random next unreviewed proposal"
 msgstr "前往随机的下一个未审核的提案。"
 
-#: pretalx/orga/templates/orga/submission/review.html:208
+#: pretalx/orga/templates/orga/submission/review.html:210
 msgid "Save and next"
 msgstr "保存并下一个"
 
-#: pretalx/orga/templates/orga/submission/review.html:210
+#: pretalx/orga/templates/orga/submission/review.html:212
 msgid "Abstain"
 msgstr "\"戒绝\""
 
-#: pretalx/orga/templates/orga/submission/review.html:212
+#: pretalx/orga/templates/orga/submission/review.html:214
 msgid "Go to random next unreviewed proposal, mark this one as skipped"
 msgstr "前往随机的下一个未经审核的建议，将此建议标记为跳过。"
 
-#: pretalx/orga/templates/orga/submission/review.html:212
+#: pretalx/orga/templates/orga/submission/review.html:214
 msgid "Skip for now"
 msgstr "现在跳过"
 
-#: pretalx/orga/templates/orga/submission/review.html:222
+#: pretalx/orga/templates/orga/submission/review.html:224
 #: pretalx/orga/templates/orga/submission/review_delete.html:5
 #, fuzzy
 #| msgid "Delete event"
@@ -6628,7 +6662,7 @@ msgstr "按州分类的会议记录"
 #: pretalx/orga/templates/orga/submission/tag_form.html:18
 #: pretalx/orga/templates/orga/submission/tag_form.html:24
 #: pretalx/orga/templates/orga/submission/tag_list.html:23
-#: pretalx/orga/views/submission.py:967
+#: pretalx/orga/views/submission.py:1025
 msgid "Tag"
 msgstr "标签"
 
@@ -6936,11 +6970,6 @@ msgstr "请考虑在slug中包括您的活动年份，例如我的活动{number}
 #: pretalx/orga/views/event.py:640
 msgid "Did you really mean to make your event take place in the past?"
 msgstr "你真的有意将你的活动安排在过去吗？"
-
-#: pretalx/orga/views/event.py:696
-#, python-brace-format
-msgid "Team {event.name}"
-msgstr "团队 {event.name}"
 
 #: pretalx/orga/views/event.py:735
 msgid ""
@@ -7257,69 +7286,80 @@ msgstr "演讲者信息"
 msgid "The information has been deleted."
 msgstr "信息已被删除。"
 
-#: pretalx/orga/views/submission.py:182
+#: pretalx/orga/views/submission.py:184
 msgid ""
 "Somebody else was faster than you: this proposal was already in the state "
 "you wanted to change it to."
 msgstr "别人比你更快：这个提案已经处于你想要改变的状态。"
 
-#: pretalx/orga/views/submission.py:221
+#: pretalx/orga/views/submission.py:223
 msgid ""
 "There may be pending emails for this proposal that are now incorrect or "
 "outdated."
 msgstr ""
 
-#: pretalx/orga/views/submission.py:255
+#: pretalx/orga/views/submission.py:257
 msgid "The speaker has been removed from the proposal."
 msgstr "发言人已被从提案中移除。"
 
-#: pretalx/orga/views/submission.py:258
+#: pretalx/orga/views/submission.py:260
 msgid "The speaker was not part of this proposal."
 msgstr "这位演讲者不是这个提案的一部分。"
 
-#: pretalx/orga/views/submission.py:291
+#: pretalx/orga/views/submission.py:293
 msgid "The speaker has been added to the proposal."
 msgstr "该发言者已被添加到提案中"
 
-#: pretalx/orga/views/submission.py:477
+#: pretalx/orga/views/submission.py:484
 msgid "The proposal has been updated!"
 msgstr "提议已经更新！"
 
-#: pretalx/orga/views/submission.py:626
+#: pretalx/orga/views/submission.py:633
 msgid "The anonymisation has been updated."
 msgstr "匿名化已更新。"
 
-#: pretalx/orga/views/submission.py:628
+#: pretalx/orga/views/submission.py:635
 msgid "This proposal is now marked as anonymised."
 msgstr "这个提案现在已被标记为匿名化了。"
 
-#: pretalx/orga/views/submission.py:644
+#: pretalx/orga/views/submission.py:651
 #, python-brace-format
 msgid "{name} proposal feed"
 msgstr "{name} 提案动态"
 
-#: pretalx/orga/views/submission.py:656
+#: pretalx/orga/views/submission.py:663
 #, python-brace-format
 msgid "Updates to the {name} schedule."
 msgstr "{name}日程表的更新。"
 
-#: pretalx/orga/views/submission.py:662
+#: pretalx/orga/views/submission.py:669
 #, python-brace-format
 msgid "New {event} proposal: {title}"
 msgstr "新的 {event} 提案：{title}"
 
-#: pretalx/orga/views/submission.py:717 pretalx/orga/views/submission.py:729
+#: pretalx/orga/views/submission.py:724 pretalx/orga/views/submission.py:736
 #: pretalx/submission/models/cfp.py:106
 #: pretalx/submission/models/question.py:133
 #: pretalx/submission/models/type.py:38
 msgid "Deadline"
 msgstr "截止日期"
 
-#: pretalx/orga/views/submission.py:979
+#: pretalx/orga/views/submission.py:999
+#, python-brace-format
+msgid "Your comment on “{title}”"
+msgstr ""
+
+#: pretalx/orga/views/submission.py:1014
+#, fuzzy
+#| msgid "The tag has been deleted."
+msgid "The comment has been deleted."
+msgstr "标签已被删除。"
+
+#: pretalx/orga/views/submission.py:1037
 msgid "The tag has been deleted."
 msgstr "标签已被删除。"
 
-#: pretalx/orga/views/submission.py:1004
+#: pretalx/orga/views/submission.py:1062
 #, python-brace-format
 msgid "Changed {count} proposal states."
 msgstr "更改了{count}个提议状态。"
@@ -8207,25 +8247,25 @@ msgstr "不要记录此次会议。"
 msgid "Assigned reviewers"
 msgstr "指定的评审人员"
 
-#: pretalx/submission/models/submission.py:422
+#: pretalx/submission/models/submission.py:423
 msgctxt ""
 "used in talk confirm/accept/reject/...-errors, like \"... must be accepted "
 "OR foo OR bar ...\""
 msgid " or "
 msgstr "或者"
 
-#: pretalx/submission/models/submission.py:430
+#: pretalx/submission/models/submission.py:431
 #, python-brace-format
 msgid "Proposal must be {src_states} not {state} to be {new_state}."
 msgstr "提案必须是 {src_states} 而非 {state} 才能成为 {new_state}。"
 
-#: pretalx/submission/models/submission.py:499
+#: pretalx/submission/models/submission.py:500
 msgid ""
 "Full proposal content:\n"
 "\n"
 msgstr "完整的提案内容：\n"
 
-#: pretalx/submission/models/submission.py:813
+#: pretalx/submission/models/submission.py:814
 #, python-brace-format
 msgid "{title_in_quotes} by {list_of_speakers}"
 msgstr ""
@@ -8305,6 +8345,16 @@ msgstr ""
 
 msgid "Hidden rooms"
 msgstr ""
+
+#~ msgid ""
+#~ "Your locale preferences have been saved. We like to think that we have "
+#~ "excellent support for English in pretalx, but if you encounter issues or "
+#~ "errors, please contact us!"
+#~ msgstr "您的本地设置已保存。"
+
+#, python-brace-format
+#~ msgid "Team {event.name}"
+#~ msgstr "团队 {event.name}"
 
 #~ msgid ""
 #~ "Add a speaker – if the email address isn’t registered yet, an account "
