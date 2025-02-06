@@ -251,6 +251,7 @@ class ReviewExportForm(ExportForm):
             ("rejected", SubmissionStates.display_values[SubmissionStates.REJECTED]),
         ),
         widget=forms.RadioSelect,
+        initial="all",
     )
     submission_id = forms.BooleanField(
         required=False,

@@ -18,6 +18,7 @@ class SpeakerExportForm(ExportForm):
             ("rejected", _("With rejected proposals")),
         ),
         widget=forms.RadioSelect,
+        initial="all",
     )
 
     class Meta:
