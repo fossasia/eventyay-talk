@@ -300,7 +300,9 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
             ).count()
             result["tiles"].append(
                 {
-                    "large": talk_count,
+                    # Don’t show 0 here for events that do not use the scheduling
+                    # component, instead show accepted + confirmed
+                    "large": talk_count or (accepted_count + confirmed_count),
                     "small": ngettext_lazy("session", "sessions", talk_count),
                     "url": event.orga_urls.submissions
                     + f"?state={SubmissionStates.ACCEPTED}&state={SubmissionStates.CONFIRMED}",
