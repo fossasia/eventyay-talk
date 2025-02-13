@@ -689,10 +689,10 @@ else:
     )
 
 EVENTYAY_TICKET_BASE_PATH = config.get(
-    "urls", "eventyay-ticket", fallback="https://app-test.eventyay.com/tickets/"
+    "urls", "eventyay-ticket", fallback="http://localhost/tickets/"
 )
 EVENTYAY_VIDEO_BASE_PATH = config.get(
-    "urls", "eventyay-video", fallback="https://app-test.eventyay.com/video/"
+    "urls", "eventyay-video", fallback="http://localhost/video/"
 )
 
 SITE_ID = 1
