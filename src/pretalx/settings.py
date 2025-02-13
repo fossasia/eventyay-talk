@@ -500,7 +500,6 @@ DEFAULT_EVENT_PRIMARY_COLOR = "#2185d0"
 
 ## AUTHENTICATION SETTINGS
 AUTH_USER_MODEL = "person.User"
-LOGIN_URL = urljoin(BASE_PATH, "orga/login")
 AUTHENTICATION_BACKENDS = (
     "rules.permissions.ObjectPermissionBackend",
     "django.contrib.auth.backends.ModelBackend",
@@ -711,7 +710,7 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 OAUTH2_PROVIDER = {
     "AUTHORIZE_URL": urljoin(EVENTYAY_TICKET_BASE_PATH, "control/oauth2/authorize/"),
     "ACCESS_TOKEN_URL": urljoin(EVENTYAY_TICKET_BASE_PATH, "control/oauth2/token/"),
-    "REDIRECT_URI": urljoin(SITE_URL, f"{BASE_PATH}/oauth2/callback/"),
+    "REDIRECT_URI": urljoin(SITE_URL, f"{BASE_PATH.strip("/")}/oauth2/callback/"),
     "SCOPE": ["profile"],
 }
 # Set default Application model if using default
@@ -726,7 +725,6 @@ SSO_USER_INFO = urljoin(EVENTYAY_TICKET_BASE_PATH, "control/oauth2/user_info/")
 OAUTHLIB_INSECURE_TRANSPORT = True
 
 LOGOUT_REDIRECT_URL = "/"
-LOGIN_URL = urljoin(BASE_PATH, "login/")
 
 CORS_ORIGIN_WHITELIST = [EVENTYAY_TICKET_BASE_PATH]
 EVENTYAY_SSO_PROVIDER = "eventyay"
