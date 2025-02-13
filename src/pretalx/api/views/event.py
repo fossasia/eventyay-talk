@@ -145,8 +145,7 @@ def save_video_settings_information(event_slug, video_tokens, event_instance):
     video_settings_data = {
         "token": video_tokens[0],
         "url": urljoin(
-            settings.EVENTYAY_VIDEO_BASE_PATH,
-            f"api/v1/worlds/{event_slug}/"
+            settings.EVENTYAY_VIDEO_BASE_PATH, f"api/v1/worlds/{event_slug}/"
         )
     }
 
