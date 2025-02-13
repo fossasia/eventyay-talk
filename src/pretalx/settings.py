@@ -710,7 +710,7 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 OAUTH2_PROVIDER = {
     "AUTHORIZE_URL": urljoin(EVENTYAY_TICKET_BASE_PATH, "control/oauth2/authorize/"),
     "ACCESS_TOKEN_URL": urljoin(EVENTYAY_TICKET_BASE_PATH, "control/oauth2/token/"),
-    "REDIRECT_URI": urljoin(SITE_URL, f"{BASE_PATH.strip("/")}/oauth2/callback/"),
+    "REDIRECT_URI": urljoin(SITE_URL, f'{BASE_PATH.strip("/")}/oauth2/callback/'),
     "SCOPE": ["profile"],
 }
 # Set default Application model if using default
