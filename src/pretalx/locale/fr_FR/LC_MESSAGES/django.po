@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 15:33+0000\n"
+"POT-Creation-Date: 2025-02-14 13:01+0000\n"
 "PO-Revision-Date: 2024-10-01 09:55+0000\n"
 "Last-Translator: Harrissou Sant-anna <delazj@gmail.com>\n"
 "Language-Team: \n"
@@ -504,7 +504,7 @@ msgid "accepted"
 msgstr "accepté"
 
 #: pretalx/cfp/templates/cfp/event/fragment_state.html:13
-#: pretalx/orga/views/dashboard.py:315
+#: pretalx/orga/views/dashboard.py:317
 #: pretalx/submission/models/submission.py:51
 msgid "confirmed"
 msgstr "confirmé"
@@ -977,7 +977,7 @@ msgid "Submit something now!"
 msgstr "Proposer quelque chose maintenant !"
 
 #: pretalx/cfp/templates/cfp/includes/submission_resources_form.html:9
-#: pretalx/orga/forms/schedule.py:159
+#: pretalx/orga/forms/schedule.py:160
 #: pretalx/orga/templates/orga/submission/review.html:120
 msgid "Resources"
 msgstr "Ressources"
@@ -2377,8 +2377,8 @@ msgstr ""
 #: pretalx/event/models/event.py:275
 #: pretalx/orga/templates/orga/admin/admin.html:106
 #: pretalx/orga/templates/orga/base.html:232
-#: pretalx/orga/templates/orga/plugins.html:5
-#: pretalx/orga/templates/orga/plugins.html:7
+#: pretalx/orga/templates/orga/plugins.html:6
+#: pretalx/orga/templates/orga/plugins.html:8
 msgid "Plugins"
 msgstr "Plugins"
 
@@ -4077,37 +4077,37 @@ msgstr "Assigner les propositions aux évaluateurs"
 msgid "Assign reviewers to proposals"
 msgstr "Affecter des évaluateurs aux propositions"
 
-#: pretalx/orga/forms/review.py:257
+#: pretalx/orga/forms/review.py:258
 msgid "Proposal ID"
 msgstr "Identifiant de la proposition"
 
-#: pretalx/orga/forms/review.py:266
+#: pretalx/orga/forms/review.py:267
 msgid "Reviewer name"
 msgstr "Nom de l'évaluateur"
 
-#: pretalx/orga/forms/review.py:270
+#: pretalx/orga/forms/review.py:271
 msgid "Reviewer email"
 msgstr "E-mail de l'évaluateur"
 
-#: pretalx/orga/forms/review.py:328
+#: pretalx/orga/forms/review.py:329
 #, python-brace-format
 msgid "Score in “{score_category}”"
 msgstr "Score dans “{score_category}”"
 
-#: pretalx/orga/forms/review.py:371 pretalx/person/models/information.py:51
+#: pretalx/orga/forms/review.py:372 pretalx/person/models/information.py:51
 #: pretalx/submission/models/resource.py:26
 msgid "File"
 msgstr "Fichier"
 
-#: pretalx/orga/forms/review.py:373 pretalx/orga/forms/review.py:376
+#: pretalx/orga/forms/review.py:374 pretalx/orga/forms/review.py:377
 msgid "Replace current assignments"
 msgstr "Remplacer les affectations actuelles"
 
-#: pretalx/orga/forms/review.py:375
+#: pretalx/orga/forms/review.py:376
 msgid "Keep current assignments"
 msgstr "Garder les affectations actuelles"
 
-#: pretalx/orga/forms/review.py:379
+#: pretalx/orga/forms/review.py:380
 msgid ""
 "Select to remove all current assignments and replace them with the import. "
 "Otherwise, the import will be an addition to the current assignments."
@@ -4116,15 +4116,15 @@ msgstr ""
 "et les remplacer par l'importation. Dans le cas contraire, l'importation "
 "s'ajoutera aux affectations actuelles."
 
-#: pretalx/orga/forms/review.py:385
+#: pretalx/orga/forms/review.py:386
 msgid "Cannot parse JSON file."
 msgstr "Impossible de traiter le fichier JSON."
 
-#: pretalx/orga/forms/review.py:402
+#: pretalx/orga/forms/review.py:403
 msgid "Unknown user: {}"
 msgstr "Utilisateur inconnu : {}"
 
-#: pretalx/orga/forms/review.py:412
+#: pretalx/orga/forms/review.py:413
 msgid "Unknown proposal: {}"
 msgstr "Proposition inconnue : {}"
 
@@ -4154,45 +4154,45 @@ msgstr ""
 msgid "Target group"
 msgstr "Groupe cible"
 
-#: pretalx/orga/forms/schedule.py:97
+#: pretalx/orga/forms/schedule.py:98
 msgid "Speaker IDs"
 msgstr "Identifiant de l'intervenant"
 
-#: pretalx/orga/forms/schedule.py:99
+#: pretalx/orga/forms/schedule.py:100
 msgid "The unique ID of a speaker is used in the speaker URL and in exports"
 msgstr ""
 "L'identifiant unique d'un intervenant est utilisé dans son URL et dans les "
 "exports"
 
-#: pretalx/orga/forms/schedule.py:104
+#: pretalx/orga/forms/schedule.py:105
 msgid "Speaker names"
 msgstr "Noms des intervenants"
 
-#: pretalx/orga/forms/schedule.py:120 pretalx/orga/forms/schedule.py:139
+#: pretalx/orga/forms/schedule.py:121 pretalx/orga/forms/schedule.py:140
 msgid "date"
 msgstr ""
 
-#: pretalx/orga/forms/schedule.py:128 pretalx/orga/forms/schedule.py:144
+#: pretalx/orga/forms/schedule.py:129 pretalx/orga/forms/schedule.py:145
 msgid "time"
 msgstr ""
 
-#: pretalx/orga/forms/schedule.py:149
+#: pretalx/orga/forms/schedule.py:150
 msgid "Median score"
 msgstr "Score médian"
 
-#: pretalx/orga/forms/schedule.py:150
+#: pretalx/orga/forms/schedule.py:151
 msgid "Median review score, if there have been reviews yet"
 msgstr "Score médian de l'évaluation, si des évaluations ont déjà été faites"
 
-#: pretalx/orga/forms/schedule.py:154
+#: pretalx/orga/forms/schedule.py:155
 msgid "Average (mean) score"
 msgstr "Score moyen"
 
-#: pretalx/orga/forms/schedule.py:155
+#: pretalx/orga/forms/schedule.py:156
 msgid "Average review score, if there have been reviews yet"
 msgstr "Score d'évaluation moyen, si des évaluations ont été faites"
 
-#: pretalx/orga/forms/schedule.py:161
+#: pretalx/orga/forms/schedule.py:162
 msgid "Resources provided by the speaker, either as links or as uploaded files"
 msgstr ""
 "Ressources fournies par l'intervenant, sous forme de liens ou de fichiers "
@@ -4210,15 +4210,15 @@ msgstr "Avec les propositions confirmées"
 msgid "With rejected proposals"
 msgstr "Avec les propositions rejetées"
 
-#: pretalx/orga/forms/speaker.py:31
+#: pretalx/orga/forms/speaker.py:32
 msgid "Proposal IDs"
 msgstr "Identifiant de la proposition"
 
-#: pretalx/orga/forms/speaker.py:36
+#: pretalx/orga/forms/speaker.py:37
 msgid "Proposal titles"
 msgstr "Titres des propositions"
 
-#: pretalx/orga/forms/speaker.py:40
+#: pretalx/orga/forms/speaker.py:41
 #: pretalx/orga/templates/orga/cfp/text.html:192
 #: pretalx/orga/templates/orga/submission/review.html:136
 #: pretalx/orga/templates/orga/submission/speakers.html:45
@@ -4226,11 +4226,11 @@ msgstr "Titres des propositions"
 msgid "Biography"
 msgstr "Biographie"
 
-#: pretalx/orga/forms/speaker.py:44
+#: pretalx/orga/forms/speaker.py:45
 msgid "Picture"
 msgstr "Image"
 
-#: pretalx/orga/forms/speaker.py:45
+#: pretalx/orga/forms/speaker.py:46
 msgid "The link to the speaker’s profile picture"
 msgstr "Le lien vers la photo de profil de l'intervenant"
 
@@ -4293,7 +4293,7 @@ msgstr "Langues de contenu"
 msgid "The language in which the speaker will receive their invitation email."
 msgstr ""
 
-#: pretalx/orga/forms/submission.py:311
+#: pretalx/orga/forms/submission.py:314
 #, fuzzy
 #| msgid "Please provide a valid email address."
 msgid "Please provide an email address."
@@ -5430,7 +5430,7 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/includes/dashboard_block_event.html:13
 #: pretalx/orga/templates/orga/speaker/form.html:37
-#: pretalx/orga/views/dashboard.py:326
+#: pretalx/orga/views/dashboard.py:328
 msgid "proposal"
 msgid_plural "proposals"
 msgstr[0] "proposition"
@@ -5816,7 +5816,7 @@ msgstr "Il n'y a pas d'organisateur que vous pouvez éditer."
 
 #: pretalx/orga/templates/orga/organiser/speaker_list.html:6
 #: pretalx/orga/templates/orga/organiser/speaker_list.html:22
-#: pretalx/orga/views/dashboard.py:342
+#: pretalx/orga/views/dashboard.py:344
 msgid "speaker"
 msgid_plural "speakers"
 msgstr[0] "intervenant"
@@ -5864,25 +5864,25 @@ msgstr "Vous êtes membre de cette équipe"
 msgid "New team"
 msgstr "Nouvelle équipe"
 
-#: pretalx/orga/templates/orga/plugins.html:22
+#: pretalx/orga/templates/orga/plugins.html:23
 msgid "Disable"
 msgstr "Désactiver"
 
-#: pretalx/orga/templates/orga/plugins.html:24
+#: pretalx/orga/templates/orga/plugins.html:25
 msgid "Enable"
 msgstr "Activer"
 
-#: pretalx/orga/templates/orga/plugins.html:31
+#: pretalx/orga/templates/orga/plugins.html:32
 #, python-format
 msgid "Version %(v)s by <em>%(a)s</em>"
 msgstr "Version %(v)s par <em>%(a)s</em>"
 
-#: pretalx/orga/templates/orga/plugins.html:37
+#: pretalx/orga/templates/orga/plugins.html:38
 #, python-format
 msgid "Version %(v)s"
 msgstr "Version %(v)s"
 
-#: pretalx/orga/templates/orga/plugins.html:53
+#: pretalx/orga/templates/orga/plugins.html:54
 msgid "This instance does currently not have any plugins installed."
 msgstr "Cette instance ne comporte actuellement aucun plugin."
 
@@ -6756,7 +6756,7 @@ msgstr "Ajouter une nouvelle note"
 
 #: pretalx/orga/templates/orga/speaker/list.html:6
 #: pretalx/orga/templates/orga/speaker/list.html:11
-#: pretalx/orga/views/dashboard.py:361
+#: pretalx/orga/views/dashboard.py:363
 msgid "submitter"
 msgid_plural "submitters"
 msgstr[0] "personne ayant déposé une proposition"
@@ -6898,7 +6898,7 @@ msgstr "Flux des propositions"
 
 #: pretalx/orga/templates/orga/submission/list.html:21
 #: pretalx/orga/templates/orga/submission/list.html:31
-#: pretalx/orga/views/dashboard.py:304
+#: pretalx/orga/views/dashboard.py:306
 msgid "session"
 msgid_plural "sessions"
 msgstr[0] "intervention"
@@ -7240,16 +7240,16 @@ msgstr "de {total_days} jours"
 msgid "current schedule"
 msgstr "version actuelle du planning"
 
-#: pretalx/orga/views/dashboard.py:309
+#: pretalx/orga/views/dashboard.py:311
 msgid "unconfirmed"
 msgstr "non confirmé"
 
-#: pretalx/orga/views/dashboard.py:346
+#: pretalx/orga/views/dashboard.py:348
 #: pretalx/submission/models/submission.py:52
 msgid "rejected"
 msgstr "rejeté"
 
-#: pretalx/orga/views/dashboard.py:370
+#: pretalx/orga/views/dashboard.py:372
 msgid "sent email"
 msgid_plural "sent emails"
 msgstr[0] "courriel envoyé"
@@ -8440,7 +8440,7 @@ msgstr ""
 "Avez-vous besoin d'une réponse pour chaque intervenant ou pour chaque "
 "intervention ?"
 
-#: pretalx/submission/models/question.py:135
+#: pretalx/submission/models/question.py:134
 #, fuzzy
 #| msgid "Set a deadline to make this question required after the given date."
 msgid "Set a deadline to make this field required after the given date."
@@ -8448,11 +8448,11 @@ msgstr ""
 "Définissez une date butoir pour rendre cette question incontournable après "
 "une date donnée."
 
-#: pretalx/submission/models/question.py:141
+#: pretalx/submission/models/question.py:139
 msgid "freeze after"
 msgstr "geler après"
 
-#: pretalx/submission/models/question.py:142
+#: pretalx/submission/models/question.py:141
 #, fuzzy
 #| msgid "Set a deadline to stop changes to answers after the given date."
 msgid "Set a deadline to stop changes to responses after the given date."

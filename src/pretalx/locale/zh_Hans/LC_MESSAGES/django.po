@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 15:33+0000\n"
+"POT-Creation-Date: 2025-02-14 13:01+0000\n"
 "PO-Revision-Date: 2023-05-27 12:16+0000\n"
 "Last-Translator: Joel (Jiawei) Wang <joel.bradley.w@gmail.com>\n"
 "Language-Team: none\n"
@@ -455,7 +455,7 @@ msgid "accepted"
 msgstr "接受"
 
 #: pretalx/cfp/templates/cfp/event/fragment_state.html:13
-#: pretalx/orga/views/dashboard.py:315
+#: pretalx/orga/views/dashboard.py:317
 #: pretalx/submission/models/submission.py:51
 msgid "confirmed"
 msgstr "确认"
@@ -911,7 +911,7 @@ msgid "Submit something now!"
 msgstr "提交一些信息"
 
 #: pretalx/cfp/templates/cfp/includes/submission_resources_form.html:9
-#: pretalx/orga/forms/schedule.py:159
+#: pretalx/orga/forms/schedule.py:160
 #: pretalx/orga/templates/orga/submission/review.html:120
 msgid "Resources"
 msgstr "资源"
@@ -2277,8 +2277,8 @@ msgstr "此文本将显示在特色会议环节页面的顶部，而不是默认
 #: pretalx/event/models/event.py:275
 #: pretalx/orga/templates/orga/admin/admin.html:106
 #: pretalx/orga/templates/orga/base.html:232
-#: pretalx/orga/templates/orga/plugins.html:5
-#: pretalx/orga/templates/orga/plugins.html:7
+#: pretalx/orga/templates/orga/plugins.html:6
+#: pretalx/orga/templates/orga/plugins.html:8
 msgid "Plugins"
 msgstr "插件"
 
@@ -3847,39 +3847,39 @@ msgstr "分配提案给特定审稿人"
 msgid "Assign reviewers to proposals"
 msgstr "分配审稿人审核特定提案"
 
-#: pretalx/orga/forms/review.py:257
+#: pretalx/orga/forms/review.py:258
 msgid "Proposal ID"
 msgstr "提议ID"
 
-#: pretalx/orga/forms/review.py:266
+#: pretalx/orga/forms/review.py:267
 msgid "Reviewer name"
 msgstr "审核者姓名"
 
-#: pretalx/orga/forms/review.py:270
+#: pretalx/orga/forms/review.py:271
 msgid "Reviewer email"
 msgstr "审核者电子邮件"
 
-#: pretalx/orga/forms/review.py:328
+#: pretalx/orga/forms/review.py:329
 #, python-brace-format
 msgid "Score in “{score_category}”"
 msgstr "在 “{score_category}” 方面的得分"
 
-#: pretalx/orga/forms/review.py:371 pretalx/person/models/information.py:51
+#: pretalx/orga/forms/review.py:372 pretalx/person/models/information.py:51
 #: pretalx/submission/models/resource.py:26
 msgid "File"
 msgstr "文件"
 
-#: pretalx/orga/forms/review.py:373 pretalx/orga/forms/review.py:376
+#: pretalx/orga/forms/review.py:374 pretalx/orga/forms/review.py:377
 msgid "Replace current assignments"
 msgstr "更换当前的任务"
 
-#: pretalx/orga/forms/review.py:375
+#: pretalx/orga/forms/review.py:376
 #, fuzzy
 #| msgid "Replace current assignments"
 msgid "Keep current assignments"
 msgstr "更换当前的任务"
 
-#: pretalx/orga/forms/review.py:379
+#: pretalx/orga/forms/review.py:380
 msgid ""
 "Select to remove all current assignments and replace them with the import. "
 "Otherwise, the import will be an addition to the current assignments."
@@ -3887,15 +3887,15 @@ msgstr ""
 "选择移除所有当前的任务，并用导入的任务取而代之。否则，导入的任务将会添加到当"
 "前的任务中。"
 
-#: pretalx/orga/forms/review.py:385
+#: pretalx/orga/forms/review.py:386
 msgid "Cannot parse JSON file."
 msgstr "无法解析JSON文件。"
 
-#: pretalx/orga/forms/review.py:402
+#: pretalx/orga/forms/review.py:403
 msgid "Unknown user: {}"
 msgstr "未知用户: {}"
 
-#: pretalx/orga/forms/review.py:412
+#: pretalx/orga/forms/review.py:413
 msgid "Unknown proposal: {}"
 msgstr "未知提案：{}"
 
@@ -3926,43 +3926,43 @@ msgstr "此进度版本已被使用，请选择其他版本。"
 msgid "Target group"
 msgstr "目标群体"
 
-#: pretalx/orga/forms/schedule.py:97
+#: pretalx/orga/forms/schedule.py:98
 msgid "Speaker IDs"
 msgstr "发言人ID"
 
-#: pretalx/orga/forms/schedule.py:99
+#: pretalx/orga/forms/schedule.py:100
 msgid "The unique ID of a speaker is used in the speaker URL and in exports"
 msgstr "说话者的唯一标识符在说话者网址和输出中使用。"
 
-#: pretalx/orga/forms/schedule.py:104
+#: pretalx/orga/forms/schedule.py:105
 msgid "Speaker names"
 msgstr "发言人姓名"
 
-#: pretalx/orga/forms/schedule.py:120 pretalx/orga/forms/schedule.py:139
+#: pretalx/orga/forms/schedule.py:121 pretalx/orga/forms/schedule.py:140
 msgid "date"
 msgstr ""
 
-#: pretalx/orga/forms/schedule.py:128 pretalx/orga/forms/schedule.py:144
+#: pretalx/orga/forms/schedule.py:129 pretalx/orga/forms/schedule.py:145
 msgid "time"
 msgstr ""
 
-#: pretalx/orga/forms/schedule.py:149
+#: pretalx/orga/forms/schedule.py:150
 msgid "Median score"
 msgstr "中位数得分"
 
-#: pretalx/orga/forms/schedule.py:150
+#: pretalx/orga/forms/schedule.py:151
 msgid "Median review score, if there have been reviews yet"
 msgstr "如果已经有评论，则为中位数评分"
 
-#: pretalx/orga/forms/schedule.py:154
+#: pretalx/orga/forms/schedule.py:155
 msgid "Average (mean) score"
 msgstr "平均分数"
 
-#: pretalx/orga/forms/schedule.py:155
+#: pretalx/orga/forms/schedule.py:156
 msgid "Average review score, if there have been reviews yet"
 msgstr "如果已经有评论，平均评分。"
 
-#: pretalx/orga/forms/schedule.py:161
+#: pretalx/orga/forms/schedule.py:162
 msgid "Resources provided by the speaker, either as links or as uploaded files"
 msgstr "演讲者提供的资源，可以是链接或上传的文件。"
 
@@ -3978,15 +3978,15 @@ msgstr "具有已确认的提案"
 msgid "With rejected proposals"
 msgstr "具有被拒绝的提案"
 
-#: pretalx/orga/forms/speaker.py:31
+#: pretalx/orga/forms/speaker.py:32
 msgid "Proposal IDs"
 msgstr "提案 ID"
 
-#: pretalx/orga/forms/speaker.py:36
+#: pretalx/orga/forms/speaker.py:37
 msgid "Proposal titles"
 msgstr "提案标题"
 
-#: pretalx/orga/forms/speaker.py:40
+#: pretalx/orga/forms/speaker.py:41
 #: pretalx/orga/templates/orga/cfp/text.html:192
 #: pretalx/orga/templates/orga/submission/review.html:136
 #: pretalx/orga/templates/orga/submission/speakers.html:45
@@ -3994,11 +3994,11 @@ msgstr "提案标题"
 msgid "Biography"
 msgstr "信息"
 
-#: pretalx/orga/forms/speaker.py:44
+#: pretalx/orga/forms/speaker.py:45
 msgid "Picture"
 msgstr "图片"
 
-#: pretalx/orga/forms/speaker.py:45
+#: pretalx/orga/forms/speaker.py:46
 msgid "The link to the speaker’s profile picture"
 msgstr "演讲者个人资料照片的链接"
 
@@ -4061,7 +4061,7 @@ msgstr "内容语言"
 msgid "The language in which the speaker will receive their invitation email."
 msgstr ""
 
-#: pretalx/orga/forms/submission.py:311
+#: pretalx/orga/forms/submission.py:314
 #, fuzzy
 #| msgid "Please provide a valid email address."
 msgid "Please provide an email address."
@@ -5165,7 +5165,7 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/includes/dashboard_block_event.html:13
 #: pretalx/orga/templates/orga/speaker/form.html:37
-#: pretalx/orga/views/dashboard.py:326
+#: pretalx/orga/views/dashboard.py:328
 msgid "proposal"
 msgid_plural "proposals"
 msgstr[0] ""
@@ -5550,7 +5550,7 @@ msgstr "没有你可以编辑的组织者。"
 
 #: pretalx/orga/templates/orga/organiser/speaker_list.html:6
 #: pretalx/orga/templates/orga/organiser/speaker_list.html:22
-#: pretalx/orga/views/dashboard.py:342
+#: pretalx/orga/views/dashboard.py:344
 msgid "speaker"
 msgid_plural "speakers"
 msgstr[0] ""
@@ -5598,25 +5598,25 @@ msgstr "你是这个团队的成员。"
 msgid "New team"
 msgstr "新团队"
 
-#: pretalx/orga/templates/orga/plugins.html:22
+#: pretalx/orga/templates/orga/plugins.html:23
 msgid "Disable"
 msgstr "禁用"
 
-#: pretalx/orga/templates/orga/plugins.html:24
+#: pretalx/orga/templates/orga/plugins.html:25
 msgid "Enable"
 msgstr "启用"
 
-#: pretalx/orga/templates/orga/plugins.html:31
+#: pretalx/orga/templates/orga/plugins.html:32
 #, python-format
 msgid "Version %(v)s by <em>%(a)s</em>"
 msgstr "版本 %(v)s 作者 <em>%(a)s</em>"
 
-#: pretalx/orga/templates/orga/plugins.html:37
+#: pretalx/orga/templates/orga/plugins.html:38
 #, python-format
 msgid "Version %(v)s"
 msgstr "版本 %(v)s"
 
-#: pretalx/orga/templates/orga/plugins.html:53
+#: pretalx/orga/templates/orga/plugins.html:54
 msgid "This instance does currently not have any plugins installed."
 msgstr "该实例当前未安装任何插件。"
 
@@ -6448,7 +6448,7 @@ msgstr "添加一条新的注释"
 
 #: pretalx/orga/templates/orga/speaker/list.html:6
 #: pretalx/orga/templates/orga/speaker/list.html:11
-#: pretalx/orga/views/dashboard.py:361
+#: pretalx/orga/views/dashboard.py:363
 msgid "submitter"
 msgid_plural "submitters"
 msgstr[0] ""
@@ -6588,7 +6588,7 @@ msgstr "建议供稿"
 
 #: pretalx/orga/templates/orga/submission/list.html:21
 #: pretalx/orga/templates/orga/submission/list.html:31
-#: pretalx/orga/views/dashboard.py:304
+#: pretalx/orga/views/dashboard.py:306
 msgid "session"
 msgid_plural "sessions"
 msgstr[0] ""
@@ -6916,16 +6916,16 @@ msgstr "共{total_days}天"
 msgid "current schedule"
 msgstr "当前日程"
 
-#: pretalx/orga/views/dashboard.py:309
+#: pretalx/orga/views/dashboard.py:311
 msgid "unconfirmed"
 msgstr "未确认"
 
-#: pretalx/orga/views/dashboard.py:346
+#: pretalx/orga/views/dashboard.py:348
 #: pretalx/submission/models/submission.py:52
 msgid "rejected"
 msgstr "拒绝"
 
-#: pretalx/orga/views/dashboard.py:370
+#: pretalx/orga/views/dashboard.py:372
 msgid "sent email"
 msgid_plural "sent emails"
 msgstr[0] ""
@@ -8054,17 +8054,17 @@ msgstr "新型"
 msgid "Do you require an answer from every speaker or for every session?"
 msgstr "你需要每个发言者或每个环节都需要回答吗？"
 
-#: pretalx/submission/models/question.py:135
+#: pretalx/submission/models/question.py:134
 #, fuzzy
 #| msgid "Set a deadline to make this question required after the given date."
 msgid "Set a deadline to make this field required after the given date."
 msgstr "在给定日期之后设置截止日期，使该问题成为必填问题。"
 
-#: pretalx/submission/models/question.py:141
+#: pretalx/submission/models/question.py:139
 msgid "freeze after"
 msgstr "冷冻后"
 
-#: pretalx/submission/models/question.py:142
+#: pretalx/submission/models/question.py:141
 #, fuzzy
 #| msgid "Set a deadline to stop changes to answers after the given date."
 msgid "Set a deadline to stop changes to responses after the given date."
