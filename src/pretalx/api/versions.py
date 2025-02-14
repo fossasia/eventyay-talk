@@ -61,5 +61,6 @@ def get_api_version_from_request(request):
         if request.auth.token:
             # TODO: apply the current/latest version to the token and save it.
             pass
+
     # TODO: track use of legacy versions, send/show warning (once) to user
     return api_version
