@@ -1,0 +1,237 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Maintenance &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../genindex.html"/>
+    <link rel="search" title="Search" href="../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Administrator documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configure.html">Configuration</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Maintenance</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#updates">Updates</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#installing-a-fixed-release">Installing a fixed release</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#installing-a-commit-or-a-branch-version">Installing a commit or a branch version</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#backups">Backups</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html">Management commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="maintenance">
+<span id="id1"></span><h1>Maintenance<a class="headerlink" href="#maintenance" title="Link to this heading">¶</a></h1>
+<p>Once you have installed pretalx, you’ll start thinking about maintaining your
+installation. The following guide assumes that you perform general system
+maintenance and monitoring. So please: keep your servers up to date on security
+updates. Keep all non-public ports closed. Follow best practices.</p>
+<section id="updates">
+<h2>Updates<a class="headerlink" href="#updates" title="Link to this heading">¶</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>While we try hard not to issue breaking updates, <strong>please perform
+a backup before every upgrade</strong>.</p>
+</div>
+<p>This guide assumes that you followed the <a class="reference internal" href="installation.html#installation"><span class="std std-ref">Installation</span></a> documentation.</p>
+<p>We try to make upgrades as painless as possible. To this end, we provide
+<a class="reference internal" href="../changelog.html#changelog"><span class="std std-ref">Release Notes</span></a> and our release <a class="reference external" href="https://pretalx.com/p/news/">blog post</a>. Please read them – they contain
+important upgrade notes and warnings. Also, make sure you have a current
+backup.</p>
+<p>Next, execute the following commands in the same environment as your
+installation. This may be your pretalx user, or a virtualenv, if you chose a
+different installation path.</p>
+<p>These commands update pretalx first, then the database, then the static files.
+Once you have executed these steps without seeing any errors, do not forget to
+restart your service(s):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip3 install --user --upgrade-strategy eager -U pretalx
+$ python -m pretalx migrate
+$ python -m pretalx rebuild --npm-install
+# systemctl restart pretalx-web
+# systemctl restart pretalx-worker  # If you’re running celery
+</pre></div>
+</div>
+<section id="installing-a-fixed-release">
+<h3>Installing a fixed release<a class="headerlink" href="#installing-a-fixed-release" title="Link to this heading">¶</a></h3>
+<p>If you want to upgrade pretalx to a specific release, you can pin the version
+in the pip command. Substitute <code class="docutils literal notranslate"><span class="pre">pretalx</span></code> with <code class="docutils literal notranslate"><span class="pre">pretalx==1.2.3</span></code> in the pip
+install line above like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip3 install --user --upgrade-strategy eager pretalx==1.2.3
+</pre></div>
+</div>
+</section>
+<section id="installing-a-commit-or-a-branch-version">
+<span id="installing-a-commit"></span><h3>Installing a commit or a branch version<a class="headerlink" href="#installing-a-commit-or-a-branch-version" title="Link to this heading">¶</a></h3>
+<p>If you’re sure that you know what you’re doing, you can also install a specific
+commit or branch of pretalx. You can replace <code class="docutils literal notranslate"><span class="pre">main</span></code> with a short or long
+commit ID for a specific commit:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip3 install --user --upgrade-strategy eager -U &quot;git+https://github.com/pretalx/pretalx.git@main#egg=pretalx&quot;
+</pre></div>
+</div>
+</section>
+</section>
+<section id="backups">
+<h2>Backups<a class="headerlink" href="#backups" title="Link to this heading">¶</a></h2>
+<p>There are two things which you should create backups of:</p>
+<dl class="simple">
+<dt>Database</dt><dd><p>Your SQL database (SQLite or PostgreSQL). This is critical and you must
+<strong>always always create automatic backups of your database</strong>. There are tons
+of tutorials on the internet on how to do this, and the process depends on
+the choice of your database. For PostgreSQL, see the <code class="docutils literal notranslate"><span class="pre">pg_dump</span></code> tool. For
+SQLite, it is sufficient to create a backup of the database file. You
+should create a cronjob or timer that does the backups for you on a regular
+schedule. Do not forget to add another one to rotate your backups.</p>
+</dd>
+<dt>Data directory</dt><dd><p>The data directory of your pretalx configuration may contain files that you
+want to back up. If you did not specify a secret in your config file, back
+up the <code class="docutils literal notranslate"><span class="pre">.secret</span></code> text file in the data directory. If you lose the secret,
+all active user sessions, password reset links will be invalid. You should
+backup the <code class="docutils literal notranslate"><span class="pre">media</span></code> subdirectory of the data directory. It contains
+all user-uploaded and generated files. This includes files you could in
+theory regenerate (talk and speaker images for social media, html exports),
+but also files that you or your users would need to re-upload (event logos,
+talk pictures, etc.).</p>
+</dd>
+</dl>
+<p>There is no need to create backups of the redis database, if you use it. We only use it for
+non-critical, temporary or cached data.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/administrator/maintenance.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script> 
+
+</body>
+</html>

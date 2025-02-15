@@ -1,0 +1,1272 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pretalx.event.models.event &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../../../../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../../../../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../../../../genindex.html"/>
+    <link rel="search" title="Search" href="../../../../search.html"/>
+
+   
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pretalx.event.models.event</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">zoneinfo</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dateutil.relativedelta</span><span class="w"> </span><span class="kn">import</span> <span class="n">relativedelta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultipleObjectsReturned</span><span class="p">,</span> <span class="n">ValidationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.core.mail</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_connection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.core.mail.backends.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEmailBackend</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.core.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegexValidator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">transaction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.timezone</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_aware</span><span class="p">,</span> <span class="n">now</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gettext_lazy</span> <span class="k">as</span> <span class="n">_</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django_scopes</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScopedManager</span><span class="p">,</span> <span class="n">scopes_disabled</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i18nfield.fields</span><span class="w"> </span><span class="kn">import</span> <span class="n">I18nCharField</span><span class="p">,</span> <span class="n">I18nTextField</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObjectRelatedCache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.language</span><span class="w"> </span><span class="kn">import</span> <span class="n">LANGUAGE_NAMES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">TIMEZONE_CHOICES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.models.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedModel</span><span class="p">,</span> <span class="n">PretalxModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.models.settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">hierarkey</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.plugins</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_all_plugins</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.text.daterange</span><span class="w"> </span><span class="kn">import</span> <span class="n">daterange</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.text.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">path_with_hash</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.text.phrases</span><span class="w"> </span><span class="kn">import</span> <span class="n">phrases</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventUrls</span>
+
+<span class="c1"># Slugs need to start and end with an alphanumeric character,</span>
+<span class="c1"># but may contain dashes and dots in between.</span>
+<span class="n">SLUG_CHARS</span> <span class="o">=</span> <span class="s2">&quot;a-zA-Z0-9.-&quot;</span>
+<span class="n">SLUG_REGEX</span> <span class="o">=</span> <span class="sa">rf</span><span class="s2">&quot;[a-zA-Z0-9]([</span><span class="si">{</span><span class="n">SLUG_CHARS</span><span class="si">}</span><span class="s2">]*[a-zA-Z0-9])?&quot;</span>
+<span class="n">FULL_SLUG_REGEX</span> <span class="o">=</span> <span class="sa">rf</span><span class="s2">&quot;^</span><span class="si">{</span><span class="n">SLUG_REGEX</span><span class="si">}</span><span class="s2">$&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_event_slug_permitted</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="n">forbidden</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;_global&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;__debug__&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;api&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;csp_report&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;events&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;download&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;healthcheck&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jsi18n&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;locale&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;metrics&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;orga&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;redirect&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;relay&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;widget&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;400&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;403&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;404&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;500&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;p&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">forbidden</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span>
+            <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Invalid event slug – this slug is reserved: </span><span class="si">{value}</span><span class="s2">.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">=</span><span class="n">value</span>
+            <span class="p">),</span>
+            <span class="n">code</span><span class="o">=</span><span class="s2">&quot;invalid&quot;</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">},</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">event_css_path</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">path_with_hash</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">base_path</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">instance</span><span class="o">.</span><span class="n">slug</span><span class="si">}</span><span class="s2">/css/&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">event_logo_path</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">path_with_hash</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">base_path</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">instance</span><span class="o">.</span><span class="n">slug</span><span class="si">}</span><span class="s2">/img/&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">default_feature_flags</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;show_schedule&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;show_featured&quot;</span><span class="p">:</span> <span class="s2">&quot;pre_schedule&quot;</span><span class="p">,</span>  <span class="c1"># or always, or never</span>
+        <span class="s2">&quot;show_widget_if_not_public&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;export_html_on_release&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_tracks&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;use_feedback&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;present_multiple_times&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;submission_public_review&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">default_display_settings</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;grid&quot;</span><span class="p">,</span>  <span class="c1"># or list</span>
+        <span class="s2">&quot;imprint_url&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;header_pattern&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;html_export_url&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;meta_noindex&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;texts&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;agenda_session_above&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;agenda_session_below&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">default_review_settings</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;score_mandatory&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;text_mandatory&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;aggregate_method&quot;</span><span class="p">:</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span>  <span class="c1"># or mean</span>
+        <span class="s2">&quot;score_format&quot;</span><span class="p">:</span> <span class="s2">&quot;words_numbers&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">default_mail_settings</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;mail_from&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reply_to&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subject_prefix&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;smtp_use_custom&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;smtp_host&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;smtp_port&quot;</span><span class="p">:</span> <span class="mi">587</span><span class="p">,</span>
+        <span class="s2">&quot;smtp_username&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;smtp_password&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;smtp_use_tls&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;smtp_use_ssl&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mail_on_new_submission&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<div class="viewcode-block" id="Event">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.event.models.event.Event">[docs]</a>
+<span class="nd">@hierarkey</span><span class="o">.</span><span class="n">add</span><span class="p">()</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Event</span><span class="p">(</span><span class="n">PretalxModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Event class has direct or indirect relations to all other models.</span>
+
+<span class="sd">    Since most models depend on the Event model in some way, they should</span>
+<span class="sd">    preferably be accessed via the reverse relation on the event model to</span>
+<span class="sd">    prevent data leaks.</span>
+
+<span class="sd">    :param is_public: Is this event public yet? Should only be set via the</span>
+<span class="sd">        ``pretalx.orga.views.EventLive`` view or in another way that processes</span>
+<span class="sd">        the ``pretalx.orga.signals.activate_event`` signal.</span>
+<span class="sd">    :param locale_array: Contains the event’s active locales as a comma</span>
+<span class="sd">        separated string. Please use the ``locales`` property to interact</span>
+<span class="sd">        with this information.</span>
+<span class="sd">    :param content_locale_array: Contains the event’s active locales available</span>
+<span class="sd">        for proposals as a comma separated string. Please use the</span>
+<span class="sd">        ``content_locales`` property to interact with this information.</span>
+<span class="sd">    :param primary_color: Main event colour. Accepts hex values like</span>
+<span class="sd">        ``#00ff00``.</span>
+<span class="sd">    :param custom_css: Custom event CSS. Has to pass fairly restrictive</span>
+<span class="sd">        validation for security considerations.</span>
+<span class="sd">    :param custom_domain: Custom event domain, starting with ``https://``.</span>
+<span class="sd">    :param plugins: A list of active plugins as a comma-separated string.</span>
+<span class="sd">        Please use the ``plugin_list`` property for interaction.</span>
+<span class="sd">    :param feature_flags: A JSON field containing feature flags for this event.</span>
+<span class="sd">        Please use the ``get_feature_flag`` method to check for features,</span>
+<span class="sd">        so that new feature flags can be added without breaking existing events.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">I18nCharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">))</span>
+    <span class="n">slug</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SlugField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="n">db_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">validators</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">RegexValidator</span><span class="p">(</span>
+                <span class="n">regex</span><span class="o">=</span><span class="n">FULL_SLUG_REGEX</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+                    <span class="s2">&quot;The slug may only contain letters, numbers, dots and dashes.&quot;</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">validate_event_slug_permitted</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Short form&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;The slug may only contain letters, numbers, dots and dashes.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">organiser</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;Organiser&quot;</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># backwards compatibility, won’t ever be empty</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;events&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">is_public</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Event is public&quot;</span><span class="p">))</span>
+    <span class="n">date_from</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Event start date&quot;</span><span class="p">))</span>
+    <span class="n">date_to</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Event end date&quot;</span><span class="p">))</span>
+    <span class="n">timezone</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[(</span><span class="n">tz</span><span class="p">,</span> <span class="n">tz</span><span class="p">)</span> <span class="k">for</span> <span class="n">tz</span> <span class="ow">in</span> <span class="n">TIMEZONE_CHOICES</span><span class="p">],</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;UTC&quot;</span><span class="p">,</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;All event dates will be localised and interpreted to be in this timezone.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">EmailField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Organiser email address&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Will be used as Reply-To in emails.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">custom_domain</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">URLField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Custom domain&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Enter a custom domain, such as https://my.event.example.org&quot;</span><span class="p">),</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">feature_flags</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">default_feature_flags</span><span class="p">)</span>
+    <span class="n">display_settings</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">default_display_settings</span><span class="p">)</span>
+    <span class="n">review_settings</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">default_review_settings</span><span class="p">)</span>
+    <span class="n">mail_settings</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">default_mail_settings</span><span class="p">)</span>
+    <span class="n">primary_color</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">validators</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">RegexValidator</span><span class="p">(</span><span class="s2">&quot;#([0-9A-Fa-f]</span><span class="si">{3}</span><span class="s2">){1,2}&quot;</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Main event colour&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;Provide a hex value like #00ff00 if you want to style eventyay in your event’s colour scheme.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">custom_css</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">FileField</span><span class="p">(</span>
+        <span class="n">upload_to</span><span class="o">=</span><span class="n">event_css_path</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Custom Event CSS&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;Upload a custom CSS file if changing the primary colour is not sufficient for you.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">logo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ImageField</span><span class="p">(</span>
+        <span class="n">upload_to</span><span class="o">=</span><span class="n">event_logo_path</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Logo&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;If you provide a logo image, your event’s name will not be shown in the event header. &quot;</span>
+            <span class="s2">&quot;The logo will be scaled down to a height of 150px.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">header_image</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ImageField</span><span class="p">(</span>
+        <span class="n">upload_to</span><span class="o">=</span><span class="n">event_logo_path</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Header image&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;If you provide a header image, it will be displayed instead of your event’s color and/or header pattern &quot;</span>
+            <span class="s2">&quot;at the top of all event pages. It will be center-aligned, so when the window shrinks, the center parts will &quot;</span>
+            <span class="s2">&quot;continue to be displayed, and not stretched.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">locale_array</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGE_CODE</span><span class="p">)</span>
+    <span class="n">content_locale_array</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGE_CODE</span><span class="p">)</span>
+    <span class="n">locale</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGE_CODE</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGES</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Default language&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">landing_page_text</span> <span class="o">=</span> <span class="n">I18nTextField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Landing page text&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;This text will be shown on the landing page, alongside with links to the CfP and schedule, if appropriate.&quot;</span>
+        <span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+        <span class="o">+</span> <span class="n">phrases</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">use_markdown</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">featured_sessions_text</span> <span class="o">=</span> <span class="n">I18nTextField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Featured sessions text&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;This text will be shown at the top of the featured sessions page instead of the default text.&quot;</span>
+        <span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+        <span class="o">+</span> <span class="n">phrases</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">use_markdown</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">plugins</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Plugins&quot;</span><span class="p">))</span>
+
+    <span class="n">HEADER_PATTERN_CHOICES</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Plain&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;pcb&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Circuits&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;bubbles&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Circles&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;signal&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Signal&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;topo&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Topography&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Graph Paper&quot;</span><span class="p">)),</span>
+    <span class="p">)</span>
+
+    <span class="n">objects</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Manager</span><span class="p">()</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">urls</span><span class="p">(</span><span class="n">EventUrls</span><span class="p">):</span>
+        <span class="n">base_path</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">BASE_PATH</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base_path}</span><span class="s2">/</span><span class="si">{self.slug}</span><span class="s2">/&quot;</span>
+        <span class="n">login</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">login/&quot;</span>
+        <span class="n">logout</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">logout&quot;</span>
+        <span class="n">auth</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">auth/&quot;</span>
+        <span class="n">logo</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.logo.url}</span><span class="s2">&quot;</span>
+        <span class="n">social_image</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">og-image&quot;</span>
+        <span class="n">reset</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">reset&quot;</span>
+        <span class="n">submit</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">submit/&quot;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">me/&quot;</span>
+        <span class="n">user_delete</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">me/delete&quot;</span>
+        <span class="n">user_submissions</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{user}</span><span class="s2">submissions/&quot;</span>
+        <span class="n">user_mails</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{user}</span><span class="s2">mails/&quot;</span>
+        <span class="n">schedule</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">schedule/&quot;</span>
+        <span class="n">schedule_nojs</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{schedule}</span><span class="s2">nojs&quot;</span>
+        <span class="n">featured</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">featured/&quot;</span>
+        <span class="n">talks</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">talk/&quot;</span>
+        <span class="n">speakers</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">speaker/&quot;</span>
+        <span class="n">changelog</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{schedule}</span><span class="s2">changelog/&quot;</span>
+        <span class="n">feed</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{schedule}</span><span class="s2">feed.xml&quot;</span>
+        <span class="n">export</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{schedule}</span><span class="s2">export/&quot;</span>
+        <span class="n">frab_xml</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{export}</span><span class="s2">schedule.xml&quot;</span>
+        <span class="n">frab_json</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{export}</span><span class="s2">schedule.json&quot;</span>
+        <span class="n">frab_xcal</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{export}</span><span class="s2">schedule.xcal&quot;</span>
+        <span class="n">ical</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{export}</span><span class="s2">schedule.ics&quot;</span>
+        <span class="n">schedule_widget_data</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{schedule}</span><span class="s2">widgets/schedule.json&quot;</span>
+        <span class="n">schedule_widget_script</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">widgets/schedule.js&quot;</span>
+        <span class="n">settings_css</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">static/event.css&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">orga_urls</span><span class="p">(</span><span class="n">EventUrls</span><span class="p">):</span>
+        <span class="n">base_path</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">BASE_PATH</span>
+        <span class="n">create</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base_path}</span><span class="s2">/orga/event/new&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base_path}</span><span class="s2">/orga/event/</span><span class="si">{self.slug}</span><span class="s2">/&quot;</span>
+        <span class="n">login</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">login/&quot;</span>
+        <span class="n">live</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">live&quot;</span>
+        <span class="n">delete</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">delete&quot;</span>
+        <span class="n">cfp</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">cfp/&quot;</span>
+        <span class="n">history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">history/&quot;</span>
+        <span class="n">users</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">api/users&quot;</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">mails/&quot;</span>
+        <span class="n">compose_mails</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{mail}</span><span class="s2">compose&quot;</span>
+        <span class="n">compose_mails_sessions</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{compose_mails}</span><span class="s2">/sessions/&quot;</span>
+        <span class="n">compose_mails_teams</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{compose_mails}</span><span class="s2">/teams/&quot;</span>
+        <span class="n">send_drafts_reminder</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{compose_mails}</span><span class="s2">/reminders&quot;</span>
+        <span class="n">mail_templates</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{mail}</span><span class="s2">templates/&quot;</span>
+        <span class="n">new_template</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{mail_templates}</span><span class="s2">new&quot;</span>
+        <span class="n">outbox</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{mail}</span><span class="s2">outbox/&quot;</span>
+        <span class="n">sent_mails</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{mail}</span><span class="s2">sent&quot;</span>
+        <span class="n">send_outbox</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{outbox}</span><span class="s2">send&quot;</span>
+        <span class="n">purge_outbox</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{outbox}</span><span class="s2">purge&quot;</span>
+        <span class="n">submissions</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">submissions/&quot;</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{submissions}</span><span class="s2">tags/&quot;</span>
+        <span class="n">new_tag</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{tags}</span><span class="s2">new&quot;</span>
+        <span class="n">submission_cards</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">submissions/cards/&quot;</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">submissions/statistics/&quot;</span>
+        <span class="n">submission_feed</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">submissions/feed/&quot;</span>
+        <span class="n">new_submission</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{submissions}</span><span class="s2">new&quot;</span>
+        <span class="n">feedback</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{submissions}</span><span class="s2">feedback/&quot;</span>
+        <span class="n">apply_pending</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{submissions}</span><span class="s2">apply-pending/&quot;</span>
+        <span class="n">speakers</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">speakers/&quot;</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="n">edit_settings</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">settings/&quot;</span>
+        <span class="n">review_settings</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{settings}</span><span class="s2">review/&quot;</span>
+        <span class="n">mail_settings</span> <span class="o">=</span> <span class="n">edit_mail_settings</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{settings}</span><span class="s2">mail&quot;</span>
+        <span class="n">widget_settings</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{settings}</span><span class="s2">widget&quot;</span>
+        <span class="n">team_settings</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{settings}</span><span class="s2">team/&quot;</span>
+        <span class="n">new_team</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{settings}</span><span class="s2">team/new&quot;</span>
+        <span class="n">room_settings</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{schedule}</span><span class="s2">rooms/&quot;</span>
+        <span class="n">new_room</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{room_settings}</span><span class="s2">new&quot;</span>
+        <span class="n">schedule</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">schedule/&quot;</span>
+        <span class="n">schedule_export</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{schedule}</span><span class="s2">export/&quot;</span>
+        <span class="n">schedule_export_trigger</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{schedule_export}</span><span class="s2">trigger&quot;</span>
+        <span class="n">schedule_export_download</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{schedule_export}</span><span class="s2">download&quot;</span>
+        <span class="n">release_schedule</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{schedule}</span><span class="s2">release&quot;</span>
+        <span class="n">reset_schedule</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{schedule}</span><span class="s2">reset&quot;</span>
+        <span class="n">toggle_schedule</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{schedule}</span><span class="s2">toggle&quot;</span>
+        <span class="n">reviews</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">reviews/&quot;</span>
+        <span class="n">review_assignments</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{reviews}</span><span class="s2">assign/&quot;</span>
+        <span class="n">schedule_api</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">schedule/api/&quot;</span>
+        <span class="n">talks_api</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{schedule_api}</span><span class="s2">talks/&quot;</span>
+        <span class="n">plugins</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{settings}</span><span class="s2">plugins&quot;</span>
+        <span class="n">information</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">info/&quot;</span>
+        <span class="n">new_information</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">info/new&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">api_urls</span><span class="p">(</span><span class="n">EventUrls</span><span class="p">):</span>
+        <span class="n">base_path</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">BASE_PATH</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base_path}</span><span class="s2">/api/events/</span><span class="si">{self.slug}</span><span class="s2">/&quot;</span>
+        <span class="n">submissions</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">submissions/&quot;</span>
+        <span class="n">talks</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">talks/&quot;</span>
+        <span class="n">schedules</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">schedules/&quot;</span>
+        <span class="n">speakers</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">speakers/&quot;</span>
+        <span class="n">reviews</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">reviews/&quot;</span>
+        <span class="n">rooms</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">rooms/&quot;</span>
+        <span class="n">questions</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">questions/&quot;</span>
+        <span class="n">answers</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">answers/&quot;</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">tags/&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">ordering</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;date_from&quot;</span><span class="p">,)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">locales</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Is a list of active event locales.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale_array</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">content_locales</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Is a list of active content locales.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_locale_array</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_multilingual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Is ``True`` if the event supports more than one locale.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_locales</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">named_locales</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Is a list of tuples of locale codes and natural names for this</span>
+<span class="sd">        event.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">language</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">],</span> <span class="n">language</span><span class="p">[</span><span class="s2">&quot;natural_name&quot;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGES_INFORMATION</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">language</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">locales</span>
+        <span class="p">]</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">available_content_locales</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="c1"># Content locales can be anything pretalx knows as a language, merged with</span>
+        <span class="c1"># this event&#39;s plugin locales.</span>
+
+        <span class="n">locale_names</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">LANGUAGE_NAMES</span><span class="p">)</span>
+        <span class="n">locale_names</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">named_plugin_locales</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">([(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">locale_names</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">named_content_locales</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">locale_names</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">available_content_locales</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">code</span><span class="p">,</span> <span class="n">locale_names</span><span class="p">[</span><span class="n">code</span><span class="p">])</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_locales</span><span class="p">]</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">named_plugin_locales</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_locales</span>
+
+        <span class="n">locale_names</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">LANGUAGE_NAMES</span><span class="p">)</span>
+        <span class="n">locale_names</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">named_locales</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">_receiver</span><span class="p">,</span> <span class="n">locales</span> <span class="ow">in</span> <span class="n">register_locales</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">sender</span><span class="o">=</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">locale</span> <span class="ow">in</span> <span class="n">locales</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">locale</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="n">result</span><span class="p">[</span><span class="n">locale</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">locale</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span><span class="p">[</span><span class="n">locale</span><span class="p">]</span> <span class="o">=</span> <span class="n">locale_names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">locale</span><span class="p">,</span> <span class="n">locale</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plugin_locales</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">named_plugin_locales</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an :py:class:`ObjectRelatedCache` object.</span>
+
+<span class="sd">        This behaves equivalent to Django&#39;s built-in cache backends, but</span>
+<span class="sd">        puts you into an isolated environment for this event, so you</span>
+<span class="sd">        don&#39;t have to prefix your cache keys.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ObjectRelatedCache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s2">&quot;slug&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">was_created</span> <span class="o">=</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">was_created</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">build_initial_data</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plugin_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">available_plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">plugin</span><span class="o">.</span><span class="n">module</span><span class="p">:</span> <span class="n">plugin</span>
+            <span class="k">for</span> <span class="n">plugin</span> <span class="ow">in</span> <span class="n">get_all_plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="s2">&quot;visible&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modules</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is not @plugin_list.setter to make the side effects more visible.</span>
+<span class="sd">        It will call installed() on all plugins that were not active before, and</span>
+<span class="sd">        uninstalled() on all plugins that are not active anymore.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plugins_active</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_list</span><span class="p">)</span>
+
+        <span class="n">enable</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">modules</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">available_plugins</span><span class="p">)</span> <span class="o">-</span> <span class="n">plugins_active</span><span class="p">)</span>
+        <span class="n">disable</span> <span class="o">=</span> <span class="n">plugins_active</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">modules</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">enable</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">available_plugins</span><span class="p">[</span><span class="n">module</span><span class="p">]</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="s2">&quot;installed&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">available_plugins</span><span class="p">[</span><span class="n">module</span><span class="p">]</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">disable</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">available_plugins</span><span class="p">[</span><span class="n">module</span><span class="p">]</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="s2">&quot;uninstalled&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">available_plugins</span><span class="p">[</span><span class="n">module</span><span class="p">]</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">uninstalled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modules</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Event.enable_plugin">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.event.models.event.Event.enable_plugin">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enable_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enables a plugin. If the given plugin is available and was not in the list of</span>
+<span class="sd">        active plugins, it will be added and installed() will be called.&quot;&quot;&quot;</span>
+        <span class="n">plugins_active</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_list</span>
+        <span class="k">if</span> <span class="n">module</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">plugins_active</span><span class="p">:</span>
+            <span class="n">plugins_active</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_plugins</span><span class="p">(</span><span class="n">plugins_active</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Event.disable_plugin">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.event.models.event.Event.disable_plugin">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">disable_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Disables a plugin. If the given plugin is in the list of active</span>
+<span class="sd">        plugins, it will be removed and uninstall() will be called.&quot;&quot;&quot;</span>
+        <span class="n">plugins_active</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_list</span>
+        <span class="k">if</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">plugins_active</span><span class="p">:</span>
+            <span class="n">plugins_active</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_plugins</span><span class="p">(</span><span class="n">plugins_active</span><span class="p">)</span></div>
+
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visible_primary_color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_color</span> <span class="ow">or</span> <span class="n">settings</span><span class="o">.</span><span class="n">DEFAULT_EVENT_PRIMARY_COLOR</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_default_submission_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubmissionType</span>
+
+        <span class="n">sub_type</span> <span class="o">=</span> <span class="n">SubmissionType</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sub_type</span><span class="p">:</span>
+            <span class="n">sub_type</span> <span class="o">=</span> <span class="n">SubmissionType</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Talk&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sub_type</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mail_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.mail.default_templates</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_default_template</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.mail.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">MailTemplate</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail_templates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="n">role</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">MailTemplate</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="n">subject</span><span class="p">,</span> <span class="n">text</span> <span class="o">=</span> <span class="n">get_default_template</span><span class="p">(</span><span class="n">role</span><span class="p">)</span>
+            <span class="n">template</span><span class="p">,</span> <span class="n">__</span> <span class="o">=</span> <span class="n">MailTemplate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span>
+                <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">role</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">}</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">template</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_initial_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.mail.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">MailTemplateRoles</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.schedule.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Schedule</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">CfP</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;cfp&quot;</span><span class="p">):</span>
+            <span class="n">CfP</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_default_submission_type</span><span class="p">()</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedules</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">version__isnull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">Schedule</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">role</span><span class="p">,</span> <span class="n">__</span> <span class="ow">in</span> <span class="n">MailTemplateRoles</span><span class="o">.</span><span class="n">choices</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_mail_template</span><span class="p">(</span><span class="n">role</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">review_phases</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReviewPhase</span>
+
+            <span class="n">cfp_deadline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">deadline</span>
+            <span class="n">rp</span> <span class="o">=</span> <span class="n">ReviewPhase</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Review&quot;</span><span class="p">),</span>
+                <span class="n">start</span><span class="o">=</span><span class="n">cfp_deadline</span><span class="p">,</span>
+                <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">datetime_from</span> <span class="o">-</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">months</span><span class="o">=-</span><span class="mi">3</span><span class="p">),</span>
+                <span class="n">is_active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="ow">not</span> <span class="n">cfp_deadline</span> <span class="ow">or</span> <span class="n">cfp_deadline</span> <span class="o">&lt;</span> <span class="n">now</span><span class="p">()),</span>
+                <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ReviewPhase</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Selection&quot;</span><span class="p">),</span>
+                <span class="n">start</span><span class="o">=</span><span class="n">rp</span><span class="o">.</span><span class="n">end</span><span class="p">,</span>
+                <span class="n">is_active</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">can_review</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">can_see_other_reviews</span><span class="o">=</span><span class="s2">&quot;always&quot;</span><span class="p">,</span>
+                <span class="n">can_change_submission_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_categories</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReviewScore</span><span class="p">,</span> <span class="n">ReviewScoreCategory</span>
+
+            <span class="n">category</span> <span class="o">=</span> <span class="n">ReviewScoreCategory</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Score&quot;</span><span class="p">)),</span>
+            <span class="p">)</span>
+            <span class="n">ReviewScore</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">)),</span>
+            <span class="p">)</span>
+            <span class="n">ReviewScore</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Maybe&quot;</span><span class="p">)),</span>
+            <span class="p">)</span>
+            <span class="n">ReviewScore</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">)),</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="n">build_initial_data</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@scopes_disabled</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy_data_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_event</span><span class="p">,</span> <span class="n">skip_attributes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.orga.signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">event_copy_data</span>
+
+        <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_from</span> <span class="o">-</span> <span class="n">other_event</span><span class="o">.</span><span class="n">date_from</span>
+
+        <span class="n">clonable_attributes</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;locale&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;locale_array&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;primary_color&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;timezone&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;plugins&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;feature_flags&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;display_settings&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;review_settings&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content_locale_array&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;landing_page_text&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;featured_sessions_text&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">skip_attributes</span><span class="p">:</span>
+            <span class="n">clonable_attributes</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">clonable_attributes</span> <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skip_attributes</span>
+            <span class="p">]</span>
+        <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">clonable_attributes</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other_event</span><span class="p">,</span> <span class="n">attribute</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">extra_link</span> <span class="ow">in</span> <span class="n">other_event</span><span class="o">.</span><span class="n">extra_links</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">extra_link</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">extra_link</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">extra_link</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail_templates</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="n">other_event</span><span class="o">.</span><span class="n">mail_templates</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_auto_created</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">submission_types</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">default_type_id</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">submission_type_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">submission_type</span> <span class="ow">in</span> <span class="n">other_event</span><span class="o">.</span><span class="n">submission_types</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">submission_type_map</span><span class="p">[</span><span class="n">submission_type</span><span class="o">.</span><span class="n">pk</span><span class="p">]</span> <span class="o">=</span> <span class="n">submission_type</span>
+            <span class="n">is_default</span> <span class="o">=</span> <span class="n">submission_type</span> <span class="o">==</span> <span class="n">other_event</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">default_type</span>
+            <span class="n">submission_type</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">submission_type</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">submission_type</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">is_default</span><span class="p">:</span>
+                <span class="n">old_default</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">default_type</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">default_type</span> <span class="o">=</span> <span class="n">submission_type</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="n">old_default</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+
+        <span class="n">track_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">other_event</span><span class="o">.</span><span class="n">tracks</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">track_map</span><span class="p">[</span><span class="n">track</span><span class="o">.</span><span class="n">pk</span><span class="p">]</span> <span class="o">=</span> <span class="n">track</span>
+            <span class="n">track</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">track</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">track</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="n">question_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">question</span> <span class="ow">in</span> <span class="n">other_event</span><span class="o">.</span><span class="n">questions</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">question_map</span><span class="p">[</span><span class="n">question</span><span class="o">.</span><span class="n">pk</span><span class="p">]</span> <span class="o">=</span> <span class="n">question</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">question</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+            <span class="n">tracks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">question</span><span class="o">.</span><span class="n">tracks</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;pk&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">question</span><span class="o">.</span><span class="n">submission_types</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;pk&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">question</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">question</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">question</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">question</span><span class="o">.</span><span class="n">tracks</span><span class="o">.</span><span class="n">set</span><span class="p">([])</span>
+            <span class="n">question</span><span class="o">.</span><span class="n">submission_types</span><span class="o">.</span><span class="n">set</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
+                <span class="n">option</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">option</span><span class="o">.</span><span class="n">question</span> <span class="o">=</span> <span class="n">question</span>
+                <span class="n">option</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">:</span>
+                <span class="n">question</span><span class="o">.</span><span class="n">tracks</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">track_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">track</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">stype</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+                <span class="n">question</span><span class="o">.</span><span class="n">submission_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">submission_type_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stype</span><span class="p">))</span>
+
+        <span class="n">information_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">information</span> <span class="ow">in</span> <span class="n">other_event</span><span class="o">.</span><span class="n">information</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">information_map</span><span class="p">[</span><span class="n">information</span><span class="o">.</span><span class="n">pk</span><span class="p">]</span> <span class="o">=</span> <span class="n">information</span>
+            <span class="n">tracks</span> <span class="o">=</span> <span class="n">information</span><span class="o">.</span><span class="n">limit_tracks</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;pk&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">types</span> <span class="o">=</span> <span class="n">information</span><span class="o">.</span><span class="n">limit_types</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;pk&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">information</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">information</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">information</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">information</span><span class="o">.</span><span class="n">limit_tracks</span><span class="o">.</span><span class="n">set</span><span class="p">([])</span>
+            <span class="n">information</span><span class="o">.</span><span class="n">limit_types</span><span class="o">.</span><span class="n">set</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">:</span>
+                <span class="n">information</span><span class="o">.</span><span class="n">limit_tracks</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">track_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">track</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">stype</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+                <span class="n">information</span><span class="o">.</span><span class="n">limit_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">submission_type_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stype</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">review_phases</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">review_phase</span> <span class="ow">in</span> <span class="n">other_event</span><span class="o">.</span><span class="n">review_phases</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">review_phase</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">review_phase</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">review_phase</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">review_phase</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+                <span class="n">review_phase</span><span class="o">.</span><span class="n">start</span> <span class="o">+=</span> <span class="n">delta</span>
+            <span class="k">if</span> <span class="n">review_phase</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
+                <span class="n">review_phase</span><span class="o">.</span><span class="n">end</span> <span class="o">+=</span> <span class="n">delta</span>
+            <span class="n">review_phase</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">score_categories</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">score_category</span> <span class="ow">in</span> <span class="n">other_event</span><span class="o">.</span><span class="n">score_categories</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">scores</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">score_category</span><span class="o">.</span><span class="n">scores</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+            <span class="n">tracks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">score_category</span><span class="o">.</span><span class="n">limit_tracks</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+            <span class="n">score_category</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">score_category</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">score_category</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">score_category</span><span class="o">.</span><span class="n">limit_tracks</span><span class="o">.</span><span class="n">set</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">track_map</span><span class="p">:</span>
+                    <span class="n">score_category</span><span class="o">.</span><span class="n">limit_tracks</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">track_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">track</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
+                <span class="n">score</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">score</span><span class="o">.</span><span class="n">category</span> <span class="o">=</span> <span class="n">score_category</span>
+                <span class="n">score</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">sett</span> <span class="ow">in</span> <span class="n">other_event</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">_objects</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">sett</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;file://&quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">sett</span><span class="o">.</span><span class="n">object</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">sett</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">sett</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">copy_data_from</span><span class="p">(</span><span class="n">other_event</span><span class="o">.</span><span class="n">cfp</span><span class="p">,</span> <span class="n">skip_attributes</span><span class="o">=</span><span class="n">skip_attributes</span><span class="p">)</span>
+        <span class="n">event_copy_data</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+            <span class="n">sender</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">other</span><span class="o">=</span><span class="n">other_event</span><span class="o">.</span><span class="n">slug</span><span class="p">,</span>
+            <span class="n">question_map</span><span class="o">=</span><span class="n">question_map</span><span class="p">,</span>
+            <span class="n">track_map</span><span class="o">=</span><span class="n">track_map</span><span class="p">,</span>
+            <span class="n">submission_type_map</span><span class="o">=</span><span class="n">submission_type_map</span><span class="p">,</span>
+            <span class="n">speaker_information_map</span><span class="o">=</span><span class="n">information_map</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_initial_data</span><span class="p">()</span>  <span class="c1"># make sure we get a functioning event</span>
+
+    <span class="n">copy_data_from</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pending_mails</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The amount of currently unsent.</span>
+
+<span class="sd">        :class:`~pretalx.mail.models.QueuedMail` objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">queued_mails</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">sent__isnull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wip_schedule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the latest unreleased.</span>
+
+<span class="sd">        :class:`~pretalx.schedule.models.schedule.Schedule`.</span>
+
+<span class="sd">        :retval: :class:`~pretalx.schedule.models.schedule.Schedule`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">schedule</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedules</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">version__isnull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">MultipleObjectsReturned</span><span class="p">:</span>
+            <span class="c1"># No idea how this happens – a race condition due to transaction weirdness?</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.schedule.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">TalkSlot</span>
+
+            <span class="n">schedules</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schedules</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">version__isnull</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">schedule</span> <span class="o">=</span> <span class="n">schedules</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># It&#39;s only ever been two so far, but while we&#39;re being resilient …</span>
+            <span class="k">for</span> <span class="n">dupe</span> <span class="ow">in</span> <span class="n">schedules</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">TalkSlot</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">schedule</span><span class="o">=</span><span class="n">dupe</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+                <span class="n">dupe</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">schedule</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">current_schedule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the latest released.</span>
+
+<span class="sd">        :class:`~pretalx.schedule.models.schedule.Schedule`, or ``None`` before</span>
+<span class="sd">        the first release.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">schedules</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-published&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">published__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_to</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_from</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mail_backend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_custom</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEmailBackend</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.mail</span><span class="w"> </span><span class="kn">import</span> <span class="n">CustomSMTPBackend</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail_settings</span><span class="p">[</span><span class="s2">&quot;smtp_use_custom&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">force_custom</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">CustomSMTPBackend</span><span class="p">(</span>
+                <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mail_settings</span><span class="p">[</span><span class="s2">&quot;smtp_host&quot;</span><span class="p">],</span>
+                <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mail_settings</span><span class="p">[</span><span class="s2">&quot;smtp_port&quot;</span><span class="p">],</span>
+                <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mail_settings</span><span class="p">[</span><span class="s2">&quot;smtp_username&quot;</span><span class="p">],</span>
+                <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mail_settings</span><span class="p">[</span><span class="s2">&quot;smtp_password&quot;</span><span class="p">],</span>
+                <span class="n">use_tls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mail_settings</span><span class="p">[</span><span class="s2">&quot;smtp_use_tls&quot;</span><span class="p">],</span>
+                <span class="n">use_ssl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mail_settings</span><span class="p">[</span><span class="s2">&quot;smtp_use_ssl&quot;</span><span class="p">],</span>
+                <span class="n">fail_silently</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">get_connection</span><span class="p">(</span><span class="n">fail_silently</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">teams</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns all :class:`~pretalx.event.models.organiser.Team` objects</span>
+<span class="sd">        that concern this event.&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.event.models.organiser</span><span class="w"> </span><span class="kn">import</span> <span class="n">Team</span>
+
+        <span class="k">return</span> <span class="n">Team</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">limit_events__in</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span> <span class="o">|</span> <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">all_events</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">organiser</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">organiser</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reviewers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.person.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+
+        <span class="k">return</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">teams__in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">teams</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_reviewer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">datetime_from</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The localised datetime of the event start date.</span>
+
+<span class="sd">        :rtype: datetime</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">make_aware</span><span class="p">(</span>
+            <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_from</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">time</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tz</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">datetime_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The localised datetime of the event end date.</span>
+
+<span class="sd">        :rtype: datetime</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">make_aware</span><span class="p">(</span>
+            <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_to</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">time</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">23</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">59</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">59</span><span class="p">)),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tz</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">zoneinfo</span><span class="o">.</span><span class="n">ZoneInfo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timezone</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reviews</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Review</span>
+
+        <span class="k">return</span> <span class="n">Review</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">submission__event</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">active_review_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">phase</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">review_phases</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">phase</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">review_phases</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReviewPhase</span>
+
+            <span class="n">cfp_deadline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">deadline</span>
+            <span class="k">return</span> <span class="n">ReviewPhase</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Review&quot;</span><span class="p">),</span>
+                <span class="n">start</span><span class="o">=</span><span class="n">cfp_deadline</span><span class="p">,</span>
+                <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">datetime_from</span> <span class="o">-</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">months</span><span class="o">=-</span><span class="mi">3</span><span class="p">),</span>
+                <span class="n">is_active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">cfp_deadline</span><span class="p">),</span>
+                <span class="n">can_see_other_reviews</span><span class="o">=</span><span class="s2">&quot;after_review&quot;</span><span class="p">,</span>
+                <span class="n">can_see_speaker_names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reorder_review_phases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reorder the review phases by start date.&quot;&quot;&quot;</span>
+        <span class="c1"># first, sort phases so that the ones with no start date come first</span>
+        <span class="n">phases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">review_phases</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+        <span class="n">placeholder</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1900</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tz</span><span class="p">)</span>
+        <span class="n">phases</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">start</span> <span class="ow">or</span> <span class="n">placeholder</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">end</span> <span class="ow">or</span> <span class="n">placeholder</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">phase</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">phases</span><span class="p">):</span>
+            <span class="n">phase</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="n">phase</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">update_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;position&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_review_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method activates the next review phase if the current one is</span>
+<span class="sd">        over.</span>
+
+<span class="sd">        If no review phase is active and if there is a new one to</span>
+<span class="sd">        activate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_now</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
+        <span class="n">future_phases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">review_phases</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">old_phase</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_review_phase</span>
+        <span class="k">if</span> <span class="n">old_phase</span> <span class="ow">and</span> <span class="n">old_phase</span><span class="o">.</span><span class="n">end</span> <span class="ow">and</span> <span class="n">old_phase</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;</span> <span class="n">_now</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">old_phase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reorder_review_phases</span><span class="p">()</span>
+        <span class="n">old_position</span> <span class="o">=</span> <span class="n">old_phase</span><span class="o">.</span><span class="n">position</span> <span class="k">if</span> <span class="n">old_phase</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">future_phases</span> <span class="o">=</span> <span class="n">future_phases</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">position__gt</span><span class="o">=</span><span class="n">old_position</span><span class="p">)</span>
+        <span class="n">next_phase</span> <span class="o">=</span> <span class="n">future_phases</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;position&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">next_phase</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">next_phase</span><span class="o">.</span><span class="n">start</span> <span class="ow">or</span> <span class="n">next_phase</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;</span> <span class="n">_now</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">old_phase</span>
+        <span class="n">next_phase</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">next_phase</span>
+
+    <span class="n">update_review_phase</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">talks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a queryset of all.</span>
+
+<span class="sd">        :class:`~pretalx.submission.models.submission.Submission` object in the</span>
+<span class="sd">        current released schedule.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models.submission</span><span class="w"> </span><span class="kn">import</span> <span class="n">Submission</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_schedule</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">submissions</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">slots__in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_schedule</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;submission_type&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">prefetch_related</span><span class="p">(</span><span class="s2">&quot;speakers&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Submission</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">none</span><span class="p">()</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">speakers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a queryset of all speakers (of type.</span>
+
+<span class="sd">        :class:`~pretalx.person.models.user.User`) visible in the current</span>
+<span class="sd">        released schedule.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.person.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+
+        <span class="k">return</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">submissions__in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">submitters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a queryset of all :class:`~pretalx.person.models.user.User`</span>
+<span class="sd">        objects who have submitted to this event.</span>
+
+<span class="sd">        Ignores users who have deleted all of their submissions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.person.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">submissions__in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">submissions</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+            <span class="o">.</span><span class="n">prefetch_related</span><span class="p">(</span><span class="s2">&quot;submissions&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">distinct</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfp_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.cfp.flow</span><span class="w"> </span><span class="kn">import</span> <span class="n">CfPFlow</span>
+
+        <span class="k">return</span> <span class="n">CfPFlow</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Event.get_date_range_display">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.event.models.event.Event.get_date_range_display">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_date_range_display</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the localised, prettily formatted date range for this event.</span>
+
+<span class="sd">        E.g. as long as the event takes place within the same month, the</span>
+<span class="sd">        month is only named once.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">daterange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_from</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_to</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_feature_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">feature</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_flags</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_flags</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">default_feature_flags</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Event.release_schedule">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.event.models.event.Event.release_schedule">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">release_schedule</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">notify_speakers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Releases a new :class:`~pretalx.schedule.models.schedule.Schedule`</span>
+<span class="sd">        by finalising the current WIP schedule.</span>
+
+<span class="sd">        :param name: The new version name</span>
+<span class="sd">        :param user: The :class:`~pretalx.person.models.user.User` executing the release</span>
+<span class="sd">        :param notify_speakers: Generate emails for all speakers with changed slots.</span>
+<span class="sd">        :param comment: Public comment for the release</span>
+<span class="sd">        :type user: :class:`~pretalx.person.models.user.User`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wip_schedule</span><span class="o">.</span><span class="n">freeze</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">notify_speakers</span><span class="o">=</span><span class="n">notify_speakers</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span>
+        <span class="p">)</span></div>
+
+
+    <span class="n">release_schedule</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">send_orga_mail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">stats</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">override</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.mail.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">QueuedMail</span>
+
+        <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;event_dashboard&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">orga_urls</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">full</span><span class="p">(),</span>
+            <span class="s2">&quot;event_review&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">orga_urls</span><span class="o">.</span><span class="n">reviews</span><span class="o">.</span><span class="n">full</span><span class="p">(),</span>
+            <span class="s2">&quot;event_schedule&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">orga_urls</span><span class="o">.</span><span class="n">schedule</span><span class="o">.</span><span class="n">full</span><span class="p">(),</span>
+            <span class="s2">&quot;event_submissions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">orga_urls</span><span class="o">.</span><span class="n">submissions</span><span class="o">.</span><span class="n">full</span><span class="p">(),</span>
+            <span class="s2">&quot;event_team&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">orga_urls</span><span class="o">.</span><span class="n">team_settings</span><span class="o">.</span><span class="n">full</span><span class="p">(),</span>
+            <span class="s2">&quot;submission_count&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">submissions</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">stats</span><span class="p">:</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;talk_count&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_schedule</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                        <span class="n">is_visible</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+                    <span class="s2">&quot;review_count&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">reviews</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+                    <span class="s2">&quot;schedule_count&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedules</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">&quot;mail_count&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">queued_mails</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">sent__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">with</span> <span class="n">override</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="p">):</span>
+            <span class="n">QueuedMail</span><span class="p">(</span>
+                <span class="n">subject</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;News from your content system&quot;</span><span class="p">),</span>
+                <span class="n">text</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">),</span>
+                <span class="n">to</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+                <span class="n">locale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Event.shred">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.event.models.event.Event.shred">[docs]</a>
+    <span class="nd">@transaction</span><span class="o">.</span><span class="n">atomic</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">shred</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Irrevocably deletes an event and all related data.&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActivityLog</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.person.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpeakerProfile</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.schedule.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">TalkSlot</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">Answer</span><span class="p">,</span>
+            <span class="n">AnswerOption</span><span class="p">,</span>
+            <span class="n">Feedback</span><span class="p">,</span>
+            <span class="n">Question</span><span class="p">,</span>
+            <span class="n">Resource</span><span class="p">,</span>
+            <span class="n">Submission</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">ActivityLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">,</span>
+            <span class="n">action_type</span><span class="o">=</span><span class="s2">&quot;pretalx.event.delete&quot;</span><span class="p">,</span>
+            <span class="n">content_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">organiser</span><span class="p">,</span>
+            <span class="n">is_orga_action</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;slug&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+                    <span class="c1"># We log the organiser because events and organisers are</span>
+                    <span class="c1"># often deleted together.</span>
+                    <span class="s2">&quot;organiser&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">organiser</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">deletion_order</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logged_actions</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mail_templates</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queued_mails</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfp</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mail_templates</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">information</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">TalkSlot</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">schedule__event</span><span class="o">=</span><span class="bp">self</span><span class="p">),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">Feedback</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">talk__event</span><span class="o">=</span><span class="bp">self</span><span class="p">),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">Resource</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">submission__event</span><span class="o">=</span><span class="bp">self</span><span class="p">),</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">Answer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">question__event</span><span class="o">=</span><span class="bp">self</span><span class="p">),</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">AnswerOption</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">question__event</span><span class="o">=</span><span class="bp">self</span><span class="p">),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">Question</span><span class="o">.</span><span class="n">all_objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="p">),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">Submission</span><span class="o">.</span><span class="n">all_objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="p">),</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tracks</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">submission_types</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schedules</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">SpeakerProfile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="p">),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">ActivityLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="p">),</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">entry</span><span class="p">,</span> <span class="n">detail</span> <span class="ow">in</span> <span class="n">deletion_order</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">detail</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Submission</span><span class="p">):</span>
+                        <span class="n">obj</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">obj</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
+
+
+    <span class="n">shred</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">EventExtraLink</span><span class="p">(</span><span class="n">OrderedModel</span><span class="p">,</span> <span class="n">PretalxModel</span><span class="p">):</span>
+    <span class="n">event</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;Event&quot;</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;extra_links&quot;</span>
+    <span class="p">)</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">I18nCharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Link text&quot;</span><span class="p">))</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">URLField</span><span class="p">(</span><span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Link URL&quot;</span><span class="p">))</span>
+    <span class="n">role</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">((</span><span class="s2">&quot;footer&quot;</span><span class="p">,</span> <span class="s2">&quot;Footer&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="s2">&quot;Header&quot;</span><span class="p">)),</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;footer&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">objects</span> <span class="o">=</span> <span class="n">ScopedManager</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&quot;event&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/_modules/pretalx/event/models/event" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../../../../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../../../../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/copybutton.js"></script> 
+
+</body>
+</html>

@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Tags &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../../genindex.html"/>
+    <link rel="search" title="Search" href="../../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../fundamentals.html">Basic concepts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Resources and endpoints</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="events.html">Events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="submissions.html">Submissions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="talks.html">Talks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="speakers.html">Speakers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reviews.html">Reviews</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rooms.html">Rooms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="questions.html">Questions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="answers.html">Answers</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Tags</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#resource-description">Resource description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endpoints">Endpoints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="tags">
+<h1>Tags<a class="headerlink" href="#tags" title="Link to this heading">¶</a></h1>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.2.0: </span>This resource endpoint.</p>
+</div>
+<section id="resource-description">
+<h2>Resource description<a class="headerlink" href="#resource-description" title="Link to this heading">¶</a></h2>
+<p>The tag resource contains the following fields (currently limited to organisers and reviewers):</p>
+<table class="rest-resource-table docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>tag</p></td>
+<td><p>string</p></td>
+<td><p>The actual tag name.</p></td>
+</tr>
+<tr class="row-odd"><td><p>description</p></td>
+<td><p>multi-lingual string</p></td>
+<td><p>The description of the tag.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">color</span></code></p></td>
+<td><p>string</p></td>
+<td><p>The tag’s colour as hex string.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="endpoints">
+<h2>Endpoints<a class="headerlink" href="#endpoints" title="Link to this heading">¶</a></h2>
+<dl class="http get">
+<dt class="sig sig-object http" id="get--api-events-event-tags-">
+<span class="sig-name descname"><span class="pre">GET</span> </span><span class="sig-name descname"><span class="pre">/api/events/{event}/tags/</span></span><a class="headerlink" href="#get--api-events-event-tags-" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a list of all tags configured for this event.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/api/events/sampleconf/tags/</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;science&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;en&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Scientific sessions&quot;</span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;color&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#00ff00&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event</strong> – The <code class="docutils literal notranslate"><span class="pre">slug</span></code> field of the event to fetch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Query Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>page</strong> – The page number in case of a multi-page result set, default is 1</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="http get">
+<dt class="sig sig-object http" id="get--api-events-(event)-tags-tag-">
+<span class="sig-name descname"><span class="pre">GET</span> </span><span class="sig-name descname"><span class="pre">/api/events/</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">event</span></em><span class="sig-paren">)</span><span class="sig-name descname"><span class="pre">/tags/{tag}/</span></span><a class="headerlink" href="#get--api-events-(event)-tags-tag-" title="Link to this definition">¶</a></dt>
+<dd><p>Returns information on one tag, identified by its tag string.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/api/events/sampleconf/tags/science</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;science&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;en&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Scientific sessions&quot;</span><span class="p">},</span>
+<span class="w">   </span><span class="nt">&quot;color&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#00ff00&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event</strong> – The <code class="docutils literal notranslate"><span class="pre">slug</span></code> field of the event to fetch</p></li>
+<li><p><strong>code</strong> – The <code class="docutils literal notranslate"><span class="pre">tag</span></code> field of the tag to fetch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Status Codes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – no error</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a></span> – Authentication failure</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/api/resources/tags.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../_static/copybutton.js"></script> 
+
+</body>
+</html>

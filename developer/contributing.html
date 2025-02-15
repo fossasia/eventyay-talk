@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Contributing to pretalx &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../genindex.html"/>
+    <link rel="search" title="Search" href="../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="setup.html">The development setup</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Contributing to pretalx</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pull-request-workflow">Pull Request Workflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#style-guide">Style Guide</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#code">Code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commit-messages">Commit messages</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="translating.html">Translating pretalx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="concepts.html">Concepts and Terminology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interfaces/index.html">Interfaces and Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/index.html">Plugin development</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="contributing-to-pretalx">
+<span id="contributing"></span><h1>Contributing to pretalx<a class="headerlink" href="#contributing-to-pretalx" title="Link to this heading">¶</a></h1>
+<p>You want to contribute? That’s great! Being an open source project, pretalx
+thrives if it receives regular contributions from the community. Everyone is
+able to contribute, and contributions can come in many forms: Code,
+Documentation, <a class="reference internal" href="translating.html#translating"><span class="std std-ref">Translations</span></a>, Graphics, Feedback ….  We
+appreciate them highly! If you’re not sure how to make something work, feel
+free to <a class="reference external" href="https://github.com/pretalx/pretalx/discussions/new">open a GitHub Discussion</a> about it.</p>
+<p>Don’t forget to head over to <a class="reference internal" href="setup.html#devsetup"><span class="std std-ref">The development setup</span></a> to read about how to set up your
+local copy of pretalx for development and testing.</p>
+<section id="pull-request-workflow">
+<h2>Pull Request Workflow<a class="headerlink" href="#pull-request-workflow" title="Link to this heading">¶</a></h2>
+<p>If you want to add some change to pretalx itself or its documentation, you can
+do so by opening a Pull Request on <a class="reference external" href="https://github.com/pretalx/pretalx">GitHub</a>.</p>
+<p>If you are not familiar with GitHub, the workflow is basically this: You
+register an account on GitHub, then you “fork” pretalx, and work on your copy
+of it until you’re done. Then, you submit your changes as a Pull Request. We’ll
+review the PR and help you make any changes required to get it merged.  Have a
+look at the <a class="reference external" href="https://docs.github.com/en/pull-requests">GitHub documentation</a> and other documentation on git for further
+information.</p>
+<p>We have tagged some issues as <a class="reference external" href="https://github.com/pretalx/pretalx/issues?q=is%3Aissue+is%3Aopen+label%3Asize%3Asmall">small</a>, and they are probably a good place to
+start. If you want to tackle an issue, please leave a comment to make sure
+nobody else will work on it in the meantime.</p>
+<p>We recommend that you create a branch for every issue you work on. While our
+continuous integration will run all tests and style checks against your PR, it
+makes sense for you to run the test suite locally first, to work on any
+problems ahead of time – but if you can’t figure out why tests are breaking,
+don’t hesitate to submit your PR regardless. We’ll help you figure it out.</p>
+<p>We also expect <strong>tests</strong> and <strong>documentation</strong> to be included with Pull
+Requests if appropriate – if you’re not sure where to start on those, let us
+know, and we’ll help.</p>
+</section>
+<section id="style-guide">
+<h2>Style Guide<a class="headerlink" href="#style-guide" title="Link to this heading">¶</a></h2>
+<p>Following a uniform style within a project makes it more maintainable. This
+goes doubly for projects with many contributors, such as open source projects,
+so we’d like to ask you to follow these style guide notes:</p>
+<section id="code">
+<h3>Code<a class="headerlink" href="#code" title="Link to this heading">¶</a></h3>
+<p>Generally, pretalx Python code follows <a class="reference external" href="https://legacy.python.org/dev/peps/pep-0008/">PEP8</a>. We run <code class="docutils literal notranslate"><span class="pre">flake8</span></code>, <code class="docutils literal notranslate"><span class="pre">isort</span></code>
+and <code class="docutils literal notranslate"><span class="pre">black</span></code> as style checkers, so those should help you if you’re not sure
+how to format something. They are configured via the <code class="docutils literal notranslate"><span class="pre">setup.cfg</span></code> file in the
+<code class="docutils literal notranslate"><span class="pre">src</span></code> directory, and can be run like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ isort .
+$ black .
+$ flake8 .
+$ djhtml -i .
+</pre></div>
+</div>
+<p>While we enforce no strict line length, please try to keep your lines <strong>below
+120 characters</strong>. Other than that, we generally subscribe to the <a class="reference external" href="https://docs.djangoproject.com/en/stable/internals/contributing/writing-code/coding-style/">Django
+project style guide</a>.</p>
+<p>For JavaScript and (S)CSS files we follow the conventions established by
+<a class="reference external" href="https://prettier.io/">prettier</a>, with 2 spaces for indentation in (S)CSS files and 4 spaces in
+JavaScript files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ prettier --no-semi --write path/to/file
+</pre></div>
+</div>
+<p>Changes should be covered by tests. Our tests run with pytest, so please use
+their <code class="docutils literal notranslate"><span class="pre">assert</span></code> statement conventions.</p>
+<p>Remember to mark all user-facing strings for <strong>translation</strong>, and please avoid
+unnecessary changes to existing translations, as they require manual
+re-translation in all languages.</p>
+</section>
+<section id="documentation">
+<h3>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h3>
+<p>Documentation is written in Sphinx-style ReStructured Text format. Please wrap
+lines at 80 characters.</p>
+<p>If you are a native speaker: We’re always grateful for any improvements in
+phrasing and clarity, particularly in our documentation.</p>
+</section>
+<section id="commit-messages">
+<h3>Commit messages<a class="headerlink" href="#commit-messages" title="Link to this heading">¶</a></h3>
+<p>Please wrap all lines of your commit messages at 72 characters at most – bonus
+points if your first line is no longer than 50 characters. If your commit
+message is longer than one line, the first line should be the subject, the
+second line should be empty, and the remainder should be text.</p>
+<p>If you want to address or close issues, please do so in the commit message
+body. <code class="docutils literal notranslate"><span class="pre">Closes</span> <span class="pre">#123</span></code> or <code class="docutils literal notranslate"><span class="pre">Refs</span> <span class="pre">#123</span></code> will close the issue or show the
+reference in the issue log on GitHub.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/developer/contributing.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script> 
+
+</body>
+</html>

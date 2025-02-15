@@ -1,0 +1,560 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pretalx.mail.models &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../../../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../../../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../../../genindex.html"/>
+    <link rel="search" title="Search" href="../../../search.html"/>
+
+   
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../../../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pretalx.mail.models</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">transaction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.template.loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_template</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.timezone</span><span class="w"> </span><span class="kn">import</span> <span class="n">now</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gettext_lazy</span> <span class="k">as</span> <span class="n">_</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">override</span><span class="p">,</span> <span class="n">pgettext_lazy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i18nfield.fields</span><span class="w"> </span><span class="kn">import</span> <span class="n">I18nCharField</span><span class="p">,</span> <span class="n">I18nTextField</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SendMailException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.models.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PretalxModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventUrls</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.mail.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_mail_context</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.mail.signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">queuedmail_post_send</span><span class="p">,</span> <span class="n">queuedmail_pre_send</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_prefixed_subject</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">prefix</span> <span class="o">:=</span> <span class="n">event</span><span class="o">.</span><span class="n">mail_settings</span><span class="p">[</span><span class="s2">&quot;subject_prefix&quot;</span><span class="p">]):</span>
+        <span class="k">return</span> <span class="n">subject</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">prefix</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">prefix</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">)):</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">]&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MailTemplateRoles</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">TextChoices</span><span class="p">):</span>
+    <span class="n">NEW_SUBMISSION</span> <span class="o">=</span> <span class="s2">&quot;submission.new&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Acknowledge proposal submission&quot;</span><span class="p">)</span>
+    <span class="n">NEW_SUBMISSION_INTERNAL</span> <span class="o">=</span> <span class="s2">&quot;submission.new.internal&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span>
+        <span class="s2">&quot;New proposal (organiser notification)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">SUBMISSION_ACCEPT</span> <span class="o">=</span> <span class="s2">&quot;submission.state.accepted&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Proposal accepted&quot;</span><span class="p">)</span>
+    <span class="n">SUBMISSION_REJECT</span> <span class="o">=</span> <span class="s2">&quot;submission.state.rejected&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Proposal rejected&quot;</span><span class="p">)</span>
+    <span class="n">NEW_SPEAKER_INVITE</span> <span class="o">=</span> <span class="s2">&quot;speaker.invite&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span>
+        <span class="s2">&quot;Add a speaker to a proposal (new account)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">EXISTING_SPEAKER_INVITE</span> <span class="o">=</span> <span class="s2">&quot;speaker.invite.existing&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span>
+        <span class="s2">&quot;Add a speaker to a proposal (existing account)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">QUESTION_REMINDER</span> <span class="o">=</span> <span class="s2">&quot;question.reminder&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Unanswered questions reminder&quot;</span><span class="p">)</span>
+    <span class="n">NEW_SCHEDULE</span> <span class="o">=</span> <span class="s2">&quot;schedule.new&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;New schedule published&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MailTemplate">
+<a class="viewcode-back" href="../../../developer/interfaces/models.html#pretalx.mail.models.MailTemplate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MailTemplate</span><span class="p">(</span><span class="n">PretalxModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;MailTemplates can be used to create.</span>
+
+<span class="sd">    :class:`~pretalx.mail.models.QueuedMail` objects.</span>
+
+<span class="sd">    The process does not come with variable substitution except for</span>
+<span class="sd">    special cases, for now.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">event</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;event.Event&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;mail_templates&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">role</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">MailTemplateRoles</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subject</span> <span class="o">=</span> <span class="n">I18nCharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">pgettext_lazy</span><span class="p">(</span><span class="s2">&quot;email subject&quot;</span><span class="p">,</span> <span class="s2">&quot;Subject&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">I18nTextField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Text&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">reply_to</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Reply-To&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;Change the Reply-To address if you do not want to use the default organiser address&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">bcc</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;BCC&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;Enter comma separated addresses. Will receive a blind copy of every mail sent from this template. This may be a LOT!&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="c1"># Auto-created templates are created when mass emails are sent out. They are only used to re-create similar</span>
+    <span class="c1"># emails, and are never shown in a list of email templates or anywhere else.</span>
+    <span class="n">is_auto_created</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">unique_together</span> <span class="o">=</span> <span class="p">((</span><span class="s2">&quot;event&quot;</span><span class="p">,</span> <span class="s2">&quot;role&quot;</span><span class="p">),)</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">urls</span><span class="p">(</span><span class="n">EventUrls</span><span class="p">):</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">edit</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.event.orga_urls.mail_templates}{self.pk}</span><span class="s2">/&quot;</span>
+        <span class="n">delete</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">delete&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Help with debugging.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;MailTemplate(event=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">slug</span><span class="si">}</span><span class="s2">, subject=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+<div class="viewcode-block" id="MailTemplate.to_mail">
+<a class="viewcode-back" href="../../../developer/interfaces/models.html#pretalx.mail.models.MailTemplate.to_mail">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_mail</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">user</span><span class="p">,</span>
+        <span class="n">event</span><span class="p">,</span>
+        <span class="n">locale</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">context_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip_queue</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">commit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">allow_empty_address</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">submissions</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">attachments</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a :class:`~pretalx.mail.models.QueuedMail` object from a</span>
+<span class="sd">        MailTemplate.</span>
+
+<span class="sd">        :param user: Either a :class:`~pretalx.person.models.user.User` or an</span>
+<span class="sd">            email address as a string.</span>
+<span class="sd">        :param submissions: A list of submissions to which this email belongs.</span>
+<span class="sd">            This is handled as an addition to any `submission` object present</span>
+<span class="sd">            in ``context_kwargs``.</span>
+<span class="sd">        :param event: The event to which this email belongs. May be ``None``.</span>
+<span class="sd">        :param locale: The locale will be set via the event and the recipient,</span>
+<span class="sd">            but can be overridden with this parameter.</span>
+<span class="sd">        :param context: Context to be used when rendering the template. Merged with</span>
+<span class="sd">            all context available via get_mail_context.</span>
+<span class="sd">        :param context_kwargs: Passed to get_mail_context to retrieve the correct</span>
+<span class="sd">            context when rendering the template.</span>
+<span class="sd">        :param skip_queue: Send directly. If combined with commit=False, this will</span>
+<span class="sd">            remove any logging and traces.</span>
+<span class="sd">        :param commit: Set ``False`` to return an unsaved object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.person.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">address</span> <span class="o">=</span> <span class="n">user</span>
+            <span class="n">users</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">User</span><span class="p">):</span>
+            <span class="n">address</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">users</span> <span class="o">=</span> <span class="p">[</span><span class="n">user</span><span class="p">]</span>
+            <span class="n">locale</span> <span class="o">=</span> <span class="n">locale</span> <span class="ow">or</span> <span class="n">user</span><span class="o">.</span><span class="n">locale</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">user</span> <span class="ow">and</span> <span class="n">allow_empty_address</span><span class="p">:</span>
+            <span class="n">address</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">users</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;First argument to to_mail must be a string or a User, not &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">user</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">users</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">commit</span><span class="p">:</span>
+            <span class="n">address</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">)</span>
+            <span class="n">users</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">event</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span>
+
+        <span class="k">with</span> <span class="n">override</span><span class="p">(</span><span class="n">locale</span><span class="p">):</span>
+            <span class="n">context_kwargs</span> <span class="o">=</span> <span class="n">context_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+            <span class="n">context_kwargs</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">event</span>
+            <span class="n">default_context</span> <span class="o">=</span> <span class="n">get_mail_context</span><span class="p">(</span><span class="o">**</span><span class="n">context_kwargs</span><span class="p">)</span>
+            <span class="n">default_context</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">context</span> <span class="ow">or</span> <span class="p">{})</span>
+            <span class="n">context</span> <span class="o">=</span> <span class="n">default_context</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">subject</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SendMailException</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Experienced KeyError when rendering email text: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="n">subject</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[:</span><span class="mi">198</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;…&quot;</span>
+
+            <span class="n">mail</span> <span class="o">=</span> <span class="n">QueuedMail</span><span class="p">(</span>
+                <span class="n">event</span><span class="o">=</span><span class="n">event</span><span class="p">,</span>
+                <span class="n">template</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">to</span><span class="o">=</span><span class="n">address</span><span class="p">,</span>
+                <span class="n">reply_to</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reply_to</span><span class="p">,</span>
+                <span class="n">bcc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bcc</span><span class="p">,</span>
+                <span class="n">subject</span><span class="o">=</span><span class="n">subject</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+                <span class="n">locale</span><span class="o">=</span><span class="n">locale</span><span class="p">,</span>
+                <span class="n">attachments</span><span class="o">=</span><span class="n">attachments</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">commit</span><span class="p">:</span>
+                <span class="n">mail</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="n">submissions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">submissions</span> <span class="ow">or</span> <span class="p">[])</span>
+                <span class="k">if</span> <span class="n">submission</span> <span class="o">:=</span> <span class="n">context_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;submission&quot;</span><span class="p">):</span>
+                    <span class="n">submissions</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">submission</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">submissions</span><span class="p">:</span>
+                    <span class="n">mail</span><span class="o">.</span><span class="n">submissions</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">submissions</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">users</span><span class="p">:</span>
+                    <span class="n">mail</span><span class="o">.</span><span class="n">to_users</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">skip_queue</span><span class="p">:</span>
+                <span class="n">mail</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">mail</span></div>
+
+
+    <span class="n">to_mail</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="QueuedMail">
+<a class="viewcode-back" href="../../../developer/interfaces/models.html#pretalx.mail.models.QueuedMail">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">QueuedMail</span><span class="p">(</span><span class="n">PretalxModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Emails in pretalx are rarely sent directly, hence the name QueuedMail.</span>
+
+<span class="sd">    This mechanism allows organisers to make sure they send out the right</span>
+<span class="sd">    content, and to include personal changes in emails.</span>
+
+<span class="sd">    :param sent: ``None`` if the mail has not been sent yet.</span>
+<span class="sd">    :param to_users: All known users to whom this email is addressed.</span>
+<span class="sd">    :param to: A comma-separated list of email addresses to whom this email</span>
+<span class="sd">        is addressed. Does not contain any email addresses known to belong</span>
+<span class="sd">        to users.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">event</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;event.Event&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;queued_mails&quot;</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">template</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="n">MailTemplate</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;mails&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">SET_NULL</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">to</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;To&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;One email address or several addresses separated by commas.&quot;</span><span class="p">),</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">to_users</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;person.User&quot;</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;mails&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">reply_to</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Reply-To&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;By default, the organiser address is used as Reply-To.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;CC&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;One email address or several addresses separated by commas.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">bcc</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;BCC&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;One email address or several addresses separated by commas.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">subject</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="n">pgettext_lazy</span><span class="p">(</span><span class="s2">&quot;email subject&quot;</span><span class="p">,</span> <span class="s2">&quot;Subject&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Text&quot;</span><span class="p">))</span>
+    <span class="n">sent</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Sent at&quot;</span><span class="p">))</span>
+    <span class="n">locale</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">attachments</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">submissions</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.Submission&quot;</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;mails&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">urls</span><span class="p">(</span><span class="n">EventUrls</span><span class="p">):</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">edit</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.event.orga_urls.mail}{self.pk}</span><span class="s2">/&quot;</span>
+        <span class="n">delete</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">delete&quot;</span>
+        <span class="n">send</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">send&quot;</span>
+        <span class="n">copy</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">copy&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Help with debugging.&quot;&quot;&quot;</span>
+        <span class="n">sent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sent</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sent</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;OutboxMail(to=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="si">}</span><span class="s2">, subject=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="si">}</span><span class="s2">, sent=</span><span class="si">{</span><span class="n">sent</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.templatetags.rich_text</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_markdown_abslinks</span>
+
+        <span class="n">event</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;event&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">event</span><span class="p">:</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">mail_settings</span><span class="p">[</span><span class="s2">&quot;signature&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">sig</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;-- &quot;</span><span class="p">):</span>
+                <span class="n">sig</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">3</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">body_md</span> <span class="o">=</span> <span class="n">render_markdown_abslinks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">html_context</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;body&quot;</span><span class="p">:</span> <span class="n">body_md</span><span class="p">,</span>
+            <span class="s2">&quot;event&quot;</span><span class="p">:</span> <span class="n">event</span><span class="p">,</span>
+            <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">primary_color</span> <span class="k">if</span> <span class="n">event</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">settings</span><span class="o">.</span><span class="n">DEFAULT_EVENT_PRIMARY_COLOR</span><span class="p">,</span>
+            <span class="s2">&quot;locale&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="p">,</span>
+            <span class="s2">&quot;rtl&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGES_RTL</span><span class="p">,</span>
+            <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">,</span>
+            <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="n">sig</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">get_template</span><span class="p">(</span><span class="s2">&quot;mail/mailwrapper.html&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">html_context</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;event&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">event</span><span class="o">.</span><span class="n">mail_settings</span><span class="p">[</span><span class="s2">&quot;signature&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">mail_settings</span><span class="p">[</span><span class="s2">&quot;signature&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sig</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;-- &quot;</span><span class="p">):</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;-- </span><span class="se">\n</span><span class="si">{</span><span class="n">sig</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">sig</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prefixed_subject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;event&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject</span>
+        <span class="k">return</span> <span class="n">get_prefixed_subject</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QueuedMail.send">
+<a class="viewcode-back" href="../../../developer/interfaces/models.html#pretalx.mail.models.QueuedMail.send">[docs]</a>
+    <span class="nd">@transaction</span><span class="o">.</span><span class="n">atomic</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requestor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">orga</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sends an email.</span>
+
+<span class="sd">        :param requestor: The user issuing the command. Used for logging.</span>
+<span class="sd">        :type requestor: :class:`~pretalx.person.models.user.User`</span>
+<span class="sd">        :param orga: Was this email sent as by a privileged user?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sent</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="n">_</span><span class="p">(</span><span class="s2">&quot;This mail has been sent already. It cannot be sent again.&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">has_event</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;event&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">to</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">to</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="n">to</span> <span class="o">+=</span> <span class="p">[</span><span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_users</span><span class="o">.</span><span class="n">all</span><span class="p">()]</span>
+            <span class="k">if</span> <span class="n">has_event</span><span class="p">:</span>
+                <span class="n">queuedmail_pre_send</span><span class="o">.</span><span class="n">send_robust</span><span class="p">(</span>
+                    <span class="n">sender</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span>
+                    <span class="n">mail</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># The pre_send signal must have handled the sending already,</span>
+            <span class="c1"># so there is nothing left for us to do.</span>
+            <span class="k">return</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.mail</span><span class="w"> </span><span class="kn">import</span> <span class="n">mail_send_task</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_text</span><span class="p">()</span>
+        <span class="n">body_html</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_html</span><span class="p">()</span>
+        <span class="n">mail_send_task</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;to&quot;</span><span class="p">:</span> <span class="n">to</span><span class="p">,</span>
+                <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefixed_subject</span><span class="p">,</span>
+                <span class="s2">&quot;body&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
+                <span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="n">body_html</span><span class="p">,</span>
+                <span class="s2">&quot;reply_to&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reply_to</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;event&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">pk</span> <span class="k">if</span> <span class="n">has_event</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;cc&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cc</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;bcc&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bcc</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;attachments&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">attachments</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">ignore_result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sent</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_action</span><span class="p">(</span>
+                <span class="s2">&quot;pretalx.mail.sent&quot;</span><span class="p">,</span>
+                <span class="n">person</span><span class="o">=</span><span class="n">requestor</span><span class="p">,</span>
+                <span class="n">orga</span><span class="o">=</span><span class="n">orga</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;to_users&quot;</span><span class="p">:</span> <span class="p">[(</span><span class="n">user</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span> <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_users</span><span class="o">.</span><span class="n">all</span><span class="p">()]</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">queuedmail_post_send</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+                <span class="n">sender</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span>
+                <span class="n">mail</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+    <span class="n">send</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="QueuedMail.copy_to_draft">
+<a class="viewcode-back" href="../../../developer/interfaces/models.html#pretalx.mail.models.QueuedMail.copy_to_draft">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy_to_draft</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copies an already sent email to a new object and adds it to the</span>
+<span class="sd">        outbox.&quot;&quot;&quot;</span>
+        <span class="n">new_mail</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">new_mail</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">new_mail</span><span class="o">.</span><span class="n">sent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">new_mail</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_users</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">new_mail</span><span class="o">.</span><span class="n">to_users</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_mail</span></div>
+
+
+    <span class="n">copy_to_draft</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/_modules/pretalx/mail/models" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../../../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../../../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../../_static/copybutton.js"></script> 
+
+</body>
+</html>

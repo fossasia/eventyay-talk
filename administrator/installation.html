@@ -1,0 +1,466 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../genindex.html"/>
+    <link rel="search" title="Search" href="../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Administrator documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-0-prerequisites">Step 0: Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-unix-user">Step 1: Unix user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-database-setup">Step 2: Database setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-package-dependencies">Step 3: Package dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-4-configuration">Step 4: Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-5-installation">Step 5: Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-6-starting-pretalx-as-a-service">Step 6: Starting pretalx as a service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-7-reverse-proxy">Step 7: Reverse proxy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-8-check-the-installation">Step 8: Check the installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-9-provide-periodic-tasks">Step 9: Provide periodic tasks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="configure.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maintenance.html">Maintenance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html">Management commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="installation">
+<span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h1>
+<p>This guide will help you to install pretalx on Linux. This setup is suitable to
+support events in usual sizes, but the guide does not go into performance
+tuning or customisation options beyond the standard settings.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>While we try to make it straightforward to run pretalx, it still
+requires some Linux experience to get it right, particularly to
+make sure that standard security practices are followed. If
+you’re not feeling comfortable managing a Linux server, check
+out our hosting and service offers at <a class="reference external" href="https://pretalx.com/p/about/">pretalx.com</a>.</p>
+</div>
+<p>For the more automation-savvy, we also provide an <a class="reference external" href="https://github.com/pretalx/ansible-pretalx">Ansible role</a> that follows
+this guide. If you prefer a docker setup, there is a <a class="reference external" href="https://github.com/pretalx/pretalx-docker">docker-compose setup</a>.
+Please note that the docker setup is community provided and not officially
+supported.</p>
+<section id="step-0-prerequisites">
+<h2>Step 0: Prerequisites<a class="headerlink" href="#step-0-prerequisites" title="Link to this heading">¶</a></h2>
+<p>Please set up the following systems beforehand. We can’t go into their use
+and configuration here, but please have a look at the linked pages.</p>
+<ul class="simple">
+<li><p><strong>Python 3.11 or newer</strong></p></li>
+<li><p>An SMTP server to send out mails</p></li>
+<li><p>An HTTP reverse proxy like <a class="reference external" href="https://botleg.com/stories/https-with-lets-encrypt-and-nginx/">nginx</a> to allow HTTPS connections and serve
+files from the filesystem</p></li>
+<li><p>A database server: <a class="reference external" href="https://www.postgresql.org/docs/">PostgreSQL</a> 13+, or SQLite 3. Given the choice, we’d
+recommend to use PostgreSQL.</p></li>
+<li><p>A <a class="reference external" href="https://redis.io/docs/latest/">redis</a> server, if you want to use pretalx with an asynchronous task
+runner or improved caching.</p></li>
+<li><p><a class="reference external" href="https://github.com/nodesource/distributions/blob/master/README.md">nodejs</a> and npm (usually bundled with nodejs). You’ll need a <a class="reference external" href="https://nodejs.org/en/about/previous-releases">supported
+version of nodejs</a>.</p></li>
+</ul>
+<p>Please ensure that the environment used to run pretalx is configured to work
+with non-ASCII file names. You can check this by running:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import sys; print(sys.getfilesystemencoding())&quot;</span>
+<span class="go">utf-8</span>
+</pre></div>
+</div>
+</section>
+<section id="step-1-unix-user">
+<h2>Step 1: Unix user<a class="headerlink" href="#step-1-unix-user" title="Link to this heading">¶</a></h2>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>All code lines prepended with a <code class="docutils literal notranslate"><span class="pre">#</span></code> symbol are commands that you
+need to execute on your server as the <code class="docutils literal notranslate"><span class="pre">root</span></code> user (e.g. using
+<code class="docutils literal notranslate"><span class="pre">sudo</span></code>); you should run all lines prepended with a <code class="docutils literal notranslate"><span class="pre">$</span></code> symbol as
+the <code class="docutils literal notranslate"><span class="pre">pretalx</span></code> user.</p>
+</div>
+<p>As we do not want to run pretalx as root, we first create a new unprivileged user:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>adduser<span class="w"> </span>pretalx<span class="w"> </span>--disabled-password<span class="w"> </span>--home<span class="w"> </span>/var/pretalx
+</pre></div>
+</div>
+</section>
+<section id="step-2-database-setup">
+<h2>Step 2: Database setup<a class="headerlink" href="#step-2-database-setup" title="Link to this heading">¶</a></h2>
+<p>pretalx runs with PostgreSQL or SQLite. If you’re using SQLite, you can skip
+this step, as there is no need to set up the database.</p>
+<p>We recommend using PostgreSQL. This is how you can set up a database for your
+pretalx installation – if you do not use PostgreSQL, please refer to the
+appropriate documentation on how to set up a database:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>createuser<span class="w"> </span>pretalx<span class="w"> </span>-P
+<span class="gp"># </span>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>createdb<span class="w"> </span>-O<span class="w"> </span>pretalx<span class="w"> </span>pretalx
+</pre></div>
+</div>
+<p>Make sure that your database encoding is UTF-8. You can check with this command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;SHOW SERVER_ENCODING&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="step-3-package-dependencies">
+<h2>Step 3: Package dependencies<a class="headerlink" href="#step-3-package-dependencies" title="Link to this heading">¶</a></h2>
+<p>Besides the packages above, you might need local system packages to build and
+run pretalx. We cannot maintain an up-to-date dependency list for all Linux
+flavours – on Ubuntu-like systems, you will need packages like:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">build-essential</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">libssl-dev</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python3-dev</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gettext</span></code></p></li>
+</ul>
+</section>
+<section id="step-4-configuration">
+<h2>Step 4: Configuration<a class="headerlink" href="#step-4-configuration" title="Link to this heading">¶</a></h2>
+<p>Now we’ll create a configuration directory and configuration file for pretalx:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>mkdir<span class="w"> </span>/etc/pretalx
+<span class="gp"># </span>touch<span class="w"> </span>/etc/pretalx/pretalx.cfg
+<span class="gp"># </span>chown<span class="w"> </span>-R<span class="w"> </span>pretalx:pretalx<span class="w"> </span>/etc/pretalx/
+<span class="gp"># </span>chmod<span class="w"> </span><span class="m">0600</span><span class="w"> </span>/etc/pretalx/pretalx.cfg
+</pre></div>
+</div>
+<p>This snippet can get you started with a basic configuration in your
+<code class="docutils literal notranslate"><span class="pre">/etc/pretalx/pretalx.cfg</span></code> file:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is an example pretalx configuration file.</span>
+<span class="c1"># Documentation: https://docs.pretalx.org/administrator/configure.html</span>
+
+<span class="k">[filesystem]</span>
+<span class="na">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/pretalx/data</span>
+<span class="na">static</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/pretalx/static</span>
+
+<span class="k">[site]</span>
+<span class="na">debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+<span class="na">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">https://eventyay.mydomain.com</span>
+<span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">eventyay</span>
+
+<span class="k">[database]</span>
+<span class="na">backend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">postgresql</span>
+<span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">pretalx</span>
+<span class="na">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">pretalx</span>
+<span class="c1"># For PostgreSQL on the same host, we don&#39;t need one because we can use</span>
+<span class="c1"># peer authentification if our PostgreSQL user matches our unix user.</span>
+<span class="na">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Change this in production or you&#39;re going to have a bad time</span>
+<span class="c1"># For a remote host, supply an IP address</span>
+<span class="c1"># For local postgres authentication, you can leave the host empty</span>
+<span class="na">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">localhost</span>
+<span class="na">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">5432</span>
+
+<span class="k">[mail]</span>
+<span class="na">from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">admin@localhost</span>
+<span class="na">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">localhost</span>
+<span class="na">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">25</span>
+<span class="na">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">admin</span>
+<span class="na">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Change this in production or you&#39;re going to have a bad time</span>
+<span class="na">tls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+<span class="na">ssl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
+</pre></div>
+</div>
+<p>Refer to <a class="reference internal" href="configure.html#configure"><span class="std std-ref">Configuration</span></a> for a full list of configuration options – the
+options above are only the ones you’ll likely need to get started.</p>
+</section>
+<section id="step-5-installation">
+<h2>Step 5: Installation<a class="headerlink" href="#step-5-installation" title="Link to this heading">¶</a></h2>
+<p>For your Python installation, you’ll want to use a virtual environment to
+isolate the installation from system packages. Set up your virtual environment
+like this – you’ll only have to run this command once (that is, only once per
+Python version – when you upgrade from Python 3.13 to 3.14, you’ll need to
+remove the old <code class="docutils literal notranslate"><span class="pre">venv</span></code> directory and create it again the same way):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>/var/pretalx/venv
+</pre></div>
+</div>
+<p>Now, activate the virtual environment – you’ll have to run this command once
+per session whenever you’re interacting with <code class="docutils literal notranslate"><span class="pre">python</span></code>, <code class="docutils literal notranslate"><span class="pre">pip</span></code> or
+<code class="docutils literal notranslate"><span class="pre">pretalx</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">source</span><span class="w"> </span>/var/pretalx/venv/bin/activate
+</pre></div>
+</div>
+<p>Now, upgrade your pip and then install the required Python packages:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>-U<span class="w"> </span>pip<span class="w"> </span>setuptools<span class="w"> </span>wheel<span class="w"> </span>gunicorn
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You may need to replace all following mentions of <code class="docutils literal notranslate"><span class="pre">pip</span></code> with <code class="docutils literal notranslate"><span class="pre">pip3</span></code>.</p>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Database</p></th>
+<th class="head"><p>Command</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SQLite</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--user</span> <span class="pre">--upgrade-strategy</span> <span class="pre">eager</span> <span class="pre">-U</span> <span class="pre">pretalx</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>PostgreSQL</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade-strategy</span> <span class="pre">eager</span> <span class="pre">-U</span> <span class="pre">&quot;pretalx[postgres]&quot;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>If you intend to run pretalx with asynchronous task runners or with redis as
+cache server, you can add <code class="docutils literal notranslate"><span class="pre">[redis]</span></code> to the installation command, which will
+pull in the appropriate dependencies. Please note that you should also use
+<code class="docutils literal notranslate"><span class="pre">pretalx[redis]</span></code> when you upgrade pretalx in this case.</p>
+<p>We also need to create a data directory:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/var/pretalx/data/media
+</pre></div>
+</div>
+<p>We compile static files and translation data and create the database structure:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pretalx<span class="w"> </span>migrate
+<span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pretalx<span class="w"> </span>rebuild
+</pre></div>
+</div>
+<p>Now, create a user with administrator rights, an organiser and a team by running:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(venv)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pretalx<span class="w"> </span>init
+</pre></div>
+</div>
+</section>
+<section id="step-6-starting-pretalx-as-a-service">
+<h2>Step 6: Starting pretalx as a service<a class="headerlink" href="#step-6-starting-pretalx-as-a-service" title="Link to this heading">¶</a></h2>
+<p>We recommend starting pretalx using systemd to make sure it starts up after a
+reboot. Create a file named <code class="docutils literal notranslate"><span class="pre">/etc/systemd/system/pretalx-web.service</span></code>, and
+adjust the content to fit your system:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[Unit]</span>
+<span class="na">Description</span><span class="o">=</span><span class="s">pretalx web service</span>
+<span class="na">After</span><span class="o">=</span><span class="s">network.target</span>
+
+<span class="k">[Service]</span>
+<span class="na">User</span><span class="o">=</span><span class="s">pretalx</span>
+<span class="na">Group</span><span class="o">=</span><span class="s">pretalx</span>
+<span class="na">WorkingDirectory</span><span class="o">=</span><span class="s">/var/pretalx</span>
+<span class="na">ExecStart</span><span class="o">=</span><span class="s">/var/pretalx/.local/bin/gunicorn pretalx.wsgi </span>\
+<span class="w">                      </span><span class="s">--name pretalx --workers 4 </span>\
+<span class="w">                      </span><span class="s">--max-requests 1200  --max-requests-jitter 50 </span>\
+<span class="w">                      </span><span class="s">--log-level=info --bind=127.0.0.1:8345</span>
+<span class="na">Restart</span><span class="o">=</span><span class="s">on-failure</span>
+
+<span class="k">[Install]</span>
+<span class="na">WantedBy</span><span class="o">=</span><span class="s">multi-user.target</span>
+</pre></div>
+</div>
+<p>pretalx optionally runs with Celery, a service that allows for long-running
+tasks (like sending many emails) to be performed asynchronously in the
+background. We strongly recommend running pretalx with Celery workers, as some
+things, like cleaning up unused files, are otherwise not going to work.</p>
+<p>To run Celery workers, you’ll need a second service
+<code class="docutils literal notranslate"><span class="pre">/etc/systemd/system/pretalx-worker.service</span></code> with the following content:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[Unit]</span>
+<span class="na">Description</span><span class="o">=</span><span class="s">pretalx background worker</span>
+<span class="na">After</span><span class="o">=</span><span class="s">network.target</span>
+
+<span class="k">[Service]</span>
+<span class="na">User</span><span class="o">=</span><span class="s">pretalx</span>
+<span class="na">Group</span><span class="o">=</span><span class="s">pretalx</span>
+<span class="na">ExecStart</span><span class="o">=</span><span class="s">/var/pretalx/venv/bin/celery -A pretalx.celery_app worker -l info</span>
+<span class="na">WorkingDirectory</span><span class="o">=</span><span class="s">/var/pretalx</span>
+<span class="na">Restart</span><span class="o">=</span><span class="s">on-failure</span>
+
+<span class="k">[Install]</span>
+<span class="na">WantedBy</span><span class="o">=</span><span class="s">multi-user.target</span>
+</pre></div>
+</div>
+<p>You can now run the following commands to enable and start the services:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>systemctl<span class="w"> </span>daemon-reload
+<span class="gp"># </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>pretalx-web<span class="w"> </span>pretalx-worker
+<span class="gp"># </span>systemctl<span class="w"> </span>start<span class="w"> </span>pretalx-web<span class="w"> </span>pretalx-worker
+</pre></div>
+</div>
+</section>
+<section id="step-7-reverse-proxy">
+<h2>Step 7: Reverse proxy<a class="headerlink" href="#step-7-reverse-proxy" title="Link to this heading">¶</a></h2>
+<p>You’ll need to set up an HTTP reverse proxy to handle HTTPS connections. It
+does not particularly matter which one you use, as long as you make sure to use
+<a class="reference external" href="https://mozilla.github.io/server-side-tls/ssl-config-generator/">strong encryption settings</a>. Your proxy should</p>
+<ul class="simple">
+<li><p>serve all requests exclusively over HTTPS,</p></li>
+<li><p>follow established security practices regarding protocols and ciphers.</p></li>
+<li><p>optionally set best-practice headers like <code class="docutils literal notranslate"><span class="pre">Referrer-Policy</span></code> and
+<code class="docutils literal notranslate"><span class="pre">X-Content-Type-Options</span></code>,</p></li>
+<li><p>set the <code class="docutils literal notranslate"><span class="pre">X-Forwarded-For</span></code> and <code class="docutils literal notranslate"><span class="pre">X-Forwarded-Proto</span></code> headers,</p></li>
+<li><p>set the <code class="docutils literal notranslate"><span class="pre">Host</span></code> header,</p></li>
+<li><p>serve all requests for the <code class="docutils literal notranslate"><span class="pre">/static/</span></code> and <code class="docutils literal notranslate"><span class="pre">/media/</span></code> paths from the
+directories you set up in the previous step, without permitting directory
+listings or traversal. Files in the <code class="docutils literal notranslate"><span class="pre">/media/</span></code> directory should be served
+as attachments. You can use fairly aggressive cache settings for these URLs, and</p></li>
+<li><p>pass all other requests to the gunicorn server you set up in the previous step.</p></li>
+</ul>
+</section>
+<section id="step-8-check-the-installation">
+<h2>Step 8: Check the installation<a class="headerlink" href="#step-8-check-the-installation" title="Link to this heading">¶</a></h2>
+<p>You can make sure the web interface is up and look for any issues with:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>journalctl<span class="w"> </span>-u<span class="w"> </span>pretalx-web
+</pre></div>
+</div>
+<p>If you use Celery, you can do the same for the worker processes (for example in
+case the emails are not sent):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>journalctl<span class="w"> </span>-u<span class="w"> </span>pretalx-worker
+</pre></div>
+</div>
+<p>If you’re looking for errors, check the pretalx log. You can find the logging
+directory in the start-up output.</p>
+<p>Once pretalx is up and running, you can also find up to date administrator information
+at <a class="reference external" href="https://pretalx.yourdomain.com/orga/admin/">https://pretalx.yourdomain.com/orga/admin/</a>.</p>
+</section>
+<section id="step-9-provide-periodic-tasks">
+<h2>Step 9: Provide periodic tasks<a class="headerlink" href="#step-9-provide-periodic-tasks" title="Link to this heading">¶</a></h2>
+<p>There are a couple of things in pretalx that should be run periodically. It
+does not matter how you run them, so you can go with your choice of periodic
+tasks, be they systemd timers, cron, or something else entirely.</p>
+<p>In the same environment as you ran the previous pretalx commands (e.g. the
+<code class="docutils literal notranslate"><span class="pre">pretalx</span></code> user, using either the executable paths in the
+<code class="docutils literal notranslate"><span class="pre">/var/pretalx/venv</span></code> directory, or running <code class="docutils literal notranslate"><span class="pre">/var/pretalx/venv/bin/activate</span></code>
+first), you should run</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pretalx</span> <span class="pre">runperiodic</span></code> somewhere every five minutes and once per hour.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pretalx</span> <span class="pre">clearsessions</span></code> about once a month.</p></li>
+</ul>
+<p>You could for example configure the <code class="docutils literal notranslate"><span class="pre">pretalx</span></code> user cron like this:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">*/10 * * * * /var/pretalx/venv/bin/python -m pretalx runperiodic</span>
+</pre></div>
+</div>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
+<p>You made it! You should now be able to reach pretalx at
+<a class="reference external" href="https://pretalx.yourdomain.com/orga/">https://pretalx.yourdomain.com/orga/</a> Log in with the administrator account you
+configured above, and create your first event!</p>
+<p>Check out <a class="reference internal" href="configure.html#configure"><span class="std std-ref">Configuration</span></a> for details on the available configuration options.</p>
+<p>If you want to read about updates, backups, and monitoring, head over to our
+<a class="reference internal" href="maintenance.html#maintenance"><span class="std std-ref">Maintenance</span></a> documentation!</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/administrator/installation.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script> 
+
+</body>
+</html>

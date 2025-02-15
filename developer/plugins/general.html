@@ -1,0 +1,468 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>General APIs &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../../genindex.html"/>
+    <link rel="search" title="Search" href="../../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../setup.html">The development setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html">Contributing to pretalx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../translating.html">Translating pretalx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../concepts.html">Concepts and Terminology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interfaces/index.html">Interfaces and Utilities</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Plugin development</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="plugins.html">Creating a plugin</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">General APIs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-pretalx.common.signals">Core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exporters">Exporters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-pretalx.orga.signals">Organiser area</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-pretalx.cfp.signals">Display</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="customview.html">Creating custom views</a></li>
+<li class="toctree-l3"><a class="reference internal" href="recording.html">Writing an recording provider plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exporter.html">Writing an exporter plugin</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="general-apis">
+<span id="pluginsignals"></span><h1>General APIs<a class="headerlink" href="#general-apis" title="Link to this heading">¶</a></h1>
+<p>This page lists some general signals and hooks which do not belong to a
+specific plugin but might come in handy for all sorts of plugin.</p>
+<section id="module-pretalx.common.signals">
+<span id="core"></span><h2>Core<a class="headerlink" href="#module-pretalx.common.signals" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.common.signals.periodic_task">
+<span class="sig-prename descclassname"><span class="pre">pretalx.common.signals.</span></span><span class="sig-name descname"><span class="pre">periodic_task</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.dispatch.dispatcher.Signal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.common.signals.periodic_task" title="Link to this definition">¶</a></dt>
+<dd><p>This is a regular django signal (no pretalx event signal) that we send out every
+time the periodic task cronjob runs. This interval is not sharply defined, it can
+be everything between a minute and a day. The actions you perform should be
+idempotent, meaning it should not make a difference if this is sent out more often
+than expected.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.common.signals.register_locales">
+<span class="sig-prename descclassname"><span class="pre">pretalx.common.signals.</span></span><span class="sig-name descname"><span class="pre">register_locales</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.dispatch.dispatcher.Signal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.common.signals.register_locales" title="Link to this definition">¶</a></dt>
+<dd><p>To provide additional languages via plugins, you will have to provide some settings in
+the pretalx settings file, and return a list of the registered locales as response
+to this plugin signal. Every entry should be a tuple of two strings, the first being
+the locale code, the second being the display name of the locale. (Though pretalx will
+also accept just a locale code.)</p>
+<p>You should always return your locale when no <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument is given to
+make your locale available to the makemessages command. Otherwise, check that your
+plugin is enabled in the current event context if your locale should be scoped to
+events with your plugin activated.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.common.signals.register_my_data_exporters">
+<span class="sig-prename descclassname"><span class="pre">pretalx.common.signals.</span></span><span class="sig-name descname"><span class="pre">register_my_data_exporters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.common.signals.register_my_data_exporters" title="Link to this definition">¶</a></dt>
+<dd><p>This signal is sent out to get all known data exporters. Receivers should return a
+subclass of pretalx.common.exporter.BaseExporter</p>
+<p>As with all event plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.</p>
+</dd></dl>
+
+<dl class="py data" id="module-pretalx.submission.signals">
+<dt class="sig sig-object py" id="pretalx.submission.signals.submission_state_change">
+<span class="sig-prename descclassname"><span class="pre">pretalx.submission.signals.</span></span><span class="sig-name descname"><span class="pre">submission_state_change</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.submission.signals.submission_state_change" title="Link to this definition">¶</a></dt>
+<dd><p>This signal allows you to trigger additional events when a submission changes
+its state. You will receive the submission after it has been saved, the previous
+state, and the user triggering the change if available.
+Any exceptions raised will be ignored.</p>
+<p>As with all plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.
+Additionally, you will receive the keyword arguments <code class="docutils literal notranslate"><span class="pre">submission</span></code>, <code class="docutils literal notranslate"><span class="pre">old_state</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">user</span></code> (which may be <code class="docutils literal notranslate"><span class="pre">None</span></code>).
+When the submission is created or submitted from a draft state, <code class="docutils literal notranslate"><span class="pre">old_state</span></code> will be
+<code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="py data" id="module-pretalx.schedule.signals">
+<dt class="sig sig-object py" id="pretalx.schedule.signals.schedule_release">
+<span class="sig-prename descclassname"><span class="pre">pretalx.schedule.signals.</span></span><span class="sig-name descname"><span class="pre">schedule_release</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.schedule.signals.schedule_release" title="Link to this definition">¶</a></dt>
+<dd><p>This signal allows you to trigger additional events when a new schedule
+version is released. You will receive the new schedule and the user triggering
+the change (if any).
+Any exceptions raised will be ignored.</p>
+<p>As with all plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.
+Additionally, you will receive the keyword arguments <code class="docutils literal notranslate"><span class="pre">schedule</span></code>
+and <code class="docutils literal notranslate"><span class="pre">user</span></code> (which may be <code class="docutils literal notranslate"><span class="pre">None</span></code>).</p>
+</dd></dl>
+
+<dl class="py data" id="module-pretalx.mail.signals">
+<dt class="sig sig-object py" id="pretalx.mail.signals.queuedmail_post_send">
+<span class="sig-prename descclassname"><span class="pre">pretalx.mail.signals.</span></span><span class="sig-name descname"><span class="pre">queuedmail_post_send</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.mail.signals.queuedmail_post_send" title="Link to this definition">¶</a></dt>
+<dd><p>This signal is sent out after a <code class="docutils literal notranslate"><span class="pre">QueuedMail</span></code> has been sent. Return value
+of receivers will be ignored. Receivers must not alter any data of the
+<code class="docutils literal notranslate"><span class="pre">QueuedMail</span></code> instance.</p>
+<p>As with all event-plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will
+contain the event. Additionally, the <code class="docutils literal notranslate"><span class="pre">mail</span></code> keyword argument contains
+the <code class="docutils literal notranslate"><span class="pre">QueuedMail</span></code> instance itself.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.mail.signals.queuedmail_pre_send">
+<span class="sig-prename descclassname"><span class="pre">pretalx.mail.signals.</span></span><span class="sig-name descname"><span class="pre">queuedmail_pre_send</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.mail.signals.queuedmail_pre_send" title="Link to this definition">¶</a></dt>
+<dd><p>This signal is sent out before a <code class="docutils literal notranslate"><span class="pre">QueuedMail</span></code> will been sent.
+Receivers may set the <code class="docutils literal notranslate"><span class="pre">sent</span></code> timestamp to skip sending via the regular
+email backend. The email text and HTML is rendered after this signal has
+been processed, so you can also alter the email’s content here.
+Any exceptions raised by receivers will be ignored.</p>
+<p>Please note that this signal is only sent for <code class="docutils literal notranslate"><span class="pre">QueuedMail</span></code> instances that
+are saved/persisted in the database and that belong to an event. This means
+that you will not receive this signals for emails like password resets or
+draft reminders, or anything else that pretalx thinks should be private
+between the sender and the recipient.</p>
+<p>As with all event-plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will
+contain the event. Additionally, the <code class="docutils literal notranslate"><span class="pre">mail</span></code> keyword argument contains
+the <code class="docutils literal notranslate"><span class="pre">QueuedMail</span></code> instance itself.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.mail.signals.register_mail_placeholders">
+<span class="sig-prename descclassname"><span class="pre">pretalx.mail.signals.</span></span><span class="sig-name descname"><span class="pre">register_mail_placeholders</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.mail.signals.register_mail_placeholders" title="Link to this definition">¶</a></dt>
+<dd><p>This signal is sent out to get all known email text placeholders. Receivers should return
+an instance of a subclass of pretalx.mail.placeholder.BaseMailTextPlaceholder or a list of these.</p>
+<p>As with all event-plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.</p>
+</dd></dl>
+
+</section>
+<section id="exporters">
+<h2>Exporters<a class="headerlink" href="#exporters" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-pretalx.orga.signals">
+<span id="organiser-area"></span><h2>Organiser area<a class="headerlink" href="#module-pretalx.orga.signals" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.orga.signals.activate_event">
+<span class="sig-prename descclassname"><span class="pre">pretalx.orga.signals.</span></span><span class="sig-name descname"><span class="pre">activate_event</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.orga.signals.activate_event" title="Link to this definition">¶</a></dt>
+<dd><p>This signal is sent out before an event goes live. It allows any installed
+plugin to raise an Exception to prevent the event from going live. The
+exception message will be exposed to the user. If a string value is returned, pretalx
+will show it as a success message.
+You will get the request as a keyword argument <code class="docutils literal notranslate"><span class="pre">request</span></code>.
+Receivers are not expected to return a response.</p>
+<p>As with all plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.orga.signals.event_copy_data">
+<span class="sig-prename descclassname"><span class="pre">pretalx.orga.signals.</span></span><span class="sig-name descname"><span class="pre">event_copy_data</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.orga.signals.event_copy_data" title="Link to this definition">¶</a></dt>
+<dd><p>This signal is sent out when a new event is created as a clone of an existing event, i.e.
+the settings from the older event are copied to the newer one. You can listen to this
+signal to copy data or configuration stored within your plugin’s models as well.</p>
+<p>You don’t need to copy data inside the general settings storage which is cloned automatically,
+but you might need to modify that data.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event of the <strong>new</strong> event. The <code class="docutils literal notranslate"><span class="pre">other</span></code>
+keyword argument will contain the event slug to <strong>copy from</strong>. The keyword arguments
+<code class="docutils literal notranslate"><span class="pre">submission_type_map</span></code>, <code class="docutils literal notranslate"><span class="pre">question_map</span></code>, <code class="docutils literal notranslate"><span class="pre">track_map</span></code> and <code class="docutils literal notranslate"><span class="pre">speaker_information_map</span></code> contain
+mappings from object IDs in the original event to objects in the new event of the respective
+types.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.orga.signals.html_head">
+<span class="sig-prename descclassname"><span class="pre">pretalx.orga.signals.</span></span><span class="sig-name descname"><span class="pre">html_head</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.orga.signals.html_head" title="Link to this definition">¶</a></dt>
+<dd><p>This signal allows you to put code inside the HTML <code class="docutils literal notranslate"><span class="pre">&lt;head&gt;</span></code> tag of every page in the
+organiser backend. You will get the request as the keyword argument <code class="docutils literal notranslate"><span class="pre">request</span></code> and are
+expected to return plain HTML.</p>
+<p>As with all plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.
+Additionally, the signal will be called with the <code class="docutils literal notranslate"><span class="pre">request</span></code> it is processing.
+The receivers are expected to return HTML.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.orga.signals.nav_event">
+<span class="sig-prename descclassname"><span class="pre">pretalx.orga.signals.</span></span><span class="sig-name descname"><span class="pre">nav_event</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.orga.signals.nav_event" title="Link to this definition">¶</a></dt>
+<dd><p>This signal allows you to add additional views to the admin panel
+navigation. You will get the request as a keyword argument <code class="docutils literal notranslate"><span class="pre">request</span></code>.
+Receivers are expected to return a list of dictionaries. The dictionaries
+should contain at least the keys <code class="docutils literal notranslate"><span class="pre">label</span></code> and <code class="docutils literal notranslate"><span class="pre">url</span></code>. You can also return
+a ForkAwesome icon name with the key <code class="docutils literal notranslate"><span class="pre">icon</span></code>, it will  be respected depending
+on the type of navigation. You should also return an <code class="docutils literal notranslate"><span class="pre">active</span></code> key with a boolean
+set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, when this item should be marked as active. If the <code class="docutils literal notranslate"><span class="pre">children</span></code>
+key is present, the entries will be rendered as a dropdown menu.
+The <code class="docutils literal notranslate"><span class="pre">request</span></code> object will have an attribute <code class="docutils literal notranslate"><span class="pre">event</span></code>.</p>
+<p>If you use this, you should read the documentation on <a class="reference internal" href="customview.html#urlconf"><span class="std std-ref">how to deal with URLs</span></a>
+in pretalx.</p>
+<p>As with all plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.orga.signals.nav_event_settings">
+<span class="sig-prename descclassname"><span class="pre">pretalx.orga.signals.</span></span><span class="sig-name descname"><span class="pre">nav_event_settings</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.orga.signals.nav_event_settings" title="Link to this definition">¶</a></dt>
+<dd><p>This signal is sent out to collect additional settings sub-pages of an event.
+Receivers are expected to return a list of dictionaries. The dictionaries
+should contain at least the keys <code class="docutils literal notranslate"><span class="pre">label</span></code> and <code class="docutils literal notranslate"><span class="pre">url</span></code>. You should also return
+an <code class="docutils literal notranslate"><span class="pre">active</span></code> key with a boolean set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, when this item should be marked
+as active.</p>
+<p>As with all plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.
+A second keyword argument <code class="docutils literal notranslate"><span class="pre">request</span></code> will contain the request object.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.orga.signals.nav_global">
+<span class="sig-prename descclassname"><span class="pre">pretalx.orga.signals.</span></span><span class="sig-name descname"><span class="pre">nav_global</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.dispatch.dispatcher.Signal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.orga.signals.nav_global" title="Link to this definition">¶</a></dt>
+<dd><p>This signal allows you to add additional views to the navigation bar when no event is
+selected. You will get the request as a keyword argument <code class="docutils literal notranslate"><span class="pre">request</span></code>.
+Receivers are expected to return a list of dictionaries. The dictionaries
+should contain at least the keys <code class="docutils literal notranslate"><span class="pre">label</span></code> and <code class="docutils literal notranslate"><span class="pre">url</span></code>. You can also return
+a ForkAwesome icon name with the key <code class="docutils literal notranslate"><span class="pre">icon</span></code>, it will  be respected depending
+on the type of navigation. You should also return an <code class="docutils literal notranslate"><span class="pre">active</span></code> key with a boolean
+set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, when this item should be marked as active. If the <code class="docutils literal notranslate"><span class="pre">children</span></code>
+key is present, the entries will be rendered as a dropdown menu.</p>
+<p>If you use this, you should read the documentation on <a class="reference internal" href="customview.html#urlconf"><span class="std std-ref">how to deal with URLs</span></a>
+in pretalx.</p>
+<p>This is no <code class="docutils literal notranslate"><span class="pre">EventPluginSignal</span></code>, so you do not get the event in the <code class="docutils literal notranslate"><span class="pre">sender</span></code> argument
+and you may get the signal regardless of whether your plugin is active.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">pretalx.common.signals.</span></span><span class="sig-name descname"><span class="pre">activitylog_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em></dt>
+<dd><p>To display an instance of the <code class="docutils literal notranslate"><span class="pre">ActivityLog</span></code> model to a human user,
+<code class="docutils literal notranslate"><span class="pre">pretalx.common.signals.activitylog_display</span></code> will be sent out with an <code class="docutils literal notranslate"><span class="pre">activitylog</span></code>
+argument.</p>
+<p>The first received response that is not <code class="docutils literal notranslate"><span class="pre">None</span></code> will be used to display the log entry
+to the user. The receivers are expected to return plain (lazy) text.</p>
+<p>As with all event plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">pretalx.common.signals.</span></span><span class="sig-name descname"><span class="pre">activitylog_object_link</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em></dt>
+<dd><p>To display the relationship of an instance of the <code class="docutils literal notranslate"><span class="pre">ActivityLog</span></code> model to another model
+to a human user, <code class="docutils literal notranslate"><span class="pre">pretalx.common.signals.activitylog_object_link</span></code> will be sent out
+with an <code class="docutils literal notranslate"><span class="pre">activitylog</span></code> argument.</p>
+<p>The first received response that is not <code class="docutils literal notranslate"><span class="pre">None</span></code> will be used to display the related object
+to the user. The receivers are expected to return an HTML link as a string.
+Make sure that any user content in the HTML code you return is properly escaped!</p>
+<p>As with all event-plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.</p>
+</dd></dl>
+
+</section>
+<section id="module-pretalx.cfp.signals">
+<span id="display"></span><h2>Display<a class="headerlink" href="#module-pretalx.cfp.signals" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.cfp.signals.cfp_steps">
+<span class="sig-prename descclassname"><span class="pre">pretalx.cfp.signals.</span></span><span class="sig-name descname"><span class="pre">cfp_steps</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.cfp.signals.cfp_steps" title="Link to this definition">¶</a></dt>
+<dd><p>This signal allows you to add CfP steps of your own. This signal will expect a
+list of <code class="docutils literal notranslate"><span class="pre">pretalx.cfp.flow.BaseCfPStep</span></code> objects. The integration of CfP steps
+in the CfP workflow is currently considered <strong>unstable</strong> and may change without
+notice between versions.</p>
+<p>As with all plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.
+Additionally, the signal will be called with the <code class="docutils literal notranslate"><span class="pre">request</span></code> it is processing.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.cfp.signals.footer_link">
+<span class="sig-prename descclassname"><span class="pre">pretalx.cfp.signals.</span></span><span class="sig-name descname"><span class="pre">footer_link</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.cfp.signals.footer_link" title="Link to this definition">¶</a></dt>
+<dd><p>This signal allows you to add links to the footer of an event page. You are
+expected to return a dictionary containing the keys <code class="docutils literal notranslate"><span class="pre">label</span></code> and <code class="docutils literal notranslate"><span class="pre">url</span></code>.</p>
+<p>As with all plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.
+Additionally, the signal will be called with the <code class="docutils literal notranslate"><span class="pre">request</span></code> it is processing.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.cfp.signals.html_above_profile_page">
+<span class="sig-prename descclassname"><span class="pre">pretalx.cfp.signals.</span></span><span class="sig-name descname"><span class="pre">html_above_profile_page</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.cfp.signals.html_above_profile_page" title="Link to this definition">¶</a></dt>
+<dd><p>This signal is sent out to display additional information on the personal user
+profile page, above the submission list.</p>
+<p>As with all plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.
+Additionally, the signal will be called with the <code class="docutils literal notranslate"><span class="pre">request</span></code> it is processing.
+The receivers are expected to return HTML.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.cfp.signals.html_above_submission_list">
+<span class="sig-prename descclassname"><span class="pre">pretalx.cfp.signals.</span></span><span class="sig-name descname"><span class="pre">html_above_submission_list</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.cfp.signals.html_above_submission_list" title="Link to this definition">¶</a></dt>
+<dd><p>This signal is sent out to display additional information on the personal user
+submission list page, above the submission list.</p>
+<p>As with all plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.
+Additionally, the signal will be called with the <code class="docutils literal notranslate"><span class="pre">request</span></code> it is processing.
+The receivers are expected to return HTML.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.cfp.signals.html_head">
+<span class="sig-prename descclassname"><span class="pre">pretalx.cfp.signals.</span></span><span class="sig-name descname"><span class="pre">html_head</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.cfp.signals.html_head" title="Link to this definition">¶</a></dt>
+<dd><p>This signal allows you to put code inside the HTML <code class="docutils literal notranslate"><span class="pre">&lt;head&gt;</span></code> tag of every page
+in the frontend (i.e. everything not in the organiser backend). You will get the request
+as the keyword argument <code class="docutils literal notranslate"><span class="pre">request</span></code> and are expected to return plain HTML.</p>
+<p>As with all plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.
+Additionally, the signal will be called with the <code class="docutils literal notranslate"><span class="pre">request</span></code> it is processing.
+The receivers are expected to return HTML.</p>
+</dd></dl>
+
+<dl class="py data" id="module-pretalx.agenda.signals">
+<dt class="sig sig-object py" id="pretalx.agenda.signals.html_above_session_pages">
+<span class="sig-prename descclassname"><span class="pre">pretalx.agenda.signals.</span></span><span class="sig-name descname"><span class="pre">html_above_session_pages</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.agenda.signals.html_above_session_pages" title="Link to this definition">¶</a></dt>
+<dd><p>This signal is sent out to display additional information on the public session
+pages.</p>
+<p>As with all plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.
+Additionally, the signal will be called with the <code class="docutils literal notranslate"><span class="pre">request</span></code> it is processing, and
+the <code class="docutils literal notranslate"><span class="pre">submission</span></code> which is currently displayed.
+The receivers are expected to return HTML.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.agenda.signals.html_below_session_pages">
+<span class="sig-prename descclassname"><span class="pre">pretalx.agenda.signals.</span></span><span class="sig-name descname"><span class="pre">html_below_session_pages</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.agenda.signals.html_below_session_pages" title="Link to this definition">¶</a></dt>
+<dd><p>This signal is sent out to display additional information on the public session
+pages.</p>
+<p>As with all plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain the event.
+Additionally, the signal will be called with the <code class="docutils literal notranslate"><span class="pre">request</span></code> it is processing, and
+the <code class="docutils literal notranslate"><span class="pre">submission</span></code> which is currently displayed.
+The receivers are expected to return HTML.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pretalx.agenda.signals.register_recording_provider">
+<span class="sig-prename descclassname"><span class="pre">pretalx.agenda.signals.</span></span><span class="sig-name descname"><span class="pre">register_recording_provider</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pretalx.common.signals.EventPluginSignal</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pretalx.agenda.signals.register_recording_provider" title="Link to this definition">¶</a></dt>
+<dd><p>This signal is sent out to gather all known recording providers. Receivers
+should return a subclass of pretalx.agenda.recording.BaseRecordingProvider.</p>
+<p>As with all event plugin signals, the <code class="docutils literal notranslate"><span class="pre">sender</span></code> keyword argument will contain
+the event.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/developer/plugins/general.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../_static/copybutton.js"></script> 
+
+</body>
+</html>

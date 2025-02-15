@@ -1,0 +1,620 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Configuration &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../genindex.html"/>
+    <link rel="search" title="Search" href="../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Administrator documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-filesystem-section">The filesystem section</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#data"><code class="docutils literal notranslate"><span class="pre">data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#media"><code class="docutils literal notranslate"><span class="pre">media</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#logs"><code class="docutils literal notranslate"><span class="pre">logs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#static"><code class="docutils literal notranslate"><span class="pre">static</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#the-site-section">The site section</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#debug"><code class="docutils literal notranslate"><span class="pre">debug</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#url"><code class="docutils literal notranslate"><span class="pre">url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#secret"><code class="docutils literal notranslate"><span class="pre">secret</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">media</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">static</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#csp-csp-script-csp-style-csp-img-csp-form"><code class="docutils literal notranslate"><span class="pre">csp</span></code>, <code class="docutils literal notranslate"><span class="pre">csp_script</span></code>, <code class="docutils literal notranslate"><span class="pre">csp_style</span></code>, <code class="docutils literal notranslate"><span class="pre">csp_img</span></code>, <code class="docutils literal notranslate"><span class="pre">csp_form</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#the-database-section">The database section</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#backend"><code class="docutils literal notranslate"><span class="pre">backend</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user"><code class="docutils literal notranslate"><span class="pre">user</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#password"><code class="docutils literal notranslate"><span class="pre">password</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#host"><code class="docutils literal notranslate"><span class="pre">host</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#port"><code class="docutils literal notranslate"><span class="pre">port</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#the-mail-section">The mail section</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#from"><code class="docutils literal notranslate"><span class="pre">from</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">host</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">port</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">user</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">password</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tls"><code class="docutils literal notranslate"><span class="pre">tls</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssl"><code class="docutils literal notranslate"><span class="pre">ssl</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#the-celery-section">The celery section</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">backend</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#broker"><code class="docutils literal notranslate"><span class="pre">broker</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#the-redis-section">The redis section</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#location"><code class="docutils literal notranslate"><span class="pre">location</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#session"><code class="docutils literal notranslate"><span class="pre">session</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#the-logging-section">The logging section</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#email"><code class="docutils literal notranslate"><span class="pre">email</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#email-level"><code class="docutils literal notranslate"><span class="pre">email_level</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#the-locale-section">The locale section</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#language-code"><code class="docutils literal notranslate"><span class="pre">language_code</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#time-zone"><code class="docutils literal notranslate"><span class="pre">time_zone</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#the-files-section">The files section</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#upload-limit"><code class="docutils literal notranslate"><span class="pre">upload_limit</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="maintenance.html">Maintenance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html">Management commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="configuration">
+<span id="configure"></span><h1>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h1>
+<p>You can configure pretalx using config files or environment variables. You can
+combine those two options, and their precedence is in this order:</p>
+<ol class="arabic">
+<li><p>Environment variables</p></li>
+<li><p>Configuration files</p>
+<ul>
+<li><p>The config file in the environment variable <code class="docutils literal notranslate"><span class="pre">PRETALX_CONFIG_FILE</span></code> if present, <strong>or</strong></p></li>
+<li><p>The following three configuration files in this order:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The config file <code class="docutils literal notranslate"><span class="pre">pretalx.cfg</span></code> in the <code class="docutils literal notranslate"><span class="pre">src</span></code> directory, next to the <code class="docutils literal notranslate"><span class="pre">pretalx.example.cfg</span></code> file.</p></li>
+<li><p>The config file <code class="docutils literal notranslate"><span class="pre">~/.pretalx.cfg</span></code> in the home of the executing user.</p></li>
+<li><p>The config file <code class="docutils literal notranslate"><span class="pre">/etc/pretalx/pretalx.cfg</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</li>
+<li><p>Sensible defaults</p></li>
+</ol>
+<p>This page explains the options grouped by configuration file sections. You’ll
+find the environment variable next to their corresponding settings.  A config
+file looks like this:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is an example pretalx configuration file.</span>
+<span class="c1"># Documentation: https://docs.pretalx.org/administrator/configure.html</span>
+
+<span class="k">[filesystem]</span>
+<span class="na">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/pretalx/data</span>
+<span class="na">static</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/var/pretalx/static</span>
+
+<span class="k">[site]</span>
+<span class="na">debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+<span class="na">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">https://eventyay.mydomain.com</span>
+<span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">eventyay</span>
+
+<span class="k">[database]</span>
+<span class="na">backend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">postgresql</span>
+<span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">pretalx</span>
+<span class="na">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">pretalx</span>
+<span class="c1"># For PostgreSQL on the same host, we don&#39;t need one because we can use</span>
+<span class="c1"># peer authentification if our PostgreSQL user matches our unix user.</span>
+<span class="na">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Change this in production or you&#39;re going to have a bad time</span>
+<span class="c1"># For a remote host, supply an IP address</span>
+<span class="c1"># For local postgres authentication, you can leave the host empty</span>
+<span class="na">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">localhost</span>
+<span class="na">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">5432</span>
+
+<span class="k">[mail]</span>
+<span class="na">from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">admin@localhost</span>
+<span class="na">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">localhost</span>
+<span class="na">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">25</span>
+<span class="na">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">admin</span>
+<span class="na">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Change this in production or you&#39;re going to have a bad time</span>
+<span class="na">tls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+<span class="na">ssl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
+</pre></div>
+</div>
+<p>The configuration format is the INI file format as understood by <a class="reference external" href="https://docs.python.org/3/library/configparser.html">Python</a>.
+It’s worth mentioning that you can use any of <code class="docutils literal notranslate"><span class="pre">yes</span></code>/<code class="docutils literal notranslate"><span class="pre">no</span></code>, <code class="docutils literal notranslate"><span class="pre">on</span></code>/<code class="docutils literal notranslate"><span class="pre">off</span></code>,
+<code class="docutils literal notranslate"><span class="pre">true</span></code>/<code class="docutils literal notranslate"><span class="pre">false</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code>/<code class="docutils literal notranslate"><span class="pre">0</span></code> to set boolean settings. You can add add
+comments by starting a line with <code class="docutils literal notranslate"><span class="pre">;</span></code> or <code class="docutils literal notranslate"><span class="pre">#</span></code>. Also strings don’t need to be
+quoted as every value is already a string.</p>
+<section id="the-filesystem-section">
+<h2>The filesystem section<a class="headerlink" href="#the-filesystem-section" title="Link to this heading">¶</a></h2>
+<section id="data">
+<h3><code class="docutils literal notranslate"><span class="pre">data</span></code><a class="headerlink" href="#data" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">data</span></code> option describes the path that is the base for all other
+directories. pretalx will also save its log files there. Unless you have a
+compelling reason to keep other files apart, setting the <code class="docutils literal notranslate"><span class="pre">data</span></code> option is
+the easiest way to configure file storage.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_DATA_DIR</span></code></p></li>
+<li><p><strong>Default:</strong> A directory called <code class="docutils literal notranslate"><span class="pre">data</span></code> next to pretalx’s <code class="docutils literal notranslate"><span class="pre">manage.py</span></code>.</p></li>
+</ul>
+</section>
+<section id="media">
+<h3><code class="docutils literal notranslate"><span class="pre">media</span></code><a class="headerlink" href="#media" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">media</span></code> option sets the media directory that contains user generated files. It needs to
+be writable by the pretalx process.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_FILESYSTEM_MEDIA</span></code></p></li>
+<li><p><strong>Default:</strong> A directory called <code class="docutils literal notranslate"><span class="pre">media</span></code> in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory (see above).</p></li>
+</ul>
+</section>
+<section id="logs">
+<h3><code class="docutils literal notranslate"><span class="pre">logs</span></code><a class="headerlink" href="#logs" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">logs</span></code> option sets the log directory that contains logged data. It needs to
+be writable by the pretalx process.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_FILESYSTEM_LOGS</span></code></p></li>
+<li><p><strong>Default:</strong> A directory called <code class="docutils literal notranslate"><span class="pre">logs</span></code> in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory (see above).</p></li>
+</ul>
+</section>
+<section id="static">
+<h3><code class="docutils literal notranslate"><span class="pre">static</span></code><a class="headerlink" href="#static" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">statics</span></code> option sets the directory that contains static files. It needs to
+be writable by the pretalx process. pretalx will put files there during the <code class="docutils literal notranslate"><span class="pre">rebuild</span></code> and
+<code class="docutils literal notranslate"><span class="pre">collectstatic</span></code> commands.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_FILESYSTEM_STATIC</span></code></p></li>
+<li><p><strong>Default:</strong> A directory called <code class="docutils literal notranslate"><span class="pre">static.dist</span></code> next to pretalx’s <code class="docutils literal notranslate"><span class="pre">manage.py</span></code>.</p></li>
+</ul>
+</section>
+</section>
+<section id="the-site-section">
+<h2>The site section<a class="headerlink" href="#the-site-section" title="Link to this heading">¶</a></h2>
+<section id="debug">
+<h3><code class="docutils literal notranslate"><span class="pre">debug</span></code><a class="headerlink" href="#debug" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Decides if pretalx runs in debug mode. Please use this mode for development and debugging, not
+for live usage.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_DEBUG</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">True</span></code> if you’re executing <code class="docutils literal notranslate"><span class="pre">runserver</span></code>, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise. <strong>Never run a
+production server in debug mode.</strong></p></li>
+</ul>
+</section>
+<section id="url">
+<h3><code class="docutils literal notranslate"><span class="pre">url</span></code><a class="headerlink" href="#url" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>pretalx uses this value when it has to render full URLs, for example in
+emails or feeds. It is also used to determined the allowed incoming hosts.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_SITE_URL</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">http://localhost</span></code></p></li>
+</ul>
+</section>
+<section id="secret">
+<h3><code class="docutils literal notranslate"><span class="pre">secret</span></code><a class="headerlink" href="#secret" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Every Django application has a secret that Django uses for cryptographic signing.
+You do not need to set this variable – pretalx will generate a secret key and save it in a local file if
+you do not set it.</p></li>
+<li><p><strong>Default:</strong> None</p></li>
+</ul>
+</section>
+<section id="id1">
+<h3><code class="docutils literal notranslate"><span class="pre">media</span></code><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The URL under which the media files (all files uploaded by users or generated by pretalx) should be.
+If you change this value, remember to change your web server configuration, too!</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_SITE_MEDIA</span></code></p></li>
+<li><p><strong>Default</strong>: <code class="docutils literal notranslate"><span class="pre">/media/</span></code></p></li>
+</ul>
+</section>
+<section id="id2">
+<h3><code class="docutils literal notranslate"><span class="pre">static</span></code><a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The URL under which the static files should be. This includes all JavaScript and CSS files that
+are packaged with pretalx. If you change this value, remember to change your web server configuration,
+too!</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_SITE_STATIC</span></code></p></li>
+<li><p><strong>Default</strong>: <code class="docutils literal notranslate"><span class="pre">/static/</span></code></p></li>
+</ul>
+</section>
+<section id="csp-csp-script-csp-style-csp-img-csp-form">
+<h3><code class="docutils literal notranslate"><span class="pre">csp</span></code>, <code class="docutils literal notranslate"><span class="pre">csp_script</span></code>, <code class="docutils literal notranslate"><span class="pre">csp_style</span></code>, <code class="docutils literal notranslate"><span class="pre">csp_img</span></code>, <code class="docutils literal notranslate"><span class="pre">csp_form</span></code><a class="headerlink" href="#csp-csp-script-csp-style-csp-img-csp-form" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Use any of these settings to update the matching CSP security headers. Your
+configuration values will be <em>added</em> to the default headers, they won’t replace
+them completely!
+If you need to include special values like <code class="docutils literal notranslate"><span class="pre">self</span></code>, remember to use single tick
+quotation marks: <code class="docutils literal notranslate"><span class="pre">csp=https://rixx.de,'self'</span></code></p></li>
+<li><p><strong>Environment variables:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_SITE_CSP</span></code>, <code class="docutils literal notranslate"><span class="pre">PRETALX_SITE_CSP_SCRIPT</span></code> etc.</p></li>
+<li><p><strong>Default</strong>: <code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="the-database-section">
+<h2>The database section<a class="headerlink" href="#the-database-section" title="Link to this heading">¶</a></h2>
+<section id="backend">
+<h3><code class="docutils literal notranslate"><span class="pre">backend</span></code><a class="headerlink" href="#backend" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>pretalx supports most SQL databases. You’ll need to install the appropriate
+Python library for each of them, as described in the table below.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_DB_TYPE</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">sqlite3</span></code></p></li>
+</ul>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Database</p></th>
+<th class="head"><p>Configuration string</p></th>
+<th class="head"><p>pip package</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PostgresQL</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">postgresql</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pretalx[postgres]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>SQLite</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pretalx</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="name">
+<h3><code class="docutils literal notranslate"><span class="pre">name</span></code><a class="headerlink" href="#name" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The database’s name.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_DB_NAME</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+</ul>
+</section>
+<section id="user">
+<h3><code class="docutils literal notranslate"><span class="pre">user</span></code><a class="headerlink" href="#user" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The database user, if applicable.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_DB_USER</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+</ul>
+</section>
+<section id="password">
+<h3><code class="docutils literal notranslate"><span class="pre">password</span></code><a class="headerlink" href="#password" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The database password, if applicable.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_DB_PASS</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+</ul>
+</section>
+<section id="host">
+<h3><code class="docutils literal notranslate"><span class="pre">host</span></code><a class="headerlink" href="#host" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The database host, or the socket location, as needed. For local PostgreSQL authentication, you can leave this variable empty.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_DB_HOST</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+</ul>
+</section>
+<section id="port">
+<h3><code class="docutils literal notranslate"><span class="pre">port</span></code><a class="headerlink" href="#port" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The database port, if applicable.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_DB_PORT</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="the-mail-section">
+<h2>The mail section<a class="headerlink" href="#the-mail-section" title="Link to this heading">¶</a></h2>
+<p>This section serves to configure the email server pretalx will use to send
+emails by default. Events can override these settings in the web interface.
+However, even with event-specific settings, pretalx will use these global
+settings for non-event-specific emails like password resets (even when
+triggered from an event context) and team invitations.</p>
+<section id="from">
+<h3><code class="docutils literal notranslate"><span class="pre">from</span></code><a class="headerlink" href="#from" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The fall-back sender address, e.g. for when pretalx sends event independent emails.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_MAIL_FROM</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">admin&#64;localhost</span></code></p></li>
+</ul>
+</section>
+<section id="id3">
+<h3><code class="docutils literal notranslate"><span class="pre">host</span></code><a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The email server host address.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_MAIL_HOST</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">localhost</span></code></p></li>
+</ul>
+</section>
+<section id="id4">
+<h3><code class="docutils literal notranslate"><span class="pre">port</span></code><a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The email server port.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_MAIL_PORT</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">25</span></code></p></li>
+</ul>
+</section>
+<section id="id5">
+<h3><code class="docutils literal notranslate"><span class="pre">user</span></code><a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The user account for mail server authentication, if needed.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_MAIL_USER</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+</ul>
+</section>
+<section id="id6">
+<h3><code class="docutils literal notranslate"><span class="pre">password</span></code><a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The password for mail server authentication, if needed.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_MAIL_PASSWORD</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+</ul>
+</section>
+<section id="tls">
+<h3><code class="docutils literal notranslate"><span class="pre">tls</span></code><a class="headerlink" href="#tls" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Should pretalx use TLS when sending mail? Please choose either TLS or SSL.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_MAIL_TLS</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+</ul>
+</section>
+<section id="ssl">
+<h3><code class="docutils literal notranslate"><span class="pre">ssl</span></code><a class="headerlink" href="#ssl" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Should pretalx use SSL when sending mail? Please choose either TLS or SSL.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_MAIL_SSL</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="the-celery-section">
+<h2>The celery section<a class="headerlink" href="#the-celery-section" title="Link to this heading">¶</a></h2>
+<p>Celery is not a requirement for pretalx. Celery runs as a separate process, and
+allows you to execute long-running tasks away from the usual request-response
+cycle.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If this config section is present, pretalx will assume that Celery
+workers exist and collect talks. If you include this section without
+providing Celery workers, no asynchronous tasks (like email sending)
+will be processed. If you do not use Celery, omit this section in
+your configuration.</p>
+</div>
+<section id="id7">
+<h3><code class="docutils literal notranslate"><span class="pre">backend</span></code><a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The celery backend. If you use a standard redis-based setup,
+<code class="docutils literal notranslate"><span class="pre">redis://127.0.0.1/1</span></code> would be a sensible value.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_CELERY_BACKEND</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+</ul>
+</section>
+<section id="broker">
+<h3><code class="docutils literal notranslate"><span class="pre">broker</span></code><a class="headerlink" href="#broker" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The celery broker. If you use a standard redis-based setup,
+<code class="docutils literal notranslate"><span class="pre">redis://127.0.0.1/2</span></code> would be a sensible value.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_CELERY_BROKER</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="the-redis-section">
+<h2>The redis section<a class="headerlink" href="#the-redis-section" title="Link to this heading">¶</a></h2>
+<p>If you configure a redis server, pretalx can use it for locking, caching and
+session storage to speed up operations. You will need to install <code class="docutils literal notranslate"><span class="pre">django_redis</span></code>.</p>
+<section id="location">
+<h3><code class="docutils literal notranslate"><span class="pre">location</span></code><a class="headerlink" href="#location" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The location of redis, if you want to use it as a cache.
+<code class="docutils literal notranslate"><span class="pre">redis://[:password]&#64;127.0.0.1:6379/1</span></code> would be a sensible value, or
+<code class="docutils literal notranslate"><span class="pre">unix://[:password]&#64;/path/to/socket.sock?db=0</span></code> if you prefer to use sockets.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_REDIS</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+</ul>
+</section>
+<section id="session">
+<h3><code class="docutils literal notranslate"><span class="pre">session</span></code><a class="headerlink" href="#session" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>If you want to use redis as your session storage, set this to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_REDIS_SESSIONS</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="the-logging-section">
+<h2>The logging section<a class="headerlink" href="#the-logging-section" title="Link to this heading">¶</a></h2>
+<section id="email">
+<h3><code class="docutils literal notranslate"><span class="pre">email</span></code><a class="headerlink" href="#email" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The email address (or addresses, comma separated) to send system logs to.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_LOGGING_EMAIL</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+</ul>
+</section>
+<section id="email-level">
+<h3><code class="docutils literal notranslate"><span class="pre">email_level</span></code><a class="headerlink" href="#email-level" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The log level to start sending emails at. Any of <code class="docutils literal notranslate"><span class="pre">[DEBUG,</span> <span class="pre">INFO,</span> <span class="pre">WARNING,</span> <span class="pre">ERROR,</span> <span class="pre">CRITICAL]</span></code>.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_LOGGING_EMAIL_LEVEL</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">ERROR</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="the-locale-section">
+<h2>The locale section<a class="headerlink" href="#the-locale-section" title="Link to this heading">¶</a></h2>
+<section id="language-code">
+<h3><code class="docutils literal notranslate"><span class="pre">language_code</span></code><a class="headerlink" href="#language-code" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The system’s default locale.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_LANGUAGE_CODE</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">en</span></code></p></li>
+</ul>
+</section>
+<section id="time-zone">
+<h3><code class="docutils literal notranslate"><span class="pre">time_zone</span></code><a class="headerlink" href="#time-zone" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The system’s default time zone as a <code class="docutils literal notranslate"><span class="pre">pytz</span></code> name.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_TIME_ZONE</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">UTC</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="the-files-section">
+<h2>The files section<a class="headerlink" href="#the-files-section" title="Link to this heading">¶</a></h2>
+<section id="upload-limit">
+<h3><code class="docutils literal notranslate"><span class="pre">upload_limit</span></code><a class="headerlink" href="#upload-limit" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>The maximum file size for uploads in MB.</p></li>
+<li><p><strong>Environment variable:</strong> <code class="docutils literal notranslate"><span class="pre">PRETALX_FILE_UPLOAD_LIMIT</span></code></p></li>
+<li><p><strong>Default:</strong> <code class="docutils literal notranslate"><span class="pre">10</span></code></p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/administrator/configure.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script> 
+
+</body>
+</html>

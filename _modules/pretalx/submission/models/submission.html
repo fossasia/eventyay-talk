@@ -1,0 +1,1254 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pretalx.submission.models.submission &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../../../../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../../../../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../../../../genindex.html"/>
+    <link rel="search" title="Search" href="../../../../search.html"/>
+
+   
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pretalx.submission.models.submission</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statistics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">repeat</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.core.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinValueValidator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONField</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db.models.fields.files</span><span class="w"> </span><span class="kn">import</span> <span class="n">FieldFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.shortcuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_object_or_404</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.crypto</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_random_string</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.timezone</span><span class="w"> </span><span class="kn">import</span> <span class="n">now</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gettext_lazy</span> <span class="k">as</span> <span class="n">_</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">ngettext_lazy</span> <span class="k">as</span> <span class="n">_n</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">override</span><span class="p">,</span> <span class="n">pgettext_lazy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django_scopes</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScopedManager</span><span class="p">,</span> <span class="n">scopes_disabled</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">serializers</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubmissionError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.models.choices</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.models.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenerateCode</span><span class="p">,</span> <span class="n">PretalxModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.text.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">path_with_hash</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.text.phrases</span><span class="w"> </span><span class="kn">import</span> <span class="n">phrases</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.text.serialize</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialize_duration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventUrls</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.person.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">submission_state_change</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_invite_code</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">32</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">get_random_string</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">allowed_chars</span><span class="o">=</span><span class="n">Submission</span><span class="o">.</span><span class="n">_code_charset</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">submission_image_path</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">path_with_hash</span><span class="p">(</span>
+        <span class="n">filename</span><span class="p">,</span> <span class="n">base_path</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">instance</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">slug</span><span class="si">}</span><span class="s2">/submissions/</span><span class="si">{</span><span class="n">instance</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">/&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SubmissionStates</span><span class="p">(</span><span class="n">Choices</span><span class="p">):</span>
+    <span class="n">SUBMITTED</span> <span class="o">=</span> <span class="s2">&quot;submitted&quot;</span>
+    <span class="n">ACCEPTED</span> <span class="o">=</span> <span class="s2">&quot;accepted&quot;</span>
+    <span class="n">REJECTED</span> <span class="o">=</span> <span class="s2">&quot;rejected&quot;</span>
+    <span class="n">CONFIRMED</span> <span class="o">=</span> <span class="s2">&quot;confirmed&quot;</span>
+    <span class="n">CANCELED</span> <span class="o">=</span> <span class="s2">&quot;canceled&quot;</span>
+    <span class="n">WITHDRAWN</span> <span class="o">=</span> <span class="s2">&quot;withdrawn&quot;</span>
+    <span class="n">DELETED</span> <span class="o">=</span> <span class="s2">&quot;deleted&quot;</span>
+    <span class="n">DRAFT</span> <span class="o">=</span> <span class="s2">&quot;draft&quot;</span>
+
+    <span class="n">display_values</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">SUBMITTED</span><span class="p">:</span> <span class="n">pgettext_lazy</span><span class="p">(</span><span class="s2">&quot;proposal status&quot;</span><span class="p">,</span> <span class="s2">&quot;submitted&quot;</span><span class="p">),</span>
+        <span class="n">ACCEPTED</span><span class="p">:</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;accepted&quot;</span><span class="p">),</span>
+        <span class="n">CONFIRMED</span><span class="p">:</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;confirmed&quot;</span><span class="p">),</span>
+        <span class="n">REJECTED</span><span class="p">:</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;rejected&quot;</span><span class="p">),</span>
+        <span class="n">CANCELED</span><span class="p">:</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;canceled&quot;</span><span class="p">),</span>
+        <span class="n">WITHDRAWN</span><span class="p">:</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;withdrawn&quot;</span><span class="p">),</span>
+        <span class="n">DELETED</span><span class="p">:</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;deleted&quot;</span><span class="p">),</span>
+        <span class="n">DRAFT</span><span class="p">:</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;draft&quot;</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="n">valid_choices</span> <span class="o">=</span> <span class="p">[(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">display_values</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+
+    <span class="n">valid_next_states</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">SUBMITTED</span><span class="p">:</span> <span class="p">(</span><span class="n">REJECTED</span><span class="p">,</span> <span class="n">WITHDRAWN</span><span class="p">,</span> <span class="n">ACCEPTED</span><span class="p">),</span>
+        <span class="n">REJECTED</span><span class="p">:</span> <span class="p">(</span><span class="n">ACCEPTED</span><span class="p">,</span> <span class="n">SUBMITTED</span><span class="p">),</span>
+        <span class="n">ACCEPTED</span><span class="p">:</span> <span class="p">(</span><span class="n">CONFIRMED</span><span class="p">,</span> <span class="n">CANCELED</span><span class="p">,</span> <span class="n">REJECTED</span><span class="p">,</span> <span class="n">SUBMITTED</span><span class="p">,</span> <span class="n">WITHDRAWN</span><span class="p">),</span>
+        <span class="n">CONFIRMED</span><span class="p">:</span> <span class="p">(</span><span class="n">ACCEPTED</span><span class="p">,</span> <span class="n">CANCELED</span><span class="p">),</span>
+        <span class="n">CANCELED</span><span class="p">:</span> <span class="p">(</span><span class="n">ACCEPTED</span><span class="p">,</span> <span class="n">CONFIRMED</span><span class="p">),</span>
+        <span class="n">WITHDRAWN</span><span class="p">:</span> <span class="p">(</span><span class="n">SUBMITTED</span><span class="p">),</span>
+        <span class="n">DELETED</span><span class="p">:</span> <span class="p">(),</span>
+        <span class="n">DRAFT</span><span class="p">:</span> <span class="p">(</span><span class="n">SUBMITTED</span><span class="p">,),</span>
+    <span class="p">}</span>
+
+    <span class="n">method_names</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">SUBMITTED</span><span class="p">:</span> <span class="s2">&quot;make_submitted&quot;</span><span class="p">,</span>
+        <span class="n">REJECTED</span><span class="p">:</span> <span class="s2">&quot;reject&quot;</span><span class="p">,</span>
+        <span class="n">ACCEPTED</span><span class="p">:</span> <span class="s2">&quot;accept&quot;</span><span class="p">,</span>
+        <span class="n">CONFIRMED</span><span class="p">:</span> <span class="s2">&quot;confirm&quot;</span><span class="p">,</span>
+        <span class="n">CANCELED</span><span class="p">:</span> <span class="s2">&quot;cancel&quot;</span><span class="p">,</span>
+        <span class="n">WITHDRAWN</span><span class="p">:</span> <span class="s2">&quot;withdraw&quot;</span><span class="p">,</span>
+        <span class="n">DELETED</span><span class="p">:</span> <span class="s2">&quot;remove&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">accepted_states</span> <span class="o">=</span> <span class="p">(</span><span class="n">ACCEPTED</span><span class="p">,</span> <span class="n">CONFIRMED</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_color</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">SUBMITTED</span><span class="p">:</span> <span class="s2">&quot;--color-info&quot;</span><span class="p">,</span>
+            <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">ACCEPTED</span><span class="p">:</span> <span class="s2">&quot;--color-success&quot;</span><span class="p">,</span>
+            <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">CONFIRMED</span><span class="p">:</span> <span class="s2">&quot;--color-success&quot;</span><span class="p">,</span>
+            <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">REJECTED</span><span class="p">:</span> <span class="s2">&quot;--color-danger&quot;</span><span class="p">,</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="s2">&quot;--color-grey&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SubmissionManager</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Manager</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="nb">super</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">get_queryset</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">DELETED</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">DRAFT</span><span class="p">)</span>
+        <span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DeletedSubmissionManager</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Manager</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">DELETED</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AllSubmissionManager</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Manager</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="Submission">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.submission.Submission">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Submission</span><span class="p">(</span><span class="n">GenerateCode</span><span class="p">,</span> <span class="n">PretalxModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Submissions are, next to :class:`~pretalx.event.models.event.Event`, the</span>
+<span class="sd">    central model in pretalx.</span>
+
+<span class="sd">    A submission, which belongs to exactly one event, can have multiple</span>
+<span class="sd">    speakers and a lot of other related data, such as a</span>
+<span class="sd">    :class:`~pretalx.submission.models.type.SubmissionType`, a</span>
+<span class="sd">    :class:`~pretalx.submission.models.track.Track`, multiple</span>
+<span class="sd">    :class:`~pretalx.submission.models.question.Answer` objects, and so on.</span>
+
+<span class="sd">    :param code: The unique alphanumeric identifier used to refer to a</span>
+<span class="sd">        submission.</span>
+<span class="sd">    :param state: The submission can be &#39;submitted&#39;, &#39;accepted&#39;, &#39;confirmed&#39;,</span>
+<span class="sd">        &#39;rejected&#39;, &#39;withdrawn&#39;, or &#39;canceled&#39;. State changes should be done via</span>
+<span class="sd">        the corresponding methods, like ``accept()``. The ``SubmissionStates``</span>
+<span class="sd">        class comes with a ``method_names`` dictionary for method lookup.</span>
+<span class="sd">    :param image: An image illustrating the talk or topic.</span>
+<span class="sd">    :param review_code: A token used in secret URLs giving read-access to the</span>
+<span class="sd">        submission.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">speakers</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;person.User&quot;</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;submissions&quot;</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">event</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;event.Event&quot;</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;submissions&quot;</span>
+    <span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Proposal title&quot;</span><span class="p">))</span>
+    <span class="n">submission_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>  <span class="c1"># Reasonable default must be set in form/view</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.SubmissionType&quot;</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;submissions&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Session type&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">track</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.Track&quot;</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;submissions&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Track&quot;</span><span class="p">),</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.Tag&quot;</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;submissions&quot;</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Tags&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">get_max_length</span><span class="p">(),</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">get_choices</span><span class="p">(),</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">SUBMITTED</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Proposal state&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">pending_state</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">get_max_length</span><span class="p">(),</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">get_choices</span><span class="p">(),</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Pending proposal state&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">abstract</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Abstract&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">phrases</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">use_markdown</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">phrases</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">use_markdown</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">notes</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Notes&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;These notes are meant for the organiser and won’t be made public.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">internal_notes</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Internal notes&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;Internal notes for other organisers/reviewers. Not visible to the speakers or the public.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Duration&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;The duration in minutes.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">slot_count</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Slot Count&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;How many times this session will take place.&quot;</span><span class="p">),</span>
+        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MinValueValidator</span><span class="p">(</span><span class="mi">1</span><span class="p">)],</span>
+    <span class="p">)</span>
+    <span class="n">content_locale</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGE_CODE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Language&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">is_featured</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Show this session in public list of featured sessions.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">do_not_record</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Don’t record this session.&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ImageField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">upload_to</span><span class="o">=</span><span class="n">submission_image_path</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Session image&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Use this if you want an illustration to go with your proposal.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">invitation_token</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">generate_invite_code</span><span class="p">)</span>
+    <span class="n">access_code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.SubmitterAccessCode&quot;</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;submissions&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">review_code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">generate_invite_code</span>
+    <span class="p">)</span>
+    <span class="n">anonymised_data</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">assigned_reviewers</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Assigned reviewers&quot;</span><span class="p">),</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;person.User&quot;</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;assigned_reviews&quot;</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">objects</span> <span class="o">=</span> <span class="n">ScopedManager</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&quot;event&quot;</span><span class="p">,</span> <span class="n">_manager_class</span><span class="o">=</span><span class="n">SubmissionManager</span><span class="p">)</span>
+    <span class="n">deleted_objects</span> <span class="o">=</span> <span class="n">ScopedManager</span><span class="p">(</span>
+        <span class="n">event</span><span class="o">=</span><span class="s2">&quot;event&quot;</span><span class="p">,</span> <span class="n">_manager_class</span><span class="o">=</span><span class="n">DeletedSubmissionManager</span>
+    <span class="p">)</span>
+    <span class="n">all_objects</span> <span class="o">=</span> <span class="n">ScopedManager</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&quot;event&quot;</span><span class="p">,</span> <span class="n">_manager_class</span><span class="o">=</span><span class="n">AllSubmissionManager</span><span class="p">)</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">urls</span><span class="p">(</span><span class="n">EventUrls</span><span class="p">):</span>
+        <span class="n">user_base</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.event.urls.user_submissions}{self.code}</span><span class="s2">/&quot;</span>
+        <span class="n">withdraw</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{user_base}</span><span class="s2">withdraw&quot;</span>
+        <span class="n">discard</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{user_base}</span><span class="s2">discard&quot;</span>
+        <span class="n">confirm</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{user_base}</span><span class="s2">confirm&quot;</span>
+        <span class="n">public_base</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.event.urls.base}</span><span class="s2">talk/</span><span class="si">{self.code}</span><span class="s2">&quot;</span>
+        <span class="n">public</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{public_base}</span><span class="s2">/&quot;</span>
+        <span class="n">feedback</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{public}</span><span class="s2">feedback/&quot;</span>
+        <span class="n">social_image</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{public}</span><span class="s2">og-image&quot;</span>
+        <span class="n">ical</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{public_base}</span><span class="s2">.ics&quot;</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.image_url}</span><span class="s2">&quot;</span>
+        <span class="n">invite</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{user_base}</span><span class="s2">invite&quot;</span>
+        <span class="n">accept_invitation</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">{self.event.urls.base}</span><span class="s2">invitation/</span><span class="si">{self.code}</span><span class="s2">/</span><span class="si">{self.invitation_token}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">review</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.event.urls.base}</span><span class="s2">talk/review/</span><span class="si">{self.review_code}</span><span class="s2">&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">orga_urls</span><span class="p">(</span><span class="n">EventUrls</span><span class="p">):</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">edit</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.event.orga_urls.submissions}{self.code}</span><span class="s2">/&quot;</span>
+        <span class="n">make_submitted</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">submit&quot;</span>
+        <span class="n">accept</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">accept&quot;</span>
+        <span class="n">reject</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">reject&quot;</span>
+        <span class="n">confirm</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">confirm&quot;</span>
+        <span class="n">delete</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">delete&quot;</span>
+        <span class="n">withdraw</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">withdraw&quot;</span>
+        <span class="n">cancel</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">cancel&quot;</span>
+        <span class="n">speakers</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">speakers/&quot;</span>
+        <span class="n">delete_speaker</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{speakers}</span><span class="s2">delete&quot;</span>
+        <span class="n">reviews</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">reviews/&quot;</span>
+        <span class="n">feedback</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">feedback/&quot;</span>
+        <span class="n">toggle_featured</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">toggle_featured&quot;</span>
+        <span class="n">anonymise</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">anonymise/&quot;</span>
+        <span class="n">quick_schedule</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.event.orga_urls.schedule}</span><span class="s2">quick/</span><span class="si">{self.code}</span><span class="s2">/&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">image_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">url</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfp_open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">deadline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">submission_type</span><span class="o">.</span><span class="n">deadline</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">deadline</span>
+        <span class="k">return</span> <span class="p">(</span><span class="ow">not</span> <span class="n">deadline</span><span class="p">)</span> <span class="ow">or</span> <span class="n">now</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">deadline</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">editable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">SUBMITTED</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfp_open</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">active_review_phase</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">active_review_phase</span><span class="o">.</span><span class="n">speakers_can_change_submissions</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">DRAFT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfp_open</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">accepted_states</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">anonymised</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">anonymised_data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_anonymised</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymised</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymised</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_anonymised&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reviewer_answers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">answers</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">question__is_visible_to_reviewers</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span>
+            <span class="s2">&quot;question__position&quot;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Submission.get_duration">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.submission.Submission.get_duration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns this submission&#39;s duration in minutes.</span>
+
+<span class="sd">        Falls back to the</span>
+<span class="sd">        :class:`~pretalx.submission.models.type.SubmissionType`&#39;s default</span>
+<span class="sd">        duration if none is set on the submission.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">submission_type</span><span class="o">.</span><span class="n">default_duration</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">tags</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="o">.</span><span class="n">color</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">tags</span>
+
+<div class="viewcode-block" id="Submission.update_duration">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.submission.Submission.update_duration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the submission&#39;s duration to its currently scheduled.</span>
+
+<span class="sd">        :class:`~pretalx.schedule.models.slot.TalkSlot`.</span>
+
+<span class="sd">        Should be called whenever the duration changes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">wip_schedule</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">submission</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">start__isnull</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">):</span>
+            <span class="n">slot</span><span class="o">.</span><span class="n">end</span> <span class="o">=</span> <span class="n">slot</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_duration</span><span class="p">())</span>
+            <span class="n">slot</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+
+    <span class="n">update_duration</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">is_creating</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pk</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_creating</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">DRAFT</span><span class="p">:</span>
+            <span class="n">submission_state_change</span><span class="o">.</span><span class="n">send_robust</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span>
+                <span class="n">submission</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">old_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_review_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the submission&#39;s calculated review scores.</span>
+
+<span class="sd">        Should be called whenever the tracks of a submission change.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">review</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reviews</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">review</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">update_score</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_state</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the new state is valid for this Submission (based on</span>
+<span class="sd">        SubmissionStates.valid_next_states).</span>
+
+<span class="sd">        If yes, set it and save the object. if no, raise a</span>
+<span class="sd">        SubmissionError with a helpful message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">valid_next_states</span> <span class="o">=</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">valid_next_states</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="p">[])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">new_state</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pending_state</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">update_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="s2">&quot;pending_state&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_talk_slots</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">force</span> <span class="ow">or</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="n">valid_next_states</span><span class="p">:</span>
+            <span class="n">old_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">new_state</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pending_state</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">REJECTED</span><span class="p">,</span>
+                <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">DELETED</span><span class="p">,</span>
+                <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">CANCELED</span><span class="p">,</span>
+                <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">WITHDRAWN</span><span class="p">,</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">is_featured</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">update_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="s2">&quot;pending_state&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_talk_slots</span><span class="p">()</span>
+            <span class="n">submission_state_change</span><span class="o">.</span><span class="n">send_robust</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span>
+                <span class="n">submission</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">old_state</span><span class="o">=</span><span class="n">old_state</span> <span class="k">if</span> <span class="n">old_state</span> <span class="o">!=</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">DRAFT</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">user</span><span class="o">=</span><span class="n">person</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">source_states</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">src</span>
+                <span class="k">for</span> <span class="n">src</span><span class="p">,</span> <span class="n">dsts</span> <span class="ow">in</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">valid_next_states</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="n">dsts</span>
+            <span class="p">)</span>
+
+            <span class="c1"># build an error message mentioning all states, which are valid source states for the desired new state.</span>
+            <span class="n">trans_or</span> <span class="o">=</span> <span class="n">pgettext_lazy</span><span class="p">(</span>
+                <span class="s1">&#39;used in talk confirm/accept/reject/...-errors, like &quot;... must be accepted OR foo OR bar ...&quot;&#39;</span><span class="p">,</span>
+                <span class="s2">&quot; or &quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">state_names</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">get_choices</span><span class="p">())</span>
+            <span class="n">source_states</span> <span class="o">=</span> <span class="n">trans_or</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">state_names</span><span class="p">[</span><span class="n">state</span><span class="p">])</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">source_states</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">SubmissionError</span><span class="p">(</span>
+                <span class="n">_</span><span class="p">(</span>
+                    <span class="s2">&quot;Proposal must be </span><span class="si">{src_states}</span><span class="s2"> not </span><span class="si">{state}</span><span class="s2"> to be </span><span class="si">{new_state}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">src_states</span><span class="o">=</span><span class="n">source_states</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">new_state</span><span class="o">=</span><span class="n">new_state</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="Submission.update_talk_slots">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.submission.Submission.update_talk_slots">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_talk_slots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Makes sure the correct amount of.</span>
+
+<span class="sd">        :class:`~pretalx.schedule.models.slot.TalkSlot` objects exists.</span>
+
+<span class="sd">        After an update or state change, talk slots should either be all</span>
+<span class="sd">        deleted, or all created, or the number of talk slots might need</span>
+<span class="sd">        to be adjusted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.schedule.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">TalkSlot</span>
+
+        <span class="n">scheduling_allowed</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">accepted_states</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">pending_state</span> <span class="ow">in</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">accepted_states</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">scheduling_allowed</span><span class="p">:</span>
+            <span class="n">TalkSlot</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">submission</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">schedule</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">wip_schedule</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="n">slot_count_current</span> <span class="o">=</span> <span class="n">TalkSlot</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">submission</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">schedule</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">wip_schedule</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">slot_count_current</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">slot_count</span>
+
+        <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># We build a list of all IDs to delete as .delete() doesn&#39;t work on sliced querysets.</span>
+            <span class="c1"># We delete unscheduled talks first.</span>
+            <span class="n">talks_to_delete</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">TalkSlot</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">submission</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">schedule</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">wip_schedule</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;room&quot;</span><span class="p">,</span> <span class="s2">&quot;is_visible&quot;</span><span class="p">)[:</span><span class="n">diff</span><span class="p">]</span>
+                <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">TalkSlot</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pk__in</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">talks_to_delete</span><span class="p">))</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">__</span> <span class="ow">in</span> <span class="n">repeat</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">diff</span><span class="p">)):</span>
+                <span class="n">TalkSlot</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                    <span class="n">submission</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">schedule</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">wip_schedule</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="n">TalkSlot</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">submission</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">schedule</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">wip_schedule</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">is_visible</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">CONFIRMED</span><span class="p">)</span></div>
+
+
+    <span class="n">update_talk_slots</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">send_initial_mails</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">person</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.mail.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">MailTemplateRoles</span>
+
+        <span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get_mail_template</span><span class="p">(</span><span class="n">MailTemplateRoles</span><span class="o">.</span><span class="n">NEW_SUBMISSION</span><span class="p">)</span>
+        <span class="n">template_text</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">locale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_email_locale</span><span class="p">(</span><span class="n">person</span><span class="o">.</span><span class="n">locale</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">override</span><span class="p">(</span><span class="n">locale</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;</span><span class="si">{full_submission_content}</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">text</span><span class="p">):</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">***********</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Full proposal content:</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">{full_submission_content}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">to_mail</span><span class="p">(</span>
+            <span class="n">user</span><span class="o">=</span><span class="n">person</span><span class="p">,</span>
+            <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span>
+            <span class="n">context_kwargs</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="n">person</span><span class="p">,</span>
+                <span class="s2">&quot;submission&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">context</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;full_submission_content&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_content_for_mail</span><span class="p">(),</span>
+            <span class="p">},</span>
+            <span class="n">skip_queue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">commit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Send immediately, but save a record</span>
+            <span class="n">locale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_email_locale</span><span class="p">(</span><span class="n">person</span><span class="o">.</span><span class="n">locale</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">refresh_from_db</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">template</span><span class="o">.</span><span class="n">text</span> <span class="o">!=</span> <span class="n">template_text</span><span class="p">:</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">template_text</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">mail_settings</span><span class="p">[</span><span class="s2">&quot;mail_on_new_submission&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get_mail_template</span><span class="p">(</span>
+                <span class="n">MailTemplateRoles</span><span class="o">.</span><span class="n">NEW_SUBMISSION_INTERNAL</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">to_mail</span><span class="p">(</span>
+                <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+                <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span>
+                <span class="n">context_kwargs</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="n">person</span><span class="p">,</span>
+                    <span class="s2">&quot;submission&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="n">context</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orga_url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">orga_urls</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">full</span><span class="p">()},</span>
+                <span class="n">skip_queue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">commit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Send immediately, don&#39;t save a record</span>
+                <span class="n">locale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">locale</span><span class="p">,</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="Submission.make_submitted">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.submission.Submission.make_submitted">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_submitted</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">person</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">orga</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">from_pending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the submission&#39;s state to &#39;submitted&#39;.&quot;&quot;&quot;</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">SUBMITTED</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">previous</span> <span class="o">==</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">DRAFT</span> <span class="ow">and</span> <span class="n">person</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_initial_mails</span><span class="p">(</span><span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_action</span><span class="p">(</span>
+                <span class="s2">&quot;pretalx.submission.make_submitted&quot;</span><span class="p">,</span>
+                <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">,</span>
+                <span class="n">orga</span><span class="o">=</span><span class="n">orga</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;previous&quot;</span><span class="p">:</span> <span class="n">previous</span><span class="p">,</span> <span class="s2">&quot;from_pending&quot;</span><span class="p">:</span> <span class="n">from_pending</span><span class="p">},</span>
+            <span class="p">)</span></div>
+
+
+    <span class="n">make_submitted</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="Submission.confirm">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.submission.Submission.confirm">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">confirm</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">person</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">orga</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">from_pending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the submission&#39;s state to &#39;confirmed&#39;.&quot;&quot;&quot;</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">CONFIRMED</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_action</span><span class="p">(</span>
+            <span class="s2">&quot;pretalx.submission.confirm&quot;</span><span class="p">,</span>
+            <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">,</span>
+            <span class="n">orga</span><span class="o">=</span><span class="n">orga</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;previous&quot;</span><span class="p">:</span> <span class="n">previous</span><span class="p">,</span> <span class="s2">&quot;from_pending&quot;</span><span class="p">:</span> <span class="n">from_pending</span><span class="p">},</span>
+        <span class="p">)</span></div>
+
+
+    <span class="n">confirm</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="Submission.accept">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.submission.Submission.accept">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">accept</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">person</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">orga</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">from_pending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the submission&#39;s state to &#39;accepted&#39;.</span>
+
+<span class="sd">        Creates an acceptance :class:`~pretalx.mail.models.QueuedMail`</span>
+<span class="sd">        unless the submission was previously confirmed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">ACCEPTED</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_action</span><span class="p">(</span>
+            <span class="s2">&quot;pretalx.submission.accept&quot;</span><span class="p">,</span>
+            <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">,</span>
+            <span class="n">orga</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;previous&quot;</span><span class="p">:</span> <span class="n">previous</span><span class="p">,</span> <span class="s2">&quot;from_pending&quot;</span><span class="p">:</span> <span class="n">from_pending</span><span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">previous</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">ACCEPTED</span><span class="p">,</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">CONFIRMED</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_state_mail</span><span class="p">()</span></div>
+
+
+    <span class="n">accept</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="Submission.reject">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.submission.Submission.reject">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reject</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">person</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">orga</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">from_pending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the submission&#39;s state to &#39;rejected&#39; and creates a rejection.</span>
+
+<span class="sd">        :class:`~pretalx.mail.models.QueuedMail`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">REJECTED</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_action</span><span class="p">(</span>
+            <span class="s2">&quot;pretalx.submission.reject&quot;</span><span class="p">,</span>
+            <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">,</span>
+            <span class="n">orga</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;previous&quot;</span><span class="p">:</span> <span class="n">previous</span><span class="p">,</span> <span class="s2">&quot;from_pending&quot;</span><span class="p">:</span> <span class="n">from_pending</span><span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">previous</span> <span class="o">!=</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">REJECTED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_state_mail</span><span class="p">()</span></div>
+
+
+    <span class="n">reject</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_pending_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pending_state</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pending_state</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pending_state</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">method_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pending_state</span><span class="p">])(</span>
+            <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">,</span> <span class="n">from_pending</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+    <span class="n">apply_pending_state</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_email_locale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_locale</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">locales</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_locale</span>
+        <span class="k">if</span> <span class="n">fallback</span> <span class="ow">and</span> <span class="n">fallback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">locales</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">fallback</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">locale</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_content_locale_display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">named_content_locales</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">content_locale</span><span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">send_state_mail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.mail.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">MailTemplateRoles</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">ACCEPTED</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get_mail_template</span><span class="p">(</span><span class="n">MailTemplateRoles</span><span class="o">.</span><span class="n">SUBMISSION_ACCEPT</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">REJECTED</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get_mail_template</span><span class="p">(</span><span class="n">MailTemplateRoles</span><span class="o">.</span><span class="n">SUBMISSION_REJECT</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">speaker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">speakers</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">to_mail</span><span class="p">(</span>
+                <span class="n">user</span><span class="o">=</span><span class="n">speaker</span><span class="p">,</span>
+                <span class="n">locale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_email_locale</span><span class="p">(</span><span class="n">speaker</span><span class="o">.</span><span class="n">locale</span><span class="p">),</span>
+                <span class="n">context_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;submission&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="n">speaker</span><span class="p">},</span>
+                <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="n">send_state_mail</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="Submission.cancel">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.submission.Submission.cancel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cancel</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">person</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">orga</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">from_pending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the submission&#39;s state to &#39;canceled&#39;.&quot;&quot;&quot;</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">CANCELED</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_action</span><span class="p">(</span>
+            <span class="s2">&quot;pretalx.submission.cancel&quot;</span><span class="p">,</span>
+            <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">,</span>
+            <span class="n">orga</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;previous&quot;</span><span class="p">:</span> <span class="n">previous</span><span class="p">,</span> <span class="s2">&quot;from_pending&quot;</span><span class="p">:</span> <span class="n">from_pending</span><span class="p">},</span>
+        <span class="p">)</span></div>
+
+
+    <span class="n">cancel</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="Submission.withdraw">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.submission.Submission.withdraw">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">withdraw</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">person</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">orga</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">from_pending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the submission&#39;s state to &#39;withdrawn&#39;.&quot;&quot;&quot;</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">WITHDRAWN</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_action</span><span class="p">(</span>
+            <span class="s2">&quot;pretalx.submission.withdraw&quot;</span><span class="p">,</span>
+            <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">,</span>
+            <span class="n">orga</span><span class="o">=</span><span class="n">orga</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;previous&quot;</span><span class="p">:</span> <span class="n">previous</span><span class="p">,</span> <span class="s2">&quot;from_pending&quot;</span><span class="p">:</span> <span class="n">from_pending</span><span class="p">},</span>
+        <span class="p">)</span></div>
+
+
+    <span class="n">withdraw</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">person</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">orga</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">from_pending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the submission&#39;s state to &#39;deleted&#39;.&quot;&quot;&quot;</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">DELETED</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">answers</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">answer</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_action</span><span class="p">(</span>
+            <span class="s2">&quot;pretalx.submission.deleted&quot;</span><span class="p">,</span>
+            <span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">,</span>
+            <span class="n">orga</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;previous&quot;</span><span class="p">:</span> <span class="n">previous</span><span class="p">,</span> <span class="s2">&quot;from_pending&quot;</span><span class="p">:</span> <span class="n">from_pending</span><span class="p">},</span>
+        <span class="p">)</span>
+
+    <span class="n">remove</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">DRAFT</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SubmissionError</span><span class="p">(</span>
+                <span class="s2">&quot;Submission is not in draft mode and cannot be deleted completely. Set the deleted flag instead.&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">answers</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">integer_uuid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># For import into Engelsystem, we need to somehow convert our submission code into an unique integer. Luckily,</span>
+        <span class="c1"># codes can contain 34 different characters (including compatibility with frab imported data) and normally have</span>
+        <span class="c1"># 6 charactes. Since log2(34 **6) == 30.52, that just fits in to a positive 32-bit signed integer (that</span>
+        <span class="c1"># Engelsystem expects), if we do it correctly.</span>
+        <span class="n">charset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_code_charset</span> <span class="o">+</span> <span class="p">[</span>
+            <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;4&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;5&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;6&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+        <span class="p">]</span>  <span class="c1"># compatibility with imported frab data</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">charset</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="p">{</span><span class="n">char</span><span class="p">:</span> <span class="n">cp</span> <span class="k">for</span> <span class="n">cp</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">charset</span><span class="p">)}</span>
+
+        <span class="n">intval</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">:</span>
+            <span class="n">intval</span> <span class="o">*=</span> <span class="n">base</span>
+            <span class="n">intval</span> <span class="o">+=</span> <span class="n">table</span><span class="p">[</span><span class="n">char</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">intval</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The first scheduled :class:`~pretalx.schedule.models.slot.TalkSlot`</span>
+<span class="sd">        of this submission in the current.</span>
+
+<span class="sd">        :class:`~pretalx.schedule.models.schedule.Schedule`.</span>
+
+<span class="sd">        Note that this slot is not guaranteed to be visible.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">current_schedule</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">submission</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;room&quot;</span><span class="p">,</span> <span class="s2">&quot;submission&quot;</span><span class="p">,</span> <span class="s2">&quot;submission__event&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">current_schedule</span>
+            <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">current_slots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">current_schedule</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">current_schedule</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">submission</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_visible</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;room&quot;</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">public_slots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;All publicly visible :class:`~pretalx.schedule.models.slot.TalkSlot`</span>
+<span class="sd">        objects of this submission in the current.</span>
+
+<span class="sd">        :class:`~pretalx.schedule.models.schedule.Schedule`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.agenda.permissions</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_agenda_visible</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_agenda_visible</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_slots</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display_speaker_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method for a consistent speaker name display.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">speaker</span><span class="o">.</span><span class="n">get_display_name</span><span class="p">()</span> <span class="k">for</span> <span class="n">speaker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">speakers</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display_title_with_speakers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phrases</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">quotation_open</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}{</span><span class="n">phrases</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">quotation_close</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">speakers</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">title</span>
+        <span class="k">return</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{title_in_quotes}</span><span class="s2"> by </span><span class="si">{list_of_speakers}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">title_in_quotes</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+            <span class="n">list_of_speakers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">display_speaker_names</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">does_accept_feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">slot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slot</span>
+        <span class="k">if</span> <span class="n">slot</span> <span class="ow">and</span> <span class="n">slot</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">slot</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;</span> <span class="n">now</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">median_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">review</span><span class="o">.</span><span class="n">score</span> <span class="k">for</span> <span class="n">review</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reviews</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">if</span> <span class="n">review</span><span class="o">.</span><span class="n">score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">statistics</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="k">if</span> <span class="n">scores</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">review</span><span class="o">.</span><span class="n">score</span> <span class="k">for</span> <span class="n">review</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reviews</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">if</span> <span class="n">review</span><span class="o">.</span><span class="n">score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">fmean</span><span class="p">(</span><span class="n">scores</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">scores</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">track</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track</span>
+        <span class="n">track_filter</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">limit_tracks__isnull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
+            <span class="n">track_filter</span> <span class="o">|=</span> <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">limit_tracks__in</span><span class="o">=</span><span class="p">[</span><span class="n">track</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">score_categories</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">track_filter</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span>
+            <span class="s2">&quot;id&quot;</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">active_resources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span>  <span class="c1"># either the resource exists</span>
+                <span class="o">~</span><span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">resource</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="o">&amp;</span> <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">resource__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="o">&amp;</span> <span class="o">~</span><span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">resource</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="o">|</span> <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span>
+                <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">link__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">link</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="p">)</span>  <span class="c1"># or the link exists</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;link&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_deleted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">DELETED</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">user_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">SubmissionStates</span><span class="o">.</span><span class="n">SUBMITTED</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfp_open</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;review&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Help when debugging.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Submission(event=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">slug</span><span class="si">}</span><span class="s2">, code=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">, title=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">, state=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">export_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">serialize_duration</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_duration</span><span class="p">())</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">speaker_profiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.person.models.profile</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpeakerProfile</span>
+
+        <span class="k">return</span> <span class="n">SpeakerProfile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">user__in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">speakers</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">availabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The intersection of all.</span>
+
+<span class="sd">        :class:`~pretalx.schedule.models.availability.Availability` objects of</span>
+<span class="sd">        all speakers of this submission.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.schedule.models.availability</span><span class="w"> </span><span class="kn">import</span> <span class="n">Availability</span>
+
+        <span class="n">all_availabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">availabilities</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">person__in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">speaker_profiles</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Availability</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">all_availabilities</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_content_for_mail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;abstract&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;notes&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;duration&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content_locale&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;do_not_record&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;image&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">order</span><span class="p">:</span>
+            <span class="n">field_content</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">field_content</span><span class="p">:</span>
+                <span class="n">_field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+                <span class="n">field_name</span> <span class="o">=</span> <span class="n">_field</span><span class="o">.</span><span class="n">verbose_name</span> <span class="ow">or</span> <span class="n">_field</span><span class="o">.</span><span class="n">name</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">field_name</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">field_content</span><span class="p">})</span>
+        <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">answers</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;question__position&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">answer</span><span class="o">.</span><span class="n">question</span><span class="o">.</span><span class="n">variant</span> <span class="o">==</span> <span class="s2">&quot;boolean&quot;</span><span class="p">:</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="o">.</span><span class="n">question</span><span class="o">.</span><span class="n">question</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="o">.</span><span class="n">boolean_answer</span><span class="p">}</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">answer</span><span class="o">.</span><span class="n">answer_file</span><span class="p">:</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="o">.</span><span class="n">question</span><span class="o">.</span><span class="n">question</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="o">.</span><span class="n">answer_file</span><span class="p">}</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="o">.</span><span class="n">question</span><span class="o">.</span><span class="n">question</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="o">.</span><span class="n">answer</span> <span class="ow">or</span> <span class="s2">&quot;-&quot;</span><span class="p">}</span>
+                <span class="p">)</span>
+        <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">field_name</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="n">field_content</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_content</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="n">field_content</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">field_content</span> <span class="k">else</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_content</span><span class="p">,</span> <span class="n">FieldFile</span><span class="p">):</span>
+                <span class="n">field_content</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">custom_domain</span> <span class="ow">or</span> <span class="n">settings</span><span class="o">.</span><span class="n">SITE_URL</span>
+                <span class="p">)</span> <span class="o">+</span> <span class="n">field_content</span><span class="o">.</span><span class="n">url</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;**</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">**: </span><span class="si">{</span><span class="n">field_content</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_speaker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">locale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_absolute_uri</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.mail.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">MailTemplateRoles</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.person.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpeakerProfile</span><span class="p">,</span> <span class="n">User</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.person.services</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_user</span>
+
+        <span class="n">user_created</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">speaker</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">email__iexact</span><span class="o">=</span><span class="n">email</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">speaker</span><span class="o">.</span><span class="n">profiles</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">SpeakerProfile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">speaker</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">User</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="n">speaker</span> <span class="o">=</span> <span class="n">create_user</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">)</span>
+            <span class="n">user_created</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">context</span><span class="p">[</span><span class="s2">&quot;invitation_link&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_absolute_uri</span><span class="p">(</span>
+                <span class="s2">&quot;cfp:event.new_recover&quot;</span><span class="p">,</span>
+                <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;event&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">slug</span><span class="p">,</span> <span class="s2">&quot;token&quot;</span><span class="p">:</span> <span class="n">speaker</span><span class="o">.</span><span class="n">pw_reset_token</span><span class="p">},</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">speakers</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">speaker</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_action</span><span class="p">(</span><span class="s2">&quot;pretalx.submission.speakers.add&quot;</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">orga</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">speaker</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get_mail_template</span><span class="p">(</span>
+            <span class="n">MailTemplateRoles</span><span class="o">.</span><span class="n">EXISTING_SPEAKER_INVITE</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">user_created</span>
+            <span class="k">else</span> <span class="n">MailTemplateRoles</span><span class="o">.</span><span class="n">NEW_SPEAKER_INVITE</span>
+        <span class="p">)</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">to_mail</span><span class="p">(</span>
+            <span class="n">user</span><span class="o">=</span><span class="n">speaker</span><span class="p">,</span>
+            <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span>
+            <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
+            <span class="n">context_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="n">speaker</span><span class="p">,</span> <span class="s2">&quot;submission&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;event&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">},</span>
+            <span class="n">locale</span><span class="o">=</span><span class="n">locale</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">locale</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">speaker</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">send_invite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">_from</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subject</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.mail.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">QueuedMail</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_from</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">subject</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">text</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please enter a sender for this invitation.&quot;</span><span class="p">)</span>
+
+        <span class="n">subject</span> <span class="o">=</span> <span class="n">subject</span> <span class="ow">or</span> <span class="n">phrases</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">invite_subject</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">speaker</span><span class="o">=</span><span class="n">_from</span><span class="o">.</span><span class="n">get_display_name</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">subject</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">slug</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span> <span class="ow">or</span> <span class="n">phrases</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">invite_text</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">urls</span><span class="o">.</span><span class="n">accept_invitation</span><span class="o">.</span><span class="n">full</span><span class="p">(),</span>
+            <span class="n">speaker</span><span class="o">=</span><span class="n">_from</span><span class="o">.</span><span class="n">get_display_name</span><span class="p">(),</span>
+        <span class="p">)</span>
+        <span class="n">to</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">to</span>
+        <span class="k">for</span> <span class="n">invite</span> <span class="ow">in</span> <span class="n">to</span><span class="p">:</span>
+            <span class="n">QueuedMail</span><span class="p">(</span>
+                <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span>
+                <span class="n">to</span><span class="o">=</span><span class="n">invite</span><span class="p">,</span>
+                <span class="n">subject</span><span class="o">=</span><span class="n">subject</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+                <span class="n">locale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_email_locale</span><span class="p">(),</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+
+    <span class="n">send_invite</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_favourite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+        <span class="n">SubmissionFavourite</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">submission</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_favourite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+        <span class="n">SubmissionFavourite</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">submission</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SubmissionFavouriteDeprecated</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;person.User&quot;</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;submission_favorites&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_n</span><span class="p">(</span><span class="s2">&quot;User&quot;</span><span class="p">,</span> <span class="s2">&quot;Users&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">talk_list</span> <span class="o">=</span> <span class="n">JSONField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;List favourite talk&quot;</span><span class="p">))</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s1">&#39;&quot;submission_submission_favourites&quot;&#39;</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SubmissionFavouriteDeprecatedSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SlugRelatedField</span><span class="p">(</span><span class="n">slug_field</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user_id</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">SubmissionFavouriteDeprecated</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;talk_list&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">talk_code</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">scopes_disabled</span><span class="p">():</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
+            <span class="n">submission_fav</span><span class="p">,</span> <span class="n">created</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">SubmissionFavouriteDeprecated</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">submission_fav</span><span class="o">.</span><span class="n">talk_list</span> <span class="o">=</span> <span class="n">talk_code</span>
+            <span class="n">submission_fav</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">submission_fav</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SubmissionFavourite</span><span class="p">(</span><span class="n">PretalxModel</span><span class="p">):</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;person.User&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;submission_favourites&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">submission</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.Submission&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;favourites&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">objects</span> <span class="o">=</span> <span class="n">ScopedManager</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&quot;submission__event&quot;</span><span class="p">)</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">unique_together</span> <span class="o">=</span> <span class="p">((</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;submission&quot;</span><span class="p">),)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/_modules/pretalx/submission/models/submission" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../../../../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../../../../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/copybutton.js"></script> 
+
+</body>
+</html>

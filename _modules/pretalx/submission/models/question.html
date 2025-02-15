@@ -1,0 +1,594 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pretalx.submission.models.question &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../../../../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../../../../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../../../../genindex.html"/>
+    <link rel="search" title="Search" href="../../../../search.html"/>
+
+   
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pretalx.submission.models.question</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">django.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.timezone</span><span class="w"> </span><span class="kn">import</span> <span class="n">now</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gettext_lazy</span> <span class="k">as</span> <span class="n">_</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django_scopes</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScopedManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i18nfield.fields</span><span class="w"> </span><span class="kn">import</span> <span class="n">I18nCharField</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.models.choices</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.models.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedModel</span><span class="p">,</span> <span class="n">PretalxModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.text.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">path_with_hash</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.text.phrases</span><span class="w"> </span><span class="kn">import</span> <span class="n">phrases</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventUrls</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">answer_file_path</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">path_with_hash</span><span class="p">(</span>
+        <span class="n">filename</span><span class="p">,</span> <span class="n">base_path</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">instance</span><span class="o">.</span><span class="n">question</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">slug</span><span class="si">}</span><span class="s2">/question_uploads/&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">QuestionManager</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Manager</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="nb">super</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">get_queryset</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">QuestionTarget</span><span class="o">.</span><span class="n">REVIEWER</span><span class="p">)</span>
+        <span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AllQuestionManager</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Manager</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">QuestionVariant</span><span class="p">(</span><span class="n">Choices</span><span class="p">):</span>
+    <span class="n">NUMBER</span> <span class="o">=</span> <span class="s2">&quot;number&quot;</span>
+    <span class="n">STRING</span> <span class="o">=</span> <span class="s2">&quot;string&quot;</span>
+    <span class="n">TEXT</span> <span class="o">=</span> <span class="s2">&quot;text&quot;</span>
+    <span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;url&quot;</span>
+    <span class="n">DATE</span> <span class="o">=</span> <span class="s2">&quot;date&quot;</span>
+    <span class="n">DATETIME</span> <span class="o">=</span> <span class="s2">&quot;datetime&quot;</span>
+    <span class="n">BOOLEAN</span> <span class="o">=</span> <span class="s2">&quot;boolean&quot;</span>
+    <span class="n">FILE</span> <span class="o">=</span> <span class="s2">&quot;file&quot;</span>
+    <span class="n">CHOICES</span> <span class="o">=</span> <span class="s2">&quot;choices&quot;</span>
+    <span class="n">MULTIPLE</span> <span class="o">=</span> <span class="s2">&quot;multiple_choice&quot;</span>
+
+    <span class="n">valid_choices</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">NUMBER</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Number&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">STRING</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Text (one-line)&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Multi-line text&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">URL</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;URL&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">DATE</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">DATETIME</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Date and time&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">BOOLEAN</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Yes/No&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">FILE</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;File upload&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">CHOICES</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Choose one from a list&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">MULTIPLE</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Choose multiple from a list&quot;</span><span class="p">)),</span>
+    <span class="p">]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">QuestionTarget</span><span class="p">(</span><span class="n">Choices</span><span class="p">):</span>
+    <span class="n">SUBMISSION</span> <span class="o">=</span> <span class="s2">&quot;submission&quot;</span>
+    <span class="n">SPEAKER</span> <span class="o">=</span> <span class="s2">&quot;speaker&quot;</span>
+    <span class="n">REVIEWER</span> <span class="o">=</span> <span class="s2">&quot;reviewer&quot;</span>
+
+    <span class="n">valid_choices</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">SUBMISSION</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;per proposal&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">SPEAKER</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;per speaker&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">REVIEWER</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;for reviewers&quot;</span><span class="p">)),</span>
+    <span class="p">]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">QuestionRequired</span><span class="p">(</span><span class="n">Choices</span><span class="p">):</span>
+    <span class="n">OPTIONAL</span> <span class="o">=</span> <span class="s2">&quot;optional&quot;</span>
+    <span class="n">REQUIRED</span> <span class="o">=</span> <span class="s2">&quot;required&quot;</span>
+    <span class="n">AFTER_DEADLINE</span> <span class="o">=</span> <span class="s2">&quot;after_deadline&quot;</span>
+
+    <span class="n">valid_choices</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">OPTIONAL</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;always optional&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">REQUIRED</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;always required&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">AFTER_DEADLINE</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;required after a deadline&quot;</span><span class="p">)),</span>
+    <span class="p">]</span>
+
+
+<div class="viewcode-block" id="Question">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.question.Question">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Question</span><span class="p">(</span><span class="n">OrderedModel</span><span class="p">,</span> <span class="n">PretalxModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Questions can be asked per.</span>
+
+<span class="sd">    :class:`~pretalx.submission.models.submission.Submission`, per speaker, or</span>
+<span class="sd">    of reviewers per :class:`~pretalx.submission.models.review.Review`.</span>
+
+<span class="sd">    Questions can have many types, which offers a flexible framework to give organisers</span>
+<span class="sd">    the opportunity to get all the information they need.</span>
+
+<span class="sd">    :param variant: Can be any of &#39;number&#39;, &#39;string&#39;, &#39;text&#39;, &#39;boolean&#39;,</span>
+<span class="sd">        &#39;file&#39;, &#39;choices&#39;, or &#39;multiple_choice&#39;. Defined in the</span>
+<span class="sd">        ``QuestionVariant`` class.</span>
+<span class="sd">    :param target: Can be any of &#39;submission&#39;, &#39;speaker&#39;, or &#39;reviewer&#39;.</span>
+<span class="sd">        Defined in the ``QuestionTarget`` class.</span>
+<span class="sd">    :param deadline: Datetime field. This field is required for &#39;after deadline&#39; and &#39;freeze after&#39; options of</span>
+<span class="sd">        question_required field and optional for the other ones. For &#39;after deadline&#39; it shows that the answer will</span>
+<span class="sd">        be optional before the deadline and mandatory after that deadline. For &#39;freeze after&#39; it shows that the</span>
+<span class="sd">        answer will be allowed before the deadline and frozen after that deadline</span>
+<span class="sd">    :param question_required: Can be any of &#39;none&#39;, &#39;require &#39;, &#39;after deadline&#39;, or &#39;freeze after&#39;.</span>
+<span class="sd">        Defined in the ``QuestionRequired`` class.</span>
+<span class="sd">        &#39;required&#39; answering this question will always be required.</span>
+<span class="sd">        &#39;optional&#39; means that it will never be mandatory.</span>
+<span class="sd">        &#39;after deadline&#39; the answer will be optional before the deadline and mandatory after the deadline.</span>
+<span class="sd">    :param freeze_after: Can be a datetime field or null.</span>
+<span class="sd">        For &#39;freeze after&#39; the answer will be allowed before the deadline and frozen after the deadline.</span>
+<span class="sd">    :param position: Position in the question order in this event.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">event</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;event.Event&quot;</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;questions&quot;</span>
+    <span class="p">)</span>
+    <span class="n">variant</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="n">QuestionVariant</span><span class="o">.</span><span class="n">get_max_length</span><span class="p">(),</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">QuestionVariant</span><span class="o">.</span><span class="n">get_choices</span><span class="p">(),</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">QuestionVariant</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="n">QuestionTarget</span><span class="o">.</span><span class="n">get_max_length</span><span class="p">(),</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">QuestionTarget</span><span class="o">.</span><span class="n">get_choices</span><span class="p">(),</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">QuestionTarget</span><span class="o">.</span><span class="n">SUBMISSION</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;question type&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;Do you require an answer from every speaker or for every session?&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">deadline</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Deadline&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;Set a deadline to make this question required after the given date.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">freeze_after</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;freeze after&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Set a deadline to stop changes to answers after the given date.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">question_required</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="n">QuestionRequired</span><span class="o">.</span><span class="n">get_max_length</span><span class="p">(),</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">QuestionRequired</span><span class="o">.</span><span class="n">get_choices</span><span class="p">(),</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">QuestionRequired</span><span class="o">.</span><span class="n">OPTIONAL</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;question required&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">tracks</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.Track&quot;</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;questions&quot;</span><span class="p">,</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;You can limit this question to some tracks. Leave this field empty to apply to all tracks.&quot;</span>
+        <span class="p">),</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Tracks&quot;</span><span class="p">),</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">submission_types</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.SubmissionType&quot;</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;questions&quot;</span><span class="p">,</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;You can limit this question to some session types. Leave this field empty to apply to all session types.&quot;</span>
+        <span class="p">),</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Session Types&quot;</span><span class="p">),</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">question</span> <span class="o">=</span> <span class="n">I18nCharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;question&quot;</span><span class="p">))</span>
+    <span class="n">help_text</span> <span class="o">=</span> <span class="n">I18nCharField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;help text&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Will appear just like this text below the question input field.&quot;</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+        <span class="o">+</span> <span class="n">phrases</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">use_markdown</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">default_answer</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;default answer&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">active</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;active&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Inactive questions will no longer be asked.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">contains_personal_data</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Answers contain personal data&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;If a user deletes their account, answers of questions for personal data will be removed, too.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">min_length</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Minimum text length&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;Minimum allowed text in characters or words (set in CfP settings).&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">max_length</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Maximum text length&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;Maximum allowed text length in characters or words (set in CfP settings).&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">min_number</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span>
+        <span class="n">decimal_places</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+        <span class="n">max_digits</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Minimum value&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">max_number</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span>
+        <span class="n">decimal_places</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+        <span class="n">max_digits</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Maximum value&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">min_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Minimum value&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">max_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Maximum value&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">min_datetime</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Minimum value&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">max_datetime</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Maximum value&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">is_public</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Publish answers&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;Answers will be shown on session or speaker pages as appropriate. Please note that you cannot make a question public after the first answers have been given, to allow speakers explicit consent before publishing information.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">is_visible_to_reviewers</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Show answers to reviewers&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;Should answers to this question be shown to reviewers? This is helpful if you want to collect personal information, but use anonymous reviews.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">objects</span> <span class="o">=</span> <span class="n">ScopedManager</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&quot;event&quot;</span><span class="p">,</span> <span class="n">_manager_class</span><span class="o">=</span><span class="n">QuestionManager</span><span class="p">)</span>
+    <span class="n">all_objects</span> <span class="o">=</span> <span class="n">ScopedManager</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&quot;event&quot;</span><span class="p">,</span> <span class="n">_manager_class</span><span class="o">=</span><span class="n">AllQuestionManager</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">required</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_now</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
+        <span class="c1"># Question should become optional in order to be frozen</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_only</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_required</span> <span class="o">==</span> <span class="n">QuestionRequired</span><span class="o">.</span><span class="n">REQUIRED</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_required</span> <span class="o">==</span> <span class="n">QuestionRequired</span><span class="o">.</span><span class="n">AFTER_DEADLINE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">deadline</span> <span class="o">&lt;=</span> <span class="n">_now</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_only</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">freeze_after</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freeze_after</span> <span class="o">&lt;=</span> <span class="n">now</span><span class="p">())</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">urls</span><span class="p">(</span><span class="n">EventUrls</span><span class="p">):</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.event.cfp.urls.questions}{self.pk}</span><span class="s2">/&quot;</span>
+        <span class="n">edit</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">edit&quot;</span>
+        <span class="n">delete</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">delete&quot;</span>
+        <span class="n">toggle</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">toggle&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">question</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_order_queryset</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">event</span><span class="o">.</span><span class="n">questions</span><span class="p">(</span><span class="n">manager</span><span class="o">=</span><span class="s2">&quot;all_objects&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Question.missing_answers">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.question.Question.missing_answers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">missing_answers</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">filter_speakers</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">filter_talks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns how many answers are still missing or this question.</span>
+
+<span class="sd">        This method only supports submission questions and speaker questions.</span>
+<span class="sd">        For missing reviews, please use the Review.find_missing_reviews method.</span>
+
+<span class="sd">        :param filter_speakers: Apply only to these speakers.</span>
+<span class="sd">        :param filter_talks: Apply only to these talks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.person.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Submission</span>
+
+        <span class="n">answers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">answers</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">filter_talks</span> <span class="o">=</span> <span class="n">filter_talks</span> <span class="ow">or</span> <span class="n">Submission</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">none</span><span class="p">()</span>
+        <span class="n">filter_speakers</span> <span class="o">=</span> <span class="n">filter_speakers</span> <span class="ow">or</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">none</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">filter_speakers</span> <span class="ow">or</span> <span class="n">filter_talks</span><span class="p">:</span>
+            <span class="n">answers</span> <span class="o">=</span> <span class="n">answers</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">person__in</span><span class="o">=</span><span class="n">filter_speakers</span><span class="p">)</span>
+                <span class="o">|</span> <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">submission__in</span><span class="o">=</span><span class="n">filter_talks</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">answer_count</span> <span class="o">=</span> <span class="n">answers</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">==</span> <span class="n">QuestionTarget</span><span class="o">.</span><span class="n">SUBMISSION</span><span class="p">:</span>
+            <span class="n">submissions</span> <span class="o">=</span> <span class="n">filter_talks</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">submissions</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">submissions</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">-</span> <span class="n">answer_count</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">==</span> <span class="n">QuestionTarget</span><span class="o">.</span><span class="n">SPEAKER</span><span class="p">:</span>
+            <span class="n">users</span> <span class="o">=</span> <span class="n">filter_speakers</span> <span class="ow">or</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">submissions__event_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">pk</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">users</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">-</span> <span class="n">answer_count</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span></div>
+
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">ordering</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;position&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AnswerOption">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.question.AnswerOption">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnswerOption</span><span class="p">(</span><span class="n">PretalxModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Provides the possible answers for.</span>
+
+<span class="sd">    :class:`~pretalx.submission.models.question.Question` objects of variant</span>
+<span class="sd">    &#39;choice&#39; or &#39;multiple_choice&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">question</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.Question&quot;</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;options&quot;</span>
+    <span class="p">)</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">I18nCharField</span><span class="p">(</span><span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Answer&quot;</span><span class="p">))</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">objects</span> <span class="o">=</span> <span class="n">ScopedManager</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&quot;question__event&quot;</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">question</span><span class="o">.</span><span class="n">event</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Used in choice forms.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">answer</span><span class="p">)</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">ordering</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;position&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Answer">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.question.Answer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Answer</span><span class="p">(</span><span class="n">PretalxModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Answers are connected to a.</span>
+
+<span class="sd">    :class:`~pretalx.submission.models.question.Question`, and, depending on</span>
+<span class="sd">    type, a :class:`~pretalx.person.models.user.User`, a</span>
+<span class="sd">    :class:`~pretalx.submission.models.submission.Submission`, or a</span>
+<span class="sd">    :class:`~pretalx.submission.models.review.Review`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">question</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.Question&quot;</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;answers&quot;</span>
+    <span class="p">)</span>
+    <span class="n">submission</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.Submission&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;answers&quot;</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">person</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;person.User&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;answers&quot;</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">review</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.Review&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;answers&quot;</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">answer_file</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">FileField</span><span class="p">(</span><span class="n">upload_to</span><span class="o">=</span><span class="n">answer_file_path</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.AnswerOption&quot;</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;answers&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">objects</span> <span class="o">=</span> <span class="n">ScopedManager</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&quot;question__event&quot;</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">question</span><span class="o">.</span><span class="n">event</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Help when debugging.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Answer(question=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">question</span><span class="o">.</span><span class="n">question</span><span class="si">}</span><span class="s2">, answer=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">answer</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+<div class="viewcode-block" id="Answer.remove">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.question.Answer.remove">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deletes an answer.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">option</span><span class="o">.</span><span class="n">answers</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
+
+
+    <span class="n">remove</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">boolean_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">answer</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">answer</span> <span class="o">==</span> <span class="s2">&quot;False&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">answer_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">question</span><span class="o">.</span><span class="n">variant</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">answer</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">question</span><span class="o">.</span><span class="n">variant</span> <span class="o">==</span> <span class="s2">&quot;boolean&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boolean_answer</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boolean_answer</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">question</span><span class="o">.</span><span class="n">variant</span> <span class="o">==</span> <span class="s2">&quot;file&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">answer_file</span><span class="o">.</span><span class="n">url</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">answer_file</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">question</span><span class="o">.</span><span class="n">variant</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;choices&quot;</span><span class="p">,</span> <span class="s2">&quot;multiple_choice&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">option</span><span class="o">.</span><span class="n">answer</span><span class="p">)</span> <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_answered</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">answer_string</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/_modules/pretalx/submission/models/question" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../../../../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../../../../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/copybutton.js"></script> 
+
+</body>
+</html>

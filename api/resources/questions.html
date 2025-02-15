@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Questions &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../../genindex.html"/>
+    <link rel="search" title="Search" href="../../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../fundamentals.html">Basic concepts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Resources and endpoints</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="events.html">Events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="submissions.html">Submissions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="talks.html">Talks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="speakers.html">Speakers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reviews.html">Reviews</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rooms.html">Rooms</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Questions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#resource-description">Resource description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#permissions-and-limitations">Permissions and limitations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endpoints">Endpoints</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="answers.html">Answers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tags.html">Tags</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="questions">
+<h1>Questions<a class="headerlink" href="#questions" title="Link to this heading">¶</a></h1>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.0.0: </span>This resource endpoint.</p>
+</div>
+<section id="resource-description">
+<h2>Resource description<a class="headerlink" href="#resource-description" title="Link to this heading">¶</a></h2>
+<p>The questions resource represents the highly flexible questions model that allows organisers to request
+nearly arbitrary additional information from speakers or reviewers. You will sometimes find questions
+nested in other information, such as in answers – in that case, only the <code class="docutils literal notranslate"><span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">question</span></code> fields
+will be included to reduce the transmission size.</p>
+<p>The questions resource contains the following public fields:</p>
+<table class="rest-resource-table docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>number</p></td>
+<td><p>The unique ID of the question object</p></td>
+</tr>
+<tr class="row-odd"><td><p>variant</p></td>
+<td><p>string</p></td>
+<td><p>The kind of question asked. Can be any of <code class="docutils literal notranslate"><span class="pre">number</span></code>, <code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">boolean</span></code>, <code class="docutils literal notranslate"><span class="pre">file</span></code>, <code class="docutils literal notranslate"><span class="pre">choices</span></code>, <code class="docutils literal notranslate"><span class="pre">multiple_choice</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>target</p></td>
+<td><p>string</p></td>
+<td><p>The question scope. Can be <code class="docutils literal notranslate"><span class="pre">speaker</span></code> (each speaker is asked once), <code class="docutils literal notranslate"><span class="pre">submission</span></code> (speakers are asked per submission), or <code class="docutils literal notranslate"><span class="pre">reviewer</span></code> (the question is used in the review process).</p></td>
+</tr>
+<tr class="row-odd"><td><p>question</p></td>
+<td><p>multi-lingual string</p></td>
+<td><p>The question</p></td>
+</tr>
+<tr class="row-even"><td><p>help_text</p></td>
+<td><p>multi-lingual string</p></td>
+<td><p>Additional text shown to help with the question. Can be Markdown.</p></td>
+</tr>
+<tr class="row-odd"><td><p>question_required</p></td>
+<td><p>string</p></td>
+<td><p>Can be any of <code class="docutils literal notranslate"><span class="pre">optional</span></code>, <code class="docutils literal notranslate"><span class="pre">required</span></code>, <code class="docutils literal notranslate"><span class="pre">after_deadline</span></code>, in which case the deadline field will be filled.</p></td>
+</tr>
+<tr class="row-even"><td><p>deadline</p></td>
+<td><p>datetime</p></td>
+<td><p>The deadline after which speakers are required to answer the question.</p></td>
+</tr>
+<tr class="row-odd"><td><p>required</p></td>
+<td><p>boolean</p></td>
+<td><p>Is the question required to be answered at the moment (based on <code class="docutils literal notranslate"><span class="pre">question_required</span></code> and the deadline)?</p></td>
+</tr>
+<tr class="row-even"><td><p>read_only</p></td>
+<td><p>boolean</p></td>
+<td><p>Is the question read-only at the moment (based on <code class="docutils literal notranslate"><span class="pre">freeze_after</span></code>)?</p></td>
+</tr>
+<tr class="row-odd"><td><p>freeze_after</p></td>
+<td><p>datetime</p></td>
+<td><p>Filled if the question cannot be modified after the given date.</p></td>
+</tr>
+<tr class="row-even"><td><p>options</p></td>
+<td><p>list</p></td>
+<td><p>A list of objects with an <code class="docutils literal notranslate"><span class="pre">id</span></code> and an <code class="docutils literal notranslate"><span class="pre">option</span></code> attribute, for choice questions</p></td>
+</tr>
+<tr class="row-odd"><td><p>default_answer</p></td>
+<td><p>string</p></td>
+<td><p>The answer suggested to speakers</p></td>
+</tr>
+<tr class="row-even"><td><p>contains_personal_data</p></td>
+<td><p>boolean</p></td>
+<td><p>If an answer contains personal data, it is deleted when a speaker deletes their account.</p></td>
+</tr>
+<tr class="row-odd"><td><p>min_length</p></td>
+<td><p>number</p></td>
+<td><p>Minimum answer length, for text questions</p></td>
+</tr>
+<tr class="row-even"><td><p>max_length</p></td>
+<td><p>number</p></td>
+<td><p>Maximum answer length, for text questions</p></td>
+</tr>
+<tr class="row-odd"><td><p>is_public</p></td>
+<td><p>boolean</p></td>
+<td><p>Is the answer shown publicly on the talk/speaker page?</p></td>
+</tr>
+<tr class="row-even"><td><p>is_visible_to_reviewers</p></td>
+<td><p>boolean</p></td>
+<td><p>Can reviewers see the answers to this question?</p></td>
+</tr>
+</tbody>
+</table>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.2.0: </span>The <code class="docutils literal notranslate"><span class="pre">question_required</span></code>, <code class="docutils literal notranslate"><span class="pre">deadline</span></code>, <code class="docutils literal notranslate"><span class="pre">read_only</span></code> and <code class="docutils literal notranslate"><span class="pre">freeze_after</span></code> fields were added in 2.2.0.</p>
+</div>
+</section>
+<section id="permissions-and-limitations">
+<h2>Permissions and limitations<a class="headerlink" href="#permissions-and-limitations" title="Link to this heading">¶</a></h2>
+<p>This endpoint is writable. However, it does not support the full spectrum of question capabilities, namely:</p>
+<ul class="simple">
+<li><p>You cannot limit a question to tracks or submission types</p></li>
+<li><p>You cannot change or create question options (for choice and multiple-choice questions)</p></li>
+<li><p>You cannot change the order of questions</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These limitations are not by design, they are by capacity.
+If you would like to see these features in pretalx, you can <a class="reference internal" href="../../developer/contributing.html#contributing"><span class="std std-ref">contribute</span></a> them or provide <a class="reference internal" href="../../funding.html#funding"><span class="std std-ref">funding</span></a>!</p>
+</div>
+</section>
+<section id="endpoints">
+<h2>Endpoints<a class="headerlink" href="#endpoints" title="Link to this heading">¶</a></h2>
+<dl class="http get">
+<dt class="sig sig-object http" id="get--api-events-event-questions-">
+<span class="sig-name descname"><span class="pre">GET</span> </span><span class="sig-name descname"><span class="pre">/api/events/{event}/questions/</span></span><a class="headerlink" href="#get--api-events-event-questions-" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a list of all questions configured for this event.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/api/events/sampleconf/questions/</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;variant&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;question&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;How much do you like green, on a scale from 1-10?&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;question_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;deadline&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;read_only&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;freeze_after&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2021-06-22T12:44:42Z&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submission&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">          </span><span class="nt">&quot;help_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;tracks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">          </span><span class="nt">&quot;submission_types&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">          </span><span class="nt">&quot;default_answer&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;contains_personal_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;min_length&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;max_length&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;is_public&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;is_visible_to_reviewers&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event</strong> – The <code class="docutils literal notranslate"><span class="pre">slug</span></code> field of the event to fetch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Query Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>page</strong> – The page number in case of a multi-page result set, default is 1</p></li>
+<li><p><strong>q</strong> – Search for a string in the questions</p></li>
+<li><p><strong>target</strong> – Filter for questions of a specific target kind, e.g. reviewer questions</p></li>
+<li><p><strong>variant</strong> – Filter for questions of a specific variant, e.g. number questions</p></li>
+<li><p><strong>is_public</strong> – Filter for questions that are or are not public</p></li>
+<li><p><strong>is_visible_to_reviewers</strong> – Filter for questions that are or are not visible to reviewers</p></li>
+</ul>
+</dd>
+</dl>
+<p>The page number in case of a multi-page result set, default is 1</p>
+</dd></dl>
+
+<dl class="http get">
+<dt class="sig sig-object http" id="get--api-events-(event)-questions-id-">
+<span class="sig-name descname"><span class="pre">GET</span> </span><span class="sig-name descname"><span class="pre">/api/events/</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">event</span></em><span class="sig-paren">)</span><span class="sig-name descname"><span class="pre">/questions/{id}/</span></span><a class="headerlink" href="#get--api-events-(event)-questions-id-" title="Link to this definition">¶</a></dt>
+<dd><p>Returns information on one question, identified by its ID.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/api/events/sampleconf/questions/23</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;variant&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;question&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;How much do you like green, on a scale from 1-10?&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;question_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;deadline&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;read_only&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;freeze_after&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2021-06-22T12:44:42Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submission&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;help_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;tracks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;submission_types&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;default_answer&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;contains_personal_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;min_length&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;max_length&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;is_public&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;is_visible_to_reviewers&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event</strong> – The <code class="docutils literal notranslate"><span class="pre">slug</span></code> field of the event to fetch</p></li>
+<li><p><strong>code</strong> – The <code class="docutils literal notranslate"><span class="pre">id</span></code> field of the question to fetch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Status Codes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – no error</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a></span> – Authentication failure</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/api/resources/questions.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../_static/copybutton.js"></script> 
+
+</body>
+</html>

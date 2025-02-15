@@ -1,0 +1,324 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pretalx.submission.models.cfp &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../../../../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../../../../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../../../../genindex.html"/>
+    <link rel="search" title="Search" href="../../../../search.html"/>
+
+   
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pretalx.submission.models.cfp</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.timezone</span><span class="w"> </span><span class="kn">import</span> <span class="n">now</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gettext_lazy</span> <span class="k">as</span> <span class="n">_</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i18nfield.fields</span><span class="w"> </span><span class="kn">import</span> <span class="n">I18nCharField</span><span class="p">,</span> <span class="n">I18nTextField</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.models.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PretalxModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.text.phrases</span><span class="w"> </span><span class="kn">import</span> <span class="n">phrases</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventUrls</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">default_settings</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;flow&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s2">&quot;count_length_in&quot;</span><span class="p">:</span> <span class="s2">&quot;chars&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;show_deadline&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">default_fields</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;required&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;min_length&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;max_length&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;abstract&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;required&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;min_length&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;max_length&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;optional&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;min_length&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;max_length&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;biography&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;required&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;min_length&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;max_length&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;avatar&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;optional&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;avatar_source&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;optional&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;avatar_license&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;optional&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;availabilities&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;optional&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;optional&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;do_not_record&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;optional&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;optional&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;track&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;do_not_ask&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;do_not_ask&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;content_locale&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;required&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;additional_speaker&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;optional&quot;</span><span class="p">},</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">field_helper</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_field_requested</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">default_fields</span><span class="p">()[</span><span class="n">field</span><span class="p">])[</span><span class="s2">&quot;visibility&quot;</span><span class="p">]</span>
+            <span class="o">!=</span> <span class="s2">&quot;do_not_ask&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_field_required</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">default_fields</span><span class="p">()[</span><span class="n">field</span><span class="p">])[</span><span class="s2">&quot;visibility&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;required&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">default_fields</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="nb">setattr</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;request_</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">property</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">is_field_requested</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">field</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;require_</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">property</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">is_field_required</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">field</span><span class="p">))</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span>
+
+
+<div class="viewcode-block" id="CfP">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.submission.models.cfp.CfP">[docs]</a>
+<span class="nd">@field_helper</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CfP</span><span class="p">(</span><span class="n">PretalxModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Every :class:`~pretalx.event.models.event.Event` has one Call for</span>
+<span class="sd">    Papers/Participation/Proposals.</span>
+
+<span class="sd">    :param deadline: The regular deadline. Please note that submissions can be available for longer than this if different deadlines are configured on single submission types.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">event</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">to</span><span class="o">=</span><span class="s2">&quot;event.Event&quot;</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">)</span>
+    <span class="n">headline</span> <span class="o">=</span> <span class="n">I18nCharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;headline&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">I18nTextField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">phrases</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">use_markdown</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">default_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;submission.SubmissionType&quot;</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Default session type&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">deadline</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Deadline&quot;</span><span class="p">),</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span>
+            <span class="s2">&quot;Please put in the last date you want to accept proposals from users.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">default_settings</span><span class="p">)</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">default_fields</span><span class="p">)</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">urls</span><span class="p">(</span><span class="n">EventUrls</span><span class="p">):</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.event.orga_urls.cfp}</span><span class="s2">&quot;</span>
+        <span class="n">editor</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">flow/&quot;</span>
+        <span class="n">questions</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">questions/&quot;</span>
+        <span class="n">new_question</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{questions}</span><span class="s2">new&quot;</span>
+        <span class="n">remind_questions</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{questions}</span><span class="s2">remind&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">edit_text</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">text&quot;</span>
+        <span class="n">types</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">types/&quot;</span>
+        <span class="n">new_type</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{types}</span><span class="s2">new&quot;</span>
+        <span class="n">tracks</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">tracks/&quot;</span>
+        <span class="n">new_track</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{tracks}</span><span class="s2">new&quot;</span>
+        <span class="n">access_codes</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{base}</span><span class="s2">access-codes/&quot;</span>
+        <span class="n">new_access_code</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{access_codes}</span><span class="s2">new&quot;</span>
+        <span class="n">public</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.event.urls.base}</span><span class="s2">cfp&quot;</span>
+        <span class="n">submit</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.event.urls.base}</span><span class="s2">submit/&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Help with debugging.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;CfP(event=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">slug</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy_data_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_cfp</span><span class="p">,</span> <span class="n">skip_attributes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># default_type gets set by event.copy_data_from</span>
+        <span class="n">clonable_attributes</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;headline&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deadline&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;settings&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fields&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">skip_attributes</span><span class="p">:</span>
+            <span class="n">clonable_attributes</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">clonable_attributes</span> <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skip_attributes</span>
+            <span class="p">]</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">clonable_attributes</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other_cfp</span><span class="p">,</span> <span class="n">field</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_open</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``True`` if ``max_deadline`` is not over yet, or if no deadline is</span>
+<span class="sd">        set.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deadline</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_deadline</span> <span class="o">&gt;=</span> <span class="n">now</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_deadline</span> <span class="k">else</span> <span class="kc">True</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_deadline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the latest date any submission is possible.</span>
+
+<span class="sd">        This includes the deadlines set on any submission type for this</span>
+<span class="sd">        event.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">deadlines</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">submission_types</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">deadline__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span>
+                <span class="s2">&quot;deadline&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deadline</span><span class="p">:</span>
+            <span class="n">deadlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deadline</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">deadlines</span><span class="p">)</span> <span class="k">if</span> <span class="n">deadlines</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/_modules/pretalx/submission/models/cfp" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../../../../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../../../../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/copybutton.js"></script> 
+
+</body>
+</html>

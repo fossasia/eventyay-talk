@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Talks &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../../genindex.html"/>
+    <link rel="search" title="Search" href="../../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../fundamentals.html">Basic concepts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Resources and endpoints</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="events.html">Events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="submissions.html">Submissions</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Talks</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#resource-description">Resource description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endpoints">Endpoints</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="speakers.html">Speakers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reviews.html">Reviews</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rooms.html">Rooms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="questions.html">Questions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="answers.html">Answers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tags.html">Tags</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="talks">
+<h1>Talks<a class="headerlink" href="#talks" title="Link to this heading">¶</a></h1>
+<section id="resource-description">
+<h2>Resource description<a class="headerlink" href="#resource-description" title="Link to this heading">¶</a></h2>
+<p>The talk resource is the same as the submission resource, but will limit the returned
+submissions to talks that already have a slot on the current schedule. It contains the
+following public fields:</p>
+<table class="rest-resource-table docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>string</p></td>
+<td><p>A unique, alphanumeric identifier, also used in URLs</p></td>
+</tr>
+<tr class="row-odd"><td><p>speakers</p></td>
+<td><p>list</p></td>
+<td><p>A list of speaker objects, e.g. <code class="docutils literal notranslate"><span class="pre">[{&quot;name&quot;:</span> <span class="pre">&quot;Jane&quot;,</span> <span class="pre">&quot;code&quot;:</span> <span class="pre">&quot;ABCDEF&quot;,</span> <span class="pre">&quot;biography&quot;:</span> <span class="pre">&quot;&quot;}]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>created</p></td>
+<td><p>string</p></td>
+<td><p>The time of submission creation as an ISO-8601 formatted datetime. Available if the requesting user has organiser permission.</p></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td><p>string</p></td>
+<td><p>The submission’s title</p></td>
+</tr>
+<tr class="row-even"><td><p>submission_type</p></td>
+<td><p>string</p></td>
+<td><p>The submission type (e.g. “talk”, “workshop”)</p></td>
+</tr>
+<tr class="row-odd"><td><p>submission_type_id</p></td>
+<td><p>number</p></td>
+<td><p>ID of the submission type</p></td>
+</tr>
+<tr class="row-even"><td><p>track</p></td>
+<td><p>string</p></td>
+<td><p>The track this talk belongs to (e.g. “security”, “design”, or <code class="docutils literal notranslate"><span class="pre">null</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>track_id</p></td>
+<td><p>number</p></td>
+<td><p>ID of the track this talk belongs to (e.g. “security”, “design”, or <code class="docutils literal notranslate"><span class="pre">null</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>state</p></td>
+<td><p>string</p></td>
+<td><p>The submission’s state, one of “submitted”, “accepted”, “rejected”, “confirmed”</p></td>
+</tr>
+<tr class="row-odd"><td><p>abstract</p></td>
+<td><p>string</p></td>
+<td><p>The abstract, a short note of the submission’s content</p></td>
+</tr>
+<tr class="row-even"><td><p>description</p></td>
+<td><p>string</p></td>
+<td><p>The description, a more expansive description of the submission’s content</p></td>
+</tr>
+<tr class="row-odd"><td><p>duration</p></td>
+<td><p>number</p></td>
+<td><p>The talk’s duration in minutes, or <code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>do_not_record</p></td>
+<td><p>boolean</p></td>
+<td><p>Indicates if the speaker consent to recordings of their talk</p></td>
+</tr>
+<tr class="row-odd"><td><p>is_featured</p></td>
+<td><p>boolean</p></td>
+<td><p>Indicates if the talk is show in the schedule preview / sneak peek</p></td>
+</tr>
+<tr class="row-even"><td><p>content_locale</p></td>
+<td><p>string</p></td>
+<td><p>The language the submission is in, e.g. “en” or “de”</p></td>
+</tr>
+<tr class="row-odd"><td><p>slot</p></td>
+<td><p>object</p></td>
+<td><p>An object with the scheduling details, e.g. <code class="docutils literal notranslate"><span class="pre">{&quot;start&quot;:</span> <span class="pre">…,</span> <span class="pre">&quot;end&quot;:</span> <span class="pre">…,</span> <span class="pre">&quot;room&quot;:</span> <span class="pre">&quot;R101&quot;,</span> <span class="pre">&quot;room_id&quot;:</span> <span class="pre">12}</span></code> if they exist. This will not be present til after the schedule is released.</p></td>
+</tr>
+<tr class="row-even"><td><p>slot_count</p></td>
+<td><p>number</p></td>
+<td><p>How often this submission may be scheduled.</p></td>
+</tr>
+<tr class="row-odd"><td><p>answers</p></td>
+<td><p>list</p></td>
+<td><p>The question answers given by the speakers. Available if the requesting user has organiser permissions, and if the <code class="docutils literal notranslate"><span class="pre">questions</span></code> query parameter is passed.</p></td>
+</tr>
+<tr class="row-even"><td><p>notes</p></td>
+<td><p>string</p></td>
+<td><p>Notes the speaker left for the organisers. Available if the requesting user has organiser permissions.</p></td>
+</tr>
+<tr class="row-odd"><td><p>internal_notes</p></td>
+<td><p>string</p></td>
+<td><p>Notes the organisers left on the submission. Available if the requesting user has organiser permissions.</p></td>
+</tr>
+<tr class="row-even"><td><p>tags</p></td>
+<td><p>list</p></td>
+<td><p>The tags attached to the current submission, as a list of strings. Available if the requesting user has organiser or reviewer permissions.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tag_ids</p></td>
+<td><p>list</p></td>
+<td><p>The tags attached to the current submission, as a list of IDs. Available if the requesting user has organiser or reviewer permissions.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.1.0: </span>The <code class="docutils literal notranslate"><span class="pre">resources</span></code> field for file uploads was added in pretalx v1.1.0.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.2.0: </span>The <code class="docutils literal notranslate"><span class="pre">tags</span></code> field was added in pretalx v2.2.0.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 3.0.0: </span>The <code class="docutils literal notranslate"><span class="pre">track_id</span></code>, <code class="docutils literal notranslate"><span class="pre">tag_ids</span></code> and <code class="docutils literal notranslate"><span class="pre">submission_type_id</span></code> fields were added, as well as the <code class="docutils literal notranslate"><span class="pre">room_id</span></code> field in the <code class="docutils literal notranslate"><span class="pre">slot</span></code> object.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 3.0.0: </span>The <code class="docutils literal notranslate"><span class="pre">answers</span></code> field was turned off by default in pretalx v3.0.0. Pass the <code class="docutils literal notranslate"><span class="pre">questions</span></code> query parameter to see questions, and pass <code class="docutils literal notranslate"><span class="pre">questions=all</span></code> to get the previous behaviour.</p>
+</div>
+</section>
+<section id="endpoints">
+<h2>Endpoints<a class="headerlink" href="#endpoints" title="Link to this heading">¶</a></h2>
+<dl class="http get">
+<dt class="sig sig-object http" id="get--api-events-event-talks">
+<span class="sig-name descname"><span class="pre">GET</span> </span><span class="sig-name descname"><span class="pre">/api/events/{event}/talks</span></span><a class="headerlink" href="#get--api-events-event-talks" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a list of all scheduled submissions the authenticated user/token has access to, or
+all confirmed, publicly scheduled submissions for unauthenticated users.
+For a list of all submissions regardless of their state, authenticated users may choose
+to use the <code class="docutils literal notranslate"><span class="pre">/api/events/{event}/submissions</span></code> endpoint instead.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/api/events/sampleconf/talks</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ABCDE&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;speakers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Jane&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DEFAB&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;biography&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">}],</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A talk&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;submission_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;talk&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;submission_type_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;confirmed&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;abstract&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A good talk.&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;I will expand upon the properties of the talk, primarily its high quality.&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;do_not_record&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_featured&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;content_locale&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;en&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;slot&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;start&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-12-27T10:00:00Z&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;end&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-12-27T10:30:00Z&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;room&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;R101&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;room_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;answers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;question&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;question&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;en&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;How much do you like green, on a scale from 1-10?&quot;</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submission&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]},</span>
+<span class="w">        </span><span class="nt">&quot;answer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;11&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;answer_file&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;submission&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ABCDE&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;person&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">     </span><span class="p">],</span>
+<span class="w">     </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Please make sure you give me red M&amp;Ms&quot;</span><span class="p">,</span>
+<span class="w">     </span><span class="nt">&quot;internal_notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Absolutely no M&amp;Ms, but cool proposal otherwise!&quot;</span><span class="p">,</span>
+<span class="w">     </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;science&quot;</span><span class="p">],</span>
+<span class="w">     </span><span class="nt">&quot;tag_ids&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event</strong> – The <code class="docutils literal notranslate"><span class="pre">slug</span></code> field of the event to fetch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Query Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>page</strong> – The page number in case of a multi-page result set, default is 1</p></li>
+<li><p><strong>q</strong> – Search through submissions by title and speaker name</p></li>
+<li><p><strong>submission_type</strong> – Filter submissions by submission type</p></li>
+<li><p><strong>state</strong> – Filter submission by state</p></li>
+<li><p><strong>questions</strong> – Pass a comma separated list of question IDs to load, or the string ‘all’ to return all answers.</p></li>
+<li><p><strong>is_featured</strong> – Filter by the <code class="docutils literal notranslate"><span class="pre">is_featured</span></code> field (<code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="http get">
+<dt class="sig sig-object http" id="get--api-events-(event)-talks-code">
+<span class="sig-name descname"><span class="pre">GET</span> </span><span class="sig-name descname"><span class="pre">/api/events/</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">event</span></em><span class="sig-paren">)</span><span class="sig-name descname"><span class="pre">/talks/{code}</span></span><a class="headerlink" href="#get--api-events-(event)-talks-code" title="Link to this definition">¶</a></dt>
+<dd><p>Returns information on one event, identified by its slug.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/api/events/sampleconf/talks/ABCDE</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ABCDE&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;speakers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Jane&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DEFAB&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;biography&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">}],</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A talk&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;submission_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;talk&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;submission_type_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;confirmed&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;abstract&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A good talk.&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;I will expand upon the properties of the talk, primarily its high quality.&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;do_not_record&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;is_featured&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;content_locale&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;en&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;slot&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;start&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-12-27T10:00:00Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;end&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-12-27T10:30:00Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;room&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;R101&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;room_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;answers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;question&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;question&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;en&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;How much do you like green, on a scale from 1-10?&quot;</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submission&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]},</span>
+<span class="w">      </span><span class="nt">&quot;answer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;11&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;answer_file&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;submission&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ABCDE&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;person&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">   </span><span class="p">],</span>
+<span class="w">   </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Please make sure you give me red M&amp;Ms&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;internal_notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Absolutely no M&amp;Ms, but cool proposal otherwise!&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;science&quot;</span><span class="p">],</span>
+<span class="w">   </span><span class="nt">&quot;tag_ids&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event</strong> – The <code class="docutils literal notranslate"><span class="pre">slug</span></code> field of the event to fetch</p></li>
+<li><p><strong>code</strong> – The <code class="docutils literal notranslate"><span class="pre">code</span></code> field of the submission to fetch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Query Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>questions</strong> – Pass a comma separated list of question IDs to load, or the string ‘all’ to return all answers.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Status Codes<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – no error</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a></span> – Authentication failure</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.4">403 Forbidden</a></span> – The requested event does not exist <strong>or</strong> you have no permission to view it.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/api/resources/talks.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../_static/copybutton.js"></script> 
+
+</body>
+</html>

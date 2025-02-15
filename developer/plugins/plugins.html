@@ -1,0 +1,368 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Creating a plugin &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../../genindex.html"/>
+    <link rel="search" title="Search" href="../../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../setup.html">The development setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html">Contributing to pretalx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../translating.html">Translating pretalx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../concepts.html">Concepts and Terminology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interfaces/index.html">Interfaces and Utilities</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Plugin development</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Creating a plugin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#about-this-documentation">About this Documentation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plugin-metadata">Plugin metadata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plugin-registration">Plugin registration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#signals">Signals</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models">Models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#views">Views</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuration">Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="general.html">General APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customview.html">Creating custom views</a></li>
+<li class="toctree-l3"><a class="reference internal" href="recording.html">Writing an recording provider plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exporter.html">Writing an exporter plugin</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="creating-a-plugin">
+<span id="pluginsetup"></span><h1>Creating a plugin<a class="headerlink" href="#creating-a-plugin" title="Link to this heading">¶</a></h1>
+<p>You can extend pretalx with custom Python code using the official plugin API.
+Think of every plugin as an independent Django application living in its own
+python package installed like any other python module.</p>
+<p>The communication between pretalx and the plugins happens using Django’s
+<a class="reference external" href="https://docs.djangoproject.com/en/stable/topics/signals/">signal dispatcher</a> feature. The core modules of pretalx expose signals which
+you can read about on the next pages.</p>
+<p>To create a new plugin, create a new python package which must be a valid
+<a class="reference external" href="https://docs.djangoproject.com/en/stable/ref/applications/">Django application</a> and must contain plugin metadata, as described below.
+You will need some boilerplate for every plugin to get started. To save you
+time, we created a <a class="reference external" href="https://cookiecutter.readthedocs.io/en/latest/">cookiecutter</a> template that you can use like this:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(env)</span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>cookiecutter
+<span class="gp gp-VirtualEnv">(env)</span><span class="gp">$ </span>cookiecutter<span class="w"> </span>https://github.com/pretalx/pretalx-plugin-cookiecutter
+</pre></div>
+</div>
+<p>This will ask you some questions and then create a project folder for your plugin.
+Afterwards install your plugin into pretalx:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(env)</span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>pretalx-pluginname
+<span class="gp gp-VirtualEnv">(env)</span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+<p>If you already had it running, you’ll now have to restart your pretalx
+development server process for it to recognise the new plugin. Your plugin
+should now show up in the startup message the server prints to the console.</p>
+<section id="about-this-documentation">
+<h2>About this Documentation<a class="headerlink" href="#about-this-documentation" title="Link to this heading">¶</a></h2>
+<p>The following pages go into detail about the types of plugins
+supported. While these instructions don’t assume that you know a lot about
+pretalx, they do assume that you have prior knowledge about Django (e.g. its
+view layer, how its ORM works, topics covered in the Django tutorial.).</p>
+</section>
+<section id="plugin-metadata">
+<h2>Plugin metadata<a class="headerlink" href="#plugin-metadata" title="Link to this heading">¶</a></h2>
+<p>The plugin metadata lives inside a <code class="docutils literal notranslate"><span class="pre">PretalxPluginMeta</span></code> class inside your
+configuration class. The metadata class must define the following attributes:</p>
+<table class="rest-resource-table docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>name</p></td>
+<td><p>string</p></td>
+<td><p>The human-readable name of your plugin</p></td>
+</tr>
+<tr class="row-odd"><td><p>author</p></td>
+<td><p>string</p></td>
+<td><p>Your name</p></td>
+</tr>
+<tr class="row-even"><td><p>version</p></td>
+<td><p>string</p></td>
+<td><p>A human-readable version code of your plugin. If you publish your
+plugin on PyPI, this should match the package version.</p></td>
+</tr>
+<tr class="row-odd"><td><p>description</p></td>
+<td><p>string</p></td>
+<td><p>A more verbose description of what your plugin does.</p></td>
+</tr>
+<tr class="row-even"><td><p>category</p></td>
+<td><p>string</p></td>
+<td><p>A category for your plugin, used to group it in the plugin list.
+Supported categories are <code class="docutils literal notranslate"><span class="pre">FEATURE</span></code>, <code class="docutils literal notranslate"><span class="pre">INTEGRATION</span></code>, <code class="docutils literal notranslate"><span class="pre">CUSTOMIZATION</span></code>,
+<code class="docutils literal notranslate"><span class="pre">EXPORTER</span></code>, <code class="docutils literal notranslate"><span class="pre">RECORDING</span></code>, <code class="docutils literal notranslate"><span class="pre">LANGUAGE</span></code>, <code class="docutils literal notranslate"><span class="pre">OTHER</span></code> (default).</p></td>
+</tr>
+<tr class="row-odd"><td><p>visible</p></td>
+<td><p>bool</p></td>
+<td><p>Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>. Setting it to <code class="docutils literal notranslate"><span class="pre">False</span></code> will hide the plugin
+from the plugin list in the event settings.</p></td>
+</tr>
+</tbody>
+</table>
+<p>A working example would be:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">django.apps</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gettext_lazy</span> <span class="k">as</span> <span class="n">_</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FacebookApp</span><span class="p">(</span><span class="n">AppConfig</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;pretalx_facebook&quot;</span>
+    <span class="n">verbose_name</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Facebook&quot;</span><span class="p">)</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">PretalxPluginMeta</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Facebook&quot;</span><span class="p">)</span>
+        <span class="n">author</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;the pretalx team&quot;</span><span class="p">)</span>
+        <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;1.0.0&quot;</span>
+        <span class="n">visible</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;This plugin allows you to post talks to facebook.&quot;</span><span class="p">)</span>
+        <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;INTEGRATION&quot;</span>
+
+
+<span class="n">default_app_config</span> <span class="o">=</span> <span class="s2">&quot;pretalx_facebook.FacebookApp&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="plugin-registration">
+<h2>Plugin registration<a class="headerlink" href="#plugin-registration" title="Link to this heading">¶</a></h2>
+<p>Somehow, pretalx needs to know that your plugin exists at all. For this purpose, we
+make use of the <a class="reference external" href="https://setuptools.pypa.io/en/latest/pkg_resources.html#locating-plugins">entry point</a> feature of setuptools. To register a plugin that lives
+in a separate python package, your <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> should contain something like this:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[project.entry-points.</span><span class="s2">&quot;pretalx.plugin&quot;</span><span class="k">]</span>
+<span class="n">pretalx_facebook</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;pretalx_facebook:PretalxPluginMeta&quot;</span>
+</pre></div>
+</div>
+<p>This will automatically make pretalx discover this plugin as soon as you have
+installed it e.g.  through <code class="docutils literal notranslate"><span class="pre">pip</span></code>. During development, you can run <code class="docutils literal notranslate"><span class="pre">pip</span>
+<span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> inside your plugin source directory to make it discoverable.
+Make sure you do this in the same virtualenv as you’re using for pretalx.</p>
+</section>
+<section id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Link to this heading">¶</a></h2>
+<p>pretalx defines signals which your plugin can listen for. We will go into the
+details of the different signals in the following pages. We suggest that you
+put your signal receivers into a <code class="docutils literal notranslate"><span class="pre">signals</span></code> submodule of your plugin. You
+should extend your <code class="docutils literal notranslate"><span class="pre">AppConfig</span></code> (see above) by the following method to make
+your receivers available:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">FacebookApp</span><span class="p">(</span><span class="n">AppConfig</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">ready</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">signals</span>  <span class="c1"># noqa</span>
+</pre></div>
+</div>
+<p>You can optionally specify code that you want to execute when the organiser
+activates your plugin for an event in the <code class="docutils literal notranslate"><span class="pre">installed</span></code> method, and code to
+execute upon removal in the <code class="docutils literal notranslate"><span class="pre">uninstalled</span></code> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">FacebookApp</span><span class="p">(</span><span class="n">AppConfig</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">installed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">pass</span>  <span class="c1"># Your code here</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">uninstalled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">pass</span>  <span class="c1"># Your code here</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">AppConfig</span></code> class may also implement the method <code class="docutils literal notranslate"><span class="pre">is_available(event)</span></code>
+which checks if a plugin is available for a specific event. If not, it will not
+be shown on the plugin list for that event, and cannot be enabled. This method
+is not called on plugins with <code class="docutils literal notranslate"><span class="pre">visibility=False</span></code>, as those are already
+hidden.</p>
+</section>
+<section id="models">
+<h2>Models<a class="headerlink" href="#models" title="Link to this heading">¶</a></h2>
+<p>Often, you’ll want to store additional data in your plugin. As your plugin is a
+Django application, you can define models in the usual way, and generate
+migrations for them, by running <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pretalx</span> <span class="pre">makemigrations</span></code>. Your
+migrations will be applied when running <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pretalx</span> <span class="pre">migrate</span></code> just like
+any other migration.</p>
+<p>Please note that to generate your <strong>first</strong> migration, you will have to specify
+your plugin’s app name explicitly in order for Django to pick it up, like
+this:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pretalx makemigrations pretalx_facebook</span>
+</pre></div>
+</div>
+</section>
+<section id="views">
+<h2>Views<a class="headerlink" href="#views" title="Link to this heading">¶</a></h2>
+<p>Your plugin may define custom views. If you put an <code class="docutils literal notranslate"><span class="pre">urls</span></code> submodule into your
+plugin module, pretalx will automatically import it and include it into the root
+URL configuration with the namespace <code class="docutils literal notranslate"><span class="pre">plugins:&lt;label&gt;:</span></code>, where <code class="docutils literal notranslate"><span class="pre">&lt;label&gt;</span></code> is
+your Django application label.</p>
+<p>You can see examples of how this works on the following pages, particularly
+the “Writing a … plugin” pages.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We recommend that non-backend-URLs start with a /p/ to avoid collisions
+with event names and current/future pretalx URLs.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you define custom URLs and views, you are on your own
+with checking that the calling user has logged in, has appropriate permissions,
+and more. You can use mixins and permissions from pretalx to help you with this,
+but by default, all views are public to all users, authenticated or not.</p>
+</div>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h2>
+<p>Occasionally, your plugin may need system-level configuration that does not
+need its own API. In this case, you can ask users to provide this configuration
+via their <code class="docutils literal notranslate"><span class="pre">pretalx.cfg</span></code> file. Ask them to put their configuration in a
+section with the title <code class="docutils literal notranslate"><span class="pre">[plugin:your_plugin_name]</span></code>, which pretalx will then
+provide in <code class="docutils literal notranslate"><span class="pre">settings.PLUGIN_SETTINGS[your_plugin_name]</span></code>, like this:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[plugin:pretalx_soap]</span>
+<span class="na">endpoint</span><span class="o">=</span><span class="s">https://example.com</span>
+<span class="na">api_key</span><span class="o">=</span><span class="s">123456</span>
+</pre></div>
+</div>
+<p>Which you can use in your code like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">django.conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
+<span class="k">assert</span> <span class="n">settings</span><span class="o">.</span><span class="n">PLUGIN_SETTINGS</span><span class="p">[</span><span class="s2">&quot;pretalx_soap&quot;</span><span class="p">][</span><span class="s2">&quot;endpoint&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;https://example.com&quot;</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.1: </span>The <code class="docutils literal notranslate"><span class="pre">PLUGIN_SETTINGS</span></code> configuration was added in pretalx 1.1.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/developer/plugins/plugins.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../_static/copybutton.js"></script> 
+
+</body>
+</html>

@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Management commands &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../genindex.html"/>
+    <link rel="search" title="Search" href="../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Administrator documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configure.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maintenance.html">Maintenance</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Management commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#database-commands">Database commands</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#migrate"><code class="docutils literal notranslate"><span class="pre">migrate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#showmigrations"><code class="docutils literal notranslate"><span class="pre">showmigrations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clearsessions"><code class="docutils literal notranslate"><span class="pre">clearsessions</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#debug-commands">Debug commands</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#shell-scoped"><code class="docutils literal notranslate"><span class="pre">shell_scoped</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#print-settings"><code class="docutils literal notranslate"><span class="pre">print_settings</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#core-pretalx-commands">Core pretalx commands</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#rebuild"><code class="docutils literal notranslate"><span class="pre">rebuild</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#init"><code class="docutils literal notranslate"><span class="pre">init</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#createsuperuser"><code class="docutils literal notranslate"><span class="pre">createsuperuser</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#runperiodic"><code class="docutils literal notranslate"><span class="pre">runperiodic</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#export-schedule-html"><code class="docutils literal notranslate"><span class="pre">export_schedule_html</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-test-event"><code class="docutils literal notranslate"><span class="pre">create_test_event</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#move-event"><code class="docutils literal notranslate"><span class="pre">move_event</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#development-commands">Development commands</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#makemessages"><code class="docutils literal notranslate"><span class="pre">makemessages</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#makemigrations"><code class="docutils literal notranslate"><span class="pre">makemigrations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-social-apps"><code class="docutils literal notranslate"><span class="pre">create_social_apps</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sync-customer-account"><code class="docutils literal notranslate"><span class="pre">sync_customer_account</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="management-commands">
+<h1>Management commands<a class="headerlink" href="#management-commands" title="Link to this heading">¶</a></h1>
+<p>pretalx comes with commands that you can execute from the command line. Run
+them in the same environment you installed pretalx in. If you followed the
+installation guide, you should run them as the <code class="docutils literal notranslate"><span class="pre">pretalx</span></code> user, and either
+use the <code class="docutils literal notranslate"><span class="pre">/var/pretax/venv/bin/python</span></code> executable, or activate the virtual
+environment by running <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">/var/pretalx/venv/bin/activate</span></code>.</p>
+<p>All commands are run with the <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pretalx</span></code> prefix:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pretalx &lt;command&gt; [&lt;flags&gt;] [&lt;options&gt;]</span>
+</pre></div>
+</div>
+<p>You can add the <code class="docutils literal notranslate"><span class="pre">--no-pretalx-information</span></code> flag to any of these commands
+to suppress the printing of the pretalx debug startup header.</p>
+<section id="database-commands">
+<h2>Database commands<a class="headerlink" href="#database-commands" title="Link to this heading">¶</a></h2>
+<section id="migrate">
+<h3><code class="docutils literal notranslate"><span class="pre">migrate</span></code><a class="headerlink" href="#migrate" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">migrate</span></code> command updates the database tables to conform to what pretalx
+expects. Please execute it once upon installation and then on every update. As
+<code class="docutils literal notranslate"><span class="pre">migrate</span></code> touches the database, you should have a backup of the state before
+the command run.
+Running <code class="docutils literal notranslate"><span class="pre">migrate</span></code> if pretalx has no pending database changes  is harmless. It
+will result in no changes to the database.</p>
+<p>If migrations touch upon large populated tables, they may run for some time.
+The <a class="reference internal" href="../changelog.html#changelog"><span class="std std-ref">Release Notes</span></a> will include a warning if an upgrade can trigger this
+behaviour.</p>
+</section>
+<section id="showmigrations">
+<h3><code class="docutils literal notranslate"><span class="pre">showmigrations</span></code><a class="headerlink" href="#showmigrations" title="Link to this heading">¶</a></h3>
+<p>If you ran into trouble during <code class="docutils literal notranslate"><span class="pre">migrate</span></code>, run <code class="docutils literal notranslate"><span class="pre">showmigrations</span></code>. It will
+show you the current state of all pretalx migrations. It may be useful debug
+output to include in bug reports about database problems.</p>
+</section>
+<section id="clearsessions">
+<h3><code class="docutils literal notranslate"><span class="pre">clearsessions</span></code><a class="headerlink" href="#clearsessions" title="Link to this heading">¶</a></h3>
+<p>This command will remove old and unusable sessions from the database. We
+recommend that you run it about once a month to keep your database at a
+reasonable size.</p>
+</section>
+</section>
+<section id="debug-commands">
+<h2>Debug commands<a class="headerlink" href="#debug-commands" title="Link to this heading">¶</a></h2>
+<section id="shell-scoped">
+<h3><code class="docutils literal notranslate"><span class="pre">shell_scoped</span></code><a class="headerlink" href="#shell-scoped" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">shell_scoped</span></code> command opens a Python shell with the pretalx
+configuration and environment. You can use it to import pretalx modules and
+execute methods. For a better environment, install <code class="docutils literal notranslate"><span class="pre">django_extensions</span></code> and
+<code class="docutils literal notranslate"><span class="pre">ipython</span></code>.</p>
+<p>You’ll have to provide the event you want to interact with to provide proper
+database isolation:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pretalx<span class="w"> </span>shell_scoped<span class="w"> </span>--event__slug<span class="o">=</span>myevent
+</pre></div>
+</div>
+<p>Alternatively, you can specify that you want to be able to access all events:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pretalx<span class="w"> </span>shell_scoped<span class="w"> </span>--override
+</pre></div>
+</div>
+</section>
+<section id="print-settings">
+<h3><code class="docutils literal notranslate"><span class="pre">print_settings</span></code><a class="headerlink" href="#print-settings" title="Link to this heading">¶</a></h3>
+<p>If other debugging fails, install the <code class="docutils literal notranslate"><span class="pre">django_extensions</span></code> package. Run
+<code class="docutils literal notranslate"><span class="pre">print_settings</span></code> to receive full settings output. The output will contain
+passwords, so sanitise it before pasting it anywhere.</p>
+<p>If you don’t want to install a library for debugging, you can run these
+commands in the pretalx <code class="docutils literal notranslate"><span class="pre">shell</span></code> command:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">django.conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pprint</span><span class="w"> </span><span class="kn">import</span> <span class="n">pprint</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="core-pretalx-commands">
+<h2>Core pretalx commands<a class="headerlink" href="#core-pretalx-commands" title="Link to this heading">¶</a></h2>
+<section id="rebuild">
+<h3><code class="docutils literal notranslate"><span class="pre">rebuild</span></code><a class="headerlink" href="#rebuild" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">rebuild</span></code> command regenerates all static files. With the <code class="docutils literal notranslate"><span class="pre">--clear</span></code>
+flag, it replaces all static files with ones compiled from scratch. Run this
+command after every upgrade.</p>
+<p>Run this command with <code class="docutils literal notranslate"><span class="pre">--npm-install</span></code> to install or update all frontend
+dependencies. This option will automatically be used the first time when
+pretalx detects that you don’t have a <code class="docutils literal notranslate"><span class="pre">node_modules</span></code> directory, but it’s your
+responsibility to use it during updates. It’s not the default as running <code class="docutils literal notranslate"><span class="pre">npm</span>
+<span class="pre">install</span></code> can take a long time.</p>
+</section>
+<section id="init">
+<h3><code class="docutils literal notranslate"><span class="pre">init</span></code><a class="headerlink" href="#init" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">init</span></code> command allows you to create a superuser and an organiser. It is
+useful to give you all the tools to start configuring pretalx in the web
+interface. Please run this command once in the beginning. You can abort the
+command at any time, and it will not write anything to the database.</p>
+<p>With the <code class="docutils literal notranslate"><span class="pre">--noinput</span></code> flag, this command will <em>not</em> prompt you interactively
+on standard input, but will instead read from the environment. This is
+especially useful for automating invocations of this command. For the first
+phase (creation of a superuser), set the environment variables
+<code class="docutils literal notranslate"><span class="pre">DJANGO_SUPERUSER_EMAIL</span></code> and <code class="docutils literal notranslate"><span class="pre">DJANGO_SUPERUSER_PASSWORD</span></code> (<a class="reference external" href="https://docs.djangoproject.com/en/stable/ref/django-admin/#createsuperuser">see also the
+documentation of the non-interactive mode of the corresponding Django command</a>).
+For the second phase (creation of an organiser), set the environment variables
+<code class="docutils literal notranslate"><span class="pre">PRETALX_INIT_ORGANISER_NAME</span></code> and <code class="docutils literal notranslate"><span class="pre">PRETALX_INIT_ORGANISER_SLUG</span></code>.</p>
+</section>
+<section id="createsuperuser">
+<h3><code class="docutils literal notranslate"><span class="pre">createsuperuser</span></code><a class="headerlink" href="#createsuperuser" title="Link to this heading">¶</a></h3>
+<p>If you need more users after generating your initial administration user,
+use <code class="docutils literal notranslate"><span class="pre">createsuperuser</span></code>. Please note that superusers have access to all areas
+of all events.</p>
+</section>
+<section id="runperiodic">
+<h3><code class="docutils literal notranslate"><span class="pre">runperiodic</span></code><a class="headerlink" href="#runperiodic" title="Link to this heading">¶</a></h3>
+<p>Please run the <code class="docutils literal notranslate"><span class="pre">runperiodic</span></code> command in regular intervals, e.g. every 5-10
+minutes.</p>
+</section>
+<section id="export-schedule-html">
+<h3><code class="docutils literal notranslate"><span class="pre">export_schedule_html</span></code><a class="headerlink" href="#export-schedule-html" title="Link to this heading">¶</a></h3>
+<p>This command requires an event slug as an argument. You can provide the
+<code class="docutils literal notranslate"><span class="pre">--zip</span></code> flag to produce a zip archive instead of a directory structure. The
+command will print the location of the HTML export upon successful exit.</p>
+</section>
+<section id="create-test-event">
+<h3><code class="docutils literal notranslate"><span class="pre">create_test_event</span></code><a class="headerlink" href="#create-test-event" title="Link to this heading">¶</a></h3>
+<p>This command will create a test event for you, with a set of test submissions,
+and speakers, and the like. You will need to install the <code class="docutils literal notranslate"><span class="pre">freezegun</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Faker</span></code> libraries.</p>
+<p>With the <code class="docutils literal notranslate"><span class="pre">--stage</span></code> flag, you can determine which stage the event in question
+should be in. The available choices are <code class="docutils literal notranslate"><span class="pre">cfp</span></code> (CfP still open, plenty of
+submissions, but no reviews), <code class="docutils literal notranslate"><span class="pre">review</span></code> (submissions have been reviewed and
+accepted/rejected), <code class="docutils literal notranslate"><span class="pre">schedule</span></code> (there is a schedule and the event is
+currently running), and <code class="docutils literal notranslate"><span class="pre">over</span></code>. <code class="docutils literal notranslate"><span class="pre">schedule</span></code> is the default value.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--slug</span></code> flag allows you to specify the slug of the event to be created.
+It defaults to <code class="docutils literal notranslate"><span class="pre">democon</span></code>. Please only use alphanumerical characters and <code class="docutils literal notranslate"><span class="pre">-</span></code>
+in the slug, otherwise you won’t be able to see the event in the web interface.</p>
+</section>
+<section id="move-event">
+<h3><code class="docutils literal notranslate"><span class="pre">move_event</span></code><a class="headerlink" href="#move-event" title="Link to this heading">¶</a></h3>
+<p>This command will move a given event (with the <code class="docutils literal notranslate"><span class="pre">--event</span> <span class="pre">&lt;event_slug&gt;</span></code>
+parameter) event. By default, the event start date will be set to the current
+day, but you can configure any date using the <code class="docutils literal notranslate"><span class="pre">--date</span> <span class="pre">2021-12-26</span></code> argument.</p>
+<p>Data moved includes event start and end dates and the dates of all talks, both
+current and historical. No new schedule versions will need to be created.</p>
+<p>This command is intended to be used with demo or test events. If you move an
+actual event like this, be prepared for some odd behaviour and please release a
+new schedule version to make sure external tools can process the changes.</p>
+</section>
+</section>
+<section id="development-commands">
+<h2>Development commands<a class="headerlink" href="#development-commands" title="Link to this heading">¶</a></h2>
+<section id="makemessages">
+<h3><code class="docutils literal notranslate"><span class="pre">makemessages</span></code><a class="headerlink" href="#makemessages" title="Link to this heading">¶</a></h3>
+<p>This command regenerates translation files. It should only be used during
+pretalx development.</p>
+</section>
+<section id="makemigrations">
+<h3><code class="docutils literal notranslate"><span class="pre">makemigrations</span></code><a class="headerlink" href="#makemigrations" title="Link to this heading">¶</a></h3>
+<p>This command generates new migration files for database changed. It should ONLY
+be used during pretalx development, even if you are running a custom
+installation, or if the console output of pretalx tells you to run it in case
+of changes to database models.</p>
+</section>
+<section id="create-social-apps">
+<h3><code class="docutils literal notranslate"><span class="pre">create_social_apps</span></code><a class="headerlink" href="#create-social-apps" title="Link to this heading">¶</a></h3>
+<p>This command is used to create SocialApp entries for Eventyay-ticket Provider</p>
+</section>
+<section id="sync-customer-account">
+<h3><code class="docutils literal notranslate"><span class="pre">sync_customer_account</span></code><a class="headerlink" href="#sync-customer-account" title="Link to this heading">¶</a></h3>
+<p>This command is used to sync customer accounts from Eventyay Ticket</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/administrator/commands.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script> 
+
+</body>
+</html>

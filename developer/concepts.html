@@ -1,0 +1,255 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Concepts and Terminology &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../genindex.html"/>
+    <link rel="search" title="Search" href="../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="setup.html">The development setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html">Contributing to pretalx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="translating.html">Translating pretalx</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Concepts and Terminology</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-components">The Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-concepts">The Concepts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#persons">Persons</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#events-and-organisers">Events and organisers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#submissions-and-reviews">Submissions and Reviews</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#schedules-and-slots">Schedules and Slots</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="interfaces/index.html">Interfaces and Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/index.html">Plugin development</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="concepts-and-terminology">
+<h1>Concepts and Terminology<a class="headerlink" href="#concepts-and-terminology" title="Link to this heading">¶</a></h1>
+<section id="the-components">
+<h2>The Components<a class="headerlink" href="#the-components" title="Link to this heading">¶</a></h2>
+<p>pretalx is split into a range of components (also called “apps”, following the
+Django terminology). These are the most important ones:</p>
+<dl class="simple">
+<dt><strong>common</strong></dt><dd><p>Templates, models, and utility methods used in all areas of pretalx live here.</p>
+</dd>
+<dt><strong>event</strong></dt><dd><p>This component contains all models and methods regarding events, organisers,
+teams, and their relationships with each other.</p>
+</dd>
+<dt><strong>mail</strong></dt><dd><p>Everything concerning email sending and templating takes place here.</p>
+</dd>
+<dt><strong>person</strong></dt><dd><p>The custom pretalx user model, as well as speaker profiles.</p>
+</dd>
+<dt><strong>schedule</strong></dt><dd><p>All matters regarding schedules, scheduling, talk slots, conflict resolution,
+etc, come from here.</p>
+</dd>
+<dt><strong>submission</strong></dt><dd><p>This component contains the submission model and all other models that are
+tied directly to it, such as tracks, submission types, questions and answers,
+the submission state machine, etc.</p>
+</dd>
+<dt><strong>agenda</strong></dt><dd><p>In this frontend component you can find all templates and views for the
+public schedule pages.</p>
+</dd>
+<dt><strong>cfp</strong></dt><dd><p>This frontend component contains all templates and views for the submission
+workflow and the private speaker area.</p>
+</dd>
+<dt><strong>orga</strong></dt><dd><p>This frontend component holds all templates and views for the organiser backend.</p>
+</dd>
+<dt><strong>api</strong></dt><dd><p>All matters regarding the RESTful pretalx API live here.</p>
+</dd>
+</dl>
+</section>
+<section id="the-concepts">
+<h2>The Concepts<a class="headerlink" href="#the-concepts" title="Link to this heading">¶</a></h2>
+<p>This is how pretalx sees the world – so if anything here strikes you as very
+wrong, chances are pretalx will not work well for you. If this happens, please
+let us know by <a class="reference external" href="https://github.com/pretalx/pretalx/issues/new">opening an issue</a>!</p>
+<section id="persons">
+<h3>Persons<a class="headerlink" href="#persons" title="Link to this heading">¶</a></h3>
+<p>pretalx tries to treat its users as the persons they actually are. This
+involves allowing people to be both organisers and speakers at one or multiple
+events. Even submitting proposals to an event and then reviewing other
+proposals is something pretalx allows (although the submitter will never be
+able to see the reviews their own submission received).</p>
+<p>It is expected that people can take part in as many events as they like, in any
+role they like. Naturally, a non-bounded number of people can present any talk.</p>
+</section>
+<section id="events-and-organisers">
+<h3>Events and organisers<a class="headerlink" href="#events-and-organisers" title="Link to this heading">¶</a></h3>
+<p><strong>Events</strong> take place once, over the course of one or multiple days. Events
+belong to an <strong>organiser</strong>, which is an entity that can take on one or multiple
+events.</p>
+<p><strong>Teams</strong> run events or certain parts of events for an organiser. A team is
+defined as a number of people who share the same rights and responsibilities
+with regards to one or multiple events. People can be in multiple teams. A team
+can run multiple events, and most events will have multiple teams associated
+with them.</p>
+</section>
+<section id="submissions-and-reviews">
+<h3>Submissions and Reviews<a class="headerlink" href="#submissions-and-reviews" title="Link to this heading">¶</a></h3>
+<p><strong>Submissions</strong> (or: proposals) are a cornerstone of how pretalx’s
+understanding of the world. A submission will have at least a title and as many
+other fields as the organisers have specified, either by requiring or removing
+the built-in fields, or by adding questions of their own. A submission will
+probably have one or multiple speakers.</p>
+<p>Submissions have a <strong>state</strong>. They start out as <em>submitted</em>. While they are
+submitted, they can be <em>deleted</em> or <em>withdrawn</em>. Organisers can then change the
+submission state to <em>accepted</em> or <em>rejected</em> (typically after the CfP has
+closed and the review phase is over). An <em>accepted</em> proposal can then be
+<em>confirmed</em> by any of their speakers (or the organisers, who can set any
+submission to any state, if need be).</p>
+<p>Both <em>accepted</em> and <em>confirmed</em> submissions can be <em>canceled</em> to indicate that
+a planned presentation will not take place after all.</p>
+</section>
+<section id="schedules-and-slots">
+<h3>Schedules and Slots<a class="headerlink" href="#schedules-and-slots" title="Link to this heading">¶</a></h3>
+<p>A <strong>schedule</strong> is a versioned programme of an event. Any event will have at
+least one schedule – the unreleased, work-in-progress schedule. At any time,
+organisers can “freeze” this schedule to a released <strong>version</strong>, that will go
+by a name organisers can choose. Speakers will receive updates if their
+presentations have been moved, and attendees can look at the changelog to see
+differences between versions.</p>
+<p><strong>Slots</strong> are the scheduled instances of a submission. Regularly, a submission
+will have one slot per schedule, but submissions can also have more than that,
+for example if a workshop will be held twice.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/developer/concepts.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script> 
+
+</body>
+</html>

@@ -1,0 +1,291 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Markdown Guide &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../genindex.html"/>
+    <link rel="search" title="Search" href="../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="event/widget.html">Embeddable Widget</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Markdown Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#what-is-markdown">What is Markdown?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#formatting-rules">Formatting rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-html">Using HTML</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="markdown-guide">
+<span id="id1"></span><h1>Markdown Guide<a class="headerlink" href="#markdown-guide" title="Link to this heading">¶</a></h1>
+<section id="what-is-markdown">
+<h2>What is Markdown?<a class="headerlink" href="#what-is-markdown" title="Link to this heading">¶</a></h2>
+<p>pretalx often allows you to write <a class="reference external" href="https://en.wikipedia.org/wiki/Markdown">Markdown</a> instead of plain text, like in
+talk descriptions, the Call for Papers, and email texts. Markdown is helpful if
+you want to write text including links, bold text, and other formatted content.
+Markdown is a common option since it’s way easier to learn than languages like
+HTML but allows all basic formatting options required for text in those places.</p>
+</section>
+<section id="formatting-rules">
+<h2>Formatting rules<a class="headerlink" href="#formatting-rules" title="Link to this heading">¶</a></h2>
+<p>The following table shows the markdown syntax on the left, and the results are
+on the right:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Markdown</p></th>
+<th class="head"><p>Result</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="highlight-md notranslate"><div class="highlight"><pre><span></span>Please <span class="ge">*please*</span> keep the <span class="ge">_deadline_</span>.
+</pre></div>
+</div>
+</td>
+<td><p>Please <em>please</em> keep the <em>deadline</em>.</p></td>
+</tr>
+<tr class="row-odd"><td><div class="highlight-md notranslate"><div class="highlight"><pre><span></span>This is <span class="gs">**important**</span>.
+</pre></div>
+</div>
+</td>
+<td><p>This is <strong>important</strong>.</p></td>
+</tr>
+<tr class="row-even"><td><div class="highlight-md notranslate"><div class="highlight"><pre><span></span>Print <span class="sb">`this`</span>.
+</pre></div>
+</div>
+</td>
+<td><p>Print <code class="docutils literal notranslate"><span class="pre">this</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><div class="highlight-md notranslate"><div class="highlight"><pre><span></span>Look at https://pretalx.com.
+Look at [<span class="nt">this</span>](<span class="na">https://pretalx.com</span>)
+</pre></div>
+</div>
+</td>
+<td><p>Look at <a class="reference external" href="https://pretalx.com">https://pretalx.com</a>.</p>
+<p>Look at <a class="reference external" href="https://pretalx.com">this</a></p>
+</td>
+</tr>
+<tr class="row-even"><td><div class="highlight-md notranslate"><div class="highlight"><pre><span></span><span class="k">*</span><span class="w"> </span>First item
+<span class="k">*</span><span class="w"> </span>Second item which is too long to
+  fit in a line
+<span class="k">*</span><span class="w"> </span><span class="gs">**Note:**</span> Keep an empty line before
+  and after your list!
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Lists can be nested
+</pre></div>
+</div>
+</td>
+<td><ul class="simple">
+<li><p>First item</p></li>
+<li><p>Second item which is too long to
+fit in a line</p></li>
+<li><p><strong>Note:</strong> Keep an empty line
+before and after your list!</p>
+<ul>
+<li><p>Lists can be nested</p></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><div class="highlight-md notranslate"><div class="highlight"><pre><span></span><span class="k">1.</span> First item
+<span class="k">2.</span> Second item which is too long to
+   fit in a line
+<span class="k">3.</span> Third item
+</pre></div>
+</div>
+</td>
+<td><ol class="arabic simple">
+<li><p>First item</p></li>
+<li><p>Second item which is too long to
+fit in a line</p></li>
+<li><p>Third item</p></li>
+</ol>
+</td>
+</tr>
+<tr class="row-even"><td><div class="highlight-md notranslate"><div class="highlight"><pre><span></span><span class="gh"># Headline 1</span>
+<span class="gu">## Headline 2</span>
+<span class="gu">### Headline 3</span>
+<span class="gu">#### Headline 4</span>
+<span class="gu">##### Headline 5</span>
+<span class="gu">###### Headline 6</span>
+</pre></div>
+</div>
+</td>
+<td><h1>Headline 1</h1>
+<h2>Headline 2</h2>
+<h3>Headline 3</h3>
+<h4>Headline 4</h4>
+<h5>Headline 5</h5>
+<h6>Headline 6</h6></td>
+</tr>
+<tr class="row-odd"><td><div class="highlight-md notranslate"><div class="highlight"><pre><span></span>*****
+</pre></div>
+</div>
+</td>
+<td><hr></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="using-html">
+<h2>Using HTML<a class="headerlink" href="#using-html" title="Link to this heading">¶</a></h2>
+<p>You can also directly embed HTML code, if you want, although we recommend using
+Markdown, as it enables e.g. people using text-based email clients to get a
+better plain text representation of your text. Note that for security reasons
+you can use the following HTML elements, and no others:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a</span><span class="p">,</span> <span class="n">abbr</span><span class="p">,</span> <span class="n">acronym</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">br</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="n">em</span><span class="p">,</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">,</span>
+<span class="n">h3</span><span class="p">,</span> <span class="n">h4</span><span class="p">,</span> <span class="n">h5</span><span class="p">,</span> <span class="n">h6</span><span class="p">,</span> <span class="n">hr</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">li</span><span class="p">,</span> <span class="n">ol</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">pre</span><span class="p">,</span> <span class="n">span</span><span class="p">,</span> <span class="n">strong</span><span class="p">,</span>
+<span class="n">table</span><span class="p">,</span> <span class="n">tbody</span><span class="p">,</span> <span class="n">td</span><span class="p">,</span> <span class="n">thead</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">ul</span>
+</pre></div>
+</div>
+<p>You can use the following attributes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s2">&quot;…&quot;</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;…&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">abbr</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;…&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">acronym</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;…&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">table</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;…&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">td</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;…&quot;</span> <span class="n">align</span><span class="o">=</span><span class="s2">&quot;…&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;…&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">p</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;…&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">span</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;…&quot;</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>pretalx will strip all other elements and attributes during parsing.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/user/markdown.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script> 
+
+</body>
+</html>

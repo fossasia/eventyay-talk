@@ -1,0 +1,920 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pretalx.schedule.models.schedule &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../../../../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../../../../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../../../../genindex.html"/>
+    <link rel="search" title="Search" href="../../../../search.html"/>
+
+   
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pretalx.schedule.models.schedule</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">namedtuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">suppress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">quote</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">transaction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Count</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.timezone</span><span class="w"> </span><span class="kn">import</span> <span class="n">now</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gettext_lazy</span> <span class="k">as</span> <span class="n">_</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">pgettext_lazy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i18nfield.fields</span><span class="w"> </span><span class="kn">import</span> <span class="n">I18nTextField</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.agenda.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">export_schedule_html</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.models.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PretalxModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.text.phrases</span><span class="w"> </span><span class="kn">import</span> <span class="n">phrases</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventUrls</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.schedule.notifications</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_notifications</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.schedule.signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">schedule_release</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models.submission</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubmissionFavourite</span>
+
+
+<div class="viewcode-block" id="Schedule">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.schedule.models.schedule.Schedule">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Schedule</span><span class="p">(</span><span class="n">PretalxModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Schedule model contains all scheduled.</span>
+
+<span class="sd">    :class:`~pretalx.schedule.models.slot.TalkSlot` objects (visible or not)</span>
+<span class="sd">    for a schedule release for an :class:`~pretalx.event.models.event.Event`.</span>
+
+<span class="sd">    :param published: ``None`` if the schedule has not been published yet.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">event</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">to</span><span class="o">=</span><span class="s2">&quot;event.Event&quot;</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PROTECT</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;schedules&quot;</span>
+    <span class="p">)</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">190</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="n">pgettext_lazy</span><span class="p">(</span><span class="s2">&quot;Version of the conference schedule&quot;</span><span class="p">,</span> <span class="s2">&quot;Version&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">published</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">comment</span> <span class="o">=</span> <span class="n">I18nTextField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;This text will be shown in the public changelog and the RSS feed.&quot;</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+        <span class="o">+</span> <span class="n">phrases</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">use_markdown</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">ordering</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;-published&quot;</span><span class="p">,)</span>
+        <span class="n">unique_together</span> <span class="o">=</span> <span class="p">((</span><span class="s2">&quot;event&quot;</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">),)</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">urls</span><span class="p">(</span><span class="n">EventUrls</span><span class="p">):</span>
+        <span class="n">public</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{self.event.urls.schedule}</span><span class="s2">v/</span><span class="si">{self.url_version}</span><span class="s2">/&quot;</span>
+        <span class="n">widget_data</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{public}</span><span class="s2">widgets/schedule.json&quot;</span>
+        <span class="n">nojs</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{public}</span><span class="s2">nojs&quot;</span>
+
+<div class="viewcode-block" id="Schedule.freeze">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.schedule.models.schedule.Schedule.freeze">[docs]</a>
+    <span class="nd">@transaction</span><span class="o">.</span><span class="n">atomic</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">freeze</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">notify_speakers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Releases the current WIP schedule as a fixed schedule version.</span>
+
+<span class="sd">        :param name: The new schedule name. May not be in use in this event,</span>
+<span class="sd">            and cannot be &#39;wip&#39; or &#39;latest&#39;.</span>
+<span class="sd">        :param user: The :class:`~pretalx.person.models.user.User` initiating</span>
+<span class="sd">            the freeze.</span>
+<span class="sd">        :param notify_speakers: Should notification emails for speakers with</span>
+<span class="sd">            changed slots be generated?</span>
+<span class="sd">        :param comment: Public comment for the release</span>
+<span class="sd">        :rtype: Schedule</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.schedule.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">TalkSlot</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubmissionStates</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;wip&quot;</span><span class="p">,</span> <span class="s2">&quot;latest&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot use reserved name &quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; for schedule version.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Cannot freeze schedule version: already versioned as &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot create schedule version without a version name.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">comment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">published</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
+
+        <span class="c1"># Create WIP schedule first, to avoid race conditions</span>
+        <span class="n">wip_schedule</span> <span class="o">=</span> <span class="n">Schedule</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">update_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;published&quot;</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_action</span><span class="p">(</span><span class="s2">&quot;pretalx.schedule.release&quot;</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">orga</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Set visibility</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">is_visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">submission__state</span><span class="o">=</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">CONFIRMED</span><span class="p">)</span>
+            <span class="o">|</span> <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">submission__isnull</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">start__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">is_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">talks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">talk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;submission&quot;</span><span class="p">,</span> <span class="s2">&quot;room&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">talks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">talk</span><span class="o">.</span><span class="n">copy_to_schedule</span><span class="p">(</span><span class="n">wip_schedule</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="n">TalkSlot</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">(</span><span class="n">talks</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">notify_speakers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_notifications</span><span class="p">(</span><span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">wip_schedule</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">wip_schedule</span>
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">wip_schedule</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">current_schedule</span>
+
+        <span class="n">schedule_release</span><span class="o">.</span><span class="n">send_robust</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">schedule</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get_feature_flag</span><span class="p">(</span><span class="s2">&quot;export_html_on_release&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">HAS_CELERY</span><span class="p">:</span>
+                <span class="n">export_schedule_html</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span>
+                    <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;event_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">id</span><span class="p">},</span> <span class="n">ignore_result</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;rebuild_schedule_export&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">,</span> <span class="n">wip_schedule</span></div>
+
+
+    <span class="n">freeze</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="Schedule.unfreeze">
+<a class="viewcode-back" href="../../../../developer/interfaces/models.html#pretalx.schedule.models.schedule.Schedule.unfreeze">[docs]</a>
+    <span class="nd">@transaction</span><span class="o">.</span><span class="n">atomic</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unfreeze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the current WIP schedule to an older schedule version.&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.schedule.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">TalkSlot</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot unfreeze schedule version: not released yet.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># collect all talks, which have been added since this schedule (#72)</span>
+        <span class="n">submission_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;submission_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">talks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">wip_schedule</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">submission_id__in</span><span class="o">=</span><span class="n">submission_ids</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">talks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="n">talks</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+            <span class="p">)</span>  <span class="c1"># We force evaluation to catch the DatabaseError early</span>
+        <span class="k">except</span> <span class="n">DatabaseError</span><span class="p">:</span>  <span class="c1"># SQLite cannot deal with ordered querysets in union()</span>
+            <span class="n">talks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">talks</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+
+        <span class="n">wip_schedule</span> <span class="o">=</span> <span class="n">Schedule</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">)</span>
+        <span class="n">new_talks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">talk</span> <span class="ow">in</span> <span class="n">talks</span><span class="p">:</span>
+            <span class="n">new_talks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">talk</span><span class="o">.</span><span class="n">copy_to_schedule</span><span class="p">(</span><span class="n">wip_schedule</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="n">TalkSlot</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">(</span><span class="n">new_talks</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">wip_schedule</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">wip_schedule</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">wip_schedule</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">wip_schedule</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="p">,</span> <span class="n">wip_schedule</span></div>
+
+
+    <span class="n">unfreeze</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">scheduled_talks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns all :class:`~pretalx.schedule.models.slot.TalkSlot` objects</span>
+<span class="sd">        that have been scheduled and are visible in the schedule (that is, have</span>
+<span class="sd">        been confirmed at the time of release).&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubmissionStates</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+                <span class="s2">&quot;submission&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;submission__event&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;room&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">room__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">start__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">is_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">submission__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">submission__state</span><span class="o">=</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">DELETED</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">breaks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;room&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">submission__isnull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns all.</span>
+
+<span class="sd">        :class:`~pretalx.submission.models.submission.Submission` objects with</span>
+<span class="sd">        :class:`~pretalx.schedule.models.slot.TalkSlot` objects in this</span>
+<span class="sd">        schedule.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Submission</span>
+
+        <span class="k">return</span> <span class="n">Submission</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">id__in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduled_talks</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;submission&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">previous_schedule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the schedule released before this one, if any.&quot;&quot;&quot;</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">schedules</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">published</span><span class="p">:</span>
+            <span class="n">queryset</span> <span class="o">=</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">published__lt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">published</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-published&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_handle_submission_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submission</span><span class="p">,</span> <span class="n">old_slots</span><span class="p">,</span> <span class="n">new_slots</span><span class="p">):</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">canceled</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">moved</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">all_old_slots</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">slot</span> <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="n">old_slots</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">slot</span><span class="o">.</span><span class="n">submission_id</span> <span class="o">==</span> <span class="n">submission</span><span class="o">.</span><span class="n">pk</span>
+        <span class="p">]</span>
+        <span class="n">all_new_slots</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">slot</span> <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="n">new_slots</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">slot</span><span class="o">.</span><span class="n">submission_id</span> <span class="o">==</span> <span class="n">submission</span><span class="o">.</span><span class="n">pk</span>
+        <span class="p">]</span>
+        <span class="n">old_slots</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">slot</span>
+            <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="n">all_old_slots</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">slot</span><span class="o">.</span><span class="n">is_same_slot</span><span class="p">(</span><span class="n">other_slot</span><span class="p">)</span> <span class="k">for</span> <span class="n">other_slot</span> <span class="ow">in</span> <span class="n">all_new_slots</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">new_slots</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">slot</span>
+            <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="n">all_new_slots</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">slot</span><span class="o">.</span><span class="n">is_same_slot</span><span class="p">(</span><span class="n">other_slot</span><span class="p">)</span> <span class="k">for</span> <span class="n">other_slot</span> <span class="ow">in</span> <span class="n">all_old_slots</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">old_slots</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_slots</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">canceled</span> <span class="o">=</span> <span class="n">old_slots</span><span class="p">[:</span><span class="n">diff</span><span class="p">]</span>
+            <span class="n">old_slots</span> <span class="o">=</span> <span class="n">old_slots</span><span class="p">[</span><span class="n">diff</span><span class="p">:]</span>
+        <span class="k">elif</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="o">-</span><span class="n">diff</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">new_slots</span><span class="p">[:</span><span class="n">diff</span><span class="p">]</span>
+            <span class="n">new_slots</span> <span class="o">=</span> <span class="n">new_slots</span><span class="p">[</span><span class="n">diff</span><span class="p">:]</span>
+        <span class="k">for</span> <span class="n">move</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">old_slots</span><span class="p">,</span> <span class="n">new_slots</span><span class="p">):</span>
+            <span class="n">old_slot</span> <span class="o">=</span> <span class="n">move</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">new_slot</span> <span class="o">=</span> <span class="n">move</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">moved</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;submission&quot;</span><span class="p">:</span> <span class="n">new_slot</span><span class="o">.</span><span class="n">submission</span><span class="p">,</span>
+                    <span class="s2">&quot;old_start&quot;</span><span class="p">:</span> <span class="n">old_slot</span><span class="o">.</span><span class="n">local_start</span><span class="p">,</span>
+                    <span class="s2">&quot;new_start&quot;</span><span class="p">:</span> <span class="n">new_slot</span><span class="o">.</span><span class="n">local_start</span><span class="p">,</span>
+                    <span class="s2">&quot;old_room&quot;</span><span class="p">:</span> <span class="n">old_slot</span><span class="o">.</span><span class="n">room</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">&quot;new_room&quot;</span><span class="p">:</span> <span class="n">new_slot</span><span class="o">.</span><span class="n">room</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">&quot;new_info&quot;</span><span class="p">:</span> <span class="n">new_slot</span><span class="o">.</span><span class="n">room</span><span class="o">.</span><span class="n">speaker_info</span><span class="p">,</span>
+                    <span class="s2">&quot;new_slot&quot;</span><span class="p">:</span> <span class="n">new_slot</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">new</span><span class="p">,</span> <span class="n">canceled</span><span class="p">,</span> <span class="n">moved</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">changes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a dictionary of changes when compared to the previous</span>
+<span class="sd">        version.</span>
+
+<span class="sd">        The ``action`` field is either ``create`` or ``update``. If it&#39;s</span>
+<span class="sd">        an update, the ``count`` integer, and the ``new_talks``,</span>
+<span class="sd">        ``canceled_talks`` and ``moved_talks`` lists are also present.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;update&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;new_talks&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;canceled_talks&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;moved_talks&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_schedule</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;create&quot;</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="n">Slot</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Slot&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;submission&quot;</span><span class="p">,</span> <span class="s2">&quot;room&quot;</span><span class="p">,</span> <span class="s2">&quot;local_start&quot;</span><span class="p">])</span>
+        <span class="n">old_slots</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">Slot</span><span class="p">(</span><span class="n">slot</span><span class="o">.</span><span class="n">submission</span><span class="p">,</span> <span class="n">slot</span><span class="o">.</span><span class="n">room</span><span class="p">,</span> <span class="n">slot</span><span class="o">.</span><span class="n">local_start</span><span class="p">):</span> <span class="n">slot</span>
+            <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_schedule</span><span class="o">.</span><span class="n">scheduled_talks</span>
+        <span class="p">}</span>
+        <span class="n">new_slots</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">Slot</span><span class="p">(</span><span class="n">slot</span><span class="o">.</span><span class="n">submission</span><span class="p">,</span> <span class="n">slot</span><span class="o">.</span><span class="n">room</span><span class="p">,</span> <span class="n">slot</span><span class="o">.</span><span class="n">local_start</span><span class="p">):</span> <span class="n">slot</span>
+            <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduled_talks</span>
+        <span class="p">}</span>
+
+        <span class="n">old_slot_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">old_slots</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">new_slot_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">new_slots</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">old_submissions</span> <span class="o">=</span> <span class="p">{</span><span class="n">slot</span><span class="o">.</span><span class="n">submission</span> <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="n">old_slots</span><span class="p">}</span>
+        <span class="n">new_submissions</span> <span class="o">=</span> <span class="p">{</span><span class="n">slot</span><span class="o">.</span><span class="n">submission</span> <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="n">new_slots</span><span class="p">}</span>
+        <span class="n">handled_submissions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">new_by_submission</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="n">old_by_submission</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="n">new_slot_set</span><span class="p">:</span>
+            <span class="n">new_by_submission</span><span class="p">[</span><span class="n">slot</span><span class="o">.</span><span class="n">submission</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_slots</span><span class="p">[</span><span class="n">slot</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="n">old_slot_set</span><span class="p">:</span>
+            <span class="n">old_by_submission</span><span class="p">[</span><span class="n">slot</span><span class="o">.</span><span class="n">submission</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">old_slots</span><span class="p">[</span><span class="n">slot</span><span class="p">])</span>
+
+        <span class="n">moved_or_missing</span> <span class="o">=</span> <span class="n">old_slot_set</span> <span class="o">-</span> <span class="n">new_slot_set</span> <span class="o">-</span> <span class="p">{</span><span class="kc">None</span><span class="p">}</span>
+        <span class="n">moved_or_new</span> <span class="o">=</span> <span class="n">new_slot_set</span> <span class="o">-</span> <span class="n">old_slot_set</span> <span class="o">-</span> <span class="p">{</span><span class="kc">None</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">moved_or_missing</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">submission</span> <span class="ow">in</span> <span class="n">handled_submissions</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">submission</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">submission</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_submissions</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;canceled_talks&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">old_by_submission</span><span class="p">[</span><span class="n">entry</span><span class="o">.</span><span class="n">submission</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new</span><span class="p">,</span> <span class="n">canceled</span><span class="p">,</span> <span class="n">moved</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_submission_move</span><span class="p">(</span>
+                    <span class="n">entry</span><span class="o">.</span><span class="n">submission</span><span class="p">,</span> <span class="n">old_slots</span><span class="p">,</span> <span class="n">new_slots</span>
+                <span class="p">)</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;new_talks&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">new</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;canceled_talks&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">canceled</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;moved_talks&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">moved</span>
+            <span class="n">handled_submissions</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">submission</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">moved_or_new</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">submission</span> <span class="ow">in</span> <span class="n">handled_submissions</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">submission</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">old_submissions</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;new_talks&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">new_by_submission</span><span class="p">[</span><span class="n">entry</span><span class="o">.</span><span class="n">submission</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new</span><span class="p">,</span> <span class="n">canceled</span><span class="p">,</span> <span class="n">moved</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_submission_move</span><span class="p">(</span>
+                    <span class="n">entry</span><span class="o">.</span><span class="n">submission</span><span class="p">,</span> <span class="n">old_slots</span><span class="p">,</span> <span class="n">new_slots</span>
+                <span class="p">)</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;new_talks&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">new</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;canceled_talks&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">canceled</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;moved_talks&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">moved</span>
+            <span class="n">handled_submissions</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">submission</span><span class="p">)</span>
+
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;new_talks&quot;</span><span class="p">])</span>
+            <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;canceled_talks&quot;</span><span class="p">])</span>
+            <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;moved_talks&quot;</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_room_availabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.schedule.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Availability</span>
+
+        <span class="k">return</span> <span class="n">Availability</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">room__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_talk_warnings</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">talk</span><span class="p">,</span>
+        <span class="n">with_speakers</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">room_avails</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">speaker_avails</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">speaker_profiles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list of warnings that apply to this slot.</span>
+
+<span class="sd">        Warnings are dictionaries with a ``type`` (``room`` or</span>
+<span class="sd">        ``speaker``, for now) and a ``message`` fit for public display.</span>
+<span class="sd">        This property only shows availability based warnings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.schedule.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Availability</span><span class="p">,</span> <span class="n">TalkSlot</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">talk</span><span class="o">.</span><span class="n">start</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">talk</span><span class="o">.</span><span class="n">room</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">availability</span> <span class="o">=</span> <span class="n">talk</span><span class="o">.</span><span class="n">as_availability</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">orga_urls</span><span class="o">.</span><span class="n">base</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_room_availabilities</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">room_avails</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">room_avails</span> <span class="o">=</span> <span class="n">talk</span><span class="o">.</span><span class="n">room</span><span class="o">.</span><span class="n">availabilities</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">room_avails</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="n">room_availability</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">availability</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">room_availability</span> <span class="ow">in</span> <span class="n">Availability</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">room_avails</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;room&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span>
+                            <span class="n">_</span><span class="p">(</span>
+                                <span class="s2">&quot;Room </span><span class="si">{room_name}</span><span class="s2"> is not available at the scheduled time.&quot;</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">room_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phrases</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">quotation_open</span><span class="si">}{</span><span class="n">talk</span><span class="o">.</span><span class="n">room</span><span class="o">.</span><span class="n">name</span><span class="si">}{</span><span class="n">phrases</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">quotation_close</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">),</span>
+                        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+        <span class="n">overlaps</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">TalkSlot</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">schedule</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">room</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">room</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">start__lt</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">end__gt</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+                <span class="o">|</span> <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">start__lt</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">real_end</span><span class="p">,</span> <span class="n">end__gt</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">real_end</span><span class="p">)</span>
+                <span class="o">|</span> <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">start__gt</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">end__lt</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">real_end</span><span class="p">)</span>
+                <span class="o">|</span> <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">real_end</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">overlaps</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;room_overlap&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">_</span><span class="p">(</span>
+                        <span class="s2">&quot;Another session in the same room overlaps with this one.&quot;</span>
+                    <span class="p">),</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">speaker</span> <span class="ow">in</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">speakers</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">with_speakers</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">speaker_profiles</span><span class="p">:</span>
+                    <span class="n">profile</span> <span class="o">=</span> <span class="n">speaker_profiles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">speaker</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">profile</span> <span class="o">=</span> <span class="n">speaker</span><span class="o">.</span><span class="n">event_profile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">profile</span> <span class="ow">and</span> <span class="n">speaker_avails</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">profile_availabilities</span> <span class="o">=</span> <span class="n">speaker_avails</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">profile_availabilities</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="nb">list</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">availabilities</span><span class="o">.</span><span class="n">all</span><span class="p">())</span> <span class="k">if</span> <span class="n">profile</span> <span class="k">else</span> <span class="p">[]</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="n">profile_availabilities</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
+                    <span class="n">speaker_availability</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">availability</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">speaker_availability</span> <span class="ow">in</span> <span class="n">Availability</span><span class="o">.</span><span class="n">union</span><span class="p">(</span>
+                        <span class="n">profile_availabilities</span>
+                    <span class="p">)</span>
+                <span class="p">):</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;speaker&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;speaker&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">speaker</span><span class="o">.</span><span class="n">get_display_name</span><span class="p">(),</span>
+                                <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="n">speaker</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                            <span class="p">},</span>
+                            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span>
+                                <span class="n">_</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{speaker}</span><span class="s2"> is not available at the scheduled time.&quot;</span><span class="p">)</span>
+                            <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">speaker</span><span class="o">=</span><span class="n">speaker</span><span class="o">.</span><span class="n">get_display_name</span><span class="p">()),</span>
+                            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+            <span class="n">overlaps</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">TalkSlot</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">schedule</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">submission__speakers__in</span><span class="o">=</span><span class="p">[</span><span class="n">speaker</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">start__lt</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">end__gt</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+                    <span class="o">|</span> <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">start__lt</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">real_end</span><span class="p">,</span> <span class="n">end__gt</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">real_end</span><span class="p">)</span>
+                    <span class="o">|</span> <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">start__gt</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">end__lt</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">real_end</span><span class="p">)</span>
+                    <span class="o">|</span> <span class="n">models</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">talk</span><span class="o">.</span><span class="n">real_end</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">overlaps</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;speaker&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;speaker&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">speaker</span><span class="o">.</span><span class="n">get_display_name</span><span class="p">(),</span>
+                            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="n">speaker</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                        <span class="p">},</span>
+                        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span>
+                            <span class="n">_</span><span class="p">(</span>
+                                <span class="s2">&quot;</span><span class="si">{speaker}</span><span class="s2"> is scheduled for another session at the same time.&quot;</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">speaker</span><span class="o">=</span><span class="n">speaker</span><span class="o">.</span><span class="n">get_display_name</span><span class="p">()),</span>
+                        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">warnings</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_talk_warnings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filter_updated</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">talks</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">submission__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">start__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">room__isnull</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+                <span class="s2">&quot;submission&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;room&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;submission__event&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;schedule__event&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">prefetch_related</span><span class="p">(</span><span class="s2">&quot;submission__speakers&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">filter_updated</span><span class="p">:</span>
+            <span class="n">talks</span> <span class="o">=</span> <span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">updated__gte</span><span class="o">=</span><span class="n">filter_updated</span><span class="p">)</span>
+        <span class="n">with_speakers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">request_availabilities</span>
+        <span class="n">room_avails</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">,</span>
+            <span class="p">{</span>
+                <span class="n">room</span><span class="o">.</span><span class="n">pk</span><span class="p">:</span> <span class="n">room</span><span class="o">.</span><span class="n">availabilities</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">room</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">prefetch_related</span><span class="p">(</span><span class="s2">&quot;availabilities&quot;</span><span class="p">)</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+        <span class="n">speaker_avails</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">speaker_profiles</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">with_speakers</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.person.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpeakerProfile</span>
+
+            <span class="n">speaker_profiles</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">profile</span><span class="o">.</span><span class="n">user</span><span class="p">:</span> <span class="n">profile</span>
+                <span class="k">for</span> <span class="n">profile</span> <span class="ow">in</span> <span class="n">SpeakerProfile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="n">speaker_avails</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span>
+                <span class="nb">list</span><span class="p">,</span>
+                <span class="p">{</span>
+                    <span class="n">profile</span><span class="o">.</span><span class="n">pk</span><span class="p">:</span> <span class="n">profile</span><span class="o">.</span><span class="n">availabilities</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">profile</span> <span class="ow">in</span> <span class="n">SpeakerProfile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                        <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">prefetch_related</span><span class="p">(</span><span class="s2">&quot;availabilities&quot;</span><span class="p">)</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">talk</span> <span class="ow">in</span> <span class="n">talks</span><span class="p">:</span>
+            <span class="n">talk_warnings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_talk_warnings</span><span class="p">(</span>
+                <span class="n">talk</span><span class="o">=</span><span class="n">talk</span><span class="p">,</span>
+                <span class="n">with_speakers</span><span class="o">=</span><span class="n">with_speakers</span><span class="p">,</span>
+                <span class="n">room_avails</span><span class="o">=</span><span class="n">room_avails</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">talk</span><span class="o">.</span><span class="n">room_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">talk</span><span class="o">.</span><span class="n">room_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">speaker_avails</span><span class="o">=</span><span class="n">speaker_avails</span><span class="p">,</span>
+                <span class="n">speaker_profiles</span><span class="o">=</span><span class="n">speaker_profiles</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">talk_warnings</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">talk</span><span class="p">]</span> <span class="o">=</span> <span class="n">talk_warnings</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">warnings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A dictionary of warnings to be acknowledged before a release.</span>
+
+<span class="sd">        ``talk_warnings`` contains a list of talk-related warnings.</span>
+<span class="sd">        ``unscheduled`` is the list of talks without a scheduled slot,</span>
+<span class="sd">        ``unconfirmed`` is the list of submissions that will not be</span>
+<span class="sd">        visible due to their unconfirmed status, and ``no_track`` are</span>
+<span class="sd">        submissions without a track in a conference that uses tracks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.submission.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubmissionStates</span>
+
+        <span class="n">talks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">submission__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">warnings</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;talk_warnings&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;talk&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_talk_warnings</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;unscheduled&quot;</span><span class="p">:</span> <span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">start__isnull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+            <span class="s2">&quot;unconfirmed&quot;</span><span class="p">:</span> <span class="n">talks</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span>
+                <span class="n">submission__state</span><span class="o">=</span><span class="n">SubmissionStates</span><span class="o">.</span><span class="n">CONFIRMED</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+            <span class="s2">&quot;no_track&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get_feature_flag</span><span class="p">(</span><span class="s2">&quot;use_tracks&quot;</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="p">[</span><span class="s2">&quot;no_track&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">submission__track_id__isnull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">warnings</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">speakers_concerned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a dictionary of speakers with their new and changed talks in</span>
+<span class="sd">        this schedule.</span>
+
+<span class="sd">        Each speaker is assigned a dictionary with ``create`` and</span>
+<span class="sd">        ``update`` fields, each containing a list of submissions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">changes</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;create&quot;</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.person.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+
+            <span class="k">for</span> <span class="n">speaker</span> <span class="ow">in</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">submissions__slots__schedule</span><span class="o">=</span><span class="bp">self</span><span class="p">):</span>
+                <span class="n">talks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">submission__speakers</span><span class="o">=</span><span class="n">speaker</span><span class="p">,</span>
+                    <span class="n">room__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">start__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">talks</span><span class="p">:</span>
+                    <span class="n">result</span><span class="p">[</span><span class="n">speaker</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;create&quot;</span><span class="p">:</span> <span class="n">talks</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">changes</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">changes</span><span class="p">[</span><span class="s2">&quot;canceled_talks&quot;</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="n">speakers</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;create&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;update&quot;</span><span class="p">:</span> <span class="p">[]})</span>
+        <span class="k">for</span> <span class="n">new_talk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">changes</span><span class="p">[</span><span class="s2">&quot;new_talks&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">speaker</span> <span class="ow">in</span> <span class="n">new_talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">speakers</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                <span class="n">speakers</span><span class="p">[</span><span class="n">speaker</span><span class="p">][</span><span class="s2">&quot;create&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_talk</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">moved_talk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">changes</span><span class="p">[</span><span class="s2">&quot;moved_talks&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">speaker</span> <span class="ow">in</span> <span class="n">moved_talk</span><span class="p">[</span><span class="s2">&quot;submission&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">speakers</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                <span class="n">speakers</span><span class="p">[</span><span class="n">speaker</span><span class="p">][</span><span class="s2">&quot;update&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">moved_talk</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">speakers</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_notifications</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list of unsaved :class:`~pretalx.mail.models.QueuedMail` objects</span>
+<span class="sd">        to be sent on schedule release.&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.mail.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">MailTemplateRoles</span>
+
+        <span class="n">mails</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">speaker</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">speakers_concerned</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">locale</span> <span class="o">=</span> <span class="n">speaker</span><span class="o">.</span><span class="n">get_locale_for_event</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">)</span>
+            <span class="n">notifications</span> <span class="o">=</span> <span class="n">render_notifications</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">speaker</span><span class="o">=</span><span class="n">speaker</span>
+            <span class="p">)</span>
+            <span class="n">slots</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;create&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[])</span> <span class="o">+</span> <span class="p">[</span>
+                <span class="n">talk</span><span class="p">[</span><span class="s2">&quot;new_slot&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">talk</span> <span class="ow">in</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;update&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[])</span>
+            <span class="p">]</span>
+            <span class="n">submissions</span> <span class="o">=</span> <span class="p">[</span><span class="n">slot</span><span class="o">.</span><span class="n">submission</span> <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="n">slots</span><span class="p">]</span>
+            <span class="n">mails</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get_mail_template</span><span class="p">(</span><span class="n">MailTemplateRoles</span><span class="o">.</span><span class="n">NEW_SCHEDULE</span><span class="p">)</span><span class="o">.</span><span class="n">to_mail</span><span class="p">(</span>
+                    <span class="n">user</span><span class="o">=</span><span class="n">speaker</span><span class="p">,</span>
+                    <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span>
+                    <span class="n">context_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="n">speaker</span><span class="p">},</span>
+                    <span class="n">context</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;notifications&quot;</span><span class="p">:</span> <span class="n">notifications</span><span class="p">},</span>
+                    <span class="n">commit</span><span class="o">=</span><span class="n">save</span><span class="p">,</span>
+                    <span class="n">locale</span><span class="o">=</span><span class="n">locale</span><span class="p">,</span>
+                    <span class="n">submissions</span><span class="o">=</span><span class="n">submissions</span><span class="p">,</span>
+                    <span class="n">attachments</span><span class="o">=</span><span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">slot</span><span class="o">.</span><span class="n">frab_slug</span><span class="si">}</span><span class="s2">.ics&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">slot</span><span class="o">.</span><span class="n">full_ical</span><span class="p">()</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span>
+                            <span class="s2">&quot;content_type&quot;</span><span class="p">:</span> <span class="s2">&quot;text/calendar&quot;</span><span class="p">,</span>
+                        <span class="p">}</span>
+                        <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="n">slots</span>
+                    <span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">mails</span>
+
+    <span class="n">generate_notifications</span><span class="o">.</span><span class="n">alters_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">url_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">quote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="k">else</span> <span class="s2">&quot;wip&quot;</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_archived</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">current_schedule</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_talks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filter_updated</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">all_rooms</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">talks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">all_talks</span><span class="p">:</span>
+            <span class="n">talks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">filter_updated</span><span class="p">:</span>
+            <span class="n">talks</span> <span class="o">=</span> <span class="n">talks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">updated__gte</span><span class="o">=</span><span class="n">filter_updated</span><span class="p">)</span>
+        <span class="n">talks</span> <span class="o">=</span> <span class="n">talks</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+            <span class="s2">&quot;submission&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;room&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;submission__track&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;submission__event&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;submission__submission_type&quot;</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">prefetch_related</span><span class="p">(</span><span class="s2">&quot;submission__speakers&quot;</span><span class="p">)</span>
+        <span class="n">talks</span> <span class="o">=</span> <span class="n">talks</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
+        <span class="n">rooms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">all_rooms</span> <span class="k">else</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+        <span class="n">tracks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">speakers</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;talks&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+            <span class="s2">&quot;timezone&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">timezone</span><span class="p">,</span>
+            <span class="s2">&quot;event_start&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">date_from</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+            <span class="s2">&quot;event_end&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">date_to</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+        <span class="p">}</span>
+        <span class="n">show_do_not_record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">request_do_not_record</span>
+        <span class="k">for</span> <span class="n">talk</span> <span class="ow">in</span> <span class="n">talks</span><span class="p">:</span>
+            <span class="n">rooms</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">talk</span><span class="o">.</span><span class="n">room</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="p">:</span>
+                <span class="n">tracks</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">track</span><span class="p">)</span>
+                <span class="n">speakers</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">speakers</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;talks&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">code</span> <span class="k">if</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                        <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">title</span>
+                            <span class="k">if</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span>
+                            <span class="k">else</span> <span class="n">talk</span><span class="o">.</span><span class="n">description</span>
+                        <span class="p">),</span>
+                        <span class="s2">&quot;abstract&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">abstract</span> <span class="k">if</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span> <span class="k">else</span> <span class="kc">None</span>
+                        <span class="p">),</span>
+                        <span class="s2">&quot;speakers&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="p">[</span><span class="n">speaker</span><span class="o">.</span><span class="n">code</span> <span class="k">for</span> <span class="n">speaker</span> <span class="ow">in</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">speakers</span><span class="o">.</span><span class="n">all</span><span class="p">()]</span>
+                            <span class="k">if</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span>
+                            <span class="k">else</span> <span class="kc">None</span>
+                        <span class="p">),</span>
+                        <span class="s2">&quot;track&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">track_id</span> <span class="k">if</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">local_start</span><span class="p">,</span>
+                        <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">local_end</span><span class="p">,</span>
+                        <span class="s2">&quot;room&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">room_id</span><span class="p">,</span>
+                        <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">get_duration</span><span class="p">(),</span>
+                        <span class="s2">&quot;updated&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">updated</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+                        <span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">state</span> <span class="k">if</span> <span class="n">all_talks</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="s2">&quot;fav_count&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="n">count_fav_talk</span><span class="p">(</span><span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span>
+                            <span class="k">else</span> <span class="mi">0</span>
+                        <span class="p">),</span>
+                        <span class="s2">&quot;do_not_record&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">do_not_record</span>
+                            <span class="k">if</span> <span class="n">show_do_not_record</span>
+                            <span class="k">else</span> <span class="kc">None</span>
+                        <span class="p">),</span>
+                        <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">get_tag</span><span class="p">(),</span>
+                        <span class="s2">&quot;session_type&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">submission</span><span class="o">.</span><span class="n">submission_type</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;talks&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                        <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                        <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
+                        <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">local_end</span><span class="p">,</span>
+                        <span class="s2">&quot;room&quot;</span><span class="p">:</span> <span class="n">talk</span><span class="o">.</span><span class="n">room_id</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+        <span class="n">tracks</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">tracks</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">track</span><span class="p">:</span> <span class="n">track</span><span class="o">.</span><span class="n">position</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;tracks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">track</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">track</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">track</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">track</span><span class="o">.</span><span class="n">color</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">tracks</span>
+        <span class="p">]</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;rooms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">room</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">room</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">room</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">room</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">room</span> <span class="ow">in</span> <span class="n">rooms</span>
+        <span class="p">]</span>
+        <span class="n">include_avatar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">cfp</span><span class="o">.</span><span class="n">request_avatar</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;speakers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;avatar&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="n">user</span><span class="o">.</span><span class="n">get_avatar_url</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">)</span> <span class="k">if</span> <span class="n">include_avatar</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">),</span>
+                <span class="s2">&quot;avatar_thumbnail_default&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="n">user</span><span class="o">.</span><span class="n">get_avatar_url</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">thumbnail</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">include_avatar</span>
+                    <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">),</span>
+                <span class="s2">&quot;avatar_thumbnail_tiny&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="n">user</span><span class="o">.</span><span class="n">get_avatar_url</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">thumbnail</span><span class="o">=</span><span class="s2">&quot;tiny&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">include_avatar</span>
+                    <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">),</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">speakers</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Help when debugging.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Schedule(event=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">slug</span><span class="si">}</span><span class="s2">, version=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">count_fav_talk</span><span class="p">(</span><span class="n">submission_code</span><span class="p">):</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">SubmissionFavourite</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+        <span class="n">submission__code</span><span class="o">=</span><span class="n">submission_code</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">))[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">count</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/_modules/pretalx/schedule/models/schedule" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../../../../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../../../../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../../../_static/copybutton.js"></script> 
+
+</body>
+</html>

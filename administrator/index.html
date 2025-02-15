@@ -1,0 +1,204 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Administrator documentation &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../genindex.html"/>
+    <link rel="search" title="Search" href="../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Administrator documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configure.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maintenance.html">Maintenance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html">Management commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="administrator-documentation">
+<span id="administrator-index"></span><h1>Administrator documentation<a class="headerlink" href="#administrator-documentation" title="Link to this heading">¶</a></h1>
+<p>You want to install pretalx on your own server? That’s great! We have
+documentation for a standard installation using <code class="docutils literal notranslate"><span class="pre">pip</span></code> on Linux.</p>
+<p>If you want a more out-of-the-box way of running pretalx, please consider our
+hosted version at <a class="reference external" href="https://pretalx.com/p/about/">pretalx.com</a>. Other than that, we also have an
+<a class="reference external" href="https://github.com/pretalx/ansible-pretalx">ansible role</a> and a community-provided <a class="reference external" href="https://github.com/pretalx/pretalx-docker">docker-compose setup</a>. Please
+note that the docker setup is not officially supported.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#step-0-prerequisites">Step 0: Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#step-1-unix-user">Step 1: Unix user</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#step-2-database-setup">Step 2: Database setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#step-3-package-dependencies">Step 3: Package dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#step-4-configuration">Step 4: Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#step-5-installation">Step 5: Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#step-6-starting-pretalx-as-a-service">Step 6: Starting pretalx as a service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#step-7-reverse-proxy">Step 7: Reverse proxy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#step-8-check-the-installation">Step 8: Check the installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#step-9-provide-periodic-tasks">Step 9: Provide periodic tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configure.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configure.html#the-filesystem-section">The filesystem section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configure.html#the-site-section">The site section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configure.html#the-database-section">The database section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configure.html#the-mail-section">The mail section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configure.html#the-celery-section">The celery section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configure.html#the-redis-section">The redis section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configure.html#the-logging-section">The logging section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configure.html#the-locale-section">The locale section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configure.html#the-files-section">The files section</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="maintenance.html">Maintenance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="maintenance.html#updates">Updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maintenance.html#backups">Backups</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Management commands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#database-commands">Database commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#debug-commands">Debug commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#core-pretalx-commands">Core pretalx commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#development-commands">Development commands</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/administrator/index.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script> 
+
+</body>
+</html>

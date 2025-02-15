@@ -1,0 +1,200 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Release a pretalx version &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../genindex.html"/>
+    <link rel="search" title="Search" href="../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="release-a-pretalx-version">
+<h1>Release a pretalx version<a class="headerlink" href="#release-a-pretalx-version" title="Link to this heading">¶</a></h1>
+<p>You are a pretalx maintainer and want to release a new version? Hold on to your fancy hat or your favourite socks, here we go!</p>
+<section id="boarding-checks">
+<h2>Boarding checks<a class="headerlink" href="#boarding-checks" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Are the translation files up to date?</p></li>
+<li><p>Are there pending checks for bad translations on Weblate?</p></li>
+<li><p>Are there pending translations from <a class="reference external" href="https://translate.pretalx.com/projects/pretalx/pretalx/#repository">Weblate</a>? Merge them.</p></li>
+<li><p>Are all locales with more than 75% coverage included in the release?</p></li>
+<li><p>Update the translation percentages from <a class="reference external" href="https://translate.pretalx.com/projects/pretalx/pretalx/#translations">translate.pretalx.com</a>.</p></li>
+<li><p>If new translations were added, add new calendar locales (you have to download the <a class="reference external" href="https://github.com/fullcalendar/fullcalendar/releases/download/v6.1.5/fullcalendar-6.1.5.zip">release archive</a>) and extract the locales from there), and make sure that flags (in input fields) for the new locale are shown.</p></li>
+<li><p>Are there warnings about missing migrations?</p></li>
+<li><p>Any blockers to see <a class="reference external" href="https://github.com/pretalx/pretalx/issues?q=is%3Aopen+is%3Aissue+label%3A%22type%3A+bug%22+">in our issues</a>?</p></li>
+<li><p>Are there any TODOs that you have to resolve?</p></li>
+<li><p>Are there any <code class="docutils literal notranslate"><span class="pre">&#64;pytest.mark.xfail</span></code> that you have to resolve?</p></li>
+<li><p>Are the <a class="reference internal" href="../changelog.html#changelog"><span class="std std-ref">Release Notes</span></a> well-phrased and complete?</p></li>
+<li><p>Are there <a class="reference external" href="https://github.com/pretalx/pretalx/pulls">open pull requests</a> that you should merge?</p></li>
+<li><p>Are all tests passing in CI?</p></li>
+<li><p>Have you written (and not pushed) a blog post? It should contain at least major features and all contributors involved in the release.</p></li>
+</ol>
+</section>
+<section id="system-checks">
+<h2>System checks<a class="headerlink" href="#system-checks" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Deploy the release-ready commit to an instance. Check if the upgrade and the instance works.</p></li>
+<li><p>Clean clone: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">git&#64;github.com:pretalx/pretalx</span> <span class="pre">pretalx-release</span> <span class="pre">&amp;&amp;</span> <span class="pre">cd</span> <span class="pre">pretalx-release</span></code></p></li>
+<li><p>Set up your environment: <code class="docutils literal notranslate"><span class="pre">mkvirtualenv</span> <span class="pre">pretalx-release</span> <span class="pre">&amp;&amp;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span> <span class="pre">check-manifest</span> <span class="pre">twine</span> <span class="pre">wheel</span></code></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">check-manifest</span></code> <strong>locally</strong>.</p></li>
+</ol>
+</section>
+<section id="take-off-and-landing">
+<h2>Take-off and landing<a class="headerlink" href="#take-off-and-landing" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Bump version in <code class="docutils literal notranslate"><span class="pre">src/pretalx/__init__.py</span></code>.</p></li>
+<li><p>Add the release to the <a class="reference internal" href="../changelog.html#changelog"><span class="std std-ref">Release Notes</span></a>.</p></li>
+<li><p>Make a release commit: <code class="docutils literal notranslate"><span class="pre">RELEASE=vx.y.z;</span> <span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-am</span> <span class="pre">&quot;Release</span> <span class="pre">$RELEASE&quot;</span> <span class="pre">&amp;&amp;</span> <span class="pre">git</span> <span class="pre">tag</span> <span class="pre">-m</span> <span class="pre">&quot;Release</span> <span class="pre">$RELEASE&quot;</span> <span class="pre">$RELEASE</span></code></p></li>
+<li><p>Build a new release: <code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">dist/</span> <span class="pre">build/</span> <span class="pre">pretalx.egg-info</span> <span class="pre">&amp;&amp;</span> <span class="pre">python</span> <span class="pre">-m</span> <span class="pre">build</span> <span class="pre">-n</span></code></p></li>
+<li><p>Upload the release: <code class="docutils literal notranslate"><span class="pre">twine</span> <span class="pre">upload</span> <span class="pre">dist/pretalx-*</span></code></p></li>
+<li><p>Push the release: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span></code></p></li>
+<li><p>Install/update the package somewhere.</p></li>
+<li><p>Publish the blog post.</p></li>
+<li><p>Add the release on <a class="reference external" href="https://github.com/pretalx/pretalx/releases">GitHub</a> (upload the archive you uploaded to PyPI, and add a link to the correct section of the <a class="reference internal" href="../changelog.html#changelog"><span class="std std-ref">Release Notes</span></a>)</p></li>
+<li><p>Upgrade <a class="reference external" href="https://github.com/pretalx/pretalx-docker">the docker repository</a> to the current commit <strong>and tag the commit as vx.y.z</strong>.</p></li>
+<li><p>Increment version number to <code class="docutils literal notranslate"><span class="pre">version+1.dev0</span></code> in <code class="docutils literal notranslate"><span class="pre">src/pretalx/__init__.py</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">pretalx-release</span> <span class="pre">&amp;&amp;</span> <span class="pre">deactivate</span> <span class="pre">&amp;&amp;</span> <span class="pre">rmvirtualenv</span> <span class="pre">pretalx-release</span></code></p></li>
+<li><p>Update version numbers in update checker (<code class="docutils literal notranslate"><span class="pre">versions.py</span></code>) and deploy.</p></li>
+<li><p>Update any plugins waiting for the new release.</p></li>
+<li><p>Check if the docker image build was successful.</p></li>
+<li><p>Post about the release on <code class="docutils literal notranslate"><span class="pre">chaos.social</span></code>, Twitter and LinkedIn.</p></li>
+<li><p>Notify interested parties (e.g. big self-hosted instances, prominent plugin developers) about the release.</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/maintainer/release.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script> 
+
+</body>
+</html>

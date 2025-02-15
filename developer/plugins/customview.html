@@ -1,0 +1,261 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Creating custom views &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../../genindex.html"/>
+    <link rel="search" title="Search" href="../../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../setup.html">The development setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html">Contributing to pretalx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../translating.html">Translating pretalx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../concepts.html">Concepts and Terminology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interfaces/index.html">Interfaces and Utilities</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Plugin development</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="plugins.html">Creating a plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="general.html">General APIs</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Creating custom views</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#organiser-panel-views">Organiser panel views</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frontend-views">Frontend views</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="recording.html">Writing an recording provider plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exporter.html">Writing an exporter plugin</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="creating-custom-views">
+<span id="customview"></span><h1>Creating custom views<a class="headerlink" href="#creating-custom-views" title="Link to this heading">¶</a></h1>
+<p>This page describes how to provide a custom view from within your plugin. Before you start
+reading this page, please read and understand how <a class="reference internal" href="#urlconf"><span class="std std-ref">URL handling</span></a> works in
+pretalx.</p>
+<section id="organiser-panel-views">
+<span id="urlconf"></span><h2>Organiser panel views<a class="headerlink" href="#organiser-panel-views" title="Link to this heading">¶</a></h2>
+<p>If you want to add a custom view to the organiser area of an event, register an URL in your
+<code class="docutils literal notranslate"><span class="pre">urls.py</span></code> that lives in the <code class="docutils literal notranslate"><span class="pre">/orga/</span></code> subpath:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">re_path</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.event.models.event</span><span class="w"> </span><span class="kn">import</span> <span class="n">SLUG_REGEX</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">views</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+<span class="linenos"> 8</span>    <span class="n">re_path</span><span class="p">(</span>
+<span class="linenos"> 9</span>        <span class="sa">rf</span><span class="s2">&quot;^orga/event/(?P&lt;event&gt;</span><span class="si">{</span><span class="n">SLUG_REGEX</span><span class="si">}</span><span class="s2">)/p/myplugin/$&quot;</span><span class="p">,</span>
+<span class="linenos">10</span>        <span class="n">views</span><span class="o">.</span><span class="n">admin_view</span><span class="p">,</span>
+<span class="linenos">11</span>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;backend&quot;</span><span class="p">,</span>
+<span class="linenos">12</span>    <span class="p">),</span>
+<span class="linenos">13</span>    <span class="n">re_path</span><span class="p">(</span>
+<span class="linenos">14</span>        <span class="sa">rf</span><span class="s2">&quot;^(?P&lt;event&gt;</span><span class="si">{</span><span class="n">SLUG_REGEX</span><span class="si">}</span><span class="s2">)/p/myplugin/$&quot;</span><span class="p">,</span>
+<span class="linenos">15</span>        <span class="n">views</span><span class="o">.</span><span class="n">frontend_view</span><span class="p">,</span>
+<span class="linenos">16</span>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;frontend&quot;</span><span class="p">,</span>
+<span class="linenos">17</span>    <span class="p">),</span>
+<span class="linenos">18</span>    <span class="n">re_path</span><span class="p">(</span>
+<span class="linenos">19</span>        <span class="sa">rf</span><span class="s2">&quot;^p/myplugin/$&quot;</span><span class="p">,</span>
+<span class="linenos">20</span>        <span class="n">views</span><span class="o">.</span><span class="n">global_view</span><span class="p">,</span>
+<span class="linenos">21</span>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;global-frontend&quot;</span><span class="p">,</span>
+<span class="linenos">22</span>    <span class="p">),</span>
+<span class="linenos">23</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>If you just created your <cite>urls.py</cite> file and you already had the development
+server running, you’ll now have to restart it for the new file to be
+recognised.</p>
+<p>If your view is event-specific, you have to name one parameter in your URL
+<code class="docutils literal notranslate"><span class="pre">event</span></code>. By convention, all plugin URLs except for backend URLs start with
+a <code class="docutils literal notranslate"><span class="pre">/p/</span></code> to avoid namespace collisions with event names and reserved URLs.</p>
+<p>You can then write a regular view. Our middleware will automatically detect the
+<code class="docutils literal notranslate"><span class="pre">/orga/</span></code> subpath and will ensure the following points if this is an URL with
+the <code class="docutils literal notranslate"><span class="pre">event</span></code> parameter:</p>
+<ul class="simple">
+<li><p>The user has logged in</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">request.event</span></code> attribute contains the current event</p></li>
+<li><p>The user has permission to view the current event</p></li>
+</ul>
+<p>If you want to require specific permission types, we provide you with a decorator or a mixin for
+your views:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.mixins.views</span><span class="w"> </span><span class="kn">import</span> <span class="n">PermissionRequired</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AdminView</span><span class="p">(</span><span class="n">PermissionRequired</span><span class="p">,</span> <span class="n">View</span><span class="p">):</span>
+    <span class="n">permission_required</span> <span class="o">=</span> <span class="s2">&quot;orga.view_submissions&quot;</span>
+</pre></div>
+</div>
+<p>There is also a signal that allows you to add the view to the event sidebar navigation like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">django.dispatch</span><span class="w"> </span><span class="kn">import</span> <span class="n">receiver</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve</span><span class="p">,</span> <span class="n">reverse</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">ugettext_lazy</span> <span class="k">as</span> <span class="n">_</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.orga.signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">nav_event</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="nd">@receiver</span><span class="p">(</span><span class="n">nav_event</span><span class="p">,</span> <span class="n">dispatch_uid</span><span class="o">=</span><span class="s2">&quot;friends_tickets_nav&quot;</span><span class="p">)</span>
+<span class="linenos"> 9</span><span class="k">def</span><span class="w"> </span><span class="nf">navbar_info</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="linenos">10</span>    <span class="n">url</span> <span class="o">=</span> <span class="n">resolve</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">path_info</span><span class="p">)</span>
+<span class="linenos">11</span>    <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">has_perm</span><span class="p">(</span><span class="s2">&quot;orga.view_orga_area&quot;</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">event</span><span class="p">):</span>
+<span class="linenos">12</span>        <span class="k">return</span> <span class="p">[]</span>
+<span class="linenos">13</span>    <span class="k">return</span> <span class="p">[{</span>
+<span class="linenos">14</span>        <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;My plugin view&quot;</span><span class="p">),</span>
+<span class="linenos">15</span>        <span class="s2">&quot;icon&quot;</span><span class="p">:</span> <span class="s2">&quot;heart&quot;</span><span class="p">,</span>
+<span class="linenos">16</span>        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">reverse</span><span class="p">(</span><span class="s2">&quot;plugins:myplugin:index&quot;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span>
+<span class="linenos">17</span>            <span class="s2">&quot;event&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">slug</span><span class="p">,</span>
+<span class="linenos">18</span>        <span class="p">}),</span>
+<span class="linenos">19</span>        <span class="s2">&quot;active&quot;</span><span class="p">:</span> <span class="n">url</span><span class="o">.</span><span class="n">namespace</span> <span class="o">==</span> <span class="s2">&quot;plugins:myplugin&quot;</span> <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">url_name</span> <span class="o">==</span> <span class="s2">&quot;view&quot;</span><span class="p">,</span>
+<span class="linenos">20</span>    <span class="p">}]</span>
+</pre></div>
+</div>
+</section>
+<section id="frontend-views">
+<h2>Frontend views<a class="headerlink" href="#frontend-views" title="Link to this heading">¶</a></h2>
+<p>Frontend views work pretty much like organiser area views. Take care that your
+URL starts with <code class="docutils literal notranslate"><span class="pre">fr&quot;^(?P&lt;event&gt;[{SLUG_REGEX}]+)/p/mypluginname&quot;</span></code> for event
+related URLs or <code class="docutils literal notranslate"><span class="pre">f&quot;^p/mypluginname&quot;</span></code> for global views. You can then write a
+regular view. It will be automatically ensured that:</p>
+<ul class="simple">
+<li><p>The requested event exists</p></li>
+<li><p>The requested event is visible (either by being public, or if an organiser looks at it)</p></li>
+<li><p>The request involves the correct domain for the event</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">request.event</span></code> attribute contains the correct <code class="docutils literal notranslate"><span class="pre">Event</span></code> object</p></li>
+<li><p>The organiser has enabled the plugin</p></li>
+<li><p>The locale middleware has processed the request</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/developer/plugins/customview.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../_static/copybutton.js"></script> 
+
+</body>
+</html>

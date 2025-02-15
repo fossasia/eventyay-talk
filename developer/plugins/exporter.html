@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Writing an exporter plugin &mdash; pretalx 2024.4.0.dev0 documentation</title>
+  
+  <link rel="shortcut icon" href="../../_static/images/favicon.png"/>
+
+  <link rel="stylesheet" href="../../_static/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/css/pretalx.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  
+  
+    <link rel="index" title="Index" href="../../genindex.html"/>
+    <link rel="search" title="Search" href="../../search.html"/>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+</head>
+
+<body role="document">
+
+   
+
+  <header>
+  <a id="logourl" href="/" class="mobile-hide">
+    <img src="/_static/images/logo.svg" />
+  </a>
+
+  <div id="spacer"></div>
+  <div role="search" id="header-search">
+    <form id="rtd-search-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+  </div>
+
+  <div id="related" class="mobile-hide">
+    <div class="dropdown">
+      <div class="dropdown-title">Support us</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">Hosted pretalx</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/pricing">pretalx support</a></div>
+        <div class="dropdown-item"><a href="https://rixx.de/funding">Developer support</a></div>
+      </div>
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-title">Resources</div>
+      <div class="dropdown-body">
+        <div class="dropdown-item"><a href="https://pretalx.com/p/about/">Website</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/news/">Blog</a></div>
+        <div class="dropdown-item"><a href="https://pretalx.com/p/try/">Try pretalx</a></div>
+        <div class="dropdown-item"><a href="https://github.com/pretalx/pretalx/">Source code</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+    
+    <nav data-toggle="nav-shift" class="nav-side">
+      <div class="nav-scroll">
+
+        <div class="nav-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+            <div id="toctree">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administrator/index.html">Administrator documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../setup.html">The development setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html">Contributing to pretalx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../translating.html">Translating pretalx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../concepts.html">Concepts and Terminology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interfaces/index.html">Interfaces and Utilities</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Plugin development</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="plugins.html">Creating a plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="general.html">General APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customview.html">Creating custom views</a></li>
+<li class="toctree-l3"><a class="reference internal" href="recording.html">Writing an recording provider plugin</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Writing an exporter plugin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#exporter-registration">Exporter registration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#the-exporter-class">The exporter class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#access">Access</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../funding.html">❤ Funding</a></li>
+</ul>
+
+            </div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <main data-toggle="nav-shift">
+
+      
+      <nav class="nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="nav-top" class="fa fa-bars"></i>
+          <a href="../../contents.html">pretalx</a>
+        
+      </nav>
+
+      
+      <div class="nav-content">
+        <div class="rst-content">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="writing-an-exporter-plugin">
+<h1>Writing an exporter plugin<a class="headerlink" href="#writing-an-exporter-plugin" title="Link to this heading">¶</a></h1>
+<p>An Exporter is a method to export the submission or schedule data in pretalx for later use in another program.</p>
+<p>In this document, we will walk through the creation of an exporter output plugin step by step.</p>
+<p>Please read <a class="reference internal" href="plugins.html#pluginsetup"><span class="std std-ref">Creating a plugin</span></a> first, if you haven’t already.</p>
+<section id="exporter-registration">
+<h2>Exporter registration<a class="headerlink" href="#exporter-registration" title="Link to this heading">¶</a></h2>
+<p>The exporter API does not make a lot of usage from signals, but it does use a
+signal to get a list of all available exporters. Your plugin should listen for
+this signal and return the subclass of <code class="docutils literal notranslate"><span class="pre">pretalx.common.exporter.BaseExporter</span></code>
+that we’ll provide in this plugin:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kn">from</span><span class="w"> </span><span class="nn">django.dispatch</span><span class="w"> </span><span class="kn">import</span> <span class="n">receiver</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="kn">from</span><span class="w"> </span><span class="nn">pretalx.common.signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_data_exporters</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span>
+<span class="linenos">6</span><span class="nd">@receiver</span><span class="p">(</span><span class="n">register_data_exporters</span><span class="p">,</span> <span class="n">dispatch_uid</span><span class="o">=</span><span class="s2">&quot;exporter_myexporter&quot;</span><span class="p">)</span>
+<span class="linenos">7</span><span class="k">def</span><span class="w"> </span><span class="nf">register_data_exporter</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="linenos">8</span>    <span class="kn">from</span><span class="w"> </span><span class="nn">.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyExporter</span>
+<span class="linenos">9</span>    <span class="k">return</span> <span class="n">MyExporter</span>
+</pre></div>
+</div>
+</section>
+<section id="the-exporter-class">
+<h2>The exporter class<a class="headerlink" href="#the-exporter-class" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pretalx.common.exporter.BaseExporter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pretalx.common.exporter.</span></span><span class="sig-name descname"><span class="pre">BaseExporter</span></span><a class="headerlink" href="#pretalx.common.exporter.BaseExporter" title="Link to this definition">¶</a></dt>
+<dd><p>The central object of each exporter is the subclass of <code class="docutils literal notranslate"><span class="pre">BaseExporter</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretalx.common.exporter.BaseExporter.BaseExporter.event">
+<span class="sig-prename descclassname"><span class="pre">BaseExporter.</span></span><span class="sig-name descname"><span class="pre">event</span></span><a class="headerlink" href="#pretalx.common.exporter.BaseExporter.BaseExporter.event" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.identifier">
+<span class="sig-prename descclassname"><span class="pre">BaseExporter.</span></span><span class="sig-name descname"><span class="pre">identifier</span></span><a class="headerlink" href="#pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.identifier" title="Link to this definition">¶</a></dt>
+<dd><p>A short and unique identifier for this exporter.</p>
+<p>This should only contain lower-case letters and in most cases
+will be the same as your package name.</p>
+<p>This is an abstract attribute, you <strong>must</strong> override this!</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.verbose_name">
+<span class="sig-prename descclassname"><span class="pre">BaseExporter.</span></span><span class="sig-name descname"><span class="pre">verbose_name</span></span><a class="headerlink" href="#pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.verbose_name" title="Link to this definition">¶</a></dt>
+<dd><p>A human-readable name for this exporter.</p>
+<p>This should be short but self-explaining. Good examples include
+‘JSON’ or ‘Microsoft Excel’.</p>
+<p>This is an abstract attribute, you <strong>must</strong> override this!</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.public">
+<span class="sig-prename descclassname"><span class="pre">BaseExporter.</span></span><span class="sig-name descname"><span class="pre">public</span></span><a class="headerlink" href="#pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.public" title="Link to this definition">¶</a></dt>
+<dd><p>Return True if the exported data should be publicly available once
+the event is public, False otherwise.</p>
+<p>If you need additional data to decide, you can instead implement the
+<code class="docutils literal notranslate"><span class="pre">is_public(self,</span> <span class="pre">request,</span> <span class="pre">**kwargs)</span></code> method, which overrides this
+property.</p>
+<p>This is an abstract attribute, you <strong>must</strong> override this!</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.show_qrcode">
+<span class="sig-prename descclassname"><span class="pre">BaseExporter.</span></span><span class="sig-name descname"><span class="pre">show_qrcode</span></span><a class="headerlink" href="#pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.show_qrcode" title="Link to this definition">¶</a></dt>
+<dd><p>Return True if the link to the exporter should be shown as QR code,
+False (default) otherwise.</p>
+<p>Override the get_qr_code method to override the QR code itself.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.get_qrcode">
+<span class="sig-prename descclassname"><span class="pre">BaseExporter.</span></span><span class="sig-name descname"><span class="pre">get_qrcode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.get_qrcode" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.icon">
+<span class="sig-prename descclassname"><span class="pre">BaseExporter.</span></span><span class="sig-name descname"><span class="pre">icon</span></span><a class="headerlink" href="#pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.icon" title="Link to this definition">¶</a></dt>
+<dd><p>Return either a fa- string or some other symbol to accompany the
+exporter in displays.</p>
+<p>This is an abstract attribute, you <strong>must</strong> override this!</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.group">
+<span class="sig-prename descclassname"><span class="pre">BaseExporter.</span></span><span class="sig-name descname"><span class="pre">group</span></span><a class="headerlink" href="#pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.group" title="Link to this definition">¶</a></dt>
+<dd><p>Return either ‘speaker’ or ‘submission’ to indicate on which
+organiser export page to list this export.</p>
+<p>Invalid values default to ‘submission’, which is also where all
+schedule exports live.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.render">
+<span class="sig-prename descclassname"><span class="pre">BaseExporter.</span></span><span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pretalx.common.exporter.pretalx.common.exporter.BaseExporter.BaseExporter.render" title="Link to this definition">¶</a></dt>
+<dd><p>Render the exported file and return a tuple consisting of a file
+name, a file type and file content.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+</dd>
+</dl>
+<p>This is an abstract method, you <strong>must</strong> override this!</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>If you are planning to write an exporter that exports to CSV, have a look at
+the <code class="docutils literal notranslate"><span class="pre">pretalx.common.exporters.CSVExporterMixin</span></code> class. If you inherit from
+this class next to <code class="docutils literal notranslate"><span class="pre">BaseExporter</span></code>, you can provide a <code class="docutils literal notranslate"><span class="pre">filename</span></code> attribute
+and a <code class="docutils literal notranslate"><span class="pre">get_data</span></code> method, which should return the <code class="docutils literal notranslate"><span class="pre">fieldnames</span></code> as an iterable,
+and the <code class="docutils literal notranslate"><span class="pre">data</span></code> as a list of dictionaries.
+This has the advantage of sparing you CSV formatting issues and security
+considerations, since the mixin takes care of all that.</p>
+</section>
+<section id="access">
+<h2>Access<a class="headerlink" href="#access" title="Link to this heading">¶</a></h2>
+<p>The export will now be available for organisers in the schedule related export
+view. If you have set <code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">=</span> <span class="pre">True</span></code>, it will also show up in the drop down
+in the event agenda.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <a href="https://github.com/pretalx/pretalx/blob/main/doc/developer/plugins/exporter.rst" class="fa fa-github"> Edit this page</a> &middot;
+  
+  &copy; Copyright 2017-2025, Tobias Kunze.
+  <div> 
+  </div>
+</footer>
+        </div>
+      </div>
+    </main>
+
+  <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:'../../',
+          VERSION:'2024.4.0.dev0',
+          COLLAPSE_INDEX:false,
+          FILE_SUFFIX:'.html',
+          HAS_SOURCE:  true,
+          SOURCELINK_SUFFIX: '.txt'
+      };
+  </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sphinx_highlight.js"></script>
+    <script type="text/javascript" src="../../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../_static/copybutton.js"></script> 
+
+</body>
+</html>
