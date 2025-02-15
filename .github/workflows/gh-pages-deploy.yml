@@ -28,7 +28,7 @@ jobs:
         working-directory: doc
 
       - name: Copy CNAME to deploy directory
-        run: cp CNAME doc/_build/html
+        run: cp doc/CNAME doc/_build/html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
