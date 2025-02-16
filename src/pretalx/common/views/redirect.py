@@ -1,4 +1,3 @@
-import html
 import urllib.parse
 
 from django.core import signing
@@ -38,9 +37,6 @@ def redirect_view(request):
                 "url": url,
             },
         )
-    # As most of our URLs are rendered via Markdown, they may contain
-    # HTML entities – particularly, ampersands will be encoded as "&amp;".
-    url = html.unescape(url)
     return HttpResponseRedirect(url)
 
 
