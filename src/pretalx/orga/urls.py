@@ -39,7 +39,7 @@ urlpatterns = [
         name="admin.user.delete",
     ),
     path("admin/users/", admin.AdminUserList.as_view(), name="admin.user.list"),
-    path("me", event.UserSettings.as_view(), name="user.view"),
+    path("me", person.UserSettings.as_view(), name="user.view"),
     path("me/subuser", person.SubuserView.as_view(), name="user.subuser"),
     path(
         "invitation/<code>",
