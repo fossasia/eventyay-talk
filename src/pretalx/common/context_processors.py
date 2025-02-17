@@ -6,6 +6,7 @@ from django.http import Http404
 from django.urls import resolve
 from django.utils import translation
 from django.utils.formats import get_format
+from django_scopes import get_scope
 
 from pretalx.cfp.signals import footer_link, html_head
 from pretalx.common.models.settings import GlobalSettings
@@ -66,7 +67,7 @@ def system_information(request):
         context["footer_links"] = []
         context["header_links"] = []
 
-        if event:
+        if event and get_scope():
             context["footer_links"] = [
                 {"label": link.label, "url": link.url}
                 for link in event.extra_links.all()
@@ -88,7 +89,7 @@ def system_information(request):
                 )
         context["footer_links"] += _footer
 
-        if event:
+        if event and get_scope():
             for _receiver, response in html_head.send(event, request=request):
                 _head.append(response)
             context["html_head"] = "".join(_head)
