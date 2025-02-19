@@ -2,6 +2,7 @@ import configparser
 import os
 import sys
 from pathlib import Path
+from configparser import RawConfigParser
 
 CONFIG = {
     "filesystem": {
@@ -157,10 +158,15 @@ CONFIG = {
 }
 
 
-def read_config_files(config):
-    if "PRETALX_CONFIG_FILE" in os.environ:
-        with open(os.environ.get("PRETALX_CONFIG_FILE"), encoding="utf-8") as fp:
-            config_files = config.read_file(fp)
+def read_config_files(config: RawConfigParser) -> tuple[RawConfigParser, list[str]]:
+    if path_from_env := os.getenv("PRETALX_CONFIG_FILE"):
+        file_path = Path(path_from_env)
+        if file_path.exists():
+            with file_path.open(encoding="utf-8") as fp:
+                config.read_file(fp)
+                config_files = [str(file_path.resolve())]
+        else:
+            config_files = []
     else:
         config_files = config.read(
             [
@@ -185,7 +191,7 @@ def reduce_dict(data):
     }
 
 
-def read_layer(layer_name, config):
+def read_layer(layer_name: str, config: RawConfigParser) -> RawConfigParser:
     config_dict = reduce_dict(
         {
             section_name: {
@@ -198,7 +204,7 @@ def read_layer(layer_name, config):
     return config
 
 
-def build_config():
+def build_config() -> tuple[RawConfigParser, list[str]]:
     config = configparser.RawConfigParser()
     config = read_layer("default", config)
     config, config_files = read_config_files(config)
