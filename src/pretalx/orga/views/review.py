@@ -505,15 +505,11 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
     @context
     @cached_property
     def has_anonymised_review(self):
-        return self.request.event.review_phases.filter(
-            can_see_speaker_names=False
-        ).exists()
-
-    @context
-    @cached_property
-    def anonymise_review(self):
-        return not getattr(
-            self.request.event.active_review_phase, "can_see_speaker_names", True
+        return (
+            self.request.event.review_phases.filter(
+                can_see_speaker_names=False
+            ).exists()
+            or self.request.event.teams.filter(force_hide_speaker_names=True).exists()
         )
 
     @context

@@ -20,7 +20,7 @@
 {% block extra_title %}{% translate "Reviews" %} :: {% endblock extra_title %}
 
 {% block content %}
-    {% has_perm "orga.view_speakers" request.user request.event as can_view_speakers %}
+    {% has_perm "orga.view_speakers_in_review_context" request.user request.event as can_view_speakers %}
     <div class="alert alert-info">
         {% if next_submission %}
             {% blocktranslate trimmed count count=missing_reviews %}

@@ -205,6 +205,9 @@ rules.add_perm(
     "orga.view_speakers",
     can_change_submissions | (is_reviewer & can_view_speaker_names),
 )
+rules.add_perm(
+    "orga.view_speakers_in_review_context", is_reviewer & can_view_speaker_names
+)
 rules.add_perm("orga.view_organiser_speakers", is_orga_member)
 rules.add_perm("orga.view_organiser_events", is_orga_member)
 rules.add_perm("orga.view_organiser_lists", is_any_organiser)
