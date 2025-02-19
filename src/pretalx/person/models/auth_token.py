@@ -2,6 +2,7 @@ import string
 
 from django.db import models
 from django.utils.crypto import get_random_string
+from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
 from pretalx.common.models.mixins import PretalxModel
@@ -16,12 +17,12 @@ def generate_api_token():
 READ_PERMISSIONS = ("list", "retrieve")
 WRITE_PERMISSIONS = READ_PERMISSIONS + ("create", "update", "delete", "actions")
 PERMISSION_CHOICES = (
-    ("list", _("List all resources")),
-    ("retrieve", _("Retrieve a single resource")),
-    ("create", _("Create a new resource")),
-    ("update", _("Update an existing resource")),
-    ("delete", _("Delete a resource")),
-    ("actions", _("Perform actions on a resource")),
+    ("list", _("Read list")),
+    ("retrieve", _("Read details")),
+    ("create", _("Create")),
+    ("update", _("Update")),
+    ("delete", _("Delete")),
+    ("actions", _("Additional actions")),
 )
 ENDPOINTS = (
     "events",
@@ -68,3 +69,17 @@ class UserApiToken(PretalxModel):
             endpoint, default_endpoint_permissions().get(endpoint, [])
         )
         return method in perms
+
+    @property
+    def is_active(self):
+        return not self.expires or self.expires > now()
+
+    def serialize(self):
+        return {
+            "name": self.name,
+            "token": self.token,
+            "team": self.team_id,
+            "expires": self.expires.isoformat() if self.expires else None,
+            "endpoints": self.endpoints,
+            "version": self.version,
+        }
