@@ -171,7 +171,7 @@ def read_config_files(config: RawConfigParser) -> tuple[RawConfigParser, list[st
                 config.read_file(fp)
                 config_files = [str(file_path.resolve())]
         else:
-            logger.warning("File specified by PRETALX_CONFIG_FILE does not exist. {}", path_from_env)
+            logger.warning("File specified by PRETALX_CONFIG_FILE does not exist. %s", path_from_env)
             config_files = []
     else:
         config_files = config.read(
