@@ -190,7 +190,12 @@ class TemplateFlowStep(TemplateResponseMixin, BaseCfPStep):
         )
         # Select label for login button
         config = cast(RawConfigParser, settings.CONFIG)
-        key = config['site']['call_for_speaker_login_button_label']
+        try:
+            key = config['site']['call_for_speaker_login_button_label']
+        except KeyError:
+            # TODO: The logs cannot be observed with the development Docker setup. Should be fixed.
+            logger.info("Config file misses `call_for_speaker_login_button_label` key!")
+            key = 'default'
         try:
             button_label = CALL_FOR_SPEAKER_LOGIN_BTN_LABELS[key]
         except KeyError:
