@@ -11,7 +11,7 @@ function setImage(url) {
 /* TODO: rewrite without jquery */
 
 const updateFileInput = (ev) => {
-    const imateSelected = ev.target.value !== '';
+    const imageSelected = ev.target.value !== '';
 
     if (imageSelected) {
         ev.target.closest('.avatar-form').querySelector('input[type=checkbox]').checked = false;
