@@ -108,6 +108,6 @@ class BasePhrases(Phrases, app="base"):
 
 # We want to show different button label depending on deployment site.
 CALL_FOR_SPEAKER_LOGIN_BTN_LABELS = {
-    'default': _('Login'),
-    'mediawiki': _('Login with MediaWiki SSO or Email'),
+    "default": _("Login"),
+    "mediawiki": _("Login with MediaWiki SSO or Email"),
 }
