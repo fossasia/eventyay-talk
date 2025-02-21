@@ -32,9 +32,11 @@
 					@editSession="editorStart($event)")
 			#session-editor-wrapper(v-if="editorSession", @click="editorSession = null")
 				form#session-editor(@click.stop="", @submit.prevent="editorSave")
-					h3.session-editor-title(v-if="editorSession.code")
+					h3.session-editor-title
 						a(v-if="editorSession.code", :href="`/orga/event/${eventSlug}/submissions/${editorSession.code}/`") {{editorSession.title }}
-						span(v-else) {{editorSession.title }}
+						span(v-else-if="editorSession.title") {{getLocalizedString(editorSession.title) }}
+						.btn-sm.btn-secondary.close-button(@click="editorSession = null", role="button")
+							i.fa.fa-times
 					.data
 						.data-row(v-if="editorSession.code && editorSession.speakers && editorSession.speakers.length > 0").form-group.row
 							label.data-label.col-form-label.col-md-3 {{ $t('Speakers') }}
@@ -527,6 +529,11 @@ export default {
 			.session-editor-title
 				font-size: 22px
 				margin-bottom: 16px
+				position: relative
+				.close-button
+					position: absolute
+					right: 0
+					top: 0
 			.button-row
 				display: flex
 				width: 100%
