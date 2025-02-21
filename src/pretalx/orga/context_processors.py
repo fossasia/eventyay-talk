@@ -36,13 +36,9 @@ def orga_events(request):
     context["site_config"] = site_config
     context["base_path"] = settings.BASE_PATH
     # Login button label
-    try:
-        key = site_config["call_for_speaker_login_button_label"]
-    except KeyError:
-        key = "default"
-    try:
-        button_label = CALL_FOR_SPEAKER_LOGIN_BTN_LABELS[key]
-    except KeyError:
+    key = site_config.get("login_button_label", "default")
+    button_label = CALL_FOR_SPEAKER_LOGIN_BTN_LABELS.get(key)
+    if not button_label:
         logger.warning("%s does not exist in CALL_FOR_SPEAKER_LOGIN_BTN_LABELS", key)
         button_label = CALL_FOR_SPEAKER_LOGIN_BTN_LABELS["default"]
     context["login_button_label"] = button_label
