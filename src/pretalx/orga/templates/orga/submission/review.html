@@ -164,7 +164,7 @@
             {% endif %}
 
             {% if can_view_other_reviews or form.instance.pk %}
-                <div class="table-responsive-sm">
+                <div class="table-responsive">
                     <table class="table review-table table-hover table-flip table-sticky">
                         <thead>
                             <tr>
@@ -173,7 +173,7 @@
                                     {% for cat in score_categories %}<th>{{ cat.name }}</th>{% endfor %}
                                 {% endif %}
                                 {% for field in qform %}<th>{{ field.label }}</th>{% endfor %}
-                                <th>{% translate "Review" %}</th>
+                                <th class="review-text">{% translate "Review" %}</th>
                                 <th></th>
                             </tr>
                         </thead>

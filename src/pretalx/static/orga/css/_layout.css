@@ -598,6 +598,9 @@ td.reviewer {
   display: flex;
   flex-direction: row;
 }
+td.review-text, th.review-text {
+    min-width: 20em
+}
 
 form #id_header_pattern,
 form #id_display-header_pattern {

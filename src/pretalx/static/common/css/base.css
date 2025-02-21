@@ -962,6 +962,13 @@ pl-0 {
   border-radius: var(--size-border-radius);
 }
 
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 ::selection {
   background-color: var(--color-primary);
   color: white;
@@ -985,12 +992,6 @@ pl-0 {
 }
 
 @media (max-width: 768px) {
-  .table-responsive {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
   .col-md-1,
   .col-md-2,
   .col-md-3,
