@@ -5,10 +5,8 @@ from typing import cast
 from django.conf import settings
 from django.utils.module_loading import import_string
 
-
 from pretalx.common.text.phrases import CALL_FOR_SPEAKER_LOGIN_BTN_LABELS
 from pretalx.orga.signals import html_head, nav_event, nav_event_settings, nav_global
-
 
 SessionStore = import_string(f"{settings.SESSION_ENGINE}.SessionStore")
 logger = logging.getLogger(__name__)
