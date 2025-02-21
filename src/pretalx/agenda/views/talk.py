@@ -17,7 +17,7 @@ from pretalx.common.text.phrases import phrases
 from pretalx.common.views.mixins import PermissionRequired, SocialMediaCardMixin
 from pretalx.schedule.models import Schedule, TalkSlot
 from pretalx.submission.forms import FeedbackForm
-from pretalx.submission.models import QuestionTarget, Submission, SubmissionStates
+from pretalx.submission.models import Submission, SubmissionStates
 
 
 class TalkMixin(PermissionRequired):
@@ -30,7 +30,7 @@ class TalkMixin(PermissionRequired):
             "resources",
             "slots__room",
             "speakers",
-        ).select_related("submission_type")
+        ).select_related("submission_type", "track", "event")
 
     @cached_property
     def object(self):
@@ -122,11 +122,7 @@ class TalkView(TalkMixin, TemplateView):
     @context
     @cached_property
     def answers(self):
-        return self.submission.answers.filter(
-            question__is_public=True,
-            question__event=self.request.event,
-            question__target=QuestionTarget.SUBMISSION,
-        ).select_related("question")
+        return self.submission.public_answers
 
 
 class TalkReviewView(TalkView):
