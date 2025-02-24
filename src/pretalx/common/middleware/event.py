@@ -78,7 +78,7 @@ class EventPermissionMiddleware:
                 user, created = User.objects.get_or_create(email=payload["email"])
                 if created:
                     user.set_unusable_password()
-                logger.info('JWT payload: %s', payload)
+                logger.info("JWT payload: %s", payload)
                 upstream_name = payload.get("name", "")
                 # Only update user's name if it's not set.
                 if not user.name and upstream_name:
@@ -89,7 +89,7 @@ class EventPermissionMiddleware:
                 user.timezone = payload.get("timezone", user.timezone)
                 user.code = payload.get("customer_identifier", user.code)
                 user.save()
-                logger.info('Saved new data for user: %s', user.email)
+                logger.info("Saved new data for user: %s", user.email)
                 login(
                     request, user, backend="django.contrib.auth.backends.ModelBackend"
                 )
