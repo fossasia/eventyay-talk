@@ -5,9 +5,10 @@ from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
+from django.utils.timezone import now
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
-from django_scopes import scope
+from django_scopes import scope, scopes_disabled
 from i18nfield.fields import I18nCharField
 
 from pretalx.common.models.mixins import PretalxModel
@@ -230,6 +231,12 @@ class Team(PretalxModel):
         if self.all_events:
             return self.organiser.events.all()
         return self.limit_events.all()
+
+    def remove_member(self, member):
+        self.members.remove(member)
+        with scopes_disabled():
+            if active_tokens := member.api_tokens.active().filter(team=self):
+                active_tokens.update(expires=now())
 
     class orga_urls(EventUrls):
         base = "{self.organiser.orga_urls.teams}{self.pk}/"

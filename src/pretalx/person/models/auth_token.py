@@ -1,6 +1,7 @@
 import string
 
 from django.db import models
+from django.db.models import Q
 from django.utils.crypto import get_random_string
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
@@ -39,6 +40,14 @@ def default_endpoint_permissions():
     return {endpoint: READ_PERMISSIONS for endpoint in ENDPOINTS}
 
 
+class UserApiTokenManager(models.Manager):
+
+    def active(self):
+        return self.get_queryset().filter(
+            Q(expires__isnull=True) | Q(expires__gt=now())
+        )
+
+
 class UserApiToken(PretalxModel):
     name = models.CharField(max_length=190, verbose_name=_("Name"))
     token = models.CharField(default=generate_api_token, max_length=64)
@@ -63,6 +72,8 @@ class UserApiToken(PretalxModel):
         max_length=12, null=True, blank=True, verbose_name=_("API version")
     )
     last_used = models.DateTimeField(null=True, blank=True)
+
+    objects = UserApiTokenManager()
 
     def has_endpoint_permission(self, endpoint, method):
         perms = self.endpoints.get(

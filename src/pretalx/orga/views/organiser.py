@@ -1,11 +1,12 @@
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
+from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView, TemplateView
 from django_context_decorator import context
@@ -87,7 +88,20 @@ class TeamDetail(PermissionRequired, TeamMixin, CreateOrUpdateView):
     def members(self):
         if not self.team or not self.team.pk:
             return []
-        return self.team.members.all().order_by("name")
+        return (
+            self.team.members.all()
+            .order_by("name")
+            .annotate(
+                active_tokens=Count(
+                    "api_tokens",
+                    filter=Q(api_tokens__team=self.team)
+                    & Q(
+                        Q(api_tokens__expires__isnull=True)
+                        | Q(api_tokens__expires__gt=now())
+                    ),
+                )
+            )
+        )
 
     def post(self, *args, **kwargs):
         if self.invite_form.is_bound:
@@ -164,7 +178,7 @@ class TeamDelete(PermissionRequired, TeamMixin, ActionConfirmMixin, DetailView):
         try:
             with transaction.atomic():
                 if "user_pk" in self.kwargs:
-                    self.team.members.remove(self.get_object())
+                    self.team.remove_member(self.get_object())
                     warnings = check_access_permissions(self.request.organiser)
                     messages.success(
                         request, _("The member was removed from the team.")
