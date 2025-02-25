@@ -78,7 +78,7 @@ class EventPermissionMiddleware:
                 user, created = User.objects.get_or_create(email=payload["email"])
                 if created:
                     user.set_unusable_password()
-                logger.info("JWT payload: %s", payload)
+                logger.debug("JWT payload: %s", payload)
                 upstream_name = payload.get("name", "")
                 # Only update user's name if it's not set.
                 if not user.name and upstream_name:
