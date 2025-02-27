@@ -33,7 +33,7 @@ def test_can_create_feedback_for_multiple_speakers(
         past_slot.submission.speakers.add(other_speaker)
         past_slot.submission.speakers.add(speaker)
         assert past_slot.submission.speakers.count() == 2
-    with django_assert_num_queries(43):
+    with django_assert_num_queries(41):
         response = client.post(
             past_slot.submission.urls.feedback, {"review": "cool!"}, follow=True
         )

@@ -46,7 +46,7 @@ def test_user_can_access_url(orga_client, logged_in, url, template_patch):
         ("settings.plugins.select", 200, 404),
         ("settings.widget", 200, 404),
         ("schedule.main", 200, 200),
-        ("schedule.export", 200, 200),
+        ("schedule.export", 200, 404),
         ("schedule.rooms.list", 200, 404),
         ("schedule.rooms.create", 200, 404),
         ("schedule.api.talks", 200, 404),
