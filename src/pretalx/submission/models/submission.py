@@ -287,6 +287,7 @@ class Submission(GenerateCode, PretalxModel):
         reviews = "{base}reviews/"
         feedback = "{base}feedback/"
         toggle_featured = "{base}toggle_featured"
+        apply_pending = "{base}apply_pending"
         anonymise = "{base}anonymise/"
         comments = "{base}comments/"
         quick_schedule = "{self.event.orga_urls.schedule}quick/{self.code}/"

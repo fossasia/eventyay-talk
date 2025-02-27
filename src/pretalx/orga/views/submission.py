@@ -614,6 +614,18 @@ class ToggleFeatured(SubmissionViewMixin, View):
         return HttpResponse()
 
 
+class ApplyPending(SubmissionViewMixin, View):
+    permission_required = "orga.change_submissions"
+
+    def post(self, request, *args, **kwargs):
+        submission = self.object
+        try:
+            submission.apply_pending_state(person=request.user)
+        except Exception:
+            submission.apply_pending_state(person=request.user, force=True)
+        return redirect(submission.orga_urls.base)
+
+
 class Anonymise(SubmissionViewMixin, UpdateView):
     permission_required = "orga.change_submissions"
     template_name = "orga/submission/anonymise.html"
@@ -1071,7 +1083,7 @@ class TagDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
         return redirect(self.request.event.orga_urls.tags)
 
 
-class ApplyPending(EventPermissionRequired, TemplateView):
+class ApplyPendingBulk(EventPermissionRequired, TemplateView):
     permission_required = "orga.change_submissions"
     template_name = "orga/submission/apply_pending.html"
 

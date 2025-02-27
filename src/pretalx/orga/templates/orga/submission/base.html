@@ -42,6 +42,14 @@
                 {% endif %}
                 {% if can_edit_submission %}
                     {% include "orga/submission/state_dropdown.html" with submission=submission %}
+
+                    {% if submission.pending_state and can_edit_submission %}
+                        <form action="{{ submission.orga_urls.apply_pending }}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-info" href="{{ request.event.orga_urls.apply_pending }}">
+                                {% translate "Apply pending changes" %}
+                            </button>
+                    {% endif %}
                 {% else %}
                     {% include "cfp/event/fragment_state.html" with state=submission.state as_badge=True %}
                 {% endif %}

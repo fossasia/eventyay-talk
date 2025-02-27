@@ -397,8 +397,8 @@ urlpatterns = [
                 ),
                 path(
                     "submissions/apply-pending/",
-                    submission.ApplyPending.as_view(),
-                    name="submissions.apply_pending",
+                    submission.ApplyPendingBulk.as_view(),
+                    name="submissions.apply_pending.bulk",
                 ),
                 path(
                     "submissions/statistics/",
@@ -510,6 +510,11 @@ urlpatterns = [
                                 "toggle_featured",
                                 submission.ToggleFeatured.as_view(),
                                 name="submissions.toggle_featured",
+                            ),
+                            path(
+                                "apply_pending",
+                                submission.ApplyPending.as_view(),
+                                name="submissions.apply_pending",
                             ),
                             path(
                                 "anonymise/",
