@@ -57,25 +57,27 @@
     </div>
 
     <div class="dashboard-list">
-        <a href="{{ request.event.orga_urls.live }}" class="dashboard-block">
-            <div class="dashboard-live-text">
-                {% translate "Your event is currently" %}
-            </div>
-            {% if request.event.is_public %}
-                <div class="dashboard-live text-success">
-                    <i class="fa fa-check-circle"></i>
-                    {% translate "live" %}
+        {% if can_change_settings %}
+            <a href="{{ request.event.orga_urls.live }}" class="dashboard-block">
+                <div class="dashboard-live-text">
+                    {% translate "Your event is currently" %}
                 </div>
-            {% else %}
-                <div class="dashboard-live text-danger">
-                    <i class="fa fa-times-circle"></i>
-                    {% translate "not live" %}
+                {% if request.event.is_public %}
+                    <div class="dashboard-live text-success">
+                        <i class="fa fa-check-circle"></i>
+                        {% translate "live" %}
+                    </div>
+                {% else %}
+                    <div class="dashboard-live text-danger">
+                        <i class="fa fa-times-circle"></i>
+                        {% translate "not live" %}
+                    </div>
+                {% endif %}
+                <div class="dashboard-live-text">
+                    {% translate "Click here to change" %}
                 </div>
-            {% endif %}
-            <div class="dashboard-live-text">
-                {% translate "Click here to change" %}
-            </div>
-        </a>
+            </a>
+        {% endif %}
         {% for tile in tiles %}
             <div class="dashboard-block-wrapper">
                 <{% if tile.url %}a href="{{ tile.url }}"{% else %}div{% endif %} class="dashboard-block{% if tile.left or tile.right %} dashboard-block-extended{% endif %}">

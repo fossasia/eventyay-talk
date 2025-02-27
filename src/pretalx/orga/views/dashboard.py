@@ -130,7 +130,7 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
     template_name = "orga/event/dashboard.html"
     permission_required = "orga.view_orga_area"
 
-    def get_cfp_tiles(self, _now):
+    def get_cfp_tiles(self, _now, can_change_submissions=False):
         result = []
         if self.request.event.cfp.is_open:
             result.append(
@@ -152,7 +152,7 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
             draft_proposals = Submission.all_objects.filter(
                 state=SubmissionStates.DRAFT, event=self.request.event
             ).count()
-            if draft_proposals:
+            if draft_proposals and can_change_submissions:
                 result.append(
                     {
                         "large": draft_proposals,
@@ -172,12 +172,9 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
                 )
         return result
 
-    def get_review_tiles(self):
+    def get_review_tiles(self, can_change_settings):
         result = []
         review_count = self.request.event.reviews.count()
-        can_change_settings = self.request.user.has_perm(
-            "orga.change_settings", self.request.event
-        )
         if review_count:
             active_reviewers = (
                 self.request.event.reviewers.filter(reviews__isnull=False)
@@ -244,7 +241,13 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
         )
         _now = now()
         today = _now.date()
-        result["tiles"] = self.get_cfp_tiles(_now)
+        can_change_settings = self.request.user.has_perm("orga.change_settings", event)
+        can_change_submissions = self.request.user.has_perm(
+            "orga.change_submissions", event
+        )
+        result["tiles"] = self.get_cfp_tiles(
+            _now, can_change_submissions=can_change_submissions
+        )
         if today < event.date_from:
             days = (event.date_from - today).days
             result["tiles"].append(
@@ -374,6 +377,8 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
                 "priority": 80,
             }
         )
-        result["tiles"] += self.get_review_tiles()
+        result["tiles"] += self.get_review_tiles(
+            can_change_settings=can_change_settings
+        )
         result["tiles"].sort(key=lambda tile: tile.get("priority") or 100)
         return result
