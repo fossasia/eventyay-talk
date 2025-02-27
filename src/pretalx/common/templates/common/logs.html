@@ -16,11 +16,7 @@
                                 {% else %}
                                     <i class="fa fa-user fa-fw"></i>
                                 {% endif %}
-                                {% if log.is_orga_action and hide_orga %}
-                                    {% translate "An organiser" %}
-                                {% else %}
-                                  {% include "orga/includes/user_name.html" with user=log.person lightbox=True %}
-                                {% endif %}
+                                {% include "orga/includes/user_name.html" with user=log.person lightbox=True %}
                             {% endif %}
                         </span>
                     {% endif %}
@@ -34,7 +30,7 @@
                     {% endif %}
                     {% if not hide_object %}
                         <span class="log-object">
-                            {% if not hide_orga and log.display_object %}<i class="fa fa-flag"></i>{{ log.display_object|safe }}{% endif %}
+                            {% if log.display_object %}<i class="fa fa-flag"></i>{{ log.display_object|safe }}{% endif %}
                         </span>
                     {% endif %}
                     <span class="log-text">{{ log.display }}</span>
