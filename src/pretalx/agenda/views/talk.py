@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 import vobject
 from django.conf import settings
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Prefetch, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
@@ -15,7 +15,7 @@ from pretalx.agenda.signals import register_recording_provider
 from pretalx.cfp.views.event import EventPageMixin
 from pretalx.common.text.phrases import phrases
 from pretalx.common.views.mixins import PermissionRequired, SocialMediaCardMixin
-from pretalx.schedule.models import Schedule, TalkSlot
+from pretalx.schedule.models import TalkSlot
 from pretalx.submission.forms import FeedbackForm
 from pretalx.submission.models import Submission, SubmissionStates
 
@@ -26,10 +26,7 @@ class TalkMixin(PermissionRequired):
     def get_queryset(self):
         return self.request.event.submissions.prefetch_related(
             "slots",
-            "answers",
             "resources",
-            "slots__room",
-            "speakers",
         ).select_related("submission_type", "track", "event")
 
     @cached_property
@@ -78,14 +75,12 @@ class TalkView(TalkMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        qs = TalkSlot.objects.none()
-        schedule = Schedule.objects.none()
-        if self.request.event.current_schedule:
-            schedule = self.request.event.current_schedule
-            qs = schedule.talks.filter(is_visible=True).select_related("room")
-        elif self.request.user.has_perm("orga.view_schedule", self.request.event):
+        schedule = self.request.event.current_schedule
+        if not schedule and self.request.user.has_perm(
+            "orga.view_schedule", self.request.event
+        ):
             schedule = self.request.event.wip_schedule
-            qs = schedule.talks.filter(room__isnull=False).select_related("room")
+        qs = schedule.talks.filter(room__isnull=False).select_related("room")
         ctx["talk_slots"] = (
             qs.filter(submission=self.submission)
             .order_by("start")
@@ -99,11 +94,23 @@ class TalkView(TalkMixin, TemplateView):
             if schedule
             else TalkSlot.objects.none()
         )
-        for speaker in self.submission.speakers.all():
+
+        other_submissions = self.request.event.submissions.filter(
+            slots__in=other_slots
+        ).select_related("event")
+        speakers = (
+            self.submission.speakers.all()
+            .with_profiles(self.request.event)
+            .prefetch_related(
+                Prefetch(
+                    "submissions",
+                    queryset=other_submissions,
+                    to_attr="other_submissions",
+                )
+            )
+        )
+        for speaker in speakers:
             speaker.talk_profile = speaker.event_profile(event=self.request.event)
-            speaker.other_submissions = self.request.event.submissions.filter(
-                slots__in=other_slots, speakers__in=[speaker]
-            ).select_related("event")
             result.append(speaker)
         ctx["speakers"] = result
         return ctx
