@@ -290,6 +290,7 @@ class Submission(GenerateCode, PretalxModel):
         anonymise = "{base}anonymise/"
         comments = "{base}comments/"
         quick_schedule = "{self.event.orga_urls.schedule}quick/{self.code}/"
+        history = "{base}history/"
 
     @property
     def image_url(self):

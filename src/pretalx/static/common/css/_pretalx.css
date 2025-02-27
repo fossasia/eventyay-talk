@@ -38,7 +38,7 @@
   white-space: nowrap;
 }
 
-.logentry {
+.list-group .logentry.list-group-item {
   display: flex;
   flex-direction: column;
   .time {

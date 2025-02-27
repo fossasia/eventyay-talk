@@ -641,6 +641,38 @@ class Anonymise(SubmissionViewMixin, UpdateView):
         return redirect(self.object.orga_urls.anonymise)
 
 
+class SubmissionHistory(SubmissionViewMixin, ListView):
+    template_name = "orga/submission/history.html"
+    permission_required = "person.is_administrator"
+    paginate_by = 200
+    context_object_name = "log_entries"
+
+    @context
+    @cached_property
+    def submission(self):
+        return get_object_or_404(
+            Submission.objects.filter(event=self.request.event),
+            code__iexact=self.kwargs.get("code"),
+        )
+
+    @context
+    @cached_property
+    def object(self):
+        return self.submission
+
+    def get_queryset(self):
+        # TODO: This does not include everything regarding this submission. Missing:
+        # - scheduling changes
+        # - new comments
+        # - new feedback
+        # - emails sent to speakers (important?)
+        # - reviews written and changes
+        return self.submission.logged_actions().all()
+
+    def get_permission_object(self):
+        return self.request.event
+
+
 class SubmissionFeed(PermissionRequired, Feed):
     permission_required = "orga.view_submission"
     feed_type = feedgenerator.Atom1Feed

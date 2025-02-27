@@ -526,6 +526,11 @@ urlpatterns = [
                                 submission.CommentDelete.as_view(),
                                 name="submissions.comments.delete",
                             ),
+                            path(
+                                "history/",
+                                submission.SubmissionHistory.as_view(),
+                                name="submissions.history",
+                            ),
                         ]
                     ),
                 ),

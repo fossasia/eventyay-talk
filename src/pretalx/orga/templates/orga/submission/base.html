@@ -82,6 +82,11 @@
                     {% endwith %}
                 </a>
             {% endif %}
+            {% if request.user.is_administrator %}
+                <a role="tab" href="{{ submission.orga_urls.history }}" {% if "submissions.history" in url_name %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>
+                    {% translate "History" %}
+                </a>
+            {% endif %}
             <div class="ml-auto flip d-flex">
                 {% if can_send_mails %}
                     <a class="btn btn-outline-info mr-2 mb-1" href="{{ request.event.orga_urls.compose_mails_sessions }}?submissions={{ submission.code }}">
