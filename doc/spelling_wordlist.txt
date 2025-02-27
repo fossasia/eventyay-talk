@@ -59,6 +59,7 @@ iterable
 Jorian
 jQuery
 libffi
+lifecycle
 lightbox
 linters
 localhost
