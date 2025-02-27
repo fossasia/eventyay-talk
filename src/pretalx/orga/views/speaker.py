@@ -328,7 +328,7 @@ class InformationDelete(PermissionRequired, ActionConfirmMixin, DetailView):
 
 
 class SpeakerExport(EventPermissionRequired, FormView):
-    permission_required = "orga.view_speakers"
+    permission_required = "orga.change_settings"
     template_name = "orga/speaker/export.html"
     form_class = SpeakerExportForm
 

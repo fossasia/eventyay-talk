@@ -74,7 +74,7 @@ class ScheduleView(EventPermissionRequired, TemplateView):
 
 class ScheduleExportView(EventPermissionRequired, FormView):
     template_name = "orga/schedule/export.html"
-    permission_required = "orga.view_schedule"
+    permission_required = "orga.change_settings"
     form_class = ScheduleExportForm
 
     def get_form_kwargs(self):
@@ -107,7 +107,7 @@ class ScheduleExportView(EventPermissionRequired, FormView):
 
 
 class ScheduleExportTriggerView(EventPermissionRequired, View):
-    permission_required = "orga.view_schedule"
+    permission_required = "orga.change_settings"
 
     def post(self, request, event):
         if settings.HAS_CELERY:
@@ -131,7 +131,7 @@ class ScheduleExportTriggerView(EventPermissionRequired, View):
 
 
 class ScheduleExportDownloadView(EventPermissionRequired, View):
-    permission_required = "orga.view_schedule"
+    permission_required = "orga.change_settings"
 
     def get(self, request, event):
         try:
