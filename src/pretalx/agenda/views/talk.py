@@ -80,7 +80,11 @@ class TalkView(TalkMixin, TemplateView):
             "orga.view_schedule", self.request.event
         ):
             schedule = self.request.event.wip_schedule
-        qs = schedule.talks.filter(room__isnull=False).select_related("room")
+        qs = (
+            schedule.talks.filter(room__isnull=False).select_related("room")
+            if schedule
+            else TalkSlot.objects.none()
+        )
         ctx["talk_slots"] = (
             qs.filter(submission=self.submission)
             .order_by("start")
