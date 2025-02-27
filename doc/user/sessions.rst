@@ -126,6 +126,8 @@ Organisation Features
 
 Sessions have several features that help organisers manage and categorise them:
 
+.. _`user-guide-tracks`:
+
 Tracks
 ^^^^^^
 
