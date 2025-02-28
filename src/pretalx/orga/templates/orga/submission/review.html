@@ -51,7 +51,7 @@
             {% include "common/forms/errors.html" %}
             <div class="form-group row">
                 <label class="col-md-3 col-form-label">{% translate "Title" %}</label>
-                <div class="col-md-9 mt-1">
+                <div class="col-md-9 mt-2">
                     {% if no_anonymisation %}
                         {{ submission.title|default:"-" }}
                     {% else %}
@@ -61,18 +61,18 @@
             </div>
             <div class="form-group row">
                 <label class="col-md-3 col-form-label">{% translate "Session type" %}</label>
-                <div class="col-md-9 mt-1">{{ submission.submission_type }}</div>
+                <div class="col-md-9 mt-2">{{ submission.submission_type }}</div>
             </div>
             {% if submission.track %}
                 <div class="form-group row">
                     <label class="col-md-3 col-form-label">{% translate "Track" %}</label>
-                    <div class="col-md-9 mt-1">{{ submission.track.name|default:"-" }}</div>
+                    <div class="col-md-9 mt-2">{{ submission.track.name|default:"-" }}</div>
                 </div>
             {% endif %}
             {% if request.event.cfp.request_abstract %}
                 <div class="form-group row">
                     <label class="col-md-3 col-form-label">{% translate "Abstract" %}</label>
-                    <div class="col-md-9 mt-1">
+                    <div class="col-md-9 mt-2 markdown-mt-0">
                         {% if no_anonymisation %}
                             {{ submission.abstract|rich_text|default:"-" }}
                         {% else %}
@@ -84,7 +84,7 @@
             {% if request.event.cfp.request_description %}
                 <div class="form-group row">
                     <label class="col-md-3 col-form-label">{% translate "Description" %}</label>
-                    <div class="col-md-9 mt-1">
+                    <div class="col-md-9 mt-2 markdown-mt-0">
                         {% if no_anonymisation %}
                             {{ submission.description|rich_text|default:"-" }}
                         {% else %}
@@ -96,7 +96,7 @@
             {% if request.event.cfp.request_notes %}
                 <div class="form-group row">
                     <label class="col-md-3 col-form-label">{% translate "Notes" %}</label>
-                    <div class="col-md-9 mt-1">
+                    <div class="col-md-9 mt-2 markdown-mt-0">
                         {% if no_anonymisation %}
                             {{ submission.notes|rich_text|default:"-" }}
                         {% else %}
@@ -108,7 +108,7 @@
             {% for answer in submission.reviewer_answers %}
                 <div class="form-group row">
                     <label class="col-md-3 col-form-label">{{ answer.question.question }}</label>
-                    <div class="col-md-9 mt-1">
+                    <div class="col-md-9 mt-2">
 
                         {% include "common/question_answer.html" with answer=answer %}
 
@@ -119,7 +119,7 @@
                 {% if submission.active_resources %}
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{% translate "Resources" %}</label>
-                        <div class="col-md-9 mt-1">
+                        <div class="col-md-9 mt-2">
                             {% for resource in submission.active_resources %}
 
                                 {% include "agenda/includes/submission_resource.html" %}
@@ -134,17 +134,18 @@
                 {% for speaker in profiles %}
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">
-                            {% translate "Biography" %}:
-                            {% include "orga/includes/user_name.html" with user=speaker.user lightbox=True %}
+                          {% translate "Biography" %}{% if profiles.count > 1 %}: {% include "orga/includes/user_name.html" with user=speaker.user lightbox=True %}{% endif %}
                         </label>
-                        <div class="col-md-9 mt-1">
+                        <div class="col-md-9 mt-2 markdown-mt-0">
                             {% if request.event.cfp.request_biography %}
                                 {{ speaker.biography|default:"-"|rich_text }}
                             {% endif %}
                             {% if speaker.submissions.count > 1 %}<br><strong>{% translate "Other proposals" %}:</strong>
+                              <ul class="mt-0 mb-0">
                                 {% for other_submission in speaker.submissions %}{% if other_submission != submission %}
                                     <a href="{{ other_submission.orga_urls.reviews }}">{{ other_submission.title }}</a>{% if not forloop.last %}, {% endif %}
                                 {% endif %}{% endfor %}
+                              </ul>
                             {% endif %}
                         </div>
                     </div>
