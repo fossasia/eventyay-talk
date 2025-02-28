@@ -608,6 +608,12 @@ td.review-text,
 th.review-text {
   min-width: 20em;
 }
+.markdown-mt-0 > p:first-child {
+  margin-top: 0;
+}
+#review-form .submission-state.badge {
+  padding: 0.2em 0.5em;
+}
 
 form #id_header_pattern,
 form #id_display-header_pattern {
