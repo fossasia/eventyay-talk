@@ -297,6 +297,9 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
             state=SubmissionStates.ACCEPTED
         ).count()
         submission_count = event.submissions.count()
+        pending_state_submissions = event.submissions.filter(
+            pending_state__isnull=False
+        ).count()
         if talk_count or accepted_count:
             confirmed_count = event.submissions.filter(
                 state=SubmissionStates.CONFIRMED
@@ -331,6 +334,26 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
                     "small": ngettext_lazy("proposal", "proposals", count),
                     "url": event.orga_urls.submissions,
                     "priority": 60,
+                }
+            )
+        if pending_state_submissions and pending_state_submissions > 0:
+            states = "&".join(
+                [
+                    f"state=pending_state__{state}"
+                    for state, __ in SubmissionStates.get_choices()
+                    if state not in (SubmissionStates.DRAFT, SubmissionStates.DELETED)
+                ]
+            )
+            result["tiles"].append(
+                {
+                    "large": pending_state_submissions,
+                    "small": ngettext_lazy(
+                        "submission with pending changes",
+                        "submissions with pending changes",
+                        pending_state_submissions,
+                    ),
+                    "url": event.orga_urls.submissions + f"?{states}",
+                    "priority": 56,
                 }
             )
         submitter_count = event.submitters.count()
