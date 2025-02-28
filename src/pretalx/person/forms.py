@@ -35,7 +35,13 @@ from pretalx.schedule.forms import AvailabilitiesFormMixin
 from pretalx.submission.models import Question
 from pretalx.submission.models.submission import SubmissionStates
 
-EMAIL_ADDRESS_ERROR = _("Please choose a different email address.")
+
+def get_email_address_error():
+    return (
+        _("There already exists an account for this email address.")
+        + " "
+        + _("Please choose a different email address.")
+    )
 
 
 class UserForm(CfPFormMixin, forms.Form):
@@ -236,7 +242,7 @@ class SpeakerProfileForm(
         if self.user:
             qs = qs.exclude(pk=self.user.pk)
         if qs.filter(email__iexact=email):
-            raise ValidationError(EMAIL_ADDRESS_ERROR)
+            raise ValidationError(get_email_address_error())
         return email
 
     def clean(self):
@@ -322,7 +328,7 @@ class LoginInfoForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data.get("email")
         if User.objects.exclude(pk=self.user.pk).filter(email__iexact=email):
-            raise ValidationError(EMAIL_ADDRESS_ERROR)
+            raise ValidationError(get_email_address_error())
         return email
 
     def clean(self):
