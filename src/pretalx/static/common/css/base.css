@@ -1034,7 +1034,7 @@ pl-0 {
   .d-print-none {
     display: none !important;
   }
-  a:not(role="button") {
+  a:not([role="button"]) {
     text-decoration: underline;
   }
   pre {
