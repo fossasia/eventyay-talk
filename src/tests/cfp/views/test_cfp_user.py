@@ -24,6 +24,13 @@ def test_can_see_submission(speaker_client, submission):
 
 
 @pytest.mark.django_db
+def test_orga_gets_redirected_from_speaker_view(orga_client, submission):
+    response = orga_client.get(submission.urls.user_base, follow=False)
+    assert response.status_code == 302
+    assert response.url == submission.orga_urls.base
+
+
+@pytest.mark.django_db
 def test_cannot_see_other_submission(speaker_client, other_submission):
     response = speaker_client.get(other_submission.urls.user_base, follow=True)
     assert response.status_code == 404

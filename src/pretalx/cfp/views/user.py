@@ -118,15 +118,31 @@ class ProfileView(LoggedInEventPageMixin, TemplateView):
 class SubmissionViewMixin:
     permission_required = "submission.edit_submission"
 
+    def has_permission(self):
+        return super().has_permission() or self.request.user.has_perm(
+            "orga.view_submissions", self.request.event
+        )
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user not in self.object.speakers.all():
+            # User has permission to see permission, but not to see this particular
+            # page, so we redirect them to the organiser page
+            return redirect(self.object.orga_urls.base)
+        return super().dispatch(request, *args, **kwargs)
+
     def get_object(self):
-        users = [self.request.user] if not self.request.user.is_anonymous else []
+
         return get_object_or_404(
             Submission.all_objects.filter(event=self.request.event)
             .exclude(state=SubmissionStates.DELETED)
             .prefetch_related("answers", "answers__options", "speakers"),
-            speakers__in=users,
-            code__iexact=self.kwargs.get("code"),
+            code__iexact=self.kwargs["code"],
         )
+
+    @context
+    @cached_property
+    def object(self):
+        return self.get_object()
 
     @context
     @cached_property
