@@ -14,6 +14,9 @@ from pretalx.common.exceptions import SendMailException
 from pretalx.common.text.phrases import phrases
 
 
+logger = logging.getLogger(__name__)
+
+
 class SubmitStartView(EventPageMixin, View):
     @staticmethod
     def get(request, *args, **kwargs):
@@ -57,6 +60,7 @@ class SubmitWizard(EventPageMixin, View):
         if getattr(step, "is_before", False):  # The current step URL is incorrect
             raise Http404()
         handler = getattr(step, request.method.lower(), self.http_method_not_allowed)
+        logger.info('Handler: %s', handler)
         result = handler(request)
 
         if request.method == "POST" and request.POST.get("action", "submit") == "draft":
