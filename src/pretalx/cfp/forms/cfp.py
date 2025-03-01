@@ -1,3 +1,8 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 class CfPFormMixin:
     """All forms used in the CfP step process should use this mixin.
 
@@ -33,3 +38,4 @@ class CfPFormMixin:
             )
         if field_data.get("label"):
             field.label = field_data["label"]
+            logger.info("field.label: %s", field.label)
