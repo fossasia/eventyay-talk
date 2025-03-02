@@ -38,12 +38,18 @@
 						.btn-sm.btn-secondary.close-button(@click="editorSession = null", role="button")
 							i.fa.fa-times
 					.data
-						.data-row(v-if="editorSession.code && editorSession.speakers && editorSession.speakers.length > 0").form-group.row
-							label.data-label.col-form-label.col-md-3 {{ $t('Speakers') }}
-							.col-md-9.data-value
-								span(v-for="speaker, index of editorSession.speakers")
-									a(:href="`/orga/event/${eventSlug}/speakers/${speaker.code}/`") {{speaker.name}}
-									span(v-if="index != editorSession.speakers.length - 1") {{', '}}
+						template(v-if="editorSession.code && editorSession.speakers && editorSession.speakers.length > 0")
+							.data-row.form-group.row
+								label.data-label.col-form-label.col-md-3 {{ $t('Speakers') }}
+								.col-md-9.data-value
+									span(v-for="speaker, index of editorSession.speakers")
+										a(:href="`/orga/event/${eventSlug}/speakers/${speaker.code}/`") {{speaker.name}}
+										span(v-if="index != editorSession.speakers.length - 1") {{', '}}
+							.data-row.form-group.row
+								label.data-label.col-form-label.col-md-3 {{ $t('Availabilities') }}
+								.col-md-9.data-value
+									ul.mt-0.mb-0
+										li(v-for="availability of editorSessionAvailabilities") {{ availability }}
 						.data-row(v-else).form-group.row
 							label.data-label.col-form-label.col-md-3 {{ $t('Title') }}
 							.col-md-9
@@ -132,6 +138,20 @@ export default {
 		tracksLookup () {
 			if (!this.schedule) return {}
 			return this.schedule.tracks.reduce((acc, t) => { acc[t.id] = t; return acc }, {})
+		},
+		editorSessionAvailabilities () {
+			if (!this.editorSession) return []
+			const avails = this.availabilities.talks[this.editorSession.id]
+			if (!avails.length) return ["–"]
+			return avails.map(a => {
+				const start = moment(a.start)
+				const end = moment(a.end)
+				if (start.isSame(end, 'day')) {
+					return `${start.format('L LT')} - ${end.format('LT')}`
+				} else {
+					return `${start.format('L LT')} - ${end.format('L LT')}`
+				}
+			})
 		},
 		unassignedSortMethods () {
 			const sortMethods = [
