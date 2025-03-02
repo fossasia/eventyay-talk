@@ -151,6 +151,9 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
         ).format(site_url=site_url)
         self.initial["locales"] = self.instance.locale_array.split(",")
         self.initial["content_locales"] = self.instance.content_locale_array.split(",")
+        self.initial["custom_css_text"] = (
+            self.instance.custom_css.read().decode() if self.instance.custom_css else ""
+        )
         self.fields["show_featured"].help_text = (
             str(self.fields["show_featured"].help_text)
             + " "
@@ -250,7 +253,7 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
         for image_field in ("logo", "header_image"):
             if image_field in self.changed_data:
                 self.instance.process_image(image_field)
-        if css_text:
+        if css_text and "custom_css_text" in self.changed_data:
             self.instance.custom_css.save(
                 self.instance.slug + ".css", ContentFile(css_text)
             )
