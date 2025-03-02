@@ -401,15 +401,27 @@ class SpeakerFilterForm(forms.Form):
             ("false", _("Non-accepted submitters")),
         ),
         required=False,
+        widget=EnhancedSelect,
+    )
+    arrived = forms.ChoiceField(
+        choices=(
+            ("", phrases.base.all_choices),
+            ("true", _("Marked as arrived")),
+            ("false", _("Not yet arrived")),
+        ),
+        required=False,
+        widget=EnhancedSelect,
     )
     question = SafeModelChoiceField(
         queryset=Question.objects.none(), required=False, widget=forms.HiddenInput()
     )
 
-    def __init__(self, *args, event=None, **kwargs):
+    def __init__(self, *args, event=None, filter_arrival=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.event = event
         self.fields["question"].queryset = event.questions.all()
+        if not filter_arrival:
+            self.fields.pop("arrived")
 
     def filter_queryset(self, queryset):
         data = self.cleaned_data
@@ -425,6 +437,8 @@ class SpeakerFilterForm(forms.Form):
                     state__in=SubmissionStates.accepted_states
                 )
             )
+        if has_arrived := data.get("arrived"):
+            queryset = queryset.filter(has_arrived=(has_arrived == "true"))
         return queryset
 
 
