@@ -3,20 +3,21 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-26 05:28+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2025-03-03 17:04+0000\n"
+"Last-Translator: Antoni Mtavangu <antonicmtavangu@gmail.com>\n"
+"Language-Team: Swahili <https://hosted.weblate.org/projects/open-event/"
+"eventyay-talk/sw/>\n"
+"Language: sw\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.10.3-dev\n"
 
 #: tests/screenshots/conftest.py:42 pretalx/mail/context.py:247
 msgid "Jane Doe"
@@ -274,6 +275,8 @@ msgstr ""
 msgid ""
 "Your draft was saved. You can continue to edit it as long as the CfP is open."
 msgstr ""
+"Rasimu yako ilihifadhiwa. Unaweza kuendelea kuihariri kwa kipindi ambacho "
+"CfP imefunguliwa."
 
 #: pretalx/cfp/flow.py:358
 msgid ""
@@ -281,38 +284,47 @@ msgid ""
 "changes to it up to the submission deadline, and you will be notified of any "
 "changes or questions."
 msgstr ""
+"Hongera, umewasilisha pendekezo lako! Unaweza kuendelea kulifanyia "
+"mabadiliko hadi tarehe ya mwisho ya kuwasilisha, na utaarifiwa kuhusu "
+"mabadiliko au maswali yoyote."
 
 #: pretalx/cfp/flow.py:388
 msgid "Hey, nice to meet you!"
-msgstr ""
+msgstr "Habari, nimefurahi kukutana nawe!"
 
 #: pretalx/cfp/flow.py:393
 msgid ""
 "We’re glad that you want to contribute to our event with your proposal. "
 "Let’s get started, this won’t take long."
 msgstr ""
+"Tunafurahi kuwa ungependa kuchangia katika tukio letu kwa pendekezo lako. Na "
+"tuanze, hii haitachukua muda mrefu."
 
 #: pretalx/cfp/flow.py:452
 msgid "Tell us more!"
-msgstr ""
+msgstr "Tuambie zaidi!"
 
 #: pretalx/cfp/flow.py:457
 msgid "Before we can save your proposal, we have some more questions for you."
-msgstr ""
+msgstr "Kabla ya kuhifadhi pendekezo lako, tuna maswali zaidi kwako."
 
 #: pretalx/cfp/flow.py:481
 msgid ""
 "There was an error when logging in. Please contact the organiser for further "
 "help."
 msgstr ""
+"Kulikuwa na hitilafu wakati wa kuingia. Tafadhali wasiliana na mwandaaji kwa "
+"usaidizi zaidi."
 
 #: pretalx/cfp/flow.py:490
 msgid "Account"
-msgstr ""
+msgstr "Akaunti"
 
 #: pretalx/cfp/flow.py:495
 msgid "That’s it about your proposal! We now just need a way to contact you."
 msgstr ""
+"Ni hayo tu kuhusu pendekezo lako! Sasa tunahitaji tu njia ya kuwasiliana "
+"nawe."
 
 #: pretalx/cfp/flow.py:501
 msgid ""
@@ -320,20 +332,25 @@ msgid ""
 "gives us a way to contact you, it also gives you the possibility to edit "
 "your proposal or to view its current state."
 msgstr ""
+"Ili kuunda pendekezo lako, unahitaji akaunti kwenye ukurasa huu. Hii si "
+"kwamba inatupatia tu njia ya kuwasiliana nawe, lakini pia inakupa uwezekano "
+"wa kuhariri pendekezo lako au kutazama hali yake ya sasa."
 
 #: pretalx/cfp/flow.py:543
 msgid "Profile"
-msgstr ""
+msgstr "Wasifu"
 
 #: pretalx/cfp/flow.py:547
 msgid "Tell us something about yourself!"
-msgstr ""
+msgstr "Tuambie kitu kuhusu wewe!"
 
 #: pretalx/cfp/flow.py:552
 msgid ""
 "This information will be publicly displayed next to your session - you can "
 "always edit for as long as proposals are still open."
 msgstr ""
+"Taarifa hii itaoneshwa hadharani kando ya kipindi chako - unaweza kuhariri "
+"muda wowote ili mradi muda mapendekezo uwe bado wazi."
 
 #: pretalx/cfp/phrases.py:7
 msgid "Go to CfP"
