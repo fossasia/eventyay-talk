@@ -567,9 +567,7 @@ class SubmissionList(EventPermissionRequired, BaseSubmissionList):
     @context
     @cached_property
     def pending_changes(self):
-        return self.request.event.submissions.filter(
-            pending_state__isnull=False
-        ).count()
+        return self.get_queryset().filter(pending_state__isnull=False).count()
 
     @context
     def show_tracks(self):
@@ -1083,13 +1081,13 @@ class TagDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
         return redirect(self.request.event.orga_urls.tags)
 
 
-class ApplyPendingBulk(EventPermissionRequired, TemplateView):
+class ApplyPendingBulk(EventPermissionRequired, BaseSubmissionList):
     permission_required = "orga.change_submissions"
     template_name = "orga/submission/apply_pending.html"
 
     @cached_property
     def submissions(self):
-        return self.request.event.submissions.filter(pending_state__isnull=False)
+        return self.get_queryset().filter(pending_state__isnull=False)
 
     @context
     @cached_property
