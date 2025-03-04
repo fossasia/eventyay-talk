@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-26 05:28+0000\n"
-"PO-Revision-Date: 2025-03-04 10:20+0000\n"
+"PO-Revision-Date: 2025-03-04 11:28+0000\n"
 "Last-Translator: Antoni Mtavangu <antonicmtavangu@gmail.com>\n"
 "Language-Team: Swahili <https://hosted.weblate.org/projects/open-event/"
 "eventyay-talk/sw/>\n"
@@ -297,8 +297,8 @@ msgid ""
 "We’re glad that you want to contribute to our event with your proposal. "
 "Let’s get started, this won’t take long."
 msgstr ""
-"Tunafurahi kuwa ungependa kuchangia katika tukio letu kwa pendekezo lako. Na "
-"tuanze, hii haitachukua muda mrefu."
+"Tunafurahi kuwa ungependa kuchangia katika tukio letu kwa pendekezo lako. "
+"Haya na tuanze, hii haitachukua muda mrefu."
 
 #: pretalx/cfp/flow.py:452
 msgid "Tell us more!"
@@ -726,15 +726,15 @@ msgstr "Tuna baadhi ya maswali"
 
 #: pretalx/cfp/templates/cfp/event/user_profile.html:66
 msgid "Your Account"
-msgstr ""
+msgstr "Akaunti yako"
 
 #: pretalx/cfp/templates/cfp/event/user_profile.html:67
 msgid "You can change your log in data here."
-msgstr ""
+msgstr "Unaweza kubadilisha data yako ya kuingia hapa."
 
 #: pretalx/cfp/templates/cfp/event/user_profile.html:88
 msgid "Account deletion"
-msgstr ""
+msgstr "Ufutaji wa akaunti"
 
 #: pretalx/cfp/templates/cfp/event/user_profile.html:93
 msgid ""
@@ -742,26 +742,33 @@ msgid ""
 "information will be overwritten. <strong>This action is irreversible.</"
 "strong>"
 msgstr ""
+"Unaweza kufuta akaunti yako hapa - majina, barua pepe na maelezo mengine "
+"yote ya kibinafsi yatafutwa. <strong>Kitendo hiki hakiwezi "
+"kutenduliwa.</strong>"
 
 #: pretalx/cfp/templates/cfp/event/user_profile.html:99
 msgid ""
 "I really do want to delete my account, losing access to my proposals and "
 "sessions, and overriding my public and private data."
 msgstr ""
+"Kweli nataka kufuta akaunti yangu, kupoteza ufikiaji wa mapendekezo na "
+"vipindi vyangu, na kubatilisha data yangu ya umma na ya faragha."
 
 #: pretalx/cfp/templates/cfp/event/user_profile.html:106
 msgid "Delete my account"
-msgstr ""
+msgstr "Futa akaunti yangu"
 
 #: pretalx/cfp/templates/cfp/event/user_submission_confirm.html:19
 msgid "Congratulations on your acceptance!"
-msgstr ""
+msgstr "Hongera kwa kukubaliwa!"
 
 #: pretalx/cfp/templates/cfp/event/user_submission_confirm.html:23
 msgid ""
 "Please provide us with your available hours during the event, so that we can "
 "schedule your event accordingly:"
 msgstr ""
+"Tafadhali tujuze saa zako utakazopatikana wakati wa tukio, ili tuweze "
+"kuratibu tukio lako ipasavyo:"
 
 #: pretalx/cfp/templates/cfp/event/user_submission_confirm.html:39
 msgid ""
@@ -770,17 +777,22 @@ msgid ""
 "proposal data, such as title, abstract, description, and any uploads you "
 "provided, can be made publicly available once the proposal is confirmed."
 msgstr ""
+"Kwa kuthibitisha pendekezo lako, unakubali kuwa unaweza na uko tayari "
+"kushiriki katika tukio hili na kuwasilisha maudhui ya pendekezo hili. Data "
+"ya pendekezo, kama vile kichwa, muhtasari, maelezo, na vipakizi vyovyote "
+"ulivyotoa, inaweza kufanywa ipatikane kwa umma pindi pendekezo "
+"litakapothibitishwa."
 
 #: pretalx/cfp/templates/cfp/event/user_submission_confirm.html:49
 #: pretalx/cfp/templates/cfp/event/user_submission_edit.html:120
 #: pretalx/cfp/templates/cfp/event/user_submission_withdraw.html:22
 msgid "Withdraw"
-msgstr ""
+msgstr "Ondoa"
 
 #: pretalx/cfp/templates/cfp/event/user_submission_confirm.html:52
 #: pretalx/cfp/templates/cfp/event/user_submissions.html:132
 msgid "Confirm"
-msgstr ""
+msgstr "Thibitisha"
 
 #: pretalx/cfp/templates/cfp/event/user_submission_confirm_error.html:7
 #: pretalx/cfp/templates/cfp/event/user_submission_confirm_error.html:11
