@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-26 05:28+0000\n"
-"PO-Revision-Date: 2025-03-03 21:38+0000\n"
+"PO-Revision-Date: 2025-03-04 05:14+0000\n"
 "Last-Translator: Antoni Mtavangu <antonicmtavangu@gmail.com>\n"
 "Language-Team: Swahili <https://hosted.weblate.org/projects/open-event/"
 "eventyay-talk/sw/>\n"
@@ -512,15 +512,15 @@ msgstr "Wito wa kutuma mapendekezo itakuwa mnamo %(deadline)s (%(timezone)s)."
 
 #: pretalx/cfp/templates/cfp/event/cfp.html:54
 msgid "View or edit speaker profile"
-msgstr ""
+msgstr "Tazama au uhariri wasifu wa mzungumzaji"
 
 #: pretalx/cfp/templates/cfp/event/cfp.html:62
 msgid "Submit a proposal"
-msgstr ""
+msgstr "Wasilisha pendekezo"
 
 #: pretalx/cfp/templates/cfp/event/cfp.html:64 pretalx/cfp/views/wizard.py:45
 msgid "Proposals are closed"
-msgstr ""
+msgstr "Mapendekezo yamefungwa"
 
 #: pretalx/cfp/templates/cfp/event/fragment_state.html:11
 #: pretalx/submission/models/submission.py:55
