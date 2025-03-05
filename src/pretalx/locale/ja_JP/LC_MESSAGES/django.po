@@ -1152,17 +1152,12 @@ msgid "Past events"
 msgstr "過去のイベント"
 
 #: pretalx/cfp/views/locale.py:48
-#, fuzzy
-#| msgid ""
-#| "Your locale preferences have been saved. We like to think that we have "
-#| "excellent support for English in pretalx, but if you encounter issues or "
-#| "errors, please contact us!"
 msgid ""
 "Your locale preferences have been saved. We like to think that we have "
 "excellent support for English, but if you encounter issues or errors, please "
 "contact us!"
 msgstr ""
-"ロケール設定が保存されました。pretalxでは英語のサポートが充実していると思って"
+"ロケール設定が保存されました。私たちは日本語のサポートが優れていると考えて"
 "いますが、問題やエラーが発生した場合は、ぜひご連絡ください。"
 
 #: pretalx/cfp/views/user.py:279

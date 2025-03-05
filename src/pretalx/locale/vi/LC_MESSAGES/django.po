@@ -1125,18 +1125,13 @@ msgid "Past events"
 msgstr "Các sự kiện đã diễn ra"
 
 #: pretalx/cfp/views/locale.py:48
-#, fuzzy
-#| msgid ""
-#| "Your locale preferences have been saved. We like to think that we have "
-#| "excellent support for English in pretalx, but if you encounter issues or "
-#| "errors, please contact us!"
 msgid ""
 "Your locale preferences have been saved. We like to think that we have "
 "excellent support for English, but if you encounter issues or errors, please "
 "contact us!"
 msgstr ""
-"Tùy chọn ngôn ngữ của quý vị đã được lưu. Chúng tôi muốn nghĩ rằng phiên bản "
-"Tiếng Anh của phần mềm rất hoàn hảo, nhưng nếu quý vị gặp sự cố hoặc lỗi, "
+"Tùy chọn ngôn ngữ của quý vị đã được lưu. Chúng tôi mong rằng phiên bản "
+"Tiếng Việt của phần mềm đã hoàn thiện, nhưng nếu quý vị gặp sự cố hoặc lỗi, "
 "vui lòng liên hệ với chúng tôi!"
 
 #: pretalx/cfp/views/user.py:279
