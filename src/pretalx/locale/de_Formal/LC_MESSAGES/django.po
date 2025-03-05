@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-14 13:01+0000\n"
-"PO-Revision-Date: 2024-10-21 14:40+0000\n"
+"PO-Revision-Date: 2025-03-02 13:32+0000\n"
 "Last-Translator: Tobias Kunze <r@rixx.de>\n"
 "Language-Team: \n"
 "Language: de_Formal\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.6.2\n"
+"X-Generator: Weblate 5.9.2\n"
 
 #: pretalx/agenda/phrases.py:8
 msgid "Thank you for your feedback!"
@@ -580,6 +580,8 @@ msgstr ""
 #: pretalx/cfp/templates/cfp/event/recover.html:25
 msgid "Set your password to access your profile and proposals"
 msgstr ""
+"Setzen Sie ein Passwort, um Zugang zu Ihrem Profil und Ihren Einreichungen "
+"zu erhalten"
 
 #: pretalx/cfp/templates/cfp/event/submission_base.html:10
 #: pretalx/orga/templates/orga/submission/content.html:27
@@ -1768,7 +1770,7 @@ msgstr ""
 #: pretalx/common/templates/common/redirect.html:7
 #: pretalx/common/templates/common/redirect.html:13
 msgid "Redirect"
-msgstr ""
+msgstr "Weiterleitung"
 
 #: pretalx/common/templates/common/redirect.html:15
 #, python-format
@@ -1776,15 +1778,16 @@ msgid ""
 "The link you clicked on wants to redirect you to a destination on the "
 "website %(host)s."
 msgstr ""
+"Sie sind einem Link gefolgt, der Sie auf die Website %(host)s weiterleitet."
 
 #: pretalx/common/templates/common/redirect.html:18
 msgid "Please only proceed if you trust this website to be safe."
-msgstr ""
+msgstr "Bitte fahren Sie nur fort, wenn Sie diese Webseite für sicher halten."
 
 #: pretalx/common/templates/common/redirect.html:24
 #, python-format
 msgid "Proceed to %(host)s"
-msgstr ""
+msgstr "Weiter zu %(host)s"
 
 #: pretalx/common/templates/common/user_api_token.html:8
 msgid "API Access"
@@ -3122,7 +3125,7 @@ msgstr "Ihre Einreichung: {submission_title}"
 
 #: pretalx/mail/models.py:30
 msgid "New proposal (organiser notification)"
-msgstr ""
+msgstr "Neue Einreichung (Veranstalter-Benachrichtigung)"
 
 #: pretalx/mail/models.py:32
 #, fuzzy
@@ -3138,11 +3141,11 @@ msgstr "Einreichungsfeed"
 
 #: pretalx/mail/models.py:35
 msgid "Add a speaker to a proposal (new account)"
-msgstr ""
+msgstr "Vortragende*n zu Einreichung hinzufügen (neuer Account)"
 
 #: pretalx/mail/models.py:38
 msgid "Add a speaker to a proposal (existing account)"
-msgstr ""
+msgstr "Vortragende*n zu Einreichung hinzufügen (bestehender Account)"
 
 #: pretalx/mail/models.py:40
 #: pretalx/orga/templates/orga/cfp/question_remind.html:18
@@ -3765,6 +3768,8 @@ msgid ""
 "Allow organisers and reviewers to comment on submissions, separate from "
 "reviews."
 msgstr ""
+"Veranstalter und Reviewer dürfen Einreichungen kommentieren (getrennt vom "
+"Bewertungsprozess)."
 
 #: pretalx/orga/forms/event.py:514
 msgid "Require a review score"
@@ -4134,11 +4139,11 @@ msgstr "Namen der Vortragenden"
 
 #: pretalx/orga/forms/schedule.py:121 pretalx/orga/forms/schedule.py:140
 msgid "date"
-msgstr ""
+msgstr "Datum"
 
 #: pretalx/orga/forms/schedule.py:129 pretalx/orga/forms/schedule.py:145
 msgid "time"
-msgstr ""
+msgstr "Uhrzeit"
 
 #: pretalx/orga/forms/schedule.py:150
 msgid "Median score"
@@ -4254,7 +4259,7 @@ msgstr "Einreichungssprachen"
 
 #: pretalx/orga/forms/submission.py:298
 msgid "The language in which the speaker will receive their invitation email."
-msgstr ""
+msgstr "Die Sprache, in der die Einladungs-E-Mail generiert wird."
 
 #: pretalx/orga/forms/submission.py:314
 #, fuzzy
@@ -4810,9 +4815,9 @@ msgid ""
 "be seen with a matching access code."
 msgstr ""
 "Zugangscdoes können genutzt werden, um noch nach dem Abgabeschluss "
-"Einreichungen zu ermöglichen. Sie können auch für versteckte Tracks oder "
-"versteckte Submission Types genutzt werden, die nur mit dem passenden "
-"Zugangscode gesehen werden können."
+"Einreichungen zu ermöglichen. Sie können auch für ausgeblendete Tracks oder "
+"Einreichungstypen genutzt werden, die nur mit dem passenden Zugangscode "
+"gesehen werden können."
 
 #: pretalx/orga/templates/orga/cfp/access_code_view.html:52
 msgid "Code"
@@ -5390,7 +5395,7 @@ msgstr "Nicht öffentlich"
 
 #: pretalx/orga/templates/orga/includes/event_links_formset.html:47
 msgid "Add link"
-msgstr ""
+msgstr "Link hinzufügen"
 
 #: pretalx/orga/templates/orga/includes/mail_template_role.html:3
 msgid "Accept email"
@@ -5635,6 +5640,8 @@ msgstr "Alle verwerfen"
 #: pretalx/orga/templates/orga/mails/outbox_list.html:38
 msgid "The current filters will be used when sending/discarding emails."
 msgstr ""
+"Die aktuellen Filter werden berücksichtigt, wenn E-Mails abgeschickt oder "
+"verworfen werden."
 
 #: pretalx/orga/templates/orga/mails/outbox_list.html:50
 #: pretalx/orga/templates/orga/mails/outbox_list.html:55
@@ -6387,7 +6394,7 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/settings/form.html:60
 msgid "Design"
-msgstr ""
+msgstr "Design"
 
 #: pretalx/orga/templates/orga/settings/form.html:78
 #, fuzzy
@@ -6413,16 +6420,23 @@ msgid ""
 "example link to your home page, your registration page, or your livestream "
 "here."
 msgstr ""
+"Diese Links werden oben auf allen öffentlichen Programm-Seiten gezeigt, also "
+"z.B. über dem Programm, den Vortragendenprofilen, den Sessionseiten, etc. "
+"Hier könnten Sie beispielsweise die Veranstaltungshomepage, den Ticketshop "
+"oder den Livestream verlinken."
 
 #: pretalx/orga/templates/orga/settings/form.html:109
 msgid "Footer links"
-msgstr ""
+msgstr "Footer-Links"
 
 #: pretalx/orga/templates/orga/settings/form.html:114
 msgid ""
 "These links will be shown in the footer of all your public pages. You could "
 "for example link your terms of service, imprint, or privacy policy here."
 msgstr ""
+"Diese Links werden auf allen öffentlichen Veranstaltungsseiten in der "
+"Fußzeile angezeigt. Sie könnten hier beispielsweise das Impressum, die AGB "
+"oder die Datenschutzbestimmung verlinken."
 
 #: pretalx/orga/templates/orga/settings/form.html:129
 msgid "Delete event"
@@ -6781,7 +6795,7 @@ msgstr "Geheimer öffentlicher Link"
 
 #: pretalx/orga/templates/orga/submission/comments.html:21
 msgid "No comments yet."
-msgstr ""
+msgstr "Noch keine Kommentare."
 
 #: pretalx/orga/templates/orga/submission/comments.html:63
 #, fuzzy
@@ -7670,7 +7684,7 @@ msgstr "Einreichungsschluss"
 #: pretalx/orga/views/submission.py:999
 #, python-brace-format
 msgid "Your comment on “{title}”"
-msgstr ""
+msgstr "Ihr Kommentar zu „{title}“"
 
 #: pretalx/orga/views/submission.py:1014
 #, fuzzy
@@ -7866,10 +7880,19 @@ msgid ""
 "All the best,\n"
 "the pretalx team"
 msgstr ""
+"Hi {name},\n"
+"\n"
+"Ihr pretalx-Passwort wurde gerade geändert.\n"
+"\n"
+"Wenn Sie Ihr Passwort gerade *nicht* geändert haben, melden Sie sich bitte "
+"umgehend bei der Administration.\n"
+"\n"
+"Viele Grüße\n"
+"Das pretalx-Team"
 
 #: pretalx/person/models/user.py:492
 msgid "[pretalx] Password changed"
-msgstr ""
+msgstr "[pretalx] Passwortänderung"
 
 #: pretalx/schedule/ascii.py:24
 msgid "No speakers"
@@ -8406,7 +8429,7 @@ msgstr "Einreichungsarten"
 
 #: pretalx/submission/models/question.py:168
 msgid "Label"
-msgstr ""
+msgstr "Label"
 
 #: pretalx/submission/models/question.py:173
 msgid "help text"

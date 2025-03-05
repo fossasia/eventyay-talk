@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-14 13:01+0000\n"
-"PO-Revision-Date: 2024-04-25 21:24+0000\n"
-"Last-Translator: Han Lee | 이한결 <wyatt0216@gmail.com>\n"
+"PO-Revision-Date: 2025-03-03 07:47+0000\n"
+"Last-Translator: Sungjoon Moon <sumoon@seoulsaram.org>\n"
 "Language-Team: none\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.18.2\n"
+"X-Generator: Weblate 5.9.2\n"
 
 #: pretalx/agenda/phrases.py:8
 msgid "Thank you for your feedback!"
@@ -138,7 +138,7 @@ msgstr "지금은 이 세션에 대한 피드백을 제공할 수 없습니다."
 
 #: pretalx/agenda/templates/agenda/schedule.html:23
 msgid "Changelog"
-msgstr ""
+msgstr "변경사항"
 
 #: pretalx/agenda/templates/agenda/schedule.html:77
 #, python-format
@@ -178,8 +178,6 @@ msgid "The speaker’s profile picture"
 msgstr "발표자의 프로필 사진"
 
 #: pretalx/agenda/templates/agenda/speaker.html:69
-#, fuzzy
-#| msgid "Sessions"
 msgid "Session"
 msgid_plural "Sessions"
 msgstr[0] "세션"
@@ -212,11 +210,12 @@ msgstr "아직 일정이 공개되지 않았습니다."
 msgid ""
 "You're currently not logged in, so your favourited talks will only be stored "
 "locally in your browser."
-msgstr ""
+msgstr "현재 로그인하지 않았으므로 즐겨찾기한 프로그램은 브라우저에 로컬로만 "
+"저장됩니다."
 
 #: pretalx/agenda/views/schedule.py:235
 msgid "Your favourites could only be saved locally in your browser."
-msgstr ""
+msgstr "즐겨찾기는 브라우저에 로컬로만 저장할 수 있습니다."
 
 #: pretalx/agenda/views/talk.py:117
 #, python-brace-format
@@ -227,7 +226,7 @@ msgstr "{event}의 '{title}' 세션"
 #: pretalx/orga/templates/orga/auth/base.html:29
 #: pretalx/orga/templates/orga/base.html:75
 msgid "The pretalx logo"
-msgstr ""
+msgstr "Pretalx 로고"
 
 #: pretalx/cfp/flow.py:348
 msgid ""
@@ -256,10 +255,8 @@ msgstr ""
 "보겠습니다."
 
 #: pretalx/cfp/flow.py:446
-#, fuzzy
-#| msgid "Speaker email"
 msgid "Additional information"
-msgstr "발표자 이메일"
+msgstr "추가 정보"
 
 #: pretalx/cfp/flow.py:450
 msgid "Tell us more!"
@@ -434,10 +431,8 @@ msgid ""
 msgstr "메일을 보낼 때 문제가 발생했지만 세션이 성공적으로 제출되었습니다!"
 
 #: pretalx/cfp/phrases.py:64
-#, fuzzy
-#| msgid "Data fields"
 msgid "Custom fields"
-msgstr "데이터 필드"
+msgstr "커스텀 필드"
 
 #: pretalx/cfp/templates/cfp/event/cfp.html:24
 #, python-format
@@ -483,10 +478,8 @@ msgid "withdrawn"
 msgstr "철회됨"
 
 #: pretalx/cfp/templates/cfp/event/index.html:36
-#, fuzzy
-#| msgid "Organiser area"
 msgid "Go To Organiser Area"
-msgstr "운영진 구역"
+msgstr "주최자 구역으로 이동"
 
 #: pretalx/cfp/templates/cfp/event/invitation.html:6
 #: pretalx/cfp/templates/cfp/event/invitation.html:9
@@ -526,10 +519,8 @@ msgid "No"
 msgstr "아니요"
 
 #: pretalx/cfp/templates/cfp/event/invitation.html:44
-#, fuzzy
-#| msgid "Accept invitation?"
 msgid "Accept invitation"
-msgstr "초대를 수락하시겠습니까?"
+msgstr "초대 수락"
 
 #: pretalx/cfp/templates/cfp/event/login.html:5
 msgid "Login"
@@ -559,7 +550,7 @@ msgstr ""
 
 #: pretalx/cfp/templates/cfp/event/recover.html:25
 msgid "Set your password to access your profile and proposals"
-msgstr ""
+msgstr "프로파일 및 제안서에 접근하기 위해 비밀번호 설정"
 
 #: pretalx/cfp/templates/cfp/event/submission_base.html:10
 #: pretalx/orga/templates/orga/submission/content.html:27
@@ -925,20 +916,12 @@ msgid "Resources"
 msgstr "자료"
 
 #: pretalx/cfp/templates/cfp/includes/submission_resources_form.html:13
-#, fuzzy
-#| msgid ""
-#| "Resources will be publicly visible. Please try to keep your uploads below "
-#| "16MB."
 msgid "Resources will be publicly visible."
-msgstr ""
-"자료가 공개적으로 표시됩니다. 업로드 용량을 16MB 미만으로 유지하시기 바랍니"
-"다."
+msgstr "자료가 공개적으로 표시됩니다."
 
 #: pretalx/cfp/templates/cfp/includes/submission_resources_form.html:62
-#, fuzzy
-#| msgid "A proposal resource was deleted."
 msgid "This proposal has no resources yet."
-msgstr "제안 자료가 삭제되었습니다."
+msgstr "이 제안서에는 아직 자료가 없습니다."
 
 #: pretalx/cfp/templates/cfp/includes/submission_resources_form.html:94
 msgid "You can either provide a URL or upload a file."
@@ -950,7 +933,7 @@ msgstr "다른 자료 추가"
 
 #: pretalx/cfp/templates/cfp/includes/user_submission_header.html:15
 msgid "Draft"
-msgstr ""
+msgstr "초안"
 
 #: pretalx/cfp/templates/cfp/includes/user_submission_header.html:20
 msgid "Current state of your proposal:"
@@ -1120,13 +1103,12 @@ msgstr "비밀번호가 일치하지 않습니다."
 #: pretalx/common/log_display.py:29
 #, python-brace-format
 msgid "The event {name} ({slug}) by {organiser} was deleted."
-msgstr ""
+msgstr "{organiser} 이(가) 주최한 {name} ({slug}) 이벤트가 삭제됐습니다."
 
 #: pretalx/common/log_display.py:30
-#, fuzzy, python-brace-format
-#| msgid "The proposal was deleted."
+#, python-brace-format
 msgid "The organiser {name} was deleted."
-msgstr "제안이 삭제되었습니다."
+msgstr "주최자 {name}이(가) 삭제 됐습니다."
 
 #: pretalx/common/log_display.py:51
 msgid "The CfP has been modified."
@@ -1177,10 +1159,8 @@ msgid "The invitation to the review team was sent."
 msgstr "검토 팀에 초대를 보냈습니다."
 
 #: pretalx/common/log_display.py:65
-#, fuzzy
-#| msgid "An email was sent."
 msgid "An email was created."
-msgstr "이메일이 전송되었습니다."
+msgstr "이메일이 생성됐습니다."
 
 #: pretalx/common/log_display.py:66
 msgid "A pending email was deleted."
@@ -1211,40 +1191,28 @@ msgid "A mail template was modified."
 msgstr "이메일 템플릿이 수정되었습니다."
 
 #: pretalx/common/log_display.py:73
-#, fuzzy
-#| msgid "A question was added."
 msgid "A custom field was added."
-msgstr "질문이 추가되었습니다."
+msgstr "커스텀 필드가 추가되었습니다."
 
 #: pretalx/common/log_display.py:74
-#, fuzzy
-#| msgid "A question was deleted."
 msgid "A custom field was deleted."
-msgstr "질문이 삭제되었습니다."
+msgstr "커스텀 필드가 삭제되었습니다."
 
 #: pretalx/common/log_display.py:75
-#, fuzzy
-#| msgid "A question was modified."
 msgid "A custom field was modified."
-msgstr "질문이 수정되었습니다."
+msgstr "커스텀 필드가 수정되었습니다."
 
 #: pretalx/common/log_display.py:76
-#, fuzzy
-#| msgid "A question option was added."
 msgid "A custom field option was added."
-msgstr "질문 옵션이 추가되었습니다."
+msgstr "커스텀 필드 옵션이 추가되었습니다."
 
 #: pretalx/common/log_display.py:77
-#, fuzzy
-#| msgid "A question option was deleted."
 msgid "A custom field option was deleted."
-msgstr "질문 옵션이 삭제되었습니다."
+msgstr "커스텀 필드 옵션이 삭제되었습니다."
 
 #: pretalx/common/log_display.py:78
-#, fuzzy
-#| msgid "A question option was modified."
 msgid "A custom field option was modified."
-msgstr "질문 옵션이 수정되었습니다."
+msgstr "커스텀 필드 옵션이 수정되었습니다."
 
 #: pretalx/common/log_display.py:79
 msgid "A tag was added."
@@ -1327,28 +1295,20 @@ msgid "The proposal was withdrawn."
 msgstr "이 제안은 철회되었습니다."
 
 #: pretalx/common/log_display.py:99
-#, fuzzy
-#| msgid "A question was modified."
 msgid "A custom field response was modified."
-msgstr "질문이 수정되었습니다."
+msgstr "커스텀 필드 응답이 수정되었습니다."
 
 #: pretalx/common/log_display.py:100
-#, fuzzy
-#| msgid "A question was added."
 msgid "A custom field response was added."
-msgstr "질문이 추가되었습니다."
+msgstr "커스텀 필드 응답이 추가되었습니다."
 
 #: pretalx/common/log_display.py:101
-#, fuzzy
-#| msgid "A proposal resource was added."
 msgid "A proposal comment was added."
-msgstr "제안 자료가 추가되었습니다."
+msgstr "제안 댓글이 추가되었습니다."
 
 #: pretalx/common/log_display.py:102
-#, fuzzy
-#| msgid "A proposal resource was deleted."
 msgid "A proposal comment was deleted."
-msgstr "제안 자료가 삭제되었습니다."
+msgstr "제안서 댓글이 삭제되었습니다."
 
 #: pretalx/common/log_display.py:103
 msgid "A session type was added."
@@ -1419,22 +1379,18 @@ msgstr "프로필이 수정되었습니다."
 #: pretalx/orga/templates/orga/cfp/question_view.html:58
 #: pretalx/orga/templates/orga/review/dashboard.html:84
 #: pretalx/orga/views/cfp.py:354
-#, fuzzy
-#| msgid "Custom domain"
 msgid "Custom field"
-msgstr "커스텀 도메인"
+msgstr "커스텀 필드"
 
 #: pretalx/common/log_display.py:177
 msgid "Response to custom field"
-msgstr ""
+msgstr "커스텀 필드에 응답"
 
 #: pretalx/common/log_display.py:180 pretalx/orga/templates/orga/base.html:245
 #: pretalx/orga/templates/orga/cfp/text.html:20
 #: pretalx/orga/templates/orga/cfp/text.html:24
-#, fuzzy
-#| msgid "Your proposals"
 msgid "Call for Proposals"
-msgstr "당신의 (발표) 제안"
+msgstr "제안서 요청"
 
 #: pretalx/common/log_display.py:183
 msgid "Mail template"
@@ -1557,18 +1513,14 @@ msgid "Features"
 msgstr "기능"
 
 #: pretalx/common/plugins.py:10
-#, fuzzy
-#| msgid "Duration"
 msgctxt "Type of plugin"
 msgid "Integrations"
-msgstr "기간"
+msgstr "통합"
 
 #: pretalx/common/plugins.py:11
-#, fuzzy
-#| msgid "Questions"
 msgctxt "Type of plugin"
 msgid "Customizations"
-msgstr "질문"
+msgstr "사용자 지정"
 
 #: pretalx/common/plugins.py:12
 msgid "Exporters"
@@ -1579,19 +1531,14 @@ msgid "Recording integrations"
 msgstr "레코딩 통합"
 
 #: pretalx/common/plugins.py:14
-#, fuzzy
-#| msgid "Language"
 msgid "Languages"
 msgstr "언어"
 
 #: pretalx/common/plugins.py:15
 #: pretalx/orga/templates/orga/mails/_placeholder_group.html:20
-#, fuzzy
-#| msgctxt "Type of plugin"
-#| msgid "Other"
 msgctxt "category of items"
 msgid "Other"
-msgstr "그 외..."
+msgstr "기타"
 
 #: pretalx/common/templates/400.html:18
 msgid ""
@@ -1699,16 +1646,13 @@ msgstr "연락하기"
 
 #: pretalx/common/templates/common/base.html:175
 msgid "Imprint"
-msgstr ""
+msgstr "인장"
 
 #: pretalx/common/templates/common/forms/field.html:7
 #: pretalx/orga/templates/orga/settings/form.html:92
 #: pretalx/orga/templates/orga/settings/form.html:110
-#, fuzzy
-#| msgctxt "form"
-#| msgid "Optional"
 msgid "Optional"
-msgstr "선택사항"
+msgstr "선택 사항"
 
 #: pretalx/common/templates/common/logs.html:18
 msgid "This change was performed by a member of the event orga."
@@ -1716,7 +1660,7 @@ msgstr "이 변경은 이벤트 조직 구성원이 수행했습니다."
 
 #: pretalx/common/templates/common/logs.html:24
 msgid "An organiser"
-msgstr ""
+msgstr "주최자"
 
 #: pretalx/common/templates/common/powered_by.html:36
 #, python-format
@@ -1729,12 +1673,12 @@ msgstr "제공된 파일 없음"
 
 #: pretalx/common/templates/common/question_answer.html:16
 msgid "No response"
-msgstr ""
+msgstr "응답 없음"
 
 #: pretalx/common/templates/common/redirect.html:7
 #: pretalx/common/templates/common/redirect.html:13
 msgid "Redirect"
-msgstr ""
+msgstr "리디렉트"
 
 #: pretalx/common/templates/common/redirect.html:15
 #, python-format
@@ -1745,7 +1689,7 @@ msgstr ""
 
 #: pretalx/common/templates/common/redirect.html:18
 msgid "Please only proceed if you trust this website to be safe."
-msgstr ""
+msgstr "이 웹사이트를 신뢰하시는 경우에만 계속 진행 하시기 바랍니다."
 
 #: pretalx/common/templates/common/redirect.html:24
 #, python-format
@@ -1865,16 +1809,15 @@ msgid "Delete"
 msgstr "삭제"
 
 #: pretalx/common/text/phrases.py:57
-#, fuzzy
-#| msgid "Account deletion"
 msgid "Confirm deletion"
-msgstr "계정 삭제"
+msgstr "삭제 확인"
 
 #: pretalx/common/text/phrases.py:59
 msgid ""
 "Please make sure that this is the item you want to delete. This action "
 "cannot be undone!"
-msgstr ""
+msgstr "이 항목을 삭제하고자 하시는지 다시 한번 확인 해 주십시오. 이 작업은 되돌릴 "
+"수 없습니다!"
 
 #: pretalx/common/text/phrases.py:62
 msgid "Your changes have been saved."
@@ -2567,8 +2510,6 @@ msgstr ""
 #: pretalx/orga/templates/orga/mails/_placeholder_group.html:14
 #: pretalx/orga/templates/orga/organiser/list.html:33
 #: pretalx/orga/views/event.py:746
-#, fuzzy
-#| msgid "Event"
 msgid "Event"
 msgid_plural "Events"
 msgstr[0] "행사"
@@ -2627,11 +2568,11 @@ msgstr ""
 
 #: pretalx/mail/context.py:141
 msgid "The proposal’s unique ID"
-msgstr ""
+msgstr "제안서의 고유 ID"
 
 #: pretalx/mail/context.py:148
 msgid "The proposal’s public URL"
-msgstr ""
+msgstr "제안서의 공개 URL"
 
 #: pretalx/mail/context.py:155
 msgid "The speaker’s edit page for the proposal"
@@ -2639,7 +2580,7 @@ msgstr ""
 
 #: pretalx/mail/context.py:162
 msgid "Link to confirm a proposal after it has been accepted."
-msgstr ""
+msgstr "제안서 수락 이후 확인을 위한 링크."
 
 #: pretalx/mail/context.py:169
 msgid "Link to withdraw the proposal"
@@ -2681,6 +2622,11 @@ msgid ""
 "\n"
 "Second review, containing heavy criticism!"
 msgstr ""
+"제안서에 동의 하는 첫번째 검토 의견.\n"
+"\n"
+"--------- \n"
+"\n"
+"무거운 비판이 담긴 두번째 검토 의견!"
 
 #: pretalx/mail/context.py:206
 msgid "All review texts for this proposal"
@@ -2820,7 +2766,7 @@ msgstr ""
 
 #: pretalx/mail/default_templates.py:69
 msgid "We have some questions about your proposal"
-msgstr ""
+msgstr "제출하신 제안서에 대해서 몇 가지 문의 드릴 것이 있습니다"
 
 #: pretalx/mail/default_templates.py:73
 #, python-brace-format
@@ -2917,24 +2863,20 @@ msgid "New proposal (organiser notification)"
 msgstr ""
 
 #: pretalx/mail/models.py:32
-#, fuzzy
-#| msgid "The proposal was accepted."
 msgid "Proposal accepted"
-msgstr "제안이 수락되었습니다."
+msgstr "제안서 수락됨"
 
 #: pretalx/mail/models.py:33
-#, fuzzy
-#| msgid "Proposals are closed"
 msgid "Proposal rejected"
-msgstr "발표 제안서 마감"
+msgstr "제안서 거절됨"
 
 #: pretalx/mail/models.py:35
 msgid "Add a speaker to a proposal (new account)"
-msgstr ""
+msgstr "제안서에 발표자 추가 (새 계정)"
 
 #: pretalx/mail/models.py:38
 msgid "Add a speaker to a proposal (existing account)"
-msgstr ""
+msgstr "제안서에 발표자 추가 (기존 계정)"
 
 #: pretalx/mail/models.py:40
 #: pretalx/orga/templates/orga/cfp/question_remind.html:18
@@ -2962,7 +2904,7 @@ msgstr ""
 
 #: pretalx/mail/models.py:84 pretalx/mail/models.py:258
 msgid "BCC"
-msgstr ""
+msgstr "숨은참조"
 
 #: pretalx/mail/models.py:86
 msgid ""
@@ -2995,7 +2937,7 @@ msgstr ""
 
 #: pretalx/mail/models.py:332
 msgid "This mail has been sent already. It cannot be sent again."
-msgstr ""
+msgstr "이미 발송된 이메일 입니다. 다시 발송할 수 없습니다."
 
 #: pretalx/orga/forms/admin.py:17
 msgid "Perform update checks"
@@ -3013,7 +2955,7 @@ msgstr ""
 
 #: pretalx/orga/forms/admin.py:28
 msgid "Email notifications"
-msgstr ""
+msgstr "이메일 알림"
 
 #: pretalx/orga/forms/admin.py:30
 msgid ""
@@ -3198,7 +3140,7 @@ msgstr ""
 
 #: pretalx/orga/forms/cfp.py:522
 msgid "Confirmed speakers"
-msgstr ""
+msgstr "확인된 연사"
 
 #: pretalx/orga/forms/cfp.py:525
 #: pretalx/orga/templates/orga/mails/_mail_editor.html:28
@@ -3263,7 +3205,7 @@ msgstr ""
 
 #: pretalx/orga/forms/event.py:100
 msgid "Show featured sessions"
-msgstr ""
+msgstr "주요 세션 보기"
 
 #: pretalx/orga/forms/event.py:102 pretalx/submission/models/review.py:292
 #: pretalx/submission/models/review.py:313
@@ -3331,7 +3273,7 @@ msgstr ""
 msgid ""
 "Please contact your administrator if you need to change the short name of "
 "your event."
-msgstr ""
+msgstr "행사의 약칭을 바꿔야 하는 경우 관리자에게 문의하시기 바랍니다."
 
 #: pretalx/orga/forms/event.py:169
 msgid ""
@@ -3375,7 +3317,7 @@ msgstr ""
 
 #: pretalx/orga/forms/event.py:384
 msgid "Mail signature"
-msgstr ""
+msgstr "메일 서명"
 
 #: pretalx/orga/forms/event.py:386
 msgid "The signature will be added to outgoing mails, preceded by “-- ”."
