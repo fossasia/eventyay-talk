@@ -406,8 +406,9 @@ class EventReviewSettings(EventSettingsPermission, ActionFromUrl, FormView):
         for form in self.scores_formset.deleted_forms:
             if not form.instance.is_independent:
                 weights_changed = True
-            form.instance.scores.all().delete()
-            form.instance.delete()
+            if form.instance.pk:
+                form.instance.scores.all().delete()
+                form.instance.delete()
 
         if weights_changed:
             ReviewScoreCategory.recalculate_scores(self.request.event)
