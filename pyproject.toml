@@ -64,7 +64,7 @@ dependencies = [
   'pretalx_venueless @ git+https://github.com/fossasia/eventyay-talk-video.git@main',
   'pretalx-downstream @ git+https://github.com/fossasia/eventyay-talk-downstream.git@main',
   "django-allauth~=0.63.3",
-  "PyJWT~=2.8.0",
+  "PyJWT>=2.8,<2.11",
   'django-oauth-toolkit==2.4.*',
   'requests-oauthlib==2.*',
   'psycopg2-binary==2.9.10',
