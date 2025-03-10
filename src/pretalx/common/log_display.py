@@ -10,6 +10,7 @@ from pretalx.common.signals import activitylog_display, activitylog_object_link
 from pretalx.common.text.phrases import phrases
 from pretalx.event.models.event import Event
 from pretalx.mail.models import MailTemplate, QueuedMail
+from pretalx.person.models import SpeakerProfile
 from pretalx.submission.models import (
     Answer,
     AnswerOption,
@@ -153,39 +154,47 @@ def default_activitylog_object_link(sender: Event, activitylog: ActivityLog, **k
         url = activitylog.content_object.orga_urls.base
         link_text = escape(activitylog.content_object.title)
         text = _submission_label_text(activitylog.content_object)
-    if isinstance(activitylog.content_object, SubmissionComment):
+    elif isinstance(activitylog.content_object, SubmissionComment):
         url = (
             activitylog.content_object.submission.orga_urls.comments
             + f"#comment-{activitylog.content_object.pk}"
         )
         link_text = escape(activitylog.content_object.submission.title)
         text = _submission_label_text(activitylog.content_object.submission)
-    if isinstance(activitylog.content_object, Question):
+    elif isinstance(activitylog.content_object, Question):
         url = activitylog.content_object.urls.base
         link_text = escape(activitylog.content_object.question)
         text = _("Custom field")
-    if isinstance(activitylog.content_object, AnswerOption):
+    elif isinstance(activitylog.content_object, AnswerOption):
         url = activitylog.content_object.question.urls.base
         link_text = escape(activitylog.content_object.question.question)
         text = _("Custom field")
-    if isinstance(activitylog.content_object, Answer):
+    elif isinstance(activitylog.content_object, Answer):
         if activitylog.content_object.submission:
             url = activitylog.content_object.submission.orga_urls.base
         else:
             url = activitylog.content_object.question.urls.base
         link_text = escape(activitylog.content_object.question.question)
         text = _("Response to custom field")
-    if isinstance(activitylog.content_object, CfP):
+    elif isinstance(activitylog.content_object, CfP):
         url = activitylog.content_object.urls.text
         link_text = _("Call for Proposals")
-    if isinstance(activitylog.content_object, MailTemplate):
+    elif isinstance(activitylog.content_object, MailTemplate):
         url = activitylog.content_object.urls.base
         text = _("Mail template")
         link_text = escape(activitylog.content_object.subject)
-    if isinstance(activitylog.content_object, QueuedMail):
+    elif isinstance(activitylog.content_object, QueuedMail):
         url = activitylog.content_object.urls.base
         text = _("Email")
         link_text = escape(activitylog.content_object.subject)
+    elif isinstance(activitylog.content_object, SpeakerProfile):
+        url = activitylog.content_object.orga_urls.base
+        text = _("Speaker profile")
+        link_text = escape(activitylog.content_object.user.get_display_name())
+    elif isinstance(activitylog.content_object, Event):
+        url = activitylog.content_object.orga_urls.base
+        text = _("Event")
+        link_text = escape(activitylog.content_object.name)
     if url:
         if not link_text:
             link_text = url
