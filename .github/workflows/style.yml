@@ -28,10 +28,10 @@ jobs:
         with:
           python-version-file: ".github/workflows/python-version.txt"
           cache: "pip"
-      - name: Install Dependencies
-        run: python -m pip install uv && uv pip install --system -Ue ".[dev]"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
       - name: Run isort
-        run: isort -c .
+        run: uvx isort -c .
         working-directory: ./src
   flake:
     name: flake8
@@ -42,12 +42,10 @@ jobs:
         with:
           python-version-file: ".github/workflows/python-version.txt"
           cache: "pip"
-      - name: Install Dependencies
-        run: python -m pip install uv && uv pip install --system -Ue ".[dev]"
-      - name: Setup flake8 annotations
-        uses: rbialon/flake8-annotations@v1
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
       - name: Run flake8
-        run: flake8 .
+        run: uvx flake8 .
         working-directory: ./src
   black:
     name: black
@@ -72,10 +70,12 @@ jobs:
         with:
           python-version-file: ".github/workflows/python-version.txt"
           cache: "pip"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
       - name: Install Dependencies
-        run: python -m pip install uv && uv pip install --system -Ue ".[dev]"
+        run: uv sync --group lint
       - name: Run djhtml
-        run: 'djhtml pretalx/'
+        run: 'uv run djhtml pretalx/'
         working-directory: ./src
       - name: Make sure we always use trimmed translation strings
         run: "! git grep ' blocktranslate ' | grep -v trimmed"
