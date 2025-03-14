@@ -194,6 +194,7 @@ class FeedbackView(TalkMixin, FormView):
         return self.request.event.submissions.prefetch_related(
             "slots",
             "feedback",
+            "speakers",
         ).select_related("submission_type")
 
     @context
