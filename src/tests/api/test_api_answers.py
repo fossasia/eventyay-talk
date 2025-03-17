@@ -125,3 +125,139 @@ def test_reviewer_cannot_edit_answer(event, review_client, answer):
     with scope(event=event):
         answer.refresh_from_db()
         assert answer.answer != "ohno.png"
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("required_field", ("answer", "question"))
+def test_fields_required_on_create(event, orga_client, required_field):
+    response = orga_client.post(
+        event.api_urls.answers,
+        {},
+        content_type="application/json",
+    )
+    assert response.data.get(required_field)[0] == "This field is required."
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("required_field", ("answer", "question"))
+def test_fields_required_on_update(event, orga_client, answer, required_field):
+    response = orga_client.put(
+        event.api_urls.answers + f"{answer.pk}/",
+        {},
+        content_type="application/json",
+    )
+    assert response.data.get(required_field)[0] == "This field is required."
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_field_question_may_not_be_null(event, orga_client, answer, is_detail, method):
+    url = event.api_urls.answers
+    if is_detail:
+        url += f"{answer.pk}/"
+
+    response = getattr(orga_client, method)(
+        url, {"question": ""}, content_type="application/json"
+    )
+    assert response.data.get("question")[0] == "This field may not be null."
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_field_answer_may_not_be_blank(event, orga_client, answer, is_detail, method):
+    url = event.api_urls.answers
+    if is_detail:
+        url += f"{answer.pk}/"
+
+    response = getattr(orga_client, method)(
+        url, {"answer": ""}, content_type="application/json"
+    )
+    assert response.data.get("answer")[0] == "This field may not be blank."
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_field_question_must_be_valid_pk(event, orga_client, answer, is_detail, method):
+    url = event.api_urls.answers
+    if is_detail:
+        url += f"{answer.pk}/"
+
+    response = getattr(orga_client, method)(
+        url, {"question": "invalid_pk"}, content_type="application/json"
+    )
+    assert (
+        response.data.get("question")[0]
+        == "Incorrect type. Expected pk value, received str."
+    )
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_field_review_must_be_valid_pk(event, orga_client, answer, is_detail, method):
+    url = event.api_urls.answers
+    if is_detail:
+        url += f"{answer.pk}/"
+
+    response = getattr(orga_client, method)(
+        url, {"review": "invalid_pk"}, content_type="application/json"
+    )
+    assert (
+        response.data.get("review")[0]
+        == "Incorrect type. Expected pk value, received str."
+    )
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_objects_do_not_exist(event, orga_client, answer, is_detail, method):
+    url = event.api_urls.answers
+    if is_detail:
+        url += f"{answer.pk}/"
+
+    response = getattr(orga_client, method)(
+        url, {"review": 5, "question": 4}, content_type="application/json"
+    )
+    assert response.data.get("review")[0] == 'Invalid pk "5" - object does not exist.'
+    assert response.data.get("question")[0] == 'Invalid pk "4" - object does not exist.'
+    assert response.status_code == 400, response.content.decode()
