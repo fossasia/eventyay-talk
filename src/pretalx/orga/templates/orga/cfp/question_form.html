@@ -77,7 +77,7 @@
         {{ form.contains_personal_data.as_field_group }}
         <span id="is-visible-to-reviewers">{{ form.is_visible_to_reviewers.as_field_group }}</span>
         <fieldset class="limit-submission">
-            <legend>{% translate "Limit to specific proposals" %}</legend>
+            <legend id="limit">{% translate "Limit to specific proposals" %}</legend>
             {% if form.tracks %}
                 <span class="limit-submission">{{ form.tracks.as_field_group }}</span>
             {% endif %}
@@ -86,7 +86,7 @@
             {% endif %}
         </fieldset>
         <fieldset>
-            <legend>{% translate "Input validation" %}</legend>
+            <legend id="validation">{% translate "Input validation" %}</legend>
             {{ form.question_required.as_field_group }}
             {{ form.deadline.as_field_group }}
             {{ form.freeze_after.as_field_group }}
@@ -109,7 +109,7 @@
         </fieldset>
 
         <fieldset id="answer-options">
-            <legend>{% translate "Response options" %}</legend>
+            <legend id="options">{% translate "Response options" %}</legend>
             <details class="col-md-9 offset-md-3 mb-3 hide-label" {% if form.errors.options or form.errors.options_replace %}open{% endif %}>
                 <summary>{% translate "Upload options" %}</summary>
                 <div class="pt-3"></div>

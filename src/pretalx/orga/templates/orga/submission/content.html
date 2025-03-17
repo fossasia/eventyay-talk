@@ -43,11 +43,11 @@
                 {{ form.state.as_field_group }}
                 </fieldset>
                 <fieldset>
-                    <legend>{% translate "Speaker" %}</legend>
+                    <legend id="speaker">{% translate "Speaker" %}</legend>
                     {{ new_speaker_form }}
                 </fieldset>
                 <fieldset>
-                    <legend>{% translate "Proposal" %}</legend>
+                    <legend id="proposal">{% translate "Proposal" %}</legend>
             {% endif %}
             {% if form.room %}
                 <div id="show-if-state" {% if action == "create" %}class="d-none"{% endif %}>
@@ -85,7 +85,7 @@
                 {% include "cfp/includes/submission_resources_form.html" %}
             {% endif %}
             {% if questions_form and questions_form.fields %}
-                <div><legend>{{ phrases.cfp.custom_fields }}</legend></div>
+                <div><legend id="custom">{{ phrases.cfp.custom_fields }}</legend></div>
                 {{ questions_form }}
             {% endif %}
 
