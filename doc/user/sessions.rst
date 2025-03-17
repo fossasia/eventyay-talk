@@ -134,6 +134,8 @@ Tracks
 Tracks are thematic groupings of sessions. For example, you might have tracks for "Security", "Web Development", and "Career Development".
 You can assign colours to tracks, in order to make them distinct in the public schedule, so that attendees can see at a glance which sessions belong together.
 
+Tracks can also be used to assign reviewer permissions, which is useful if your reviewers are domain experts in specific topics (more in the :ref:`Review Guide <user-guide-review>`).
+
 You don’t have to use tracks at all, and you can turn them off in the CfP settings.
 
 Session Types
@@ -146,6 +148,7 @@ Session Types define the format and default duration of sessions. Common example
 - Workshop (2 hours)
 - Lightning talk (5 minutes)
 
+Session types make scheduling easier for you, because you can just drag blocks of the correct duration onto the schedule.
 You can always override the duration of a session individually, but offering these categories can help the submitter communicate their intended format from the beginning.
 
 If you don’t want to use session types, just don’t create any beyond the default one that pretalx creates for you.

@@ -13,6 +13,13 @@ What is the difference between tracks and session types?
     the format and default duration of a session. See more in the
     :ref:`Session user guide <user-guide-tracks>`.
 
+What is the difference between the “accepted” and “confirmed” session status?
+    The “accepted” status is used to indicate that a session has been
+    accepted by the program committee. The “confirmed” status is used to
+    indicate that the speaker has confirmed their participation in the
+    conference. The “confirmed” status is set by the speaker, though organisers
+    can also set it manually. See more in the :ref:`Session user guide <user-guide-sessions>`.
+
 Email
 -----
 
