@@ -62,12 +62,9 @@ jobs:
       - name: Install the created wheel package with pip
         run: |
           # Switch to a new virtualenv
-          mkdir test_venv
           python -m venv test_venv
-          . test_venv/bin/activate
-
-          python -m pip install dist/pretalx*whl
+          test_venv/bin/python -m pip install dist/pretalx*whl
       - name: Make sure we can run pretalx commands
-        run: uv run -m pretalx help
+        run: test_venv/bin/python -m pretalx help
       - name: Make sure we can run through all migrations
-        run: python -m pretalx migrate
+        run: test_venv/bin/python -m pretalx migrate
