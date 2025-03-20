@@ -40,7 +40,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 #     pip3 install gunicorn
 
 WORKDIR /pretalx
-RUN uv sync --frozen --no-install-project
+RUN uv sync --frozen --all-extras --no-install-project
 
 RUN uv run -m pretalx makemigrations
 RUN uv run -m pretalx migrate
