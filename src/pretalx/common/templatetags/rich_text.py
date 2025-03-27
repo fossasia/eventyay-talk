@@ -187,6 +187,6 @@ def append_colon(text: LazyI18nString) -> str:
     text = str(text).strip()
     if not text:
         return ""
-    if text[-1] not in [".", "!", "?", ":", ";"]:
-        return f"{text}:"
-    return text
+    if text[-1] in [".", "!", "?", ":", ";"]:
+        return text
+    return f"{text}:"
