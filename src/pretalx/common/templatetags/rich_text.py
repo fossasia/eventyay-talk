@@ -184,7 +184,7 @@ def rich_text_without_links(text: str):
 @register.filter
 def append_colon(text: LazyI18nString) -> str:
     """Appends a colon to the given text if it doesn't end with a punctuation mark."""
-    text = str(text)
+    text = str(text).strip()
     if not text:
         return ""
     if text[-1] not in [".", "!", "?", ":", ";"]:
