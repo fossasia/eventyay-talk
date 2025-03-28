@@ -146,7 +146,8 @@ class TeamDelete(PermissionRequired, TeamMixin, ActionConfirmMixin, DetailView):
     def action_object_name(self):
         if "user_pk" in self.kwargs:
             return _("Team member") + f": {self.get_object().name}"
-        return _("Team") + f": {self.get_object().name}"
+        if obj := self.get_object():
+            return _("Team") + f": {obj.name}"
 
     @property
     def action_back_url(self):
