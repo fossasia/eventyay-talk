@@ -353,6 +353,12 @@ class EventReviewSettings(EventSettingsPermission, ActionFromUrl, FormView):
                     raise ValidationError(
                         _("Only the last review phase may be open-ended.")
                     )
+                if not next_phase.start:
+                    raise ValidationError(
+                        _(
+                            "All review phases except for the first one need a start date."
+                        )
+                    )
                 if phase.end > next_phase.start:
                     raise ValidationError(
                         _(
