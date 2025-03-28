@@ -468,8 +468,10 @@ class SubmissionContent(
         if created:
             if not self.new_speaker_form.is_valid():
                 if self.new_speaker_form.errors:
-                    first_error = next(iter(self.new_speaker_form.errors.values()))[0]
-                    messages.error(self.request, first_error)
+                    for field, errors in self.new_speaker_form.errors.items():
+                        for error in errors:
+                            messages.error(self.request, f"{field}: {error}")
+                        break  # Only show errors for the first field
                 return self.form_invalid(form)
             elif email := self.new_speaker_form.cleaned_data["email"]:
                 form.instance.add_speaker(
