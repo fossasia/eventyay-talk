@@ -1,0 +1,3 @@
+This is the variant of AlpineJS for sites with strict CSP.
+
+Files are downloaded from https://cdn.jsdelivr.net/npm/@alpinejs/csp@3.14.9/.

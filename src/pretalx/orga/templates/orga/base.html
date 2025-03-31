@@ -51,6 +51,8 @@
     {% compress js %}
       <script defer src="{% static "common/js/base.js" %}"></script>
       <script defer src="{% static "common/js/collapse.js" %}"></script>
+      <!-- AlpineJS, to replace jQuery and VueJS 2 in the future. -->
+      <script defer src="{% static 'vendored/@alpinejs/csp@3.14.9/dist/cdn.js' %}"></script>
       <script defer src="{% static "orga/js/main.js" %}"></script>
       <script defer src="{% static "orga/js/typeahead.js" %}"></script>
       <script defer src="{% static "vendored/choices/choices.min.js" %}"></script>
@@ -59,6 +61,8 @@
       <script defer src="{% static "common/js/formTools.js" %}"></script>
       <script defer src="{% static "orga/js/sidebar.js" %}"></script>
     {% endcompress %}
+    <!-- Alpine small apps. Note that they don't have "defer" attribute. -->
+    <script src="{% static 'orga/js/alpine-applets/global-nav.js?v=1' %}"></script>
     {% block scripts %}{% endblock scripts %}
     {{ html_head|safe }}
   </head>
@@ -113,7 +117,7 @@
           </li>
         {% endif %}
         {% block navbar_right %}{% endblock navbar_right %}
-        <li class="nav-item d-none d-md-block">
+        <li class="nav-item d-none d-md-block" x-data="global-nav" x-on:mouseenter="openMenu" x-on:mouseleave="closeMenu">
           <a class="nav-link active" href="{% url "orga:user.view" %}">
             <i class="fa fa-user"></i>
             {{ request.user.get_display_name }}

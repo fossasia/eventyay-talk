@@ -698,7 +698,7 @@ small {
 }
 
 .d-none {
-  display: none !important;
+  display: none;
 }
 .d-hidden {
   visibility: hidden !important;
