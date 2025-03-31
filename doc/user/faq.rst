@@ -20,6 +20,15 @@ What is the difference between the “accepted” and “confirmed” session st
     conference. The “confirmed” status is set by the speaker, though organisers
     can also set it manually. See more in the :ref:`Session user guide <user-guide-sessions>`.
 
+How do I designate sessions as fallback/alternates?
+    To designate sessions as fallback or alternates, you can use the **pending states** feature.
+    To do so, leave the session in the “submitted” state, but set it to “pending accepted”.
+    Pending states are not shown to speakers, but you can write an email to all speakers with
+    proposals marked as “pending accepted” if you want to communicate this decision.
+    For more details on how to manage session states, see the
+    :ref:`Session Lifecycle <user-guide-proposals-pending>` section in the
+    :ref`Sessions & Proposals <user-guide-proposals>` guide.
+
 Email
 -----
 

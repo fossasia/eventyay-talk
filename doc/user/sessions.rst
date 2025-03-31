@@ -101,6 +101,8 @@ contact the organisers to withdraw their session, so that proposals or sessions
 can’t be removed from the event unilaterally.
 
 
+.. _`user-guide-proposals-pending`:
+
 Pending States
 ^^^^^^^^^^^^^
 
