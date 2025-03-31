@@ -72,7 +72,7 @@ First up, install all the main application dependencies::
 You should now see a *(.venv)* prepended to your shell prompt.
 
 When working with `pretalx`, you need to use commands installed in this virtual environment, so you always have to activate it.
-Other than explicitly activate, you can invoke the commands indirectly via `uv run`. For example:
+Other than explicitly activating, you can invoke the commands indirectly via `uv run`. For example:
 
 .. code-block:: shell
 
