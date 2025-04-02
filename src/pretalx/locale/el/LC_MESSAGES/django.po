@@ -4,15 +4,15 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-14 13:01+0000\n"
-"PO-Revision-Date: 2023-10-14 10:38+0000\n"
-"Last-Translator: Vangelis Zacharioudakis <sugarvag@gmail.com>\n"
+"PO-Revision-Date: 2025-03-21 21:22+0000\n"
+"Last-Translator: Lysandros Nikolaou <lisandrosnik@gmail.com>\n"
 "Language-Team: none\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.18.2\n"
+"X-Generator: Weblate 5.9.2\n"
 
 #: pretalx/agenda/phrases.py:8
 msgid "Thank you for your feedback!"
@@ -221,10 +221,14 @@ msgid ""
 "You're currently not logged in, so your favourited talks will only be stored "
 "locally in your browser."
 msgstr ""
+"Προς το παρόν δεν έχεις συνδεθεί, οπότε οι αγαπημένες σου συνομιλίες θα "
+"αποθηκευτούν μόνο τοπικά στο πρόγραμμα περιήγησής σου."
 
 #: pretalx/agenda/views/schedule.py:235
 msgid "Your favourites could only be saved locally in your browser."
 msgstr ""
+"Τα αγαπημένα σου μπορούσαν να αποθηκευτούν μόνο τοπικά στο πρόγραμμα "
+"περιήγησής σου."
 
 #: pretalx/agenda/views/talk.py:117
 #, python-brace-format
@@ -251,7 +255,7 @@ msgid ""
 "changes or questions."
 msgstr ""
 "Συγχαρητήρια, υποβάλατε την πρότασή σας! Μπορείτε να συνεχίσετε να κάνετε "
-"αλλαγές σε αυτό μέχρι την προθεσμία υποβολής και θα ειδοποιηθείτε για τυχόν "
+"αλλαγές σε αυτήν μέχρι την προθεσμία υποβολής και θα ειδοποιηθείτε για τυχόν "
 "αλλαγές ή ερωτήσεις."
 
 #: pretalx/cfp/flow.py:386
@@ -267,10 +271,8 @@ msgstr ""
 "Ας ξεκινήσουμε, αυτό δεν θα διαρκέσει πολύ."
 
 #: pretalx/cfp/flow.py:446
-#, fuzzy
-#| msgid "Admin information"
 msgid "Additional information"
-msgstr "Πληροφορίες διαχειριστή"
+msgstr "Πρόσθετες πληροφορίες"
 
 #: pretalx/cfp/flow.py:450
 msgid "Tell us more!"
@@ -592,6 +594,7 @@ msgstr ""
 #: pretalx/cfp/templates/cfp/event/recover.html:25
 msgid "Set your password to access your profile and proposals"
 msgstr ""
+"Όρισε τον κωδικό πρόσβασής σου για πρόσβαση στο προφίλ και τις προτάσεις σου"
 
 #: pretalx/cfp/templates/cfp/event/submission_base.html:10
 #: pretalx/orga/templates/orga/submission/content.html:27
@@ -679,7 +682,7 @@ msgid ""
 "also visible to reviewers."
 msgstr ""
 "Αυτά τα δεδομένα θα εμφανίζονται δημόσια εάν η πρότασή σας γίνει αποδεκτή. "
-"Είναι επίσης ορατό στους κριτικούς."
+"Είναι επίσης ορατό στους/στις κριτικούς."
 
 #: pretalx/cfp/templates/cfp/event/user_profile.html:51
 msgid "We have some questions"
@@ -802,8 +805,8 @@ msgstr[1] "Ομιλητές"
 #: pretalx/cfp/templates/cfp/event/user_submission_edit.html:49
 msgid "Submitter"
 msgid_plural "Submitters"
-msgstr[0] "Υποβάλλων"
-msgstr[1] "Υποβάλλοντες"
+msgstr[0] "Υποβάλλων/Υποβάλλουσα"
+msgstr[1] "Υποβάλλοντες/Υποβάλλουσες"
 
 #: pretalx/cfp/templates/cfp/event/user_submission_edit.html:80
 msgid "Save draft"
@@ -822,8 +825,8 @@ msgid ""
 "If you need a review from a colleague or a friend here’s a link that you can "
 "send out for viewing your proposal:"
 msgstr ""
-"Εάν χρειάζεστε μια κριτική από έναν συνάδελφο ή έναν φίλο, εδώ είναι ένας "
-"σύνδεσμος που μπορείτε να στείλετε για να δείτε την πρότασή σας:"
+"Εάν χρειάζεστε μια κριτική από έναν/μία συνάδελφο ή έναν/μία φίλο/η, εδώ "
+"είναι ένας σύνδεσμος που μπορείτε να στείλετε για να δείτε την πρότασή σας:"
 
 #: pretalx/cfp/templates/cfp/event/user_submission_edit.html:109
 #: pretalx/cfp/templates/cfp/event/user_submission_withdraw.html:13
@@ -837,8 +840,9 @@ msgid ""
 "session, please contact the organiser instead."
 msgstr ""
 "Μπορείτε να αποσύρετε την πρότασή σας από τη διαδικασία επιλογής εδώ. Δεν "
-"μπορείτε να το αναιρέσετε - εάν δεν είστε βέβαιοι εάν μπορείτε ή πρέπει να "
-"πραγματοποιήσετε τη συνεδρία σας, επικοινωνήστε με τον διοργανωτή."
+"μπορείτε να το αναιρέσετε - εάν δεν είστε βέβαιοι/ες εάν μπορείτε ή πρέπει "
+"να πραγματοποιήσετε τη συνεδρία σας, επικοινωνήστε με τον/την "
+"διοργανωτή/διοργανώτρια."
 
 #: pretalx/cfp/templates/cfp/event/user_submission_edit.html:125
 msgid "Discard draft proposal"
@@ -1183,7 +1187,7 @@ msgstr "Οι κωδικοί σας δεν ταιριάζουν."
 #: pretalx/common/log_display.py:29
 #, python-brace-format
 msgid "The event {name} ({slug}) by {organiser} was deleted."
-msgstr ""
+msgstr "Η διοργάνωση {name} ({slug}) από {organiser} διαγράφηκε."
 
 #: pretalx/common/log_display.py:30
 #, fuzzy, python-brace-format
@@ -1489,7 +1493,7 @@ msgstr "Προσαρμοσμένο email"
 
 #: pretalx/common/log_display.py:177
 msgid "Response to custom field"
-msgstr ""
+msgstr "Απάντηση σε προσαρμοσμένο πεδίο"
 
 #: pretalx/common/log_display.py:180 pretalx/orga/templates/orga/base.html:245
 #: pretalx/orga/templates/orga/cfp/text.html:20
@@ -1805,12 +1809,12 @@ msgstr "Δεν παρέχεται αρχείο"
 
 #: pretalx/common/templates/common/question_answer.html:16
 msgid "No response"
-msgstr ""
+msgstr "Καμία απάντηση"
 
 #: pretalx/common/templates/common/redirect.html:7
 #: pretalx/common/templates/common/redirect.html:13
 msgid "Redirect"
-msgstr ""
+msgstr "Aνακατεύθυνση"
 
 #: pretalx/common/templates/common/redirect.html:15
 #, python-format
@@ -8353,7 +8357,7 @@ msgstr "Παρακαλώ δώστε μια έγκυρη ηλεκτρονική �
 
 #: pretalx/submission/forms/submission.py:31
 msgid "Additional Speaker"
-msgstr "Επιπλέον ηχείο"
+msgstr "Επιπλέον ομιλητής/ομιλήτρια"
 
 #: pretalx/submission/forms/submission.py:33
 msgid ""
