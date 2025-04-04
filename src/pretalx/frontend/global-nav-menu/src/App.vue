@@ -50,13 +50,13 @@ onBeforeUnmount(() => {
         </div>
         <ul v-if='subOpen' class='absolute z-2 top-0 -translate-x-full list-none m-0 p-s-0 bg-white shadow-lg min-w-36'>
           <li>
-            <a href='#' :class='ENTRY_CLASSES' class='block'>Main dashboard</a>
+            <a href='/common/' :class='ENTRY_CLASSES' class='block'>Main dashboard</a>
           </li>
           <li>
-            <a href='#' :class='ENTRY_CLASSES' class='block'>Tickets</a>
+            <a href='/tickets/control/' :class='ENTRY_CLASSES' class='block'>Tickets</a>
           </li>
           <li>
-            <a href='#' :class='ENTRY_CLASSES' class='block'>Talks</a>
+            <a href='/talk/orga/event/' :class='ENTRY_CLASSES' class='block'>Talks</a>
           </li>
         </ul>
       </div>
