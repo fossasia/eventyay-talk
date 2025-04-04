@@ -1,3 +1,4 @@
+import sys
 from argparse import RawTextHelpFormatter
 from os import environ
 from urllib.parse import urljoin
@@ -59,6 +60,13 @@ class Command(BaseCommand):  # pragma: no cover
             "\nLet's get you a user with the right to create new events and access every event on this pretalx instance."
         )
 
+        if not options["interactive"] and not environ.get("DJANGO_SUPERUSER_EMAIL"):
+            self.stdout.write(
+                self.style.ERROR(
+                    "You must provide the environment variable DJANGO_SUPERUSER_EMAIL and DJANGO_SUPERUSER_PASSWORD if you run this command in non-interactive mode."
+                )
+            )
+            sys.exit(-1)
         call_command("createsuperuser", interactive=options["interactive"])
 
         user = User.objects.order_by("-id").filter(is_administrator=True).first()
