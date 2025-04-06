@@ -52,21 +52,32 @@ class Command(BaseCommand):  # pragma: no cover
                 "\nWelcome to pretalx! This is my initialization command, please use it only once."
             )
         )
-        self.stdout.write(
-            "You can abort this command at any time using C-c, and it will save no data."
-        )
+
+        if options["interactive"]:
+            self.stdout.write(
+                "You can abort this command at any time using C-c, and it will save no data."
+            )
+        else:
+            required_env_vars = (
+                "DJANGO_SUPERUSER_EMAIL",
+                "DJANGO_SUPERUSER_EMAIL",
+                organiser_name_env,
+                organiser_slug_env,
+            )
+            for env_var in required_env_vars:
+                if not environ.get(env_var):
+                    self.stdout.write(
+                        self.style.ERROR(
+                            f"You must provide the environment variable {env_var} "
+                            "if you run this command in non-interactive mode.\n"
+                            "Please refer to the documentation: https://docs.pretalx.org/administrator/commands/#init"
+                        )
+                    )
+                    sys.exit(-1)
 
         self.stdout.write(
             "\nLet's get you a user with the right to create new events and access every event on this pretalx instance."
         )
-
-        if not options["interactive"] and not environ.get("DJANGO_SUPERUSER_EMAIL"):
-            self.stdout.write(
-                self.style.ERROR(
-                    "You must provide the environment variable DJANGO_SUPERUSER_EMAIL and DJANGO_SUPERUSER_PASSWORD if you run this command in non-interactive mode."
-                )
-            )
-            sys.exit(-1)
         call_command("createsuperuser", interactive=options["interactive"])
 
         user = User.objects.order_by("-id").filter(is_administrator=True).first()
