@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-14 13:01+0000\n"
-"PO-Revision-Date: 2025-02-04 10:40+0000\n"
+"PO-Revision-Date: 2025-04-08 14:25+0000\n"
 "Last-Translator: Tobias Kunze <r@rixx.de>\n"
 "Language-Team: none\n"
 "Language: vi\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.6.2\n"
+"X-Generator: Weblate 5.9.2\n"
 
 #: pretalx/agenda/phrases.py:8
 msgid "Thank you for your feedback!"
@@ -267,10 +267,8 @@ msgstr ""
 "chóng."
 
 #: pretalx/cfp/flow.py:446
-#, fuzzy
-#| msgid "Admin information"
 msgid "Additional information"
-msgstr "Thông tin quản trị"
+msgstr "Thông tin khác"
 
 #: pretalx/cfp/flow.py:450
 msgid "Tell us more!"
@@ -453,10 +451,8 @@ msgstr ""
 "thành công!"
 
 #: pretalx/cfp/phrases.py:64
-#, fuzzy
-#| msgid "Custom Mail"
 msgid "Custom fields"
-msgstr "Email tuỳ chỉnh"
+msgstr "Trường tuỳ chỉnh"
 
 #: pretalx/cfp/templates/cfp/event/cfp.html:24
 #, python-format
@@ -1228,34 +1224,24 @@ msgid "A mail template was modified."
 msgstr "Mẫu email đã được sửa."
 
 #: pretalx/common/log_display.py:73
-#, fuzzy
-#| msgid "A question was added."
 msgid "A custom field was added."
-msgstr "Một câu hỏi đã được bổ sung."
+msgstr "Đã thêm một trường tuỳ chỉnh."
 
 #: pretalx/common/log_display.py:74
-#, fuzzy
-#| msgid "A question was deleted."
 msgid "A custom field was deleted."
-msgstr "Một câu hỏi đã được xoá."
+msgstr "Đã xoá một trường tuỳ chỉnh."
 
 #: pretalx/common/log_display.py:75
-#, fuzzy
-#| msgid "A question was modified."
 msgid "A custom field was modified."
-msgstr "Một câu hỏi đã được chỉnh sửa."
+msgstr "Đã sửa một trường tuỳ chỉnh."
 
 #: pretalx/common/log_display.py:76
-#, fuzzy
-#| msgid "A question option was added."
 msgid "A custom field option was added."
-msgstr "Một lựa chọn cho câu hỏi đã được bổ sung."
+msgstr "Đã bổ sung một lựa chọn trường tuỳ chỉnh."
 
 #: pretalx/common/log_display.py:77
-#, fuzzy
-#| msgid "A question option was deleted."
 msgid "A custom field option was deleted."
-msgstr "Một lựa chọn cho câu hỏi đã được xoá."
+msgstr "Đã xoá một lựa chọn trường tuỳ chỉnh."
 
 #: pretalx/common/log_display.py:78
 #, fuzzy
@@ -1735,7 +1721,7 @@ msgstr "Chưa có file nào"
 
 #: pretalx/common/templates/common/question_answer.html:16
 msgid "No response"
-msgstr ""
+msgstr "Không có phản hồi"
 
 #: pretalx/common/templates/common/redirect.html:7
 #: pretalx/common/templates/common/redirect.html:13
@@ -3063,10 +3049,8 @@ msgstr "Thêm người nói vào đề xuất (tài khoản đã có)"
 #: pretalx/mail/models.py:40
 #: pretalx/orga/templates/orga/cfp/question_remind.html:18
 #: pretalx/orga/templates/orga/includes/mail_template_role.html:9
-#, fuzzy
-#| msgid "Custom domain"
 msgid "Custom fields reminder"
-msgstr "Tên miền riêng"
+msgstr "Lời nhắc về trường tuỳ biến"
 
 #: pretalx/mail/models.py:41
 msgid "New schedule published"
@@ -3236,40 +3220,29 @@ msgid "Upload options"
 msgstr "Lựa chọn tải lên"
 
 #: pretalx/orga/forms/cfp.py:173
-#, fuzzy
-#| msgid ""
-#| "You can upload question options here, one option per line. To use "
-#| "multiple languages, please upload a JSON file with a list of options:"
 msgid ""
 "You can upload options here, one option per line. To use multiple languages, "
 "please upload a JSON file with a list of options:"
 msgstr ""
-"Quý vị có thể tải lên các trả lời tùy chọn cho câu hỏi ở đây, mỗi dòng một "
-"tùy chọn. Để sử dụng nhiều ngôn ngữ, vui lòng tải lên tệp JSON có danh sách "
-"các tùy chọn:"
+"Quý vị có thể tải lên các tuỳ chọn ở đây, mỗi dòng một tùy chọn. Để sử dụng "
+"nhiều ngôn ngữ, vui lòng tải lên tệp JSON có danh sách các tùy chọn:"
 
 #: pretalx/orga/forms/cfp.py:181
 msgid "Replace existing options"
 msgstr "Thay thế những tuỳ chọn đã có"
 
 #: pretalx/orga/forms/cfp.py:183
-#, fuzzy
-#| msgid ""
-#| "If you upload new options, do you want to replace the existing ones? "
-#| "Please note that this will DELETE all existing answers to this question! "
-#| "If you do not check this, the uploaded options will be added to the "
-#| "existing ones, without adding duplicates."
 msgid ""
 "If you upload new options, do you want to replace the existing ones? Please "
 "note that this will DELETE all existing responses to this custom field! If "
 "you do not check this, the uploaded options will be added to the existing "
 "ones, without adding duplicates."
 msgstr ""
-"Nếu quý vị lên các tùy chọn mới, quý vị có muốn thay thế các tùy chọn hiện "
-"có không? Xin lưu ý rằng thao tác này sẽ XÓA tất cả các câu trả lời hiện có "
-"cho câu hỏi này! Nếu quý vị không đánh dấu kiểm ở mục này, các tùy chọn đã "
-"tải lên sẽ được thêm vào các tùy chọn hiện có mà không thêm các mục trùng "
-"lặp."
+"Nếu quý vị tải lên các tùy chọn mới, quý vị có muốn thay thế các tùy chọn "
+"hiện có không? Xin lưu ý rằng thao tác này sẽ XÓA tất cả các câu trả lời "
+"hiện có cho câu hỏi này! Nếu quý vị không đánh dấu kiểm ở mục này, các tùy "
+"chọn đã tải lên sẽ được thêm vào các tùy chọn hiện có mà không thêm các mục "
+"trùng lặp."
 
 #: pretalx/orga/forms/cfp.py:222
 msgid "Could not read file."
@@ -3284,18 +3257,12 @@ msgid "JSON file does not contain a list of objects."
 msgstr "File JSON không có danh sách các đối tượng."
 
 #: pretalx/orga/forms/cfp.py:243
-#, fuzzy
-#| msgid ""
-#| "Please select a deadline after which the question should become mandatory."
 msgid "Please select a deadline after which the field should become mandatory."
-msgstr "Vui lòng chọn thời hạn mà sau đó câu hỏi sẽ trở thành bắt buộc."
+msgstr "Vui lòng chọn thời hạn mà sau đó trường này sẽ trở thành bắt buộc."
 
 #: pretalx/orga/forms/cfp.py:255
-#, fuzzy
-#| msgid "You cannot replace answer options without uploading new ones."
 msgid "You cannot replace options without uploading new ones."
-msgstr ""
-"Bạn không thể thay thế các tùy chọn trả lời mà không tải lên tùy chọn mới."
+msgstr "Bạn không thể thay thế các lựa chọn mà không tải lên lựa chọn mới."
 
 #: pretalx/orga/forms/cfp.py:360
 msgid "You already have a session type by this name!"
@@ -3383,10 +3350,8 @@ msgid "Recipients"
 msgstr "Người nhận"
 
 #: pretalx/orga/forms/cfp.py:596
-#, fuzzy
-#| msgid "If you select no question, all questions will be used."
 msgid "If you select no custom field, all will be used."
-msgstr "Nếu quý vị không chọn câu hỏi, tất cả câu hỏi sẽ được sử dụng."
+msgstr "Nếu quý vị không chọn trường tuỳ biến, tất cả sẽ được sử dụng."
 
 #: pretalx/orga/forms/event.py:42
 msgid "Grid"
@@ -3671,13 +3636,15 @@ msgstr ""
 
 #: pretalx/orga/forms/event.py:507
 msgid "Enable submission comments"
-msgstr ""
+msgstr "Cho phép bình luận vào bài nộp"
 
 #: pretalx/orga/forms/event.py:509
 msgid ""
 "Allow organisers and reviewers to comment on submissions, separate from "
 "reviews."
 msgstr ""
+"Cho phép người tổ chức và người bình duyệt bình luận về bài nộp, tách biệt "
+"với phần bình duyệt."
 
 #: pretalx/orga/forms/event.py:514
 msgid "Require a review score"
@@ -3812,26 +3779,20 @@ msgid "Please select a delimiter for your CSV export."
 msgstr "Vui lòng chọn dấu phân cách cho tệp xuất CSV của bạn."
 
 #: pretalx/orga/forms/mails.py:85
-#, fuzzy
-#| msgid ""
-#| "- First missing question\n"
-#| "- Second missing question"
 msgid ""
 "- First missing field\n"
 "- Second missing field"
 msgstr ""
-"- Câu hỏi thứ nhất còn thiếu\n"
-"- Câu hỏi thứ hai còn thiếu"
+"- Trường thứ nhất bị thiếu\n"
+"- Trường thứ hai bị thiếu"
 
 #: pretalx/orga/forms/mails.py:87
-#, fuzzy
-#| msgid ""
-#| "The list of questions that the user has not answered, as bullet points"
 msgid ""
 "The list of custom fields that the user has not responded to, as bullet "
 "points"
 msgstr ""
-"Danh sách các câu hỏi mà người dùng chưa trả lời, dưới dạng các dấu đầu dòng"
+"Danh sách các trường tuỳ biến mà người dùng chưa trả lời, dưới dạng các dấu "
+"đầu dòng"
 
 #: pretalx/orga/forms/mails.py:145
 msgid ""
@@ -4739,72 +4700,53 @@ msgstr "Lọc"
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:41
 #: pretalx/orga/templates/orga/cfp/question_form.html:51
-#, fuzzy
-#| msgid ""
-#| "This question is currently active, it will be asked during submission."
 msgid "This field is currently active, it will be asked during submission."
-msgstr "Câu hỏi này hiện đang được hỏi, nó sẽ được hỏi khi gửi bài."
+msgstr "Trường này hiện đang được kích hoạt, nó sẽ được hỏi khi gửi bài."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:42
 #: pretalx/orga/templates/orga/cfp/question_form.html:53
-#, fuzzy
-#| msgid "Hide schedule"
 msgid "Hide field"
-msgstr "Ẩn lịch hội thảo"
+msgstr "Ẩn trường"
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:44
 #: pretalx/orga/templates/orga/cfp/question_form.html:59
-#, fuzzy
-#| msgid ""
-#| "This question is currently inactive, and will not be asked during "
-#| "submission."
 msgid ""
 "This field is currently inactive, and will not be asked during submission."
-msgstr "Câu hỏi này hiện không hoạt động và sẽ không được hỏi khi gửi câu hỏi."
+msgstr ""
+"Trường này hiện không được kích hoạt và sẽ không được hỏi trong quá trình "
+"gửi bài."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:45
 #: pretalx/orga/templates/orga/cfp/question_form.html:60
-#, fuzzy
-#| msgid "Activate phase"
 msgid "Activate field"
-msgstr "Kích hoạt vòng"
+msgstr "Kích hoạt trường"
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:50
-#, fuzzy
-#| msgid "Nobody has answered this question at the moment."
 msgid "Nobody has responded to this field at the moment."
-msgstr "Hiện tại vẫn chưa có ai trả lời câu hỏi này."
+msgstr "Chưa có ai phản hồi trường thông tin này."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:54
-#, fuzzy, python-format
-#| msgid ""
-#| "This question has been answered <strong>%(count)s</strong>, "
-#| "<strong>%(missing)s</strong> answers <a "
-#| "href=\"%(base_search_url)sunanswered=1\">are still missing</a>."
+#, python-format
 msgid ""
 "This field has <strong>%(count)s</strong> responses, <strong>%(missing)s</"
 "strong> <a href=\"%(base_search_url)sunanswered=1\">are still missing</a>."
 msgstr ""
-"Câu hỏi này đã được trả lời <strong>%(count)s</strong>, <strong>%(missing)s</"
-"strong> câu trả lời <a href=\"%(base_search_url)sunanswered=1\">vẫn còn "
-"thiếu</a>."
+"Trường này đã có <strong>%(count)s</strong> phản hồi, <strong>%(missing)s</"
+"strong> <a href=\"%(base_search_url)sunanswered=1\">vẫn còn thiếu</a>."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:58
-#, fuzzy, python-format
-#| msgid ""
-#| "This question has been answered <strong>%(count)s</strong>, and no "
-#| "answers are missing."
+#, python-format
 msgid ""
 "This field has <strong>%(count)s</strong> responses, and no answers are "
 "missing."
 msgstr ""
-"Câu hỏi này đã được trả lời <strong>%(count)s</strong> và không có câu trả "
-"lời nào bị thiếu."
+"Trường này đã có <strong>%(count)s</strong> phản hồi và không phản hồi nào "
+"bị thiếu."
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:74
 #: pretalx/submission/models/question.py:335
 msgid "Response"
-msgstr ""
+msgstr "Phản hồi"
 
 #: pretalx/orga/templates/orga/cfp/question_detail.html:75
 msgid "Count"
@@ -4818,40 +4760,28 @@ msgstr "%%"
 #: pretalx/orga/templates/orga/cfp/question_form.html:8
 #: pretalx/orga/templates/orga/cfp/question_form.html:31
 #: pretalx/orga/templates/orga/cfp/question_view.html:49
-#, fuzzy
-#| msgid "New custom template"
 msgid "New custom field"
-msgstr "Mẫu tuỳ biến mới"
+msgstr "Trường tuỳ biến mới"
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:39
-#, fuzzy
-#| msgid ""
-#| "This question has already been answered by some speakers – please "
-#| "consider carefully if modifying it would render those answers obsolete. "
-#| "You could also deactivate this question and start a new one instead."
 msgid ""
 "This custom field already has responses from some speakers – please consider "
 "carefully if modifying it would render those answers obsolete. You could "
 "also deactivate this field and create a new one instead."
 msgstr ""
-"Câu hỏi này đã được một số diễn giả trả lời – vui lòng cân nhắc cẩn thận nếu "
-"việc sửa đổi sẽ khiến những câu trả lời đó trở nên lỗi thời. Quý vị cũng có "
-"thể hủy kích hoạt câu hỏi này và bắt đầu một câu hỏi mới."
+"Trường tuỳ biến này đã được một số diễn giả trả lời – vui lòng cân nhắc cẩn "
+"thận nếu việc sửa đổi sẽ khiến những câu trả lời trước đó trở nên lỗi thời. "
+"Quý vị cũng có thể hủy kích hoạt trường này và tạo một trường mới thay thế."
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:71
-#, fuzzy
-#| msgid ""
-#| "If you mark a Yes/No question as required, it means that the user has to "
-#| "select Yes and No is not accepted. If you want to allow both options, do "
-#| "not make this field required."
 msgid ""
 "If you mark a Yes/No field as required, it means that the user has to select "
 "Yes and No is not accepted. If you want to allow both options, do not make "
 "this field required."
 msgstr ""
-"Nếu quý vị đánh dấu câu hỏi Có/Không là bắt buộc, điều đó có nghĩa là người "
-"dùng phải chọn Có và Không không được chấp nhận. Nếu quý vị muốn cho phép cả "
-"hai tùy chọn, đừng bắt buộc trường này."
+"Nếu quý vị đánh dấu trường Có/Không là bắt buộc, điều đó có nghĩa là người "
+"dùng phải chọn Có, và chọn Không là không được chấp nhận. Nếu quý vị muốn "
+"cho phép cả hai tùy chọn, đừng bắt buộc trường này."
 
 #: pretalx/orga/templates/orga/cfp/question_form.html:80
 msgid "Limit to specific proposals"
@@ -4892,22 +4822,16 @@ msgstr ""
 "sẽ có thể xem lại email trước khi chúng được gửi đi."
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:33
-#, fuzzy
-#| msgid ""
-#| "Questions can help you sort out additional details with speakers, such as "
-#| "clothing sizes, special requirements such as dietary needs, or "
-#| "accommodation. Questions can be asked either on a per-proposal level, or "
-#| "per speaker, as you see fit."
 msgid ""
 "Custom fields can help you sort out additional details with speakers, such "
 "as clothing sizes, special requirements such as dietary needs, or "
 "accommodation. Custom fields can be configured either on a per-proposal "
 "level, or per speaker, as you see fit."
 msgstr ""
-"Các câu hỏi có thể giúp quý vị xác định các thông tin bổ sung về diễn giả, "
-"chẳng hạn như kích cỡ quần áo, các yêu cầu đặc biệt như nhu cầu ăn kiêng "
-"hoặc chỗ ở. Các câu hỏi có thể được hỏi đối với từng đề xuất tham luận, hoặc "
-"đối với từng diễn giả, tùy theo quý vị thấy phù hợp."
+"Trường tuỳ biến có thể giúp quý vị xác định các thông tin bổ sung về diễn "
+"giả, chẳng hạn như kích cỡ quần áo, các yêu cầu đặc biệt như nhu cầu ăn "
+"kiêng hoặc chỗ ở. Các trường tuỳ biến có thể được hỏi đối với từng đề xuất "
+"tham luận, hoặc đối với từng diễn giả, tùy theo quý vị thấy phù hợp."
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:45
 #, fuzzy
@@ -4930,20 +4854,16 @@ msgstr "đang hoạt động"
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:62
 msgid "Responses"
-msgstr ""
+msgstr "Các phản hồi"
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:77
-#, fuzzy
-#| msgid "This question’s availability depends on a deadline."
 msgid "This field’s availability depends on a deadline."
-msgstr "Câu hỏi này có khả thi hay không tùy thuộc vào thời hạn."
+msgstr "Trường này có sẵn sàng hay không tùy thuộc vào thời hạn."
 
 #: pretalx/orga/templates/orga/cfp/question_view.html:100
 #: pretalx/orga/views/event.py:194
-#, fuzzy
-#| msgid "You have configured no questions yet."
 msgid "You have configured no custom fields yet."
-msgstr "Quý vị chưa cấu hình câu hỏi nào."
+msgstr "Quý vị chưa cấu hình trường tuỳ biến nào."
 
 #: pretalx/orga/templates/orga/cfp/submission_type_form.html:7
 #: pretalx/orga/templates/orga/cfp/submission_type_form.html:14
@@ -5122,11 +5042,6 @@ msgid "Color"
 msgstr "Màu"
 
 #: pretalx/orga/templates/orga/event/dashboard.html:20
-#, fuzzy
-#| msgid ""
-#| "Your event has been created and you’re ready to go! Check out the event "
-#| "settings, set up your Call for Papers with session types and questions, "
-#| "and you’re ready to go!"
 msgid ""
 "Your event has been created and you’re ready to go! Check out the event "
 "settings, set up your Call for Papers with session types and custom fields, "
@@ -5134,7 +5049,7 @@ msgid ""
 msgstr ""
 "Hội thảo của quý vị đã được tạo và sẵn sàng để vận hành! Hãy kiểm tra cài "
 "đặt cho hội thảo, thiết lập Thông báo mời viết Đề xuất tham luận với các "
-"loại phiên và câu hỏi để bắt đầu!"
+"loại phiên và các trường tuỳ biến để bắt đầu!"
 
 #: pretalx/orga/templates/orga/event/dashboard.html:62
 msgid "Your event is currently"
@@ -5311,10 +5226,9 @@ msgstr "Số nhận xét bình duyệt"
 
 #: pretalx/orga/templates/orga/includes/submission_filter_form.html:26
 #: pretalx/orga/templates/orga/speaker/list.html:23
-#, fuzzy, python-format
-#| msgid "List filtered by answers to question “%(question)s”."
+#, python-format
 msgid "List filtered by responses to custom field “%(question)s”."
-msgstr "Danh sách lọc theo câu trả lời cho câu hỏi “%(question)s”."
+msgstr "Danh sách lọc theo phản hồi cho trường tuỳ biến “%(question)s”."
 
 #: pretalx/orga/templates/orga/includes/submission_filter_form.html:31
 #: pretalx/orga/templates/orga/mails/compose_session_mail_form.html:21
@@ -5465,10 +5379,9 @@ msgstr ""
 "không hiển thị trong danh sách email đã gửi."
 
 #: pretalx/orga/templates/orga/mails/compose_session_mail_form.html:16
-#, fuzzy, python-format
-#| msgid "Recipients filtered by answers to question “%(question)s”."
+#, python-format
 msgid "Recipients filtered by responses to the custom field “%(question)s”."
-msgstr "Người nhận lọc theo câu trả lời cho câu hỏi “%(question)s”."
+msgstr "Người nhận lọc theo phản hồi cho trường tuỳ biến “%(question)s”."
 
 #: pretalx/orga/templates/orga/mails/compose_session_mail_form.html:28
 #, python-format
@@ -6638,13 +6551,11 @@ msgstr "Liên kết công khai bảo mật"
 
 #: pretalx/orga/templates/orga/submission/comments.html:21
 msgid "No comments yet."
-msgstr ""
+msgstr "Chưa có bình luận."
 
 #: pretalx/orga/templates/orga/submission/comments.html:63
-#, fuzzy
-#| msgid "Comment"
 msgid "Add comment"
-msgstr "Bình luận"
+msgstr "Thêm bình luận"
 
 #: pretalx/orga/templates/orga/submission/content.html:32
 msgid "This proposal was created using an access code:"
@@ -6714,260 +6625,266 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/submission/review.html:40
 msgid "You will be able to see other reviews once you have given yours."
-msgstr ""
+msgstr "Bạn sẽ có thể xem lời bình khác sau khi đã đưa ra lời bình của mình."
 
 #: pretalx/orga/templates/orga/submission/review.html:143
 msgid "Other proposals"
-msgstr ""
+msgstr "Các đề xuất khác"
 
 #: pretalx/orga/templates/orga/submission/review.html:192
 msgid "Nobody else has submitted a review yet."
-msgstr ""
+msgstr "Chưa có ai gửi phần bình duyệt."
 
 #: pretalx/orga/templates/orga/submission/review.html:202
 #: pretalx/orga/templates/orga/submission/review.html:203
 msgid "Review progress"
-msgstr ""
+msgstr "Quá trình bình duyệt"
 
 #: pretalx/orga/templates/orga/submission/review.html:210
 #: pretalx/orga/templates/orga/submission/review.html:212
 msgid "Go to random next unreviewed proposal"
-msgstr ""
+msgstr "Đi tới một bài đề xuất tham luận ngẫu nhiên chưa bình duyệt"
 
 #: pretalx/orga/templates/orga/submission/review.html:210
 msgid "Save and next"
-msgstr ""
+msgstr "Ghi và tiếp tục"
 
 #: pretalx/orga/templates/orga/submission/review.html:212
 msgid "Abstain"
-msgstr ""
+msgstr "Phiếu trắng"
 
 #: pretalx/orga/templates/orga/submission/review.html:214
 msgid "Go to random next unreviewed proposal, mark this one as skipped"
 msgstr ""
+"Đến một bài chưa bình duyệt ngẫu nhiên tiếp theo, đánh dấu bài này bị bỏ qua"
 
 #: pretalx/orga/templates/orga/submission/review.html:214
 msgid "Skip for now"
-msgstr ""
+msgstr "Bỏ qua"
 
 #: pretalx/orga/templates/orga/submission/review.html:224
 #: pretalx/orga/templates/orga/submission/review_delete.html:5
 msgid "Delete review"
-msgstr ""
+msgstr "Xoá phần bình duyệt"
 
 #: pretalx/orga/templates/orga/submission/speakers.html:24
 msgid "Add speaker"
-msgstr ""
+msgstr "Thêm diễn giả"
 
 #: pretalx/orga/templates/orga/submission/speakers.html:51
 msgid "Other proposals by this speaker:"
-msgstr ""
+msgstr "Các đề xuất khác của diễn giả này:"
 
 #: pretalx/orga/templates/orga/submission/speakers.html:74
 msgid "Remove"
-msgstr ""
+msgstr "Loại bỏ"
 
 #: pretalx/orga/templates/orga/submission/state_change.html:18
 msgid ""
 "Please confirm that you really want to change the state of this proposal."
 msgstr ""
+"Vui lòng xác nhận rằng bạn thực sự muốn thay đổi trạng thái của đề xuất này."
 
 #: pretalx/orga/templates/orga/submission/stats.html:23
 msgid "Proposal Statistics"
-msgstr ""
+msgstr "Số liệu thống kê về đề xuất tham luận"
 
 #: pretalx/orga/templates/orga/submission/stats.html:35
 msgid "Proposals by submission date"
-msgstr ""
+msgstr "Đề xuất tham luận theo ngày nộp"
 
 #: pretalx/orga/templates/orga/submission/stats.html:36
 msgid "Sessions by submission date"
-msgstr ""
+msgstr "Phiên thuyết trình theo ngày nộp"
 
 #: pretalx/orga/templates/orga/submission/stats.html:39
 msgid "Total proposals"
-msgstr ""
+msgstr "Tổng số đề xuất"
 
 #: pretalx/orga/templates/orga/submission/stats.html:46
 msgid "Proposals by session type"
-msgstr ""
+msgstr "Đề xuất theo loại phiên"
 
 #: pretalx/orga/templates/orga/submission/stats.html:47
 msgid "Sessions by session type"
-msgstr ""
+msgstr "Phiên thuyết trình theo loại phiên"
 
 #: pretalx/orga/templates/orga/submission/stats.html:57
 msgid "Proposals by track"
-msgstr ""
+msgstr "Đề xuất tham luận theo kênh"
 
 #: pretalx/orga/templates/orga/submission/stats.html:58
 msgid "Sessions by track"
-msgstr ""
+msgstr "Phiên thuyết trình theo kênh"
 
 #: pretalx/orga/templates/orga/submission/stats.html:68
 msgid "Proposals by state"
-msgstr ""
+msgstr "Đề xuất tham luận theo trạng thái"
 
 #: pretalx/orga/templates/orga/submission/stats.html:69
 msgid "Sessions by state"
-msgstr ""
+msgstr "Phiên thuyết trình theo trạng thái"
 
 #: pretalx/orga/templates/orga/submission/tag_form.html:18
 #: pretalx/orga/templates/orga/submission/tag_form.html:24
 #: pretalx/orga/templates/orga/submission/tag_list.html:23
 #: pretalx/orga/views/submission.py:1025
 msgid "Tag"
-msgstr ""
+msgstr "Thẻ"
 
 #: pretalx/orga/templates/orga/submission/tag_form.html:18
 #: pretalx/orga/templates/orga/submission/tag_form.html:26
 #: pretalx/orga/templates/orga/submission/tag_list.html:15
 msgid "New tag"
-msgstr ""
+msgstr "Thẻ mới"
 
 #: pretalx/orga/templates/orga/user.html:14
 #: pretalx/orga/templates/orga/user.html:17
 msgid "User settings"
-msgstr ""
+msgstr "Cấu hình người dùng"
 
 #: pretalx/orga/templates/orga/user.html:22
 msgid "Login settings"
-msgstr ""
+msgstr "Cấu hình đăng nhập"
 
 #: pretalx/orga/templates/orga/widgets/multi_languages_widget.html:8
 #, python-format
 msgid "%(percentage)s %% translated"
-msgstr ""
+msgstr "%(percentage)s %% đã dịch"
 
 #: pretalx/orga/views/admin.py:140
 msgid "The user has been deactivated."
-msgstr ""
+msgstr "Người dùng này đã bị vô hiệu."
 
 #: pretalx/orga/views/admin.py:145
 msgid "The user has been activated."
-msgstr ""
+msgstr "Người dùng này đã được kích hoạt."
 
 #: pretalx/orga/views/admin.py:156
-#, fuzzy
-#| msgid "Last login"
 msgid "Last actions"
-msgstr "Đăng nhập lần cuối"
+msgstr "Các thao tác gần nhất"
 
 #: pretalx/orga/views/admin.py:189
 msgid "The user has been deleted."
-msgstr ""
+msgstr "Người dùng này đã bị xoá."
 
 #: pretalx/orga/views/cards.py:99
 msgid "{} minutes, #{}, {}, {}"
-msgstr ""
+msgstr "{} phút, #{}, {}, {}"
 
 #: pretalx/orga/views/cfp.py:68 pretalx/orga/views/event.py:112
 #: pretalx/orga/views/event.py:272
 msgid "General information"
-msgstr ""
+msgstr "Thông tin chung"
 
 #: pretalx/orga/views/cfp.py:69
 msgid "Fields"
-msgstr ""
+msgstr "Trường"
 
 #: pretalx/orga/views/cfp.py:310
 msgid ""
 "You cannot change the options and upload an option file at the same time."
 msgstr ""
+"Quý vị không thể thay đổi các tùy chọn và tải lên tệp tùy chọn cùng một lúc."
 
 #: pretalx/orga/views/cfp.py:371
-#, fuzzy
-#| msgid "The event has been added."
 msgid "The custom field has been deleted."
-msgstr "Hội thảo này đã được tạo mới."
+msgstr "Trường tuỳ biến đã được xoá."
 
 #: pretalx/orga/views/cfp.py:378
 msgid ""
 "You cannot delete a custom field that has any responses. We have deactivated "
 "the field instead."
 msgstr ""
+"Quý vị không thể xóa trường tùy biến đã có phản hồi. Thay vào đó, chúng tôi "
+"đã vô hiệu hóa trường đó."
 
 #: pretalx/orga/views/cfp.py:432
 msgid "Could not send mails, error in configuration."
-msgstr ""
+msgstr "Không thể gửi email, lỗi cấu hình."
 
 #: pretalx/orga/views/cfp.py:524
 msgid "The Session Type has been made default."
-msgstr ""
+msgstr "Loại phiên này được chọn làm mặc định."
 
 #: pretalx/orga/views/cfp.py:550
 msgid ""
 "You cannot delete the only session type. Try creating another one first!"
 msgstr ""
+"Quý vị không thể xoá loại phiên duy nhất. Cần tạo một loại phiên khác trước "
+"đã!"
 
 #: pretalx/orga/views/cfp.py:557
 msgid ""
 "You cannot delete the default session type. Make another type default first!"
 msgstr ""
+"Quý vị không thể xoá loại phiên thuyết trình mặc định. Chọn một loại phiên "
+"khác làm mặc định trước đã!"
 
 #: pretalx/orga/views/cfp.py:568
 msgid "The Session Type has been deleted."
-msgstr ""
+msgstr "Loại phiên thuyết trình này đã được xoá."
 
 #: pretalx/orga/views/cfp.py:573
 msgid "This Session Type is in use in a proposal and cannot be deleted."
 msgstr ""
+"Loại Phiên thuyết trình này đang dùng trong một đề xuất tham luận và không "
+"thể bị xoá."
 
 #: pretalx/orga/views/cfp.py:650
 msgid "The track has been deleted."
-msgstr ""
+msgstr "Kênh này đã được xoá."
 
 #: pretalx/orga/views/cfp.py:654
 msgid "This track is in use in a proposal and cannot be deleted."
-msgstr ""
+msgstr "Kênh này đang sử dụng trong một đề xuất tham luận và không thể bị xoá."
 
 #: pretalx/orga/views/cfp.py:732
 msgid "The access code has been sent."
-msgstr ""
+msgstr "Mã truy cập đã được gửi."
 
 #: pretalx/orga/views/cfp.py:753 pretalx/submission/models/access_code.py:20
 msgid "Access code"
-msgstr ""
+msgstr "Mã truy cập"
 
 #: pretalx/orga/views/cfp.py:767
 msgid "The access code has been deleted."
-msgstr ""
+msgstr "Mã truy cập đã được xoá."
 
 #: pretalx/orga/views/cfp.py:772
 msgid ""
 "This access code has been used for a proposal and cannot be deleted. To "
 "disable it, you can set its validity date to the past."
 msgstr ""
+"Mã truy cập này đã được sử dụng cho một đề xuất tham luận và không thể xóa. "
+"Để vô hiệu hóa, bạn có thể đặt ngày hiệu lực của nó thành quá khứ."
 
 #: pretalx/orga/views/dashboard.py:148
 msgid "until the CfP ends"
-msgstr ""
+msgstr "cho đến khi Thông báo mời nộp Đề xuất tham luận kết thúc"
 
 #: pretalx/orga/views/dashboard.py:160
 msgid "unsubmitted proposal draft"
 msgid_plural "unsubmitted proposal drafts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Bản thảo các đề xuất chưa nộp"
 
 #: pretalx/orga/views/dashboard.py:167
 msgid "Send reminder"
-msgstr ""
+msgstr "Đặt lời nhắc"
 
 #: pretalx/orga/views/dashboard.py:194
 msgid "Active reviewers"
-msgstr ""
+msgstr "Những người bình duyệt còn hoạt động"
 
 #: pretalx/orga/views/dashboard.py:215
 msgid "proposal is waiting for your review."
 msgid_plural "proposals are waiting for your review."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "bài đề xuất tham luận đang chờ quý vị bình duyệt."
 
 #: pretalx/orga/views/dashboard.py:254
 msgid "day until event start"
 msgid_plural "days until event start"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ngày trước khi bắt đầu"
 
 #: pretalx/orga/views/dashboard.py:265
 msgid "day since event end"
