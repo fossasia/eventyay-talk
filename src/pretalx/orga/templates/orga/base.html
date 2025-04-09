@@ -120,7 +120,7 @@
             <i class="fa fa-user"></i>
             {{ request.user.get_display_name }}
           </a>
-          <div id='global-nav-menu' />
+          <div id='global-nav-menu' class='d-inline-block' />
         </li>
         <li class="nav-item">
           <form action="{% url "orga:logout" %}" method="post">

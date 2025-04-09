@@ -43,7 +43,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class='relative' ref='container'>
-    <button class='text-xl cursor-pointer' @click='showMenu'>User name</button>
+    <button class='text-xl cursor-pointer' @click='showMenu'><div class='i-fa-caret-down h-4 w-4' /></button>
     <div v-if='open' ref='main-menu' class='absolute z-1 end-1 grid grid-cols-1 shadow shadow-lg min-w-32 bg-white'>
       <div class='relative cursor-pointer' @mouseover='subOpen = true' @mouseleave='subOpen = false'>
         <div class='flex flex-row items-center space-x-2' :class='ENTRY_CLASSES' >
