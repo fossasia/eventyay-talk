@@ -9,12 +9,10 @@ const container = useTemplateRef('container')
 
 function showMenu() {
   open.value = true
-  console.log('showMenu')
 }
 
 function closeMenu() {
   open.value = false
-  console.log('closeMenu')
 }
 
 function handleClickOutside(event: MouseEvent) {
