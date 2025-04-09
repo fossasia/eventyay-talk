@@ -10,6 +10,7 @@ from django.test import override_settings
 
 from pretalx.common.models.settings import GlobalSettings
 
+
 def build_vue3_frontend_apps():
     """
     Build the Vue3 frontend apps.
@@ -21,6 +22,7 @@ def build_vue3_frontend_apps():
     env = os.environ.copy()
     env["BASE_URL"] = settings.STATIC_URL
     app_dir = frontend_dir / "global-nav-menu"
+    subprocess.check_call(["npm", "ci"], cwd=app_dir)
     subprocess.check_call(["npm", "run", "build"], cwd=app_dir, env=env)
 
 
