@@ -92,7 +92,7 @@ def can_change_teams(user, obj):
 @rules.predicate
 def reviews_are_open(user, obj):
     event = obj.event
-    return event.active_review_phase and event.active_review_phase.can_review
+    return bool(event.active_review_phase and event.active_review_phase.can_review)
 
 
 @rules.predicate
@@ -113,13 +113,15 @@ def can_view_speaker_names(user, obj):
     reviewer_teams = obj.event.teams.filter(members__in=[user], is_reviewer=True)
     if reviewer_teams and all(team.force_hide_speaker_names for team in reviewer_teams):
         return False
-    return event.active_review_phase and event.active_review_phase.can_see_speaker_names
+    return bool(
+        event.active_review_phase and event.active_review_phase.can_see_speaker_names
+    )
 
 
 @rules.predicate
 def can_view_reviewer_names(user, obj):
     event = obj.event
-    return (
+    return bool(
         event.active_review_phase and event.active_review_phase.can_see_reviewer_names
     )
 
@@ -127,7 +129,7 @@ def can_view_reviewer_names(user, obj):
 @rules.predicate
 def can_add_tags(user, obj):
     event = obj.event
-    return (
+    return bool(
         event.active_review_phase
         and event.active_review_phase.can_tag_submissions == "create_tags"
     )
@@ -136,7 +138,7 @@ def can_add_tags(user, obj):
 @rules.predicate
 def can_change_tags(user, obj):
     event = obj.event
-    return (
+    return bool(
         event.active_review_phase
         and event.active_review_phase.can_tag_submissions == "use_tags"
     )
