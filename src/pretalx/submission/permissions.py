@@ -132,7 +132,7 @@ def has_reviewer_access(user, obj):
 
 @rules.predicate
 def reviewer_can_change_submissions(user, obj):
-    return (
+    return bool(
         obj.event.active_review_phase
         and obj.event.active_review_phase.can_change_submission_state
     )
