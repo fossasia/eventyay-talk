@@ -1000,6 +1000,24 @@ class Submission(GenerateCode, PretalxModel):
         subject = subject or phrases.cfp.invite_subject.format(
             speaker=_from.get_display_name()
         )
+        template.to_mail(
+            user=speaker,
+            event=self.event,
+            context=context,
+            context_kwargs={"user": speaker, "submission": self, "event": self.event},
+            locale=locale or self.event.locale,
+        )
+        return speaker
+
+    def send_invite(self, to, _from=None, subject=None, text=None):
+        from pretalx.mail.models import QueuedMail
+
+        if not _from and (not subject or not text):
+            raise ValueError("Please enter a sender for this invitation.")
+
+        subject = subject or phrases.cfp.invite_subject.format(
+            speaker=_from.get_display_name()
+        )
         text = text or phrases.cfp.invite_text.format(
             event=self.event.name,
             title=self.title,

@@ -265,19 +265,19 @@ class FrabJsonExporter(ScheduleData):
                                     "do_not_record": talk.submission.do_not_record,
                                     "persons": [
                                         {
+                                            "code": person.code,
                                             "name": person.get_display_name(),
+                                            "avatar": person.get_avatar_url(self.event)
+                                            or None,
+                                            "biography": person.event_profile(
+                                                self.event
+                                            ).biography,
                                             "public_name": person.get_display_name(),  # deprecated
                                             "guid": person.guid,
                                             "id": person.id,
                                             "url": person.event_profile(
                                                 self.event
                                             ).urls.public.full(),
-                                            "code": person.code,
-                                            "avatar": person.get_avatar_url(self.event)
-                                            or None,
-                                            "biography": person.event_profile(
-                                                self.event
-                                            ).biography,
                                             "answers": (
                                                 [
                                                     {
@@ -306,6 +306,7 @@ class FrabJsonExporter(ScheduleData):
                                         if resource.link
                                     ],
                                     "feedback_url": talk.submission.urls.feedback.full(),
+                                    "origin_url": talk.submission.urls.public.full(),
                                     "attachments": [
                                         {
                                             "title": resource.description,

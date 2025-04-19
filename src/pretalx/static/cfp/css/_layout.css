@@ -56,7 +56,7 @@ header {
     margin-bottom: -4px;
     padding-bottom: 4px;
     a.header-tab {
-      padding: 8px 10px 4px 10px;
+      padding: 8px 16px 4px 16px;
       border-bottom: 2px solid transparent;
       &:hover {
         text-decoration: none;
@@ -78,10 +78,6 @@ header {
       margin-right: 20px;
     }
 
-    .locales a:hover {
-      border-bottom: 1px dashed white;
-      text-decoration: none;
-    }
     a {
       color: white;
     }
@@ -142,38 +138,15 @@ footer {
   max-width: 1140px;
 }
 
-.url-links {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: baseline;
-  align-content: stretch;
-  padding: 10px;
-  margin-right: -15px;
-  margin-left: -15px;
-  margin-bottom: var(--size-spacer);
-
-  a,
-  button {
-    margin: 5px;
-    flex-basis: 100px;
-    flex-grow: 1;
-  }
+==== BASE ====
+.add-speaker .input-group {
+  padding-left: 8px;
+==== BASE ====
 }
 
-.user-logs {
-  position: absolute;
-  left: 100%;
-  top: 5%;
-  width: 200px;
-  z-index: -1;
-
-  .logentry .person {
-    font-style: italic;
-  }
-}
-
-@media (max-width: 1200px) {
+==== BASE ====
+@media (max-width: 1400px) {
+==== BASE ====
   .user-logs {
     display: none;
   }

@@ -22,11 +22,6 @@
   display: block;
 }
 
-.export-break {
-  height: 1px;
-  background: #B0B0B0;
-}
-
 .copyable-text {
   cursor: pointer;
   &:hover {

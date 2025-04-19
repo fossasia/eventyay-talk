@@ -7,6 +7,7 @@
     overflow-x: auto;
   }
 }
+
 .has-join-popup #join-video-popupmodal, .has-join-popup #join-video-popupmodal-missing-config {
     opacity: 1;
     visibility: visible;
@@ -14,6 +15,7 @@
     -moz-transition: opacity .5s ease-in-out;
     -webkit-transition: opacity .5s ease-in-out;
 }
+
 #join-video-popupmodal, #join-video-popupmodal-missing-config {
   position: fixed;
   top: 0;
@@ -72,6 +74,7 @@
       }
   }
 }
+
 #main-container.main-schedule {
   min-width: min-content;
   margin: 0 auto;
@@ -354,11 +357,8 @@ article .pretalx-session .pretalx-session-info .abstract {
     }
   }
 }
-#fahrplan.list {
-  .pretalx-tab-content {
-    margin: 20px;
-    margin-top: 8px;
-  }
+.markdown-column .form-group {
+  flex-direction: column;
 }
 
 .btn-default {

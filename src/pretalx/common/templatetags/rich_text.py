@@ -11,6 +11,8 @@ from i18nfield.strings import LazyI18nString
 
 from pretalx.common.views.redirect import safelink as sl
 
+from pretalx.common.views.redirect import safelink as sl
+
 register = template.Library()
 
 ALLOWED_TAGS = {
@@ -152,6 +154,7 @@ md = markdown.Markdown(
         "markdown.extensions.fenced_code",
         "markdown.extensions.codehilite",
         "markdown.extensions.md_in_html",
+        StrikeThroughExtension(),
     ],
 )
 
