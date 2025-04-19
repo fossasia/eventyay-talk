@@ -22,7 +22,6 @@ from django.views.generic import TemplateView
 from django_context_decorator import context
 
 from pretalx.agenda.views.utils import find_schedule_exporter, get_schedule_exporters
-from pretalx.common.signals import register_my_data_exporters
 from pretalx.common.text.path import safe_filename
 from pretalx.common.views.mixins import EventPermissionRequired
 from pretalx.schedule.ascii import draw_ascii_schedule
@@ -195,7 +194,6 @@ class ScheduleView(EventPermissionRequired, ScheduleMixin, TemplateView):
 
     def get(self, request, **kwargs):
         accept_header = request.headers.get("Accept", "")
-
         if getattr(self, "is_html_export", False) or "text/html" in accept_header:
             return super().get(request, **kwargs)
 

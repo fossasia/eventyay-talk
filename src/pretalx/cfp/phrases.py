@@ -76,4 +76,7 @@ at {event}. Please follow this link to join:
 I’m looking forward to it!
 {speaker}"""
     )
+
+    # Translators: This string is used for headings and refers to the custom questions
+    # organisers can create for their CfP.
     questions = _("Questions")

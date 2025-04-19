@@ -36,6 +36,10 @@ from pretalx.submission.models.submission import (
     SubmissionFavouriteDeprecatedSerializer,
 )
 
+
+logger = logging.getLogger(__name__)
+
+
 with scopes_disabled():
 
     class SubmissionFilter(filters.FilterSet):
@@ -44,9 +48,6 @@ with scopes_disabled():
         class Meta:
             model = Submission
             fields = ("state", "content_locale", "submission_type", "is_featured")
-
-
-logger = logging.getLogger(__name__)
 
 
 class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
