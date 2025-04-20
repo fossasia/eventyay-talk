@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-08 14:38+0000\n"
-"PO-Revision-Date: 2025-04-05 22:14+0000\n"
-"Last-Translator: Neter <neter@moyat.net>\n"
+"PO-Revision-Date: 2025-04-14 14:06+0000\n"
+"Last-Translator: Vasil Kolew <vasil@ludost.net>\n"
 "Language-Team: none\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
@@ -6970,7 +6970,7 @@ msgstr "Само последната фаза на рецензиране мо�
 
 #: pretalx/orga/views/event.py:359
 msgid "All review phases except for the first one need a start date."
-msgstr ""
+msgstr "Всички фази на рецензиране без първата имат нужда от начална дата."
 
 #: pretalx/orga/views/event.py:365
 #, python-brace-format
@@ -7430,7 +7430,7 @@ msgstr "Парола (текуща)"
 
 #: pretalx/person/forms/profile.py:39
 msgid "There already exists an account for this email address."
-msgstr ""
+msgstr "Вече съществува потребител с този адрес."
 
 #: pretalx/person/forms/profile.py:132
 msgid ""
@@ -7869,7 +7869,7 @@ msgstr "Португалски"
 
 #: pretalx/settings.py:446
 msgid "Vietnamese"
-msgstr ""
+msgstr "Виетнамски"
 
 #: pretalx/settings.py:452
 msgid "Traditional Chinese (Taiwan)"
@@ -8481,19 +8481,19 @@ msgid "not accepted"
 msgstr "неприето"
 
 msgid "Availabilities"
-msgstr ""
+msgstr "Свободни дати/часове"
 
 msgid "Filter sessions"
-msgstr ""
+msgstr "Филтрирай сесии"
 
 msgid "New break"
-msgstr ""
+msgstr "Нова почивка"
 
 msgid "Drag the box to the schedule to create a new break"
-msgstr ""
+msgstr "Преместете кутийката за да добавите нова почивка"
 
 msgid "Hidden rooms"
-msgstr ""
+msgstr "Скрити зали"
 
 #~ msgid "An organiser"
 #~ msgstr "Организатор"

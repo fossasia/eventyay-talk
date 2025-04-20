@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-08 14:38+0000\n"
-"PO-Revision-Date: 2025-04-01 23:58+0000\n"
+"PO-Revision-Date: 2025-04-11 12:14+0000\n"
 "Last-Translator: Renne Rocha <renne@rocha.dev.br>\n"
 "Language-Team: none\n"
 "Language: pt_BR\n"
@@ -1443,10 +1443,8 @@ msgid "Email"
 msgstr "E-mail"
 
 #: pretalx/common/log_display.py:192
-#, fuzzy
-#| msgid "Speaker email"
 msgid "Speaker profile"
-msgstr "E-mail da pessoa palestrante"
+msgstr "Perfil de palestrante"
 
 #: pretalx/common/log_display.py:196 pretalx/event/stages.py:98
 #: pretalx/orga/templates/orga/admin/user_detail.html:135
@@ -1710,8 +1708,6 @@ msgid "Optional"
 msgstr "Opcional"
 
 #: pretalx/common/templates/common/logs.html:15
-#, fuzzy
-#| msgid "This change was performed by a member of the event orga."
 msgid "This change was performed by an event organiser."
 msgstr "Essa mudança foi realizada por uma pessoa da organização do evento."
 
@@ -2682,10 +2678,8 @@ msgid "The track the proposal belongs to"
 msgstr "A trilha à qual a proposta pertence"
 
 #: pretalx/mail/context.py:204
-#, fuzzy
-#| msgid "The duration in minutes."
 msgid "The session’s duration in minutes"
-msgstr "A duração em minutos."
+msgstr "A duração da sessão em minutos"
 
 #: pretalx/mail/context.py:211
 msgid ""
@@ -6934,12 +6928,10 @@ msgid "unconfirmed"
 msgstr "não confirmado"
 
 #: pretalx/orga/views/dashboard.py:351
-#, fuzzy
-#| msgid "Apply pending changes"
 msgid "submission with pending changes"
 msgid_plural "submissions with pending changes"
-msgstr[0] "Aplicar alterações pendentes"
-msgstr[1] "Aplicar alterações pendentes"
+msgstr[0] "submissão com mudanças pendentes"
+msgstr[1] "submissões com mudanças pendentes"
 
 #: pretalx/orga/views/dashboard.py:374
 #: pretalx/submission/models/submission.py:53
@@ -7015,6 +7007,8 @@ msgstr "Apenas a etapa final de revisão deve estar aberta."
 #: pretalx/orga/views/event.py:359
 msgid "All review phases except for the first one need a start date."
 msgstr ""
+"Todas as etapas de revisão, exceto a primeira, precisam de uma data de "
+"início."
 
 #: pretalx/orga/views/event.py:365
 #, python-brace-format
@@ -7475,7 +7469,7 @@ msgstr "Senha (atual)"
 
 #: pretalx/person/forms/profile.py:39
 msgid "There already exists an account for this email address."
-msgstr ""
+msgstr "Já existe uma conta para este endereço de e-mail."
 
 #: pretalx/person/forms/profile.py:132
 msgid ""
@@ -7488,16 +7482,12 @@ msgid "Non-accepted submitters"
 msgstr "Proponentes não aceitos"
 
 #: pretalx/person/forms/profile.py:281
-#, fuzzy
-#| msgid "Mark speaker as arrived"
 msgid "Marked as arrived"
-msgstr "Marcar palestrante como presente"
+msgstr "Marcado como presente"
 
 #: pretalx/person/forms/profile.py:282
-#, fuzzy
-#| msgid "Not arrived"
 msgid "Not yet arrived"
-msgstr "Não presente"
+msgstr "Ainda não presente"
 
 #: pretalx/person/forms/user.py:43
 msgid "Password (again)"
@@ -7903,10 +7893,8 @@ msgid "Dutch"
 msgstr "Holandês"
 
 #: pretalx/settings.py:426
-#, fuzzy
-#| msgid "English"
 msgid "Polish"
-msgstr "Inglês"
+msgstr "Polonês"
 
 #: pretalx/settings.py:432
 msgid "Brasilian Portuguese"
@@ -7918,7 +7906,7 @@ msgstr "Português"
 
 #: pretalx/settings.py:446
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamita"
 
 #: pretalx/settings.py:452
 msgid "Traditional Chinese (Taiwan)"
@@ -8527,7 +8515,7 @@ msgid "not accepted"
 msgstr "não aceita"
 
 msgid "Availabilities"
-msgstr ""
+msgstr "Disponibilidades"
 
 #~ msgid "An organiser"
 #~ msgstr "Uma pessoa organizadora"

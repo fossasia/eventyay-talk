@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-08 14:38+0000\n"
-"PO-Revision-Date: 2025-04-01 16:30+0000\n"
+"PO-Revision-Date: 2025-04-13 12:51+0000\n"
 "Last-Translator: albanobattistella <albano_battistella@hotmail.com>\n"
 "Language-Team: none\n"
 "Language: it\n"
@@ -1447,10 +1447,8 @@ msgid "Email"
 msgstr "E-mail"
 
 #: pretalx/common/log_display.py:192
-#, fuzzy
-#| msgid "Speaker email"
 msgid "Speaker profile"
-msgstr "Indirizzo email del relatore"
+msgstr "Profilo del relatore"
 
 #: pretalx/common/log_display.py:196 pretalx/event/stages.py:98
 #: pretalx/orga/templates/orga/admin/user_detail.html:135
@@ -1715,12 +1713,8 @@ msgid "Optional"
 msgstr "Opzionale"
 
 #: pretalx/common/templates/common/logs.html:15
-#, fuzzy
-#| msgid "This change was performed by a member of the event orga."
 msgid "This change was performed by an event organiser."
-msgstr ""
-"Questa modifica è stata eseguita da un membro dell'organizzazione "
-"dell'evento."
+msgstr "Questa modifica è stata apportata da un organizzatore dell'evento."
 
 #: pretalx/common/templates/common/powered_by.html:36
 #, python-format
@@ -1900,8 +1894,8 @@ msgstr "Si è verificato un errore nell'invio della e-mail. Riprova più tardi."
 #: pretalx/common/text/phrases.py:71
 msgid "We had trouble saving your input – Please see below for details."
 msgstr ""
-"Abbiamo riscontrato un problema nel salvare il tuo input - Per maggiori "
-"dettagli, vedi sotto. 🠯"
+"Abbiamo avuto problemi nel salvare il tuo contributo. Per maggiori dettagli "
+"vedi sotto."
 
 #: pretalx/common/text/phrases.py:73
 msgid "You do not have permission to perform this action."
@@ -2694,10 +2688,8 @@ msgid "The track the proposal belongs to"
 msgstr "Il tema della proposta"
 
 #: pretalx/mail/context.py:204
-#, fuzzy
-#| msgid "The duration in minutes."
 msgid "The session’s duration in minutes"
-msgstr "La durata in minuti."
+msgstr "Durata della sessione in minuti"
 
 #: pretalx/mail/context.py:211
 msgid ""
@@ -6943,12 +6935,10 @@ msgid "unconfirmed"
 msgstr "non confermato"
 
 #: pretalx/orga/views/dashboard.py:351
-#, fuzzy
-#| msgid "Apply pending changes"
 msgid "submission with pending changes"
 msgid_plural "submissions with pending changes"
-msgstr[0] "Applica le modifiche in sospeso"
-msgstr[1] "Applica le modifiche in sospeso"
+msgstr[0] "presentazione con modifiche in sospeso"
+msgstr[1] "presentazioni con modifiche in sospeso"
 
 #: pretalx/orga/views/dashboard.py:374
 #: pretalx/submission/models/submission.py:53
@@ -7024,6 +7014,8 @@ msgstr "Soltanto l'ultima fase di revisione può essere aperta."
 #: pretalx/orga/views/event.py:359
 msgid "All review phases except for the first one need a start date."
 msgstr ""
+"Tutte le fasi di revisione, eccetto la prima, necessitano di una data di "
+"inizio."
 
 #: pretalx/orga/views/event.py:365
 #, python-brace-format
@@ -7485,7 +7477,7 @@ msgstr "Password (attuale)"
 
 #: pretalx/person/forms/profile.py:39
 msgid "There already exists an account for this email address."
-msgstr ""
+msgstr "Esiste già un account per questo indirizzo email."
 
 #: pretalx/person/forms/profile.py:132
 msgid ""
@@ -7500,16 +7492,12 @@ msgid "Non-accepted submitters"
 msgstr "Contributori non accettati"
 
 #: pretalx/person/forms/profile.py:281
-#, fuzzy
-#| msgid "Mark speaker as arrived"
 msgid "Marked as arrived"
-msgstr "Segnala relatore come arrivato"
+msgstr "Contrassegnato come arrivato"
 
 #: pretalx/person/forms/profile.py:282
-#, fuzzy
-#| msgid "Not arrived"
 msgid "Not yet arrived"
-msgstr "Non arrivato"
+msgstr "Non ancora arrivato"
 
 #: pretalx/person/forms/user.py:43
 msgid "Password (again)"
@@ -7914,10 +7902,8 @@ msgid "Dutch"
 msgstr "Olandese"
 
 #: pretalx/settings.py:426
-#, fuzzy
-#| msgid "English"
 msgid "Polish"
-msgstr "Inglese"
+msgstr "Polacco"
 
 #: pretalx/settings.py:432
 msgid "Brasilian Portuguese"
@@ -7929,7 +7915,7 @@ msgstr "Portoghese"
 
 #: pretalx/settings.py:446
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamita"
 
 #: pretalx/settings.py:452
 msgid "Traditional Chinese (Taiwan)"
@@ -8540,7 +8526,7 @@ msgid "not accepted"
 msgstr "non accettata"
 
 msgid "Availabilities"
-msgstr ""
+msgstr "Disponibilità"
 
 #~ msgid "An organiser"
 #~ msgstr "Un rganizzatore"
