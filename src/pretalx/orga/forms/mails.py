@@ -165,7 +165,7 @@ class MailTemplateForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
                     )
                 )
                 doc = BeautifulSoup(preview_text, "lxml")
-                for link in doc.findAll("a"):
+                for link in doc.find_all("a"):
                     if link.attrs.get("href") in (None, "", "http://", "https://"):
                         raise forms.ValidationError(
                             _(
