@@ -49,7 +49,7 @@ def get_api_version_from_request(request):
             # TODO use special exception type
             raise exceptions.APIException(f"Unsupported version: {api_version}")
 
-    if not api_version and request.auth.token:
+    if not api_version and getattr(request.auth, "token", None):
         # TODO: fall back to token version
         # api_version = request.auth.token.api_version
         # if api_version not in SUPPORTED_VERSIONS:
@@ -58,7 +58,7 @@ def get_api_version_from_request(request):
 
     if not api_version:
         api_version = CURRENT_VERSION
-        if request.auth.token:
+        if getattr(request.auth, "token", None):
             # TODO: apply the current/latest version to the token and save it.
             pass
 

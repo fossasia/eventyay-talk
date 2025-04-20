@@ -33,6 +33,8 @@ ENDPOINTS = (
     "rooms",
     "questions",
     "answers",
+    "tags",
+    "schedules",
 )
 
 

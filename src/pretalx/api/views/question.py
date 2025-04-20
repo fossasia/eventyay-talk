@@ -38,6 +38,7 @@ class QuestionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     write_permission_required = "orga.edit_question"
     filterset_fields = ("is_public", "is_visible_to_reviewers", "target", "variant")
     search_fields = ("question",)
+    endpoint = "questions"
 
     def get_queryset(self):
         return get_questions_for_user(
@@ -78,6 +79,7 @@ class AnswerViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     write_permission_required = "orga.change_submissions"
     filterset_class = AnswerFilterSet
     search_fields = ("answer",)
+    endpoint = "answers"
 
     def get_queryset(self):
         return (

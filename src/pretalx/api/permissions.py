@@ -15,11 +15,26 @@ class ApiPermission(BasePermission):
         return self._has_permission(view, obj, request)
 
     def _has_permission(self, view, obj, request):
+        """
+        We check multiple levels of permissions:
+        - Is the auth token active in the first place (not expired)
+        - Does the auth token have access to the event
+        - Does the auth token have access to the endpoint (with the method used)
+        - Does the user have the required additional object-level permissions
+        """
         event = getattr(request, "event", None)
         if not event:  # Only true for root API view
             return True
 
-        # TODO endpoint permission checks: token <-> endpoint, if a token is used
+        if token := getattr(request.auth, "token", None):
+            if not token.is_active:
+                return False
+            if event not in token.team.events:
+                return False
+            if endpoint := getattr(view, "endpoint", None):
+                if not token.has_endpoint_permission(endpoint, view.action):
+                    return False
+
         permission_object = self.get_permission_object(
             view, obj, request, detail=view.detail
         )

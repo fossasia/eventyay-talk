@@ -11,6 +11,7 @@ class ReviewViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = ReviewSerializer
     queryset = Review.objects.none()
     filterset_fields = ("submission__code",)
+    endpoint = "reviews"
 
     def get_unversioned_serializer_class(self):
         if not self.request.user.has_perm(

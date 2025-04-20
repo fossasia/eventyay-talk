@@ -39,6 +39,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
         "favourite": "agenda.view_schedule",
         "favourite_object": "agenda.view_submission",
     }
+    endpoint = "submissions"
 
     def get_queryset(self):
         base_qs = (
@@ -122,6 +123,7 @@ class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = ScheduleSerializer
     queryset = Schedule.objects.none()
     lookup_value_regex = "[^/]+"
+    endpoint = "schedules"
 
     def get_unversioned_serializer_class(self):
         if self.action == "list":
@@ -163,6 +165,7 @@ class TagViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.none()
     lookup_field = "tag__iexact"
+    endpoint = "tags"
 
     def get_queryset(self):
         if self.request.user.has_perm("orga.view_submissions", self.request.event):

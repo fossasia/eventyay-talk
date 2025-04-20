@@ -12,6 +12,7 @@ class RoomPagination(pagination.LimitOffsetPagination):
 class RoomViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     queryset = Room.objects.none()
     pagination_class = RoomPagination
+    endpoint = "rooms"
 
     def get_queryset(self):
         if self.request.user.has_perm("agenda.view_schedule", self.request.event):

@@ -10,6 +10,8 @@ class ApiVersionException(exceptions.APIException):
 
 
 class PretalxViewSetMixin:
+    endpoint = None
+
     def get_versioned_serializer(self, name):
         try:
             version = get_api_version_from_request(self.request)

@@ -16,6 +16,7 @@ class SpeakerViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     lookup_field = "user__code__iexact"
     filterset_fields = ("user__name", "user__email")
     search_fields = ("user__name", "user__email")
+    endpoint = "speakers"
 
     @cached_property
     def serializer_questions(self):
