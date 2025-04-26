@@ -7,7 +7,7 @@ from rest_framework.serializers import (
     SlugRelatedField,
 )
 
-from pretalx.api.mixins import PretalxSerializer
+from pretalx.api.mixins import PretalxSerializer, ReadOnlySerializerMixin
 from pretalx.api.serializers.question import AnswerSerializer
 from pretalx.api.serializers.speaker import SubmitterOrgaSerializer, SubmitterSerializer
 from pretalx.api.versions import CURRENT_VERSION, register_serializer
@@ -143,7 +143,7 @@ class SubmissionSerializer(I18nAwareModelSerializer):
 
 
 @register_serializer(versions="LEGACY", class_name="TagSerializer")
-class LegacyTagSerializer(PretalxSerializer):
+class LegacyTagSerializer(ReadOnlySerializerMixin, PretalxSerializer):
     class Meta:
         model = Tag
         fields = ["id", "tag", "description", "color"]

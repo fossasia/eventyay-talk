@@ -104,3 +104,21 @@ class PretalxSerializer(ModelSerializer):
 
 PretalxSerializer.serializer_field_mapping[I18nCharField] = I18nField
 PretalxSerializer.serializer_field_mapping[I18nTextField] = I18nField
+
+
+class ReadOnlySerializerMixin:
+    """
+    Used in order to safeguard pre-writable-API serializers from write actions.
+    To be removed once the legacy API is dropped.
+    """
+
+    msg = "Please upgrade your API token in order to use write actions!"
+
+    def perform_create(self, validated_data):
+        raise exceptions.APIException(self.msg)
+
+    def perform_update(self, validated_data):
+        raise exceptions.APIException(self.msg)
+
+    def perform_destroy(self, validated_data):
+        raise exceptions.APIException(self.msg)
