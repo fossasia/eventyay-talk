@@ -26,13 +26,11 @@ class ApiPermission(BasePermission):
         if not event:  # Only true for root API view
             return True
 
-        if token := getattr(request.auth, "token", None):
-            if not token.is_active:
-                return False
-            if event not in token.team.events:
+        if request.auth:
+            if event not in request.auth.team.events:
                 return False
             if endpoint := getattr(view, "endpoint", None):
-                if not token.has_endpoint_permission(endpoint, view.action):
+                if not request.auth.has_endpoint_permission(endpoint, view.action):
                     return False
 
         permission_object = self.get_permission_object(

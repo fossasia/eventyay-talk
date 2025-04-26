@@ -1,7 +1,7 @@
 from rest_framework import exceptions
 
 LEGACY = "LEGACY"
-CURRENT_VERSION = LEGACY  # TODO: update to 2025.x
+CURRENT_VERSION = "2025.1.0"
 DEV_PREVIEW = "DEV_PREVIEW"
 
 DEPRECATED_VERSIONS = []
@@ -44,23 +44,17 @@ def get_serializer_by_version(name, version):
 
 
 def get_api_version_from_request(request):
-    if api_version := request.headers.get("pretalx-version"):
-        if api_version not in SUPPORTED_VERSIONS:
-            # TODO use special exception type
-            raise exceptions.APIException(f"Unsupported version: {api_version}")
+    api_version = (
+        request.headers.get("pretalx-version")
+        or getattr(request.auth, "version", None)
+        or CURRENT_VERSION
+    )
+    if api_version not in SUPPORTED_VERSIONS:
+        raise exceptions.APIException(f"Unsupported version: {api_version}")
 
-    if not api_version and getattr(request.auth, "token", None):
-        # TODO: fall back to token version
-        # api_version = request.auth.token.api_version
-        # if api_version not in SUPPORTED_VERSIONS:
-        # raise exceptions.APIException(f"Unsupported version: {api_version}. Update your token: TODO docs url")
-        pass
-
-    if not api_version:
-        api_version = CURRENT_VERSION
-        if getattr(request.auth, "token", None):
-            # TODO: apply the current/latest version to the token and save it.
-            pass
+    if request.auth and not request.auth.version:
+        request.auth.version = api_version
+        request.auth.save()
 
     # TODO: track use of legacy versions, send/show warning (once) to user
     return api_version
