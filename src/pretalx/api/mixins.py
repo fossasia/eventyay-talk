@@ -15,6 +15,11 @@ class ApiVersionException(exceptions.APIException):
 
 class PretalxViewSetMixin:
     endpoint = None
+    logtype_map = {
+        "create": ".create",
+        "update": ".update",
+        "partial_update": ".update",
+    }
 
     def get_versioned_serializer(self, name):
         try:

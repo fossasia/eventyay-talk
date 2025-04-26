@@ -155,6 +155,10 @@ class TagSerializer(PretalxSerializer):
         model = Tag
         fields = ("id", "tag", "description", "color", "is_public")
 
+    def create(self, validated_data):
+        validated_data["event"] = getattr(self.context.get("request"), "event", None)
+        return super().create(validated_data)
+
 
 @register_serializer()
 class SubmissionOrgaSerializer(SubmissionSerializer):

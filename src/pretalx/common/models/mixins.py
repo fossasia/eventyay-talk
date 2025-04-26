@@ -20,11 +20,20 @@ class TimestampedModel(models.Model):
 
 
 class LogMixin:
-    def log_action(self, action, data=None, person=None, orga=False):
+    log_prefix = None
+    log_parent = None
+
+    def log_action(
+        self, action, data=None, person=None, orga=False, content_object=None
+    ):
         if not self.pk:
             return
 
-        from pretalx.common.models import ActivityLog
+        if action.startswith("."):
+            if self.log_prefix:
+                action = f"{self.log_prefix}{action}"
+            else:
+                return
 
         if data and isinstance(data, dict):
             for key, value in data.items():
@@ -37,10 +46,12 @@ class LogMixin:
                 f"Logged data should always be a dictionary, not {type(data)}."
             )
 
+        from pretalx.common.models import ActivityLog
+
         return ActivityLog.objects.create(
             event=getattr(self, "event", None),
             person=person,
-            content_object=self,
+            content_object=content_object or self,
             action_type=action,
             data=data,
             is_orga_action=orga,
@@ -57,6 +68,14 @@ class LogMixin:
             .select_related("event", "person")
             .prefetch_related("content_object")
         )
+
+    def delete(self, *args, log_kwargs=None, **kwargs):
+        parent = self.log_parent
+        result = super().delete(*args, **kwargs)
+        if parent and getattr(parent, "log_action", None):
+            log_kwargs = log_kwargs or {}
+            parent.log_action(f"{self.log_prefix}.delete", **log_kwargs)
+        return result
 
 
 class FileCleanupMixin:
