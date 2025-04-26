@@ -33,12 +33,16 @@ class ApiPermission(BasePermission):
                 if not request.auth.has_endpoint_permission(endpoint, view.action):
                     return False
 
+        if view.detail and not obj:
+            # Early out as DRF will check permissions on detail endpoints twice,
+            # once without an object passed and once with.
+            return True
+
         permission_object = self.get_permission_object(
             view, obj, request, detail=view.detail
         )
         if permission_map := getattr(view, "permission_map", None):
-            suffix = "_object" if obj else ""
-            if permission_required := permission_map.get(f"{view.action}{suffix}"):
+            if permission_required := permission_map.get(view.action):
                 return request.user.has_perm(permission_required, permission_object)
 
         if request.method in SAFE_METHODS:

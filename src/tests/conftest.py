@@ -11,7 +11,7 @@ from lxml import etree
 
 from pretalx.event.models import Event, Organiser, Team, TeamInvite
 from pretalx.mail.models import MailTemplate
-from pretalx.person.models import SpeakerInformation, SpeakerProfile, User
+from pretalx.person.models import SpeakerInformation, SpeakerProfile, User, UserApiToken
 from pretalx.schedule.models import Availability, Room, TalkSlot
 from pretalx.submission.models import (
     Answer,
@@ -598,6 +598,27 @@ def orga_user(event):
         team.members.add(user)
         team.save()
     return user
+
+
+@pytest.fixture
+def orga_user_token(orga_user):
+    return UserApiToken.objects.create(
+        name="testtoken", user=orga_user, team=orga_user.teams.first()
+    )
+
+
+@pytest.fixture
+def orga_user_write_token(orga_user_token):
+    orga_user_token.pk = None
+    orga_user_token.endpoints = {
+        key: ["list", "retrieve", "create", "update", "destroy", "actions"]
+        for key in orga_user_token.endpoints.keys()
+    }
+    from pretalx.person.models.auth_token import generate_api_token
+
+    orga_user_token.token = generate_api_token()
+    orga_user_token.save()
+    return orga_user_token
 
 
 @pytest.fixture

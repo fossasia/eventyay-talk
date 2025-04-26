@@ -50,6 +50,7 @@ def test_tag_serializer(tag):
             "tag",
             "description",
             "color",
+            "is_public",
         }
 
 
@@ -375,15 +376,16 @@ def test_reviewer_cannot_see_speakers_and_anonymised_content(
 @pytest.mark.django_db
 def test_cannot_see_tags(client, tag):
     response = client.get(tag.event.api_urls.tags, follow=True)
-    content = json.loads(response.content.decode())
-
-    assert response.status_code == 200
-    assert content["count"] == 0
+    assert response.status_code == 401
 
 
 @pytest.mark.django_db
-def test_orga_can_see_tags(orga_client, tag):
-    response = orga_client.get(tag.event.api_urls.tags, follow=True)
+def test_orga_can_see_tags(client, orga_user_token, tag):
+    response = client.get(
+        tag.event.api_urls.tags,
+        follow=True,
+        headers={"Authorization": f"Token {orga_user_token.token}"},
+    )
     content = json.loads(response.content.decode())
 
     assert response.status_code == 200
@@ -392,9 +394,93 @@ def test_orga_can_see_tags(orga_client, tag):
 
 
 @pytest.mark.django_db
-def test_orga_can_see_single_tag(orga_client, tag):
-    response = orga_client.get(tag.event.api_urls.tags + f"{tag.tag}/", follow=True)
+def test_orga_can_see_single_tag(client, orga_user_token, tag):
+    response = client.get(
+        tag.event.api_urls.tags + f"{tag.tag}/",
+        follow=True,
+        headers={"Authorization": f"Token {orga_user_token.token}"},
+    )
     content = json.loads(response.content.decode())
 
     assert response.status_code == 200
     assert content["tag"] == tag.tag
+    assert "is_public" in content
+    assert isinstance(content["description"], dict)
+
+
+@pytest.mark.django_db
+def test_orga_can_see_single_tag_locale_override(client, orga_user_token, tag):
+    response = client.get(
+        tag.event.api_urls.tags + f"{tag.tag}/?locale=en",
+        follow=True,
+        headers={"Authorization": f"Token {orga_user_token.token}"},
+    )
+    content = json.loads(response.content.decode())
+
+    assert response.status_code == 200
+    assert content["tag"] == tag.tag
+    assert "is_public" in content
+    assert isinstance(content["description"], str)
+
+
+@pytest.mark.django_db
+def test_orga_can_see_single_legacy_tag(client, orga_user_token, tag):
+    from pretalx.api.versions import LEGACY
+
+    response = client.get(
+        tag.event.api_urls.tags + f"{tag.tag}/",
+        follow=True,
+        headers={
+            "Authorization": f"Token {orga_user_token.token}",
+            "Pretalx-Version": LEGACY,
+        },
+    )
+    content = json.loads(response.content.decode())
+
+    assert response.status_code == 200, response.content.decode()
+    assert content["tag"] == tag.tag
+    assert "is_public" not in content
+    orga_user_token.refresh_from_db()
+    assert orga_user_token.version == "LEGACY"
+
+    # now that the token version is saved, we should see the same result without the
+    # header
+    response = client.get(
+        tag.event.api_urls.tags + f"{tag.tag}/",
+        follow=True,
+        headers={
+            "Authorization": f"Token {orga_user_token.token}",
+        },
+    )
+    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.content.decode()
+    assert content["tag"] == tag.tag
+    assert "is_public" not in content
+
+
+@pytest.mark.django_db
+def test_orga_can_delete_tags(client, orga_user_write_token, event, tag):
+    assert tag.tag != "newtesttag"
+    response = client.delete(
+        event.api_urls.tags + f"{tag.pk}/",
+        follow=True,
+        headers={
+            "Authorization": f"Token {orga_user_write_token.token}",
+        },
+    )
+    assert response.status_code == 204
+    with scope(event=tag.event):
+        assert event.tags.all().count() == 0
+        assert event.logged_actions().filter(action_type="pretalx.tag.delete").exists()
+
+
+@pytest.mark.django_db
+def test_orga_cannot_delete_tags_readonly_token(client, orga_user_token, tag):
+    response = client.delete(
+        tag.event.api_urls.tags + f"{tag.pk}/",
+        follow=True,
+        headers={"Authorization": f"Token {orga_user_token.token}"},
+    )
+    assert response.status_code == 403
+    with scope(event=tag.event):
+        assert tag.event.tags.all().count() == 1

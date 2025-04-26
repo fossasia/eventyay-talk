@@ -1009,6 +1009,29 @@ class TagDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
         return result
 
 
+class TagDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
+    permission_required = "orga.remove_tags"
+
+    def get_object(self):
+        return get_object_or_404(self.request.event.tags, pk=self.kwargs.get("pk"))
+
+    def action_object_name(self):
+        return _("Tag") + f": {self.get_object().tag}"
+
+    def action_back_url(self):
+        return self.request.event.orga_urls.tags
+
+    def post(self, request, *args, **kwargs):
+        tag = self.get_object()
+
+        tag.delete()
+        request.event.log_action(
+            "pretalx.tag.delete", person=self.request.user, orga=True
+        )
+        messages.success(request, _("The tag has been deleted."))
+        return redirect(self.request.event.orga_urls.tags)
+
+
 class CommentList(SubmissionViewMixin, FormView):
     template_name = "orga/submission/comments.html"
     permission_required = "submission.view_submission_comments"
@@ -1058,29 +1081,6 @@ class CommentDelete(SubmissionViewMixin, ActionConfirmMixin, TemplateView):
         comment.delete()
         messages.success(request, _("The comment has been deleted."))
         return redirect(comment.submission.orga_urls.comments)
-
-
-class TagDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
-    permission_required = "orga.remove_tags"
-
-    def get_object(self):
-        return get_object_or_404(self.request.event.tags, pk=self.kwargs.get("pk"))
-
-    def action_object_name(self):
-        return _("Tag") + f": {self.get_object().tag}"
-
-    def action_back_url(self):
-        return self.request.event.orga_urls.tags
-
-    def post(self, request, *args, **kwargs):
-        tag = self.get_object()
-
-        tag.delete()
-        request.event.log_action(
-            "pretalx.tag.delete", person=self.request.user, orga=True
-        )
-        messages.success(request, _("The tag has been deleted."))
-        return redirect(self.request.event.orga_urls.tags)
 
 
 class ApplyPendingBulk(EventPermissionRequired, BaseSubmissionList):

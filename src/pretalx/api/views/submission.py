@@ -36,8 +36,8 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     search_fields = ("title", "speakers__name")
     filterset_class = SubmissionFilter
     permission_map = {
-        "favourite": "agenda.view_schedule",
-        "favourite_object": "agenda.view_submission",
+        "favourites": "agenda.view_schedule",
+        "favourite": "agenda.view_submission",
     }
     endpoint = "submissions"
 
@@ -161,13 +161,24 @@ class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
         return qs
 
 
-class TagViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
+class TagViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.none()
     lookup_field = "tag__iexact"
     endpoint = "tags"
+    read_permission_required = "orga.view_submissions"
+    permission_map = {
+        "create": "orga.add_tags",
+        "update": "orga.edit_tags",
+        "partial_update": "orga.edit_tags",
+        "destroy": "orga.remove_tags",
+    }
+    logtype_map = {
+        "create": "pretalx.tag.create",
+        "update": "pretalx.tag.update",
+        "partial_update": "pretalx.tag.update",
+        "destroy": "pretalx.tag.delete",
+    }
 
     def get_queryset(self):
-        if self.request.user.has_perm("orga.view_submissions", self.request.event):
-            return self.request.event.tags.all()
-        return Tag.objects.none()
+        return self.request.event.tags.all()

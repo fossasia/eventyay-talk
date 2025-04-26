@@ -16,13 +16,13 @@ def generate_api_token():
 
 
 READ_PERMISSIONS = ("list", "retrieve")
-WRITE_PERMISSIONS = READ_PERMISSIONS + ("create", "update", "delete", "actions")
+WRITE_PERMISSIONS = READ_PERMISSIONS + ("create", "update", "destroy", "actions")
 PERMISSION_CHOICES = (
     ("list", _("Read list")),
     ("retrieve", _("Read details")),
     ("create", _("Create")),
     ("update", _("Update")),
-    ("delete", _("Delete")),
+    ("destroy", _("Delete")),
     ("actions", _("Additional actions")),
 )
 ENDPOINTS = (
@@ -78,6 +78,9 @@ class UserApiToken(PretalxModel):
     objects = UserApiTokenManager()
 
     def has_endpoint_permission(self, endpoint, method):
+        if method == "partial_update":
+            # We don't track separate permissions for partial updates
+            method = "update"
         perms = self.endpoints.get(
             endpoint, default_endpoint_permissions().get(endpoint, [])
         )

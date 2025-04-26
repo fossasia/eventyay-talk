@@ -7,9 +7,10 @@ from rest_framework.serializers import (
     SlugRelatedField,
 )
 
+from pretalx.api.mixins import PretalxSerializer
 from pretalx.api.serializers.question import AnswerSerializer
 from pretalx.api.serializers.speaker import SubmitterOrgaSerializer, SubmitterSerializer
-from pretalx.api.versions import register_serializer
+from pretalx.api.versions import CURRENT_VERSION, register_serializer
 from pretalx.schedule.models import Schedule, TalkSlot
 from pretalx.submission.models import Resource, Submission, SubmissionStates, Tag
 
@@ -141,11 +142,18 @@ class SubmissionSerializer(I18nAwareModelSerializer):
         ]
 
 
-@register_serializer()
-class TagSerializer(I18nAwareModelSerializer):
+@register_serializer(versions="LEGACY", class_name="TagSerializer")
+class LegacyTagSerializer(PretalxSerializer):
     class Meta:
         model = Tag
         fields = ["id", "tag", "description", "color"]
+
+
+@register_serializer(versions=[CURRENT_VERSION])
+class TagSerializer(PretalxSerializer):
+    class Meta:
+        model = Tag
+        fields = ("id", "tag", "description", "color", "is_public")
 
 
 @register_serializer()
