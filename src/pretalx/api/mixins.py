@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_field
 from i18nfield.fields import I18nCharField, I18nTextField
 from i18nfield.rest_framework import I18nField
 from rest_flex_fields import is_expanded
@@ -79,7 +80,19 @@ class PretalxViewSetMixin:
         return [arg for arg in args if is_expanded(self.request, arg)]
 
 
-class PlainI18nField(I18nField):
+@extend_schema_field(
+    field={
+        "type": "object",
+        "additionalProperties": {"type": "string"},
+        "example": {"en": "English text", "de": "Deutscher Text"},
+    },
+    component_name="Multi-language string",
+)
+class DocumentedI18nField(I18nField):
+    pass
+
+
+class PlainI18nField(DocumentedI18nField):
     def to_representation(self, value):
         return str(value)
 
@@ -102,8 +115,8 @@ class PretalxSerializer(ModelSerializer):
             self.serializer_field_mapping[I18nTextField] = PlainI18nField
 
 
-PretalxSerializer.serializer_field_mapping[I18nCharField] = I18nField
-PretalxSerializer.serializer_field_mapping[I18nTextField] = I18nField
+PretalxSerializer.serializer_field_mapping[I18nCharField] = DocumentedI18nField
+PretalxSerializer.serializer_field_mapping[I18nTextField] = DocumentedI18nField
 
 
 class ReadOnlySerializerMixin:

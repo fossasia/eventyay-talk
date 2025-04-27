@@ -77,7 +77,9 @@ class SubmissionSerializer(I18nAwareModelSerializer):
         )
         super().__init__(*args, **kwargs)
         for field in ("title", "abstract", "description"):
-            setattr(self, f"get_{field}", partial(self.get_attribute, attribute=field))
+            partial_name = f"get_{field}"
+            setattr(self, partial_name, partial(self.get_attribute, attribute=field))
+            getattr(self, partial_name).__name__ = partial_name
 
     @staticmethod
     def get_duration(obj):

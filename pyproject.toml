@@ -49,6 +49,7 @@ dependencies = [
   "django-libsass~=0.8",
   "django-scopes~=2.0.0",
   "djangorestframework~=3.16.0",
+  "drf-spectacular~=0.28.0",
   "libsass~=0.23.0",
   "Markdown~=3.8.0",
   "Pillow~=11.2.0",

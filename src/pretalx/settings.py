@@ -91,6 +91,7 @@ LOCAL_APPS = [
 FALLBACK_APPS = [
     "django.forms",
     "rest_framework",
+    "drf_spectacular",
 ]
 INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + LOCAL_APPS + FALLBACK_APPS
 
@@ -640,10 +641,12 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ("i18nfield.rest_framework.I18nJSONRenderer",),
     "DEFAULT_AUTHENTICATION_CLASSES": ("pretalx.common.auth.UserTokenAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("pretalx.api.permissions.ApiPermission",),
+    "DEFAULT_PARSER_CLASSES": ("rest_framework.parsers.JSONParser",),
     "DEFAULT_FILTER_BACKENDS": (
         "rest_framework.filters.SearchFilter",
         "django_filters.rest_framework.DjangoFilterBackend",
     ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 25,
     "SEARCH_PARAM": "q",
@@ -654,6 +657,27 @@ REST_FRAMEWORK = {
 }
 if DEBUG:
     REST_FRAMEWORK["COMPACT_JSON"] = False
+
+SPECTACULAR_SETTINGS = {
+    "SCHEMA_PATH_PREFIX": "/api/events/{event}/",
+    "SCHEMA_COERCE_PATH_PK_SUFFIX": True,
+    "COMPONENT_SPLIT_PATCH": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SORT_OPERATIONS": False,
+    "AUTHENTICATION_WHITELIST": [],
+    "ENABLE_DJANGO_DEPLOY_CHECK": False,
+    "VERSION": None,
+    "TITLE": "pretalx API",
+    "SERVERS": [{"url": "https://pretalx.com"}],
+    "EXTERNAL_DOCS": {"url": "https://docs.pretalx.org/api/"},
+    "PATH_CONVERTER_OVERRIDES": {
+        "slug": {"type": "string", "description": "The event’s slug"},
+    },
+    "POSTPROCESSING_HOOKS": [
+        "drf_spectacular.hooks.postprocess_schema_enums",
+        "pretalx.api.documentation.postprocess_schema",
+    ],
+}
 
 WSGI_APPLICATION = "pretalx.wsgi.application"
 

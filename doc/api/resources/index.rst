@@ -1,15 +1,45 @@
 Resources and endpoints
 =======================
 
-.. toctree::
-   :maxdepth: 2
+You can also view this API schema as an `OpenAPI schema file </schema.yml>`_.
 
-   events
-   submissions
-   talks
-   speakers
-   reviews
-   rooms
-   questions
-   answers
-   tags
+.. raw:: html
+
+   <redoc id=redoc></redoc>
+   <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+   <script>
+        var spec = "../../schema.yml";
+        Redoc.init(spec, {
+            hideLoading: true,
+            jsonSampleExpandLevel: 3,
+            expandResponses: "200,201",
+        }, document.querySelector("redoc"), () => {
+            const toctree = document.querySelector('#toctree li.toctree-l2.current');
+            if (!toctree) return;
+
+            const apiContent = document.querySelector('#redoc .api-content');
+            if (!apiContent) return;
+
+            // Get all direct child divs and find ones with single-slash IDs (tag headings rather than endpoints)
+            const tags = Array.from(apiContent.children)
+                .filter(el => el.tagName === 'DIV' && el.id && (el.id.match(/\//g) || []).length === 1);
+            if (tags.length === 0) return;
+
+            const ul = document.createElement('ul');
+            tags.forEach(tag => {
+                const h2 = tag.querySelector('h2');
+                const title = h2 ? h2.textContent.trim() : tag.id;
+                const li = document.createElement('li');
+                li.className = 'toctree-l3';
+                const a = document.createElement('a');
+                a.className = 'reference internal';
+                a.href = '#' + tag.id;
+                a.textContent = title.replace(/-/g, ' ').charAt(0).toUpperCase() + title.replace(/-/g, ' ').slice(1);
+                li.appendChild(a);
+                ul.appendChild(li);
+            });
+
+            // Insert the container after the current toctree item
+            toctree.appendChild(ul);
+        });
+    </script>

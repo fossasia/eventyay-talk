@@ -3,7 +3,7 @@
 Release Notes
 =============
 
-- :support:`1598` The pretalx API has now stopped supporting session authentication, which was never officially supported. If you need to use the authenticated API, please use the documented token authentication process.
+- :announcement:`api,1598` The pretalx API has now stopped supporting session authentication, which was never officially supported. If you need to use the authenticated API, please use the documented token authentication process.
 - :feature:`orga,1892` Organisers can now mark speakers as "arrived" on the speakers detail page and on the speakers tab of accepted sessions.
 - :feature:`orga:submission` Organisers and reviewers can now leave comments on proposals. Comments are shown in chronological order, and users can of course comment multiple times, rather than leaving a single review.
 - :feature:`schedule` When you embed the pretalx widget on an external page, clicking on session links will open the session details (or speaker details) in a popup on the same page, instead of directing attendees to the pretalx schedule page.

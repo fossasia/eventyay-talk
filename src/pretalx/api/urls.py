@@ -25,5 +25,5 @@ urlpatterns = [
     path("", include(default_router.urls)),
     path("me", user.MeView.as_view(), name="user.me"),
     path("auth/", obtain_auth_token),
-    path("events/<event>/", include(event_router.urls)),
+    path("events/<slug:event>/", include(event_router.urls)),
 ]

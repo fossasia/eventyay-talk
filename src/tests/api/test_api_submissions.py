@@ -396,7 +396,7 @@ def test_orga_can_see_tags(client, orga_user_token, tag):
 @pytest.mark.django_db
 def test_orga_can_see_single_tag(client, orga_user_token, tag):
     response = client.get(
-        tag.event.api_urls.tags + f"{tag.tag}/",
+        tag.event.api_urls.tags + f"{tag.pk}/",
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
@@ -411,7 +411,7 @@ def test_orga_can_see_single_tag(client, orga_user_token, tag):
 @pytest.mark.django_db
 def test_orga_can_see_single_tag_locale_override(client, orga_user_token, tag):
     response = client.get(
-        tag.event.api_urls.tags + f"{tag.tag}/?locale=en",
+        tag.event.api_urls.tags + f"{tag.pk}/?locale=en",
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
@@ -428,7 +428,7 @@ def test_orga_can_see_single_legacy_tag(client, orga_user_token, tag):
     from pretalx.api.versions import LEGACY
 
     response = client.get(
-        tag.event.api_urls.tags + f"{tag.tag}/",
+        tag.event.api_urls.tags + f"{tag.pk}/",
         follow=True,
         headers={
             "Authorization": f"Token {orga_user_token.token}",
@@ -446,7 +446,7 @@ def test_orga_can_see_single_legacy_tag(client, orga_user_token, tag):
     # now that the token version is saved, we should see the same result without the
     # header
     response = client.get(
-        tag.event.api_urls.tags + f"{tag.tag}/",
+        tag.event.api_urls.tags + f"{tag.pk}/",
         follow=True,
         headers={
             "Authorization": f"Token {orga_user_token.token}",

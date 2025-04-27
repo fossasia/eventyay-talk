@@ -3,10 +3,12 @@ from django.http import Http404
 from django.utils.functional import cached_property
 from django_filters import rest_framework as filters
 from django_scopes import scopes_disabled
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from pretalx.api.documentation import build_search_docs
 from pretalx.api.mixins import PretalxViewSetMixin
 from pretalx.api.serializers.submission import (
     ScheduleListSerializer,
@@ -161,24 +163,19 @@ class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
         return qs
 
 
+@extend_schema_view(
+    list=extend_schema(summary="List tags", parameters=[build_search_docs("tag")]),
+    retrieve=extend_schema(summary="Show Tags"),
+    create=extend_schema(summary="Create Tags"),
+    update=extend_schema(summary="Update Tags"),
+    partial_update=extend_schema(summary="Update Tags (Partial Update)"),
+    destroy=extend_schema(summary="Delete Tags"),
+)
 class TagViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.none()
-    lookup_field = "tag__iexact"
     endpoint = "tags"
-    read_permission_required = "orga.view_submissions"
-    permission_map = {
-        "create": "orga.add_tags",
-        "update": "orga.edit_tags",
-        "partial_update": "orga.edit_tags",
-        "destroy": "orga.remove_tags",
-    }
-    logtype_map = {
-        "create": "pretalx.tag.create",
-        "update": "pretalx.tag.update",
-        "partial_update": "pretalx.tag.update",
-        "destroy": "pretalx.tag.delete",
-    }
+    search_fields = ("tag",)
 
     def get_queryset(self):
         return self.request.event.tags.all()
