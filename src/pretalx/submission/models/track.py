@@ -37,7 +37,11 @@ class Track(OrderedModel, PretalxModel):
             RegexValidator("#([0-9A-Fa-f]{3}){1,2}"),
         ],
     )
-    position = models.PositiveIntegerField(null=True, blank=True)
+    position = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        help_text="The position field is used to determine the order that tracks are displayed in (lowest first).",
+    )
     requires_access_code = models.BooleanField(
         verbose_name=_("Requires access code"),
         help_text=_(

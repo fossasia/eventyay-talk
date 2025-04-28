@@ -14,6 +14,7 @@ event_router.register(
 event_router.register("talks", submission.SubmissionViewSet, basename="talks")
 event_router.register("schedules", submission.ScheduleViewSet, basename="schedule")
 event_router.register("tags", submission.TagViewSet, basename="tag")
+event_router.register("tracks", submission.TrackViewSet, basename="track")
 event_router.register("speakers", speaker.SpeakerViewSet, basename="speaker")
 event_router.register("reviews", review.ReviewViewSet, basename="review")
 event_router.register("rooms", room.RoomViewSet, basename="room")

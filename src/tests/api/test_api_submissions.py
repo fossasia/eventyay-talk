@@ -7,6 +7,7 @@ from pretalx.api.serializers.submission import (
     SubmissionOrgaSerializer,
     SubmissionSerializer,
     TagSerializer,
+    TrackSerializer,
 )
 
 
@@ -51,6 +52,20 @@ def test_tag_serializer(tag):
             "description",
             "color",
             "is_public",
+        }
+
+
+@pytest.mark.django_db
+def test_track_serializer(track):
+    with scope(event=track.event):
+        data = TrackSerializer(track, context={"event": track.event}).data
+        assert set(data.keys()) == {
+            "id",
+            "name",
+            "description",
+            "color",
+            "position",
+            "requires_access_code",
         }
 
 
@@ -459,6 +474,82 @@ def test_orga_can_see_single_legacy_tag(client, orga_user_token, tag):
 
 
 @pytest.mark.django_db
+def test_orga_can_create_tags(client, orga_user_write_token, event):
+    response = client.post(
+        event.api_urls.tags,
+        follow=True,
+        data={"tag": "newtesttag", "color": "#00ff00"},
+        content_type="application/json",
+        headers={
+            "Authorization": f"Token {orga_user_write_token.token}",
+        },
+    )
+    assert response.status_code == 201
+    with scope(event=event):
+        tag = event.tags.get(tag="newtesttag")
+        assert tag.logged_actions().filter(action_type="pretalx.tag.create").exists()
+
+
+@pytest.mark.django_db
+def test_orga_cannot_create_tags_readonly_token(client, orga_user_token, event):
+    response = client.post(
+        event.api_urls.tags,
+        follow=True,
+        data={"tag": "newtesttag"},
+        content_type="application/json",
+        headers={
+            "Authorization": f"Token {orga_user_token.token}",
+            "Content-Type": "application/json",
+        },
+    )
+    assert response.status_code == 403
+    with scope(event=event):
+        assert not event.tags.filter(tag="newtesttag").exists()
+        assert (
+            not event.logged_actions().filter(action_type="pretalx.tag.create").exists()
+        )
+
+
+@pytest.mark.django_db
+def test_orga_can_update_tags(client, orga_user_write_token, event, tag):
+    assert tag.tag != "newtesttag"
+    response = client.patch(
+        event.api_urls.tags + f"{tag.pk}/",
+        follow=True,
+        data=json.dumps({"tag": "newtesttag"}),
+        headers={
+            "Authorization": f"Token {orga_user_write_token.token}",
+            "Content-Type": "application/json",
+        },
+    )
+    assert response.status_code == 200
+    with scope(event=tag.event):
+        tag.refresh_from_db()
+        assert tag.tag == "newtesttag"
+        assert tag.logged_actions().filter(action_type="pretalx.tag.update").exists()
+
+
+@pytest.mark.django_db
+def test_orga_cannot_update_tags_readonly_token(client, orga_user_token, tag):
+    response = client.patch(
+        tag.event.api_urls.tags + f"{tag.pk}/",
+        follow=True,
+        data=json.dumps({"tag": "newtesttag"}),
+        headers={
+            "Authorization": f"Token {orga_user_token.token}",
+            "Content-Type": "application/json",
+        },
+    )
+    assert response.status_code == 403
+    with scope(event=tag.event):
+        tag.refresh_from_db()
+        assert tag.tag != "newtesttag"
+        assert (
+            not tag.logged_actions().filter(action_type="pretalx.tag.update").exists()
+        )
+
+
+@pytest.mark.django_db
 def test_orga_can_delete_tags(client, orga_user_write_token, event, tag):
     assert tag.tag != "newtesttag"
     response = client.delete(
@@ -484,3 +575,191 @@ def test_orga_cannot_delete_tags_readonly_token(client, orga_user_token, tag):
     assert response.status_code == 403
     with scope(event=tag.event):
         assert tag.event.tags.all().count() == 1
+
+
+@pytest.mark.django_db
+def test_cannot_see_tracks(client, track):
+    response = client.get(track.event.api_urls.tracks, follow=True)
+    assert response.status_code == 401
+
+
+@pytest.mark.django_db
+def test_can_see_tracks_public_event(client, track, slot):
+    with scope(event=track.event):
+        track.event.is_public = True
+        track.event.save()
+    response = client.get(track.event.api_urls.tracks, follow=True)
+    content = json.loads(response.content.decode())
+
+    assert response.status_code == 200
+    assert content["count"] == 1
+    assert content["results"][0]["name"]["en"] == track.name
+
+
+@pytest.mark.django_db
+def test_orga_can_see_tracks(client, orga_user_token, track):
+    response = client.get(
+        track.event.api_urls.tracks,
+        follow=True,
+        headers={"Authorization": f"Token {orga_user_token.token}"},
+    )
+    content = json.loads(response.content.decode())
+
+    assert response.status_code == 200
+    assert content["count"] == 1
+    assert content["results"][0]["name"]["en"] == track.name
+
+
+@pytest.mark.django_db
+def test_orga_can_see_single_track(client, orga_user_token, track):
+    response = client.get(
+        track.event.api_urls.tracks + f"{track.pk}/",
+        follow=True,
+        headers={"Authorization": f"Token {orga_user_token.token}"},
+    )
+    content = json.loads(response.content.decode())
+
+    assert response.status_code == 200
+    assert content["name"]["en"] == track.name
+    assert isinstance(content["name"], dict)
+
+
+@pytest.mark.django_db
+def test_orga_can_see_single_track_locale_override(client, orga_user_token, track):
+    response = client.get(
+        track.event.api_urls.tracks + f"{track.pk}/?locale=en",
+        follow=True,
+        headers={"Authorization": f"Token {orga_user_token.token}"},
+    )
+    content = json.loads(response.content.decode())
+
+    assert response.status_code == 200
+    assert isinstance(content["name"], str)
+
+
+@pytest.mark.django_db
+def test_no_legacy_track_api(client, orga_user_token, track):
+    from pretalx.api.versions import LEGACY
+
+    response = client.get(
+        track.event.api_urls.tracks + f"{track.pk}/",
+        follow=True,
+        headers={
+            "Authorization": f"Token {orga_user_token.token}",
+            "Pretalx-Version": LEGACY,
+        },
+    )
+    assert response.status_code == 400, response.content.decode()
+    assert response.content.decode() == '{"detail": "API version not supported."}'
+
+
+@pytest.mark.django_db
+def test_orga_can_create_tracks(client, orga_user_write_token, event):
+    response = client.post(
+        event.api_urls.tracks,
+        follow=True,
+        data={"name": "newtesttrack", "color": "#334455"},
+        content_type="application/json",
+        headers={
+            "Authorization": f"Token {orga_user_write_token.token}",
+        },
+    )
+    assert response.status_code == 201
+    with scope(event=event):
+        track = event.tracks.get(name="newtesttrack")
+        assert (
+            track.logged_actions().filter(action_type="pretalx.track.create").exists()
+        )
+
+
+@pytest.mark.django_db
+def test_orga_cannot_create_tracks_readonly_token(client, orga_user_token, event):
+    response = client.post(
+        event.api_urls.tracks,
+        follow=True,
+        data={"name": "newtesttrack"},
+        content_type="application/json",
+        headers={
+            "Authorization": f"Token {orga_user_token.token}",
+        },
+    )
+    assert response.status_code == 403
+    with scope(event=event):
+        assert not event.tracks.filter(name="newtesttrack").exists()
+        assert (
+            not event.logged_actions()
+            .filter(action_type="pretalx.track.create")
+            .exists()
+        )
+
+
+@pytest.mark.django_db
+def test_orga_can_update_tracks(client, orga_user_write_token, event, track):
+    assert track.name != "newtesttrack"
+    response = client.patch(
+        event.api_urls.tracks + f"{track.pk}/",
+        follow=True,
+        data=json.dumps({"name": "newtesttrack"}),
+        headers={
+            "Authorization": f"Token {orga_user_write_token.token}",
+            "Content-Type": "application/json",
+        },
+    )
+    assert response.status_code == 200
+    with scope(event=track.event):
+        track.refresh_from_db()
+        assert track.name == "newtesttrack"
+        assert (
+            track.logged_actions().filter(action_type="pretalx.track.update").exists()
+        )
+
+
+@pytest.mark.django_db
+def test_orga_cannot_update_tracks_readonly_token(client, orga_user_token, track):
+    response = client.patch(
+        track.event.api_urls.tracks + f"{track.pk}/",
+        follow=True,
+        data=json.dumps({"name": "newtesttrack"}),
+        headers={
+            "Authorization": f"Token {orga_user_token.token}",
+            "Content-Type": "application/json",
+        },
+    )
+    assert response.status_code == 403
+    with scope(event=track.event):
+        track.refresh_from_db()
+        assert track.name != "newtesttrack"
+        assert (
+            not track.logged_actions()
+            .filter(action_type="pretalx.track.update")
+            .exists()
+        )
+
+
+@pytest.mark.django_db
+def test_orga_can_delete_tracks(client, orga_user_write_token, event, track):
+    response = client.delete(
+        event.api_urls.tracks + f"{track.pk}/",
+        follow=True,
+        headers={
+            "Authorization": f"Token {orga_user_write_token.token}",
+        },
+    )
+    assert response.status_code == 204
+    with scope(event=track.event):
+        assert event.tracks.all().count() == 0
+        assert (
+            event.logged_actions().filter(action_type="pretalx.track.delete").exists()
+        )
+
+
+@pytest.mark.django_db
+def test_orga_cannot_delete_tracks_readonly_token(client, orga_user_token, track):
+    response = client.delete(
+        track.event.api_urls.tracks + f"{track.pk}/",
+        follow=True,
+        headers={"Authorization": f"Token {orga_user_token.token}"},
+    )
+    assert response.status_code == 403
+    with scope(event=track.event):
+        assert track.event.tracks.all().count() == 1

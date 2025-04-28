@@ -34,6 +34,7 @@ ENDPOINTS = (
     "questions",
     "answers",
     "tags",
+    "tracks",
     "schedules",
 )
 

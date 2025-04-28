@@ -377,6 +377,7 @@ class Event(PretalxModel):
         questions = "{base}questions/"
         answers = "{base}answers/"
         tags = "{base}tags/"
+        tracks = "{base}tracks/"
 
     class Meta:
         ordering = ("date_from",)
