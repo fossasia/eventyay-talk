@@ -387,7 +387,7 @@ class CRUDView(PaginationMixin, Filterable, View):
             if name := self.get_context_object_name():
                 kwargs[name] = self.object
 
-        if getattr(self, "object_list", None) is not None:
+        elif getattr(self, "object_list", None) is not None:
             kwargs["object_list"] = self.object_list
             kwargs["generic_title"] = self.get_generic_title()
             generic_permission_object = self.get_generic_permission_object()
@@ -402,6 +402,9 @@ class CRUDView(PaginationMixin, Filterable, View):
             )
             if name := self.get_context_object_name():
                 kwargs[name] = self.object_list
+
+        else:
+            kwargs["generic_title"] = self.get_generic_title()
 
         return kwargs
 
@@ -427,7 +430,10 @@ class CRUDView(PaginationMixin, Filterable, View):
             self.url_name = url_name
             self.namespace = namespace
             self.setup(request, *args, **kwargs)
-            for verb, method in CRUDHandlerMap.get(action).items():
+            crud_map = CRUDHandlerMap.get(action).copy()
+            if extra_actions := getattr(cls, "extra_actions", {}).get(action):
+                crud_map.update(extra_actions)
+            for verb, method in crud_map.items():
                 setattr(self, verb, getattr(self, method))
             return self.dispatch(request, *args, **kwargs)
 

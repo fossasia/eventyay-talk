@@ -1,10 +1,10 @@
-{% extends "orga/base.html" %}
+{% extends "orga/generic/list.html" %}
 
 {% load compress %}
 {% load i18n %}
 {% load static %}
 
-{% block extra_title %}{% translate "Tracks" %} :: {% endblock extra_title %}
+{% block create_button_label %}{% translate "New track" %}{% endblock create_button_label %}
 
 {% block stylesheets %}
     {% compress css %}
@@ -20,13 +20,14 @@
     {% endcompress %}
 {% endblock scripts %}
 
-{% block content %}
-    <h2>
-        {% translate "Tracks" %}
-        <span class="dialog-anchor" data-target="#info-dialog" data-toggle="dialog">
-            <i class="fa fa-question-circle-o text-info"></i>
-        </span>
-    </h2>
+{% block page_title %}
+    {{ generic_title }}
+    <span class="dialog-anchor" data-target="#info-dialog" data-toggle="dialog">
+        <i class="fa fa-question-circle-o text-info ml-2"></i>
+    </span>
+{% endblock page_title %}
+
+{% block list_content %}
     <dialog id="info-dialog">
         <div class="alert alert-info">
             {% blocktranslate trimmed %}
@@ -36,12 +37,6 @@
             {% endblocktranslate %}
         </div>
     </dialog>
-    <div class="d-flex justify-content-end mb-3">
-        <a class="btn btn-info" href="{{ request.event.cfp.urls.new_track }}">
-            <i class="fa fa-plus"></i>
-            {% translate "New track" %}
-        </a>
-    </div>
     <div class="table-responsive-sm">
         <table class="table table-sm table-flip table-sticky">
             <thead>
@@ -53,7 +48,7 @@
                 </tr>
             </thead>
             <tbody dragsort-url="{{ request.cfp.urls.tracks }}">
-                {% for track in tracks %}
+                {% for track in track_list %}
                     <tr dragsort-id="{{ track.id }}">
                         <td>
                             <a href="{{ track.urls.edit }}">{{ track.name }}</a>
@@ -91,4 +86,4 @@
 
     {% include "orga/includes/pagination.html" %}
 
-{% endblock content %}
+{% endblock list_content %}

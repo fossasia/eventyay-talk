@@ -4,8 +4,11 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from i18nfield.fields import I18nCharField, I18nTextField
 
+from pretalx.agenda.rules import is_agenda_visible
 from pretalx.common.models.mixins import OrderedModel, PretalxModel
 from pretalx.common.urls import EventUrls
+from pretalx.person.rules import can_change_event_settings
+from pretalx.submission.rules import is_cfp_open, orga_can_change_submissions
 
 
 class Track(OrderedModel, PretalxModel):
@@ -43,16 +46,31 @@ class Track(OrderedModel, PretalxModel):
         default=False,
     )
 
+    log_prefix = "pretalx.track"
+
     class Meta:
         ordering = ("position",)
+        rules_permissions = {
+            "list": is_cfp_open | is_agenda_visible | orga_can_change_submissions,
+            "view": is_cfp_open | is_agenda_visible | orga_can_change_submissions,
+            "orga_list": orga_can_change_submissions,
+            "orga_view": orga_can_change_submissions,
+            "create": can_change_event_settings,
+            "update": can_change_event_settings,
+            "delete": can_change_event_settings,
+        }
 
     class urls(EventUrls):
         base = edit = "{self.event.cfp.urls.tracks}{self.pk}/"
-        delete = "{base}delete"
+        delete = "{base}delete/"
         prefilled_cfp = "{self.event.cfp.urls.public}?track={self.slug}"
 
     def __str__(self) -> str:
         return str(self.name)
+
+    @property
+    def log_parent(self):
+        return self.event
 
     @staticmethod
     def get_order_queryset(event):

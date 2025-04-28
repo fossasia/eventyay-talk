@@ -4,7 +4,7 @@ import rules
 from django.utils.timezone import now
 
 from pretalx.person.permissions import is_administrator
-from pretalx.person.rules import is_reviewer
+from pretalx.person.rules import can_change_event_settings, is_reviewer
 from pretalx.submission.permissions import (
     can_be_reviewed,
     can_view_all_reviews,
@@ -13,18 +13,6 @@ from pretalx.submission.permissions import (
     reviewer_can_change_submissions,
 )
 from pretalx.submission.rules import orga_can_change_submissions
-
-
-@rules.predicate
-def can_change_event_settings(user, obj):
-    event = getattr(obj, "event", None)
-    if not user or user.is_anonymous or not obj or not event:
-        return False
-    if user.is_administrator:
-        return True
-    return event.teams.filter(
-        members__in=[user], can_change_event_settings=True
-    ).exists()
 
 
 @rules.predicate
@@ -134,9 +122,6 @@ rules.add_perm("orga.remove_question", can_change_event_settings)
 rules.add_perm("orga.view_submission_type", orga_can_change_submissions)
 rules.add_perm("orga.edit_submission_type", can_change_event_settings)
 rules.add_perm("orga.remove_submission_type", can_change_event_settings)
-rules.add_perm("orga.view_tracks", orga_can_change_submissions)
-rules.add_perm("orga.view_track", orga_can_change_submissions)
-rules.add_perm("orga.edit_track", can_change_event_settings)
 rules.add_perm("orga.remove_track", can_change_event_settings)
 rules.add_perm("orga.view_access_codes", orga_can_change_submissions)
 rules.add_perm("orga.view_access_code", orga_can_change_submissions)

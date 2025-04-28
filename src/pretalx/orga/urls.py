@@ -225,28 +225,10 @@ urlpatterns = [
                         ]
                     ),
                 ),
-                path("cfp/tracks/", cfp.TrackList.as_view(), name="cfp.tracks.view"),
-                path(
-                    "cfp/tracks/new",
-                    cfp.TrackDetail.as_view(),
-                    name="cfp.track.create",
-                ),
-                path(
-                    "cfp/tracks/<int:pk>/",
-                    include(
-                        [
-                            path(
-                                "",
-                                cfp.TrackDetail.as_view(),
-                                name="cfp.track.view",
-                            ),
-                            path(
-                                "delete",
-                                cfp.TrackDelete.as_view(),
-                                name="cfp.track.delete",
-                            ),
-                        ]
-                    ),
+                *cfp.TrackView.get_urls(
+                    url_base="cfp/tracks",
+                    url_name="cfp.tracks",
+                    namespace="orga",
                 ),
                 path(
                     "cfp/access-codes/",

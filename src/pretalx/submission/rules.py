@@ -32,3 +32,9 @@ def orga_can_change_submissions(user, obj):
 
 
 orga_can_view_submissions = orga_can_change_submissions | is_reviewer
+
+
+@rules.predicate
+def is_cfp_open(user, obj):
+    event = getattr(obj, "event", None)
+    return event and event.is_public and event.cfp.is_open

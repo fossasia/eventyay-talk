@@ -10,7 +10,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db.models import CharField, Q
 from django.db.models.functions import Lower
 from django.http import FileResponse, Http404
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.functional import cached_property
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
@@ -421,3 +421,22 @@ class ActionConfirmMixin:
         ctx["action_title"] = self.action_title
         ctx["action_object_name"] = self.action_object_name
         return ctx
+
+
+class OrderActionMixin:
+    """Change an ordered model with a POST endpoint to a CRUDView list view."""
+
+    extra_actions = {
+        "list": {"post": "order_handler"},
+    }
+
+    def order_handler(self, request, *args, **kwargs):
+        order = request.POST.get("order")
+        if order:
+            order = order.split(",")
+            queryset = self.get_queryset()
+            for index, pk in enumerate(order):
+                obj = get_object_or_404(queryset, pk=pk)
+                obj.position = index
+                obj.save(update_fields=["position"])
+        return self.list(request, *args, **kwargs)

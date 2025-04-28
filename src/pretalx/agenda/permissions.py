@@ -1,16 +1,7 @@
 import rules
 
+from pretalx.agenda.rules import is_agenda_visible
 from pretalx.submission.rules import orga_can_change_submissions
-
-
-@rules.predicate
-def is_agenda_visible(user, event):
-    return bool(
-        event
-        and event.is_public
-        and event.get_feature_flag("show_schedule")
-        and event.current_schedule
-    )
 
 
 @rules.predicate

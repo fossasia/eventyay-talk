@@ -27,10 +27,12 @@ from pretalx.common.forms import I18nFormSet
 from pretalx.common.text.phrases import phrases
 from pretalx.common.text.serialize import I18nStrJSONEncoder
 from pretalx.common.views import CreateOrUpdateView
+from pretalx.common.views.generic import OrgaCRUDView
 from pretalx.common.views.mixins import (
     ActionConfirmMixin,
     ActionFromUrl,
     EventPermissionRequired,
+    OrderActionMixin,
     PaginationMixin,
     PermissionRequired,
 )
@@ -576,84 +578,38 @@ class SubmissionTypeDelete(PermissionRequired, ActionConfirmMixin, DetailView):
         return redirect(self.request.event.cfp.urls.types)
 
 
-class TrackList(EventPermissionRequired, PaginationMixin, ListView):
-    template_name = "orga/cfp/track_view.html"
-    context_object_name = "tracks"
-    permission_required = "orga.view_tracks"
-
-    def post(self, request, *args, **kwargs):
-        order = request.POST.get("order")
-        if order:
-            order = order.split(",")
-        for index, pk in enumerate(order):
-            track = get_object_or_404(Track.objects, event=request.event, pk=pk)
-            track.position = index
-            track.save(update_fields=["position"])
-        return self.get(request, *args, **kwargs)
+class TrackView(OrderActionMixin, OrgaCRUDView):
+    model = Track
+    form_class = TrackForm
+    template_namespace = "orga/cfp"
 
     def get_queryset(self):
         return self.request.event.tracks.all()
 
+    def get_permission_required(self):
+        permission_map = {"list": "orga_list", "detail": "orga_detail"}
+        permission = permission_map.get(self.action, self.action)
+        return self.model.get_perm(permission)
 
-class TrackDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
-    model = Track
-    form_class = TrackForm
-    template_name = "orga/cfp/track_form.html"
-    permission_required = "orga.view_track"
-    write_permission_required = "orga.edit_track"
-
-    def get_success_url(self) -> str:
-        return self.request.event.cfp.urls.tracks
-
-    def get_object(self, queryset=None):
-        return self.request.event.tracks.filter(pk=self.kwargs.get("pk")).first()
-
-    def get_permission_object(self):
-        return self.get_object() or self.request.event
-
-    def get_form_kwargs(self):
-        result = super().get_form_kwargs()
-        result["event"] = self.request.event
-        return result
-
-    def form_valid(self, form):
-        form.instance.event = self.request.event
-        result = super().form_valid(form)
-        messages.success(self.request, phrases.base.saved)
-        if form.has_changed():
-            action = "pretalx.track." + ("update" if self.object else "create")
-            form.instance.log_action(action, person=self.request.user, orga=True)
-        return result
-
-
-class TrackDelete(PermissionRequired, ActionConfirmMixin, DetailView):
-    permission_required = "orga.remove_track"
-
-    def get_object(self, queryset=None):
-        return get_object_or_404(self.request.event.tracks, pk=self.kwargs.get("pk"))
-
-    def action_object_name(self):
-        return _("Track") + f": {self.get_object().name}"
-
-    @property
-    def action_back_url(self):
-        return self.request.event.cfp.urls.tracks
-
-    def post(self, request, *args, **kwargs):
-        track = self.get_object()
-
-        try:
-            track.delete()
-            request.event.log_action(
-                "pretalx.track.delete", person=self.request.user, orga=True
+    def get_generic_title(self, instance=None):
+        if instance:
+            return (
+                _("Track")
+                + f" {phrases.base.quotation_open}{instance.name}{phrases.base.quotation_close}"
             )
-            messages.success(request, _("The track has been deleted."))
+        if self.action == "create":
+            return _("New track")
+        return _("Tracks")
+
+    def delete_handler(self, request, *args, **kwargs):
+        try:
+            return super().delete_handler(request, *args, **kwargs)
         except ProtectedError:
             messages.error(
                 request,
                 _("This track is in use in a proposal and cannot be deleted."),
             )
-        return redirect(self.request.event.cfp.urls.tracks)
+            return self.delete_view(request, *args, **kwargs)
 
 
 class AccessCodeList(EventPermissionRequired, PaginationMixin, ListView):
