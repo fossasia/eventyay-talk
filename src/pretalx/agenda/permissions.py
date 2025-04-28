@@ -1,6 +1,6 @@
 import rules
 
-from pretalx.person.permissions import can_change_submissions
+from pretalx.submission.rules import orga_can_change_submissions
 
 
 @rules.predicate
@@ -90,17 +90,20 @@ def is_speaker_viewable(user, profile):
 
 
 rules.add_perm(
-    "agenda.view_schedule", (has_agenda & is_agenda_visible) | can_change_submissions
+    "agenda.view_schedule",
+    (has_agenda & is_agenda_visible) | orga_can_change_submissions,
 )
 rules.add_perm(
     "agenda.view_featured_submissions",
-    are_featured_submissions_visible | can_change_submissions,
+    are_featured_submissions_visible | orga_can_change_submissions,
 )
-rules.add_perm("agenda.view_submission", is_submission_visible | can_change_submissions)
-rules.add_perm("agenda.view_speaker", is_speaker_viewable | can_change_submissions)
+rules.add_perm(
+    "agenda.view_submission", is_submission_visible | orga_can_change_submissions
+)
+rules.add_perm("agenda.view_speaker", is_speaker_viewable | orga_can_change_submissions)
 rules.add_perm("agenda.give_feedback", is_feedback_ready)
 rules.add_perm("agenda.view_feedback_page", event_uses_feedback & is_submission_visible)
 rules.add_perm(
     "agenda.view_widget",
-    is_agenda_visible | is_widget_always_visible | can_change_submissions,
+    is_agenda_visible | is_widget_always_visible | orga_can_change_submissions,
 )

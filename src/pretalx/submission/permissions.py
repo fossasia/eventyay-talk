@@ -1,8 +1,9 @@
 import rules
 from django.db.models import Q
 
-from pretalx.person.permissions import can_change_submissions, is_reviewer
+from pretalx.person.rules import is_reviewer
 from pretalx.submission.models import SubmissionStates
+from pretalx.submission.rules import orga_can_change_submissions
 
 
 @rules.predicate
@@ -140,57 +141,62 @@ def reviewer_can_change_submissions(user, obj):
 
 rules.add_perm(
     "submission.accept_or_reject_submissions",
-    can_change_submissions | (is_reviewer & reviewer_can_change_submissions),
+    orga_can_change_submissions | (is_reviewer & reviewer_can_change_submissions),
 )
 rules.add_perm("submission.perform_actions", is_speaker)
 rules.add_perm("submission.withdraw_submission", can_be_withdrawn & is_speaker)
 rules.add_perm(
     "submission.reject_submission",
     can_be_rejected
-    & (can_change_submissions | (is_reviewer & reviewer_can_change_submissions)),
+    & (orga_can_change_submissions | (is_reviewer & reviewer_can_change_submissions)),
 )
 rules.add_perm(
     "submission.accept_submission",
     can_be_accepted
-    & (can_change_submissions | (is_reviewer & reviewer_can_change_submissions)),
+    & (orga_can_change_submissions | (is_reviewer & reviewer_can_change_submissions)),
 )
 rules.add_perm(
     "submission.confirm_submission",
-    can_be_confirmed & (is_speaker | can_change_submissions),
+    can_be_confirmed & (is_speaker | orga_can_change_submissions),
 )
 rules.add_perm(
     "submission.cancel_submission",
-    can_be_canceled & (is_speaker | can_change_submissions),
+    can_be_canceled & (is_speaker | orga_can_change_submissions),
 )
-rules.add_perm("submission.remove_submission", can_be_removed & can_change_submissions)
 rules.add_perm(
-    "submission.edit_submission", (can_be_edited & is_speaker) | can_change_submissions
+    "submission.remove_submission", can_be_removed & orga_can_change_submissions
+)
+rules.add_perm(
+    "submission.edit_submission",
+    (can_be_edited & is_speaker) | orga_can_change_submissions,
 )
 rules.add_perm(
     "submission.view_submission",
-    is_speaker | can_change_submissions | has_reviewer_access,
+    is_speaker | orga_can_change_submissions | has_reviewer_access,
 )
 rules.add_perm("submission.review_submission", has_reviewer_access & can_be_reviewed)
 rules.add_perm(
     "submission.edit_review", has_reviewer_access & can_be_reviewed & is_review_author
 )
-rules.add_perm("submission.view_reviews", has_reviewer_access | can_change_submissions)
-rules.add_perm("submission.edit_speaker_list", is_speaker | can_change_submissions)
+rules.add_perm(
+    "submission.view_reviews", has_reviewer_access | orga_can_change_submissions
+)
+rules.add_perm("submission.edit_speaker_list", is_speaker | orga_can_change_submissions)
 rules.add_perm(
     "submission.view_feedback",
-    is_speaker | can_change_submissions | has_reviewer_access,
+    is_speaker | orga_can_change_submissions | has_reviewer_access,
 )
 rules.add_perm(
     "submission.view_submission_comments",
-    submission_comments_active & (has_reviewer_access | can_change_submissions),
+    submission_comments_active & (has_reviewer_access | orga_can_change_submissions),
 )
 rules.add_perm(
     "submission.add_submission_comments",
-    submission_comments_active & (has_reviewer_access | can_change_submissions),
+    submission_comments_active & (has_reviewer_access | orga_can_change_submissions),
 )
 rules.add_perm(
     "submission.delete_submission_comment",
     submission_comments_active
-    & (has_reviewer_access | can_change_submissions)
+    & (has_reviewer_access | orga_can_change_submissions)
     & is_comment_author,
 )
