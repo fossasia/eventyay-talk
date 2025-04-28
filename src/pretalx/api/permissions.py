@@ -8,6 +8,14 @@ MODEL_PERMISSION_MAP = {
     "destroy": "delete",
 }
 
+MODEL_PERMISSION_MAP = {
+    "list": "list",
+    "retrieve": "view",
+    "update": "update",
+    "partial_update": "update",
+    "destroy": "delete",
+}
+
 
 class ApiPermission(BasePermission):
 
