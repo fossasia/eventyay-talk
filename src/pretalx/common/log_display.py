@@ -81,6 +81,8 @@ LOG_NAMES = {
     "pretalx.tag.delete": _("A tag was deleted."),
     "pretalx.tag.update": _("A tag was modified."),
     "pretalx.room.create": _("A new room was added."),
+    "pretalx.room.update": _("A room was modified."),
+    "pretalx.room.delete": _("A room was deleted."),
     "pretalx.schedule.release": _("A new schedule version was released."),
     "pretalx.submission.accept": _("The proposal was accepted."),
     "pretalx.submission.cancel": _("The proposal was cancelled."),

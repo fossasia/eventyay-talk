@@ -664,32 +664,10 @@ urlpatterns = [
                     schedule.ScheduleResendMailsView.as_view(),
                     name="schedule.resend_mails",
                 ),
-                path(
-                    "schedule/rooms/",
-                    schedule.RoomList.as_view(),
-                    name="schedule.rooms.list",
-                ),
-                path(
-                    "schedule/rooms/new",
-                    schedule.RoomDetail.as_view(),
-                    name="schedule.rooms.create",
-                ),
-                path(
-                    "schedule/rooms/<int:pk>/",
-                    include(
-                        [
-                            path(
-                                "",
-                                schedule.RoomDetail.as_view(),
-                                name="schedule.rooms.view",
-                            ),
-                            path(
-                                "delete",
-                                schedule.RoomDelete.as_view(),
-                                name="schedule.rooms.delete",
-                            ),
-                        ]
-                    ),
+                *schedule.RoomView.get_urls(
+                    url_base="schedule/rooms",
+                    url_name="schedule.rooms",
+                    namespace="orga",
                 ),
                 path(
                     "schedule/api/talks/<int:pk>/",

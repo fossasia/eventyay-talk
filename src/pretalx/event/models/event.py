@@ -350,7 +350,7 @@ class Event(PretalxModel):
         team_settings = "{settings}team/"
         new_team = "{settings}team/new"
         room_settings = "{schedule}rooms/"
-        new_room = "{room_settings}new"
+        new_room = "{room_settings}new/"
         schedule = "{base}schedule/"
         schedule_export = "{schedule}export/"
         schedule_export_trigger = "{schedule_export}trigger"

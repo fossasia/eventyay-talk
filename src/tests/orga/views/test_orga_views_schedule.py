@@ -417,6 +417,10 @@ def test_delete_room(orga_client, event, room):
     response = orga_client.get(room.urls.delete, follow=True)
     assert response.status_code == 200
     with scope(event=event):
+        assert event.rooms.count() == 1
+    response = orga_client.post(room.urls.delete, follow=True)
+    assert response.status_code == 200
+    with scope(event=event):
         assert event.rooms.count() == 0
 
 
