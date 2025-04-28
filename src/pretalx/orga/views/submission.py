@@ -24,6 +24,7 @@ from pretalx.common.forms.fields import SizeFileInput
 from pretalx.common.models import ActivityLog
 from pretalx.common.text.phrases import phrases
 from pretalx.common.views import CreateOrUpdateView
+from pretalx.common.views.generic import OrgaCRUDView
 from pretalx.common.views.mixins import (
     ActionConfirmMixin,
     ActionFromUrl,
@@ -968,68 +969,27 @@ class AllFeedbacksList(EventPermissionRequired, PaginationMixin, ListView):
         )
 
 
-class TagList(EventPermissionRequired, PaginationMixin, ListView):
-    template_name = "orga/submission/tag_list.html"
-    context_object_name = "tags"
-    permission_required = "orga.view_submissions"
+class TagView(OrgaCRUDView):
+    model = Tag
+    form_class = TagForm
+    template_namespace = "orga/submission"
+    list_permission_required = "orga.view_submissions"
+    write_permission_required = "orga.edit_tags"
+    create_permission_required = "orga.add_tags"
+    detail_is_update = True
 
     def get_queryset(self):
         return self.request.event.tags.all().order_by("tag")
 
-
-class TagDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
-    model = Tag
-    form_class = TagForm
-    template_name = "orga/submission/tag_form.html"
-    permission_required = "orga.view_submissions"
-    write_permission_required = "orga.edit_tags"
-    create_permission_required = "orga.add_tags"
-
-    def get_success_url(self) -> str:
-        return self.request.event.orga_urls.tags
-
-    def get_object(self):
-        return self.request.event.tags.filter(pk=self.kwargs.get("pk")).first()
-
-    def get_permission_object(self):
-        return self.get_object() or self.request.event
-
-    def get_form_kwargs(self):
-        result = super().get_form_kwargs()
-        result["event"] = self.request.event
-        return result
-
-    def form_valid(self, form):
-        form.instance.event = self.request.event
-        result = super().form_valid(form)
-        messages.success(self.request, phrases.base.saved)
-        if form.has_changed():
-            action = "pretalx.tag." + ("update" if self.object else "create")
-            form.instance.log_action(action, person=self.request.user, orga=True)
-        return result
-
-
-class TagDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
-    permission_required = "orga.remove_tags"
-
-    def get_object(self):
-        return get_object_or_404(self.request.event.tags, pk=self.kwargs.get("pk"))
-
-    def action_object_name(self):
-        return _("Tag") + f": {self.get_object().tag}"
-
-    def action_back_url(self):
-        return self.request.event.orga_urls.tags
-
-    def post(self, request, *args, **kwargs):
-        tag = self.get_object()
-
-        tag.delete()
-        request.event.log_action(
-            "pretalx.tag.delete", person=self.request.user, orga=True
-        )
-        messages.success(request, _("The tag has been deleted."))
-        return redirect(self.request.event.orga_urls.tags)
+    def get_generic_title(self, instance=None):
+        if instance:
+            return (
+                _("Tag")
+                + f" {phrases.base.quotation_open}{instance.tag}{phrases.base.quotation_close}"
+            )
+        if self.action == "create":
+            return _("New tag")
+        return _("Tags")
 
 
 class CommentList(SubmissionViewMixin, FormView):

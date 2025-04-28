@@ -7,6 +7,7 @@ from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from django_scopes import ScopedManager, scopes_disabled
 from i18nfield.utils import I18nJSONEncoder
+from rules.contrib.models import RulesModelBase, RulesModelMixin
 
 SENSITIVE_KEYS = ["password", "secret", "api_key"]
 
@@ -148,7 +149,14 @@ class FileCleanupMixin:
         )
 
 
-class PretalxModel(LogMixin, TimestampedModel, FileCleanupMixin, models.Model):
+class PretalxModel(
+    LogMixin,
+    TimestampedModel,
+    FileCleanupMixin,
+    RulesModelMixin,
+    models.Model,
+    metaclass=RulesModelBase,
+):
     """
     Base model for most pretalx models. Suitable for plugins.
     """

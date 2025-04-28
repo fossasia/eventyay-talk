@@ -410,32 +410,10 @@ urlpatterns = [
                     submission.AllFeedbacksList.as_view(),
                     name="submissions.feedback",
                 ),
-                path(
-                    "submissions/tags/",
-                    submission.TagList.as_view(),
-                    name="submissions.tags.view",
-                ),
-                path(
-                    "submissions/tags/new",
-                    submission.TagDetail.as_view(),
-                    name="submissions.tag.create",
-                ),
-                path(
-                    "submissions/tags/<int:pk>/",
-                    include(
-                        [
-                            path(
-                                "",
-                                submission.TagDetail.as_view(),
-                                name="submissions.tag.view",
-                            ),
-                            path(
-                                "delete",
-                                submission.TagDelete.as_view(),
-                                name="submissions.tag.delete",
-                            ),
-                        ]
-                    ),
+                *submission.TagView.get_urls(
+                    url_base="submissions/tags",
+                    url_name="submissions.tags",
+                    namespace="orga",
                 ),
                 path(
                     "submissions/<code>/",

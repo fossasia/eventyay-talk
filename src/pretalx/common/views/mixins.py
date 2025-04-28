@@ -325,16 +325,14 @@ class SocialMediaCardMixin:
 
 
 class PaginationMixin:
-    # TODO: possible make this into a PretalxListView, to make things easier for
-    # plugin developers
 
     DEFAULT_PAGINATION = 50
 
-    def get_paginate_by(self, queryset):
+    def get_paginate_by(self, queryset=None):
         skey = "stored_page_size_" + self.request.resolver_match.url_name
         default = (
             self.request.session.get(skey)
-            or self.paginate_by
+            or getattr(self, "paginate_by", None)
             or self.DEFAULT_PAGINATION
         )
         if self.request.GET.get("page_size"):
@@ -348,7 +346,11 @@ class PaginationMixin:
         return default
 
     def get_context_data(self, **kwargs):
+        from pretalx.common.views.generic import CRUDView
+
         ctx = super().get_context_data(**kwargs)
+        if isinstance(self, CRUDView) and not self.action == "list":
+            return ctx
         ctx["page_size"] = self.get_paginate_by(None)
         ctx["pagination_sizes"] = [50, 100, 250]
         return ctx
