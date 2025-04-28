@@ -973,10 +973,6 @@ class TagView(OrgaCRUDView):
     model = Tag
     form_class = TagForm
     template_namespace = "orga/submission"
-    list_permission_required = "orga.view_submissions"
-    write_permission_required = "orga.edit_tags"
-    create_permission_required = "orga.add_tags"
-    detail_is_update = True
 
     def get_queryset(self):
         return self.request.event.tags.all().order_by("tag")

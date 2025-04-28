@@ -335,7 +335,7 @@ class Event(PretalxModel):
         purge_outbox = "{outbox}purge"
         submissions = "{base}submissions/"
         tags = "{submissions}tags/"
-        new_tag = "{tags}new"
+        new_tag = "{tags}new/"
         submission_cards = "{base}submissions/cards/"
         stats = "{base}submissions/statistics/"
         submission_feed = "{base}submissions/feed/"

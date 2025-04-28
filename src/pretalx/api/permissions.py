@@ -1,4 +1,12 @@
-from rest_framework.permissions import SAFE_METHODS, BasePermission
+from rest_framework.permissions import BasePermission
+
+MODEL_PERMISSION_MAP = {
+    "list": "list",
+    "retrieve": "view",
+    "update": "update",
+    "partial_update": "update",
+    "destroy": "delete",
+}
 
 
 class ApiPermission(BasePermission):
@@ -29,7 +37,7 @@ class ApiPermission(BasePermission):
         if request.auth:
             if event not in request.auth.team.events:
                 return False
-            if endpoint := getattr(view, "endpoint", None):
+            if view.action and (endpoint := getattr(view, "endpoint", None)):
                 if not request.auth.has_endpoint_permission(endpoint, view.action):
                     return False
 
@@ -41,19 +49,13 @@ class ApiPermission(BasePermission):
         permission_object = self.get_permission_object(
             view, obj, request, detail=view.detail
         )
-        if permission_map := getattr(view, "permission_map", None):
-            if permission_required := permission_map.get(view.action):
-                return request.user.has_perm(permission_required, permission_object)
-
-        if request.method in SAFE_METHODS:
-            read_permission = getattr(view, "read_permission_required", None)
-            if read_permission:
-                return request.user.has_perm(read_permission, permission_object)
-            return True
-
-        write_permission = getattr(view, "write_permission_required", None)
-        if write_permission:
-            return request.user.has_perm(write_permission, permission_object)
+        model_action = MODEL_PERMISSION_MAP.get(view.action, view.action)
+        permission_map = getattr(view, "permission_map", None) or {}
+        permission_required = permission_map.get(
+            view.action
+        ) or view.queryset.model.get_perm(model_action)
+        if permission_required:
+            return request.user.has_perm(permission_required, permission_object)
         return False
 
 
