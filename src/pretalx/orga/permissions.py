@@ -132,8 +132,6 @@ rules.add_perm("orga.send_mails", orga_can_change_submissions)
 rules.add_perm("orga.send_reviewer_mails", can_change_teams)
 rules.add_perm("orga.edit_mails", orga_can_change_submissions & can_edit_mail)
 rules.add_perm("orga.purge_mails", orga_can_change_submissions)
-rules.add_perm("orga.view_mail_templates", orga_can_change_submissions)
-rules.add_perm("orga.edit_mail_templates", orga_can_change_submissions)
 rules.add_perm("orga.view_review_dashboard", orga_can_change_submissions | is_reviewer)
 rules.add_perm(
     "orga.view_reviews", orga_can_change_submissions | (is_reviewer & can_view_reviews)

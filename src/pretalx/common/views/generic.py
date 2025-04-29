@@ -306,11 +306,9 @@ class CRUDView(PaginationMixin, Filterable, View):
     def get_success_url(self):
         if next_url := get_next_url(self.request):
             return next_url
-        if self.action == "delete":
+        if self.action == "delete" or self.detail_is_update:
             return self.reverse("list")
-        return self.reverse(
-            "list" if self.detail_is_update else "detail", instance=self.object
-        )
+        return self.reverse("detail", instance=self.object)
 
     def paginate_queryset(self, queryset, page_size):
         paginator = Paginator(queryset, page_size)

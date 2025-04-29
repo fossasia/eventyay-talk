@@ -328,7 +328,7 @@ class Event(PretalxModel):
         compose_mails_teams = "{compose_mails}/teams/"
         send_drafts_reminder = "{compose_mails}/reminders"
         mail_templates = "{mail}templates/"
-        new_template = "{mail_templates}new"
+        new_template = "{mail_templates}new/"
         outbox = "{mail}outbox/"
         sent_mails = "{mail}sent"
         send_outbox = "{outbox}send"

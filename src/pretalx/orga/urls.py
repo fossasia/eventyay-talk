@@ -272,32 +272,10 @@ urlpatterns = [
                         ]
                     ),
                 ),
-                path(
-                    "mails/templates/",
-                    mails.TemplateList.as_view(),
-                    name="mails.templates.list",
-                ),
-                path(
-                    "mails/templates/new",
-                    mails.TemplateDetail.as_view(),
-                    name="mails.templates.create",
-                ),
-                path(
-                    "mails/templates/<int:pk>/",
-                    include(
-                        [
-                            path(
-                                "",
-                                mails.TemplateDetail.as_view(),
-                                name="mails.templates.view",
-                            ),
-                            path(
-                                "delete",
-                                mails.TemplateDelete.as_view(),
-                                name="mails.templates.delete",
-                            ),
-                        ]
-                    ),
+                *mails.MailTemplateView.get_urls(
+                    url_base="mails/templates",
+                    url_name="mails.templates",
+                    namespace="orga",
                 ),
                 path(
                     "mails/compose/reminders",

@@ -14,6 +14,7 @@ from pretalx.common.models.mixins import PretalxModel
 from pretalx.common.urls import EventUrls
 from pretalx.mail.context import get_mail_context
 from pretalx.mail.signals import queuedmail_post_send, queuedmail_pre_send
+from pretalx.submission.rules import orga_can_change_submissions
 
 
 def get_prefixed_subject(event, subject):
@@ -51,6 +52,8 @@ class MailTemplate(PretalxModel):
     The process does not come with variable substitution except for
     special cases, for now.
     """
+
+    log_prefix = "pretalx.mail_template"
 
     event = models.ForeignKey(
         to="event.Event",
@@ -94,14 +97,25 @@ class MailTemplate(PretalxModel):
 
     class Meta:
         unique_together = (("event", "role"),)
+        rules_permissions = {
+            "list": orga_can_change_submissions,
+            "view": orga_can_change_submissions,
+            "create": orga_can_change_submissions,
+            "update": orga_can_change_submissions,
+            "delete": orga_can_change_submissions,
+        }
 
     class urls(EventUrls):
         base = edit = "{self.event.orga_urls.mail_templates}{self.pk}/"
-        delete = "{base}delete"
+        delete = "{base}delete/"
 
     def __str__(self):
         """Help with debugging."""
         return f"MailTemplate(event={self.event.slug}, subject={self.subject})"
+
+    @property
+    def log_parent(self):
+        return self.event
 
     def to_mail(
         self,
