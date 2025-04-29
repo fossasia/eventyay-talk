@@ -12,14 +12,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import (
-    DetailView,
-    FormView,
-    ListView,
-    TemplateView,
-    UpdateView,
-    View,
-)
+from django.views.generic import DetailView, FormView, TemplateView, UpdateView, View
 from django_context_decorator import context
 
 from pretalx.cfp.flow import CfPFlow
@@ -33,7 +26,6 @@ from pretalx.common.views.mixins import (
     ActionFromUrl,
     EventPermissionRequired,
     OrderActionMixin,
-    PaginationMixin,
     PermissionRequired,
 )
 from pretalx.mail.models import MailTemplateRoles
@@ -602,59 +594,53 @@ class TrackView(OrderActionMixin, OrgaCRUDView):
             return self.delete_view(request, *args, **kwargs)
 
 
-class AccessCodeList(EventPermissionRequired, PaginationMixin, ListView):
-    template_name = "orga/cfp/access_code_view.html"
-    context_object_name = "access_codes"
-    permission_required = "orga.view_access_codes"
+class AccessCodeView(OrderActionMixin, OrgaCRUDView):
+    model = SubmitterAccessCode
+    form_class = SubmitterAccessCodeForm
+    template_namespace = "orga/cfp"
+    context_object_name = "access_code"
+    lookup_field = "code"
+    path_converter = "str"
 
     def get_queryset(self):
         return self.request.event.submitter_access_codes.all().order_by("valid_until")
 
-
-class AccessCodeDetail(PermissionRequired, CreateOrUpdateView):
-    model = SubmitterAccessCode
-    form_class = SubmitterAccessCodeForm
-    template_name = "orga/cfp/access_code_form.html"
-    permission_required = "orga.view_access_code"
-    write_permission_required = "orga.edit_access_code"
-
-    def get_success_url(self) -> str:
-        return self.request.event.cfp.urls.access_codes
-
-    def get_object(self):
-        return self.request.event.submitter_access_codes.filter(
-            code__iexact=self.kwargs.get("code")
-        ).first()
+    def get_generic_title(self, instance=None):
+        if instance:
+            return (
+                _("Access code")
+                + f" {phrases.base.quotation_open}{instance.code}{phrases.base.quotation_close}"
+            )
+        if self.action == "create":
+            return _("New access code")
+        return _("Access codes")
 
     def get_form_kwargs(self):
-        result = super().get_form_kwargs()
-        result["event"] = self.request.event
-        if result.get("instance"):
-            return result
+        kwargs = super().get_form_kwargs()
         if track := self.request.GET.get("track"):
-            track = self.request.event.tracks.filter(pk=track).first()
-            if track:
-                result["initial"]["track"] = track
-        return result
+            if track := self.request.event.tracks.filter(pk=track).first():
+                kwargs["initial"] = kwargs.get("initial", {})
+                kwargs["initial"]["track"] = track
+        return kwargs
 
-    def get_permission_object(self):
-        return self.get_object() or self.request.event
-
-    def form_valid(self, form):
-        form.instance.event = self.request.event
-        result = super().form_valid(form)
-        if form.has_changed():
-            action = "pretalx.access_code." + ("update" if self.object else "create")
-            form.instance.log_action(action, person=self.request.user, orga=True)
-        messages.success(self.request, phrases.base.saved)
-        return result
+    def delete_handler(self, request, *args, **kwargs):
+        try:
+            return super().delete_handler(request, *args, **kwargs)
+        except ProtectedError:
+            messages.error(
+                request,
+                _(
+                    "This access code has been used for a proposal and cannot be deleted. To disable it, you can set its validity date to the past."
+                ),
+            )
+            return self.delete_view(request, *args, **kwargs)
 
 
 class AccessCodeSend(PermissionRequired, UpdateView):
     model = SubmitterAccessCode
     form_class = AccessCodeSendForm
     context_object_name = "access_code"
-    template_name = "orga/cfp/access_code_send.html"
+    template_name = "orga/cfp/submitteraccesscode/send.html"
     permission_required = "orga.view_access_code"
 
     def get_success_url(self) -> str:
@@ -684,41 +670,6 @@ class AccessCodeSend(PermissionRequired, UpdateView):
             data={"email": form.cleaned_data["to"]},
         )
         return result
-
-
-class AccessCodeDelete(PermissionRequired, ActionConfirmMixin, DetailView):
-    permission_required = "orga.remove_access_code"
-
-    def get_object(self, queryset=None):
-        return get_object_or_404(
-            self.request.event.submitter_access_codes,
-            code__iexact=self.kwargs.get("code"),
-        )
-
-    def action_object_name(self):
-        return _("Access code") + f": {self.get_object().code}"
-
-    @property
-    def action_back_url(self):
-        return self.request.event.cfp.urls.access_codes
-
-    def post(self, request, *args, **kwargs):
-        access_code = self.get_object()
-
-        try:
-            access_code.delete()
-            request.event.log_action(
-                "pretalx.access_code.delete", person=self.request.user, orga=True
-            )
-            messages.success(request, _("The access code has been deleted."))
-        except ProtectedError:
-            messages.error(
-                request,
-                _(
-                    "This access code has been used for a proposal and cannot be deleted. To disable it, you can set its validity date to the past."
-                ),
-            )
-        return redirect(self.request.event.cfp.urls.access_codes)
 
 
 @method_decorator(csp_update(SCRIPT_SRC="'self' 'unsafe-eval'"), name="dispatch")

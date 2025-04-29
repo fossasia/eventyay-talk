@@ -208,37 +208,15 @@ urlpatterns = [
                     url_name="cfp.tracks",
                     namespace="orga",
                 ),
-                path(
-                    "cfp/access-codes/",
-                    cfp.AccessCodeList.as_view(),
-                    name="cfp.access_code.view",
+                *cfp.AccessCodeView.get_urls(
+                    url_base="cfp/access-codes",
+                    url_name="cfp.access_code",
+                    namespace="orga",
                 ),
                 path(
-                    "cfp/access-codes/new",
-                    cfp.AccessCodeDetail.as_view(),
-                    name="cfp.access_code.create",
-                ),
-                path(
-                    "cfp/access-codes/<slug:code>/",
-                    include(
-                        [
-                            path(
-                                "",
-                                cfp.AccessCodeDetail.as_view(),
-                                name="cfp.access_code.view",
-                            ),
-                            path(
-                                "send",
-                                cfp.AccessCodeSend.as_view(),
-                                name="cfp.access_code.send",
-                            ),
-                            path(
-                                "delete",
-                                cfp.AccessCodeDelete.as_view(),
-                                name="cfp.access_code.delete",
-                            ),
-                        ]
-                    ),
+                    "cfp/access-codes/<slug:code>/send",
+                    cfp.AccessCodeSend.as_view(),
+                    name="cfp.access_code.send",
                 ),
                 path(
                     "mails/<int:pk>/",

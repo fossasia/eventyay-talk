@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 
 from pretalx.common.models.mixins import GenerateCode, PretalxModel
 from pretalx.common.urls import EventUrls
+from pretalx.person.rules import can_change_event_settings
 
 
 class SubmitterAccessCode(GenerateCode, PretalxModel):
@@ -65,14 +66,27 @@ class SubmitterAccessCode(GenerateCode, PretalxModel):
 
     _code_length = 32
 
+    log_prefix = "pretalx.access_code"
+
     class Meta:
         unique_together = (("event", "code"),)
+        rules_permissions = {
+            "list": can_change_event_settings,
+            "view": can_change_event_settings,
+            "create": can_change_event_settings,
+            "update": can_change_event_settings,
+            "delete": can_change_event_settings,
+        }
 
     class urls(EventUrls):
-        edit = "{self.event.cfp.urls.access_codes}{self.code}/"
-        send = "{edit}send"
-        delete = "{edit}delete"
+        base = edit = "{self.event.cfp.urls.access_codes}{self.code}/"
+        send = "{base}send"
+        delete = "{base}delete/"
         cfp_url = "{self.event.cfp.urls.public}?access_code={self.code}"
+
+    @property
+    def log_parent(self):
+        return self.event
 
     @property
     def is_valid(self):
