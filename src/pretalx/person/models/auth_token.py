@@ -36,6 +36,7 @@ ENDPOINTS = (
     "tags",
     "tracks",
     "schedules",
+    "submission-types",
 )
 
 

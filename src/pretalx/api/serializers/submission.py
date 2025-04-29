@@ -12,7 +12,14 @@ from pretalx.api.serializers.question import AnswerSerializer
 from pretalx.api.serializers.speaker import SubmitterOrgaSerializer, SubmitterSerializer
 from pretalx.api.versions import CURRENT_VERSION, register_serializer
 from pretalx.schedule.models import Schedule, TalkSlot
-from pretalx.submission.models import Resource, Submission, SubmissionStates, Tag, Track
+from pretalx.submission.models import (
+    Resource,
+    Submission,
+    SubmissionStates,
+    SubmissionType,
+    Tag,
+    Track,
+)
 
 
 @register_serializer()
@@ -160,6 +167,47 @@ class TagSerializer(PretalxSerializer):
     def create(self, validated_data):
         validated_data["event"] = getattr(self.context.get("request"), "event", None)
         return super().create(validated_data)
+
+
+@register_serializer(versions=[CURRENT_VERSION])
+class SubmissionTypeSerializer(PretalxSerializer):
+    class Meta:
+        model = SubmissionType
+        fields = (
+            "id",
+            "name",
+            "default_duration",
+            "deadline",
+            "requires_access_code",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.event = getattr(self.context.get("request"), "event", None)
+
+    def create(self, validated_data):
+        validated_data["event"] = self.event
+        return super().create(validated_data)
+
+    def validate_name(self, value):
+        existing_types = self.event.submission_types.all()
+        if self.instance and self.instance.pk:
+            existing_types.exclude(pk=self.instance.pk)
+        if any(str(stype.name) == str(value) for stype in existing_types):
+            raise exceptions.ValidationError(
+                "Submission type name already exists in event."
+            )
+        return value
+
+    def update(self, instance, validated_data):
+        duration_changed = (
+            "duration" in validated_data
+            and validated_data["duration"] != instance.duration
+        )
+        result = super().update(instance, validated_data)
+        if duration_changed:
+            instance.update_duration()
+        return result
 
 
 @register_serializer(versions=[CURRENT_VERSION])

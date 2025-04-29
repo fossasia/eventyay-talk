@@ -16,11 +16,18 @@ from pretalx.api.serializers.submission import (
     SubmissionOrgaSerializer,
     SubmissionReviewerSerializer,
     SubmissionSerializer,
+    SubmissionTypeSerializer,
     TagSerializer,
     TrackSerializer,
 )
 from pretalx.schedule.models import Schedule
-from pretalx.submission.models import Submission, SubmissionStates, Tag, Track
+from pretalx.submission.models import (
+    Submission,
+    SubmissionStates,
+    SubmissionType,
+    Tag,
+    Track,
+)
 
 with scopes_disabled():
 
@@ -180,6 +187,26 @@ class TagViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         return self.request.event.tags.all()
+
+
+@extend_schema_view(
+    list=extend_schema(
+        summary="List Submission Types", parameters=[build_search_docs("name")]
+    ),
+    retrieve=extend_schema(summary="Show Submission Types"),
+    create=extend_schema(summary="Create Submission Types"),
+    update=extend_schema(summary="Update Submission Types"),
+    partial_update=extend_schema(summary="Update Submission Types (Partial Update)"),
+    destroy=extend_schema(summary="Delete Submission Types"),
+)
+class SubmissionTypeViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
+    serializer_class = SubmissionTypeSerializer
+    queryset = SubmissionType.objects.none()
+    endpoint = "submission-types"
+    search_fields = ("name",)
+
+    def get_queryset(self):
+        return self.request.event.submission_types.all()
 
 
 @extend_schema_view(
