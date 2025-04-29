@@ -12,7 +12,8 @@ from i18nfield.fields import I18nCharField, I18nTextField
 from pretalx.common.exceptions import SendMailException
 from pretalx.common.models.mixins import PretalxModel
 from pretalx.common.urls import EventUrls
-from pretalx.mail.context import get_mail_context
+from pretalx.mail.context import get_available_placeholders, get_mail_context
+from pretalx.mail.placeholders import SimpleFunctionalMailTextPlaceholder
 from pretalx.mail.signals import queuedmail_post_send, queuedmail_pre_send
 from pretalx.submission.rules import orga_can_change_submissions
 
@@ -44,6 +45,18 @@ class MailTemplateRoles(models.TextChoices):
     NEW_SCHEDULE = "schedule.new", _("New schedule published")
 
 
+PLACEHOLDER_KWARGS = {
+    MailTemplateRoles.NEW_SUBMISSION: ["submission", "event", "user", "slot"],
+    MailTemplateRoles.NEW_SUBMISSION_INTERNAL: ["submission", "event"],
+    MailTemplateRoles.SUBMISSION_ACCEPT: ["submission", "event", "user"],
+    MailTemplateRoles.SUBMISSION_REJECT: ["submission", "event", "user"],
+    MailTemplateRoles.NEW_SPEAKER_INVITE: ["submission", "event", "user"],
+    MailTemplateRoles.EXISTING_SPEAKER_INVITE: ["submission", "event", "user"],
+    MailTemplateRoles.QUESTION_REMINDER: ["event", "user"],
+    MailTemplateRoles.NEW_SCHEDULE: ["event", "user"],
+}
+
+
 class MailTemplate(PretalxModel):
     """MailTemplates can be used to create.
 
@@ -65,6 +78,7 @@ class MailTemplate(PretalxModel):
         max_length=30,
         null=True,
         default=None,
+        editable=False,
     )
     subject = I18nCharField(
         max_length=200,
@@ -213,6 +227,50 @@ class MailTemplate(PretalxModel):
         return mail
 
     to_mail.alters_data = True
+
+    @cached_property
+    def valid_placeholders(self):
+        valid_placeholders = {}
+        if self.role == MailTemplateRoles.QUESTION_REMINDER:
+            valid_placeholders["questions"] = SimpleFunctionalMailTextPlaceholder(
+                "questions",
+                ["user"],
+                None,
+                _("- First missing field\n- Second missing field"),
+                _(
+                    "The list of custom fields that the user has not responded to, as bullet points"
+                ),
+            )
+            valid_placeholders["url"] = SimpleFunctionalMailTextPlaceholder(
+                "url",
+                ["event", "user"],
+                None,
+                "https://pretalx.example.com/democon/me/submissions/",
+                is_visible=False,
+            )
+            kwargs = ["event", "user"]
+        elif self.role == MailTemplateRoles.NEW_SPEAKER_INVITE:
+            valid_placeholders["invitation_link"] = SimpleFunctionalMailTextPlaceholder(
+                "invitation_link",
+                ["event", "user"],
+                None,
+                "https://pretalx.example.com/democon/invitation/123abc/",
+            )
+        elif self.role == MailTemplateRoles.NEW_SUBMISSION_INTERNAL:
+            valid_placeholders["orga_url"] = SimpleFunctionalMailTextPlaceholder(
+                "orga_url",
+                ["event", "submission"],
+                None,
+                "https://pretalx.example.com/orga/events/democon/submissions/124ABCD/",
+            )
+
+        kwargs = ["event", "user", "submission", "slot"]
+        if self.role:
+            kwargs = PLACEHOLDER_KWARGS[self.role]
+        valid_placeholders.update(
+            get_available_placeholders(event=self.event, kwargs=kwargs)
+        )
+        return valid_placeholders
 
 
 class QueuedMail(PretalxModel):

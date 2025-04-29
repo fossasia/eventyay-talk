@@ -2,7 +2,16 @@ from django.urls import include, path
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 
-from pretalx.api.views import event, question, review, room, speaker, submission, user
+from pretalx.api.views import (
+    event,
+    mail,
+    question,
+    review,
+    room,
+    speaker,
+    submission,
+    user,
+)
 
 default_router = routers.DefaultRouter()
 default_router.register("events", event.EventViewSet, basename="event")
@@ -18,6 +27,9 @@ event_router.register(
     "submission-types", submission.SubmissionTypeViewSet, basename="submission_type"
 )
 event_router.register("tracks", submission.TrackViewSet, basename="track")
+event_router.register(
+    "mail-templates", mail.MailTemplateViewSet, basename="mail_template"
+)
 event_router.register("speakers", speaker.SpeakerViewSet, basename="speaker")
 event_router.register("reviews", review.ReviewViewSet, basename="review")
 event_router.register("rooms", room.RoomViewSet, basename="room")

@@ -37,6 +37,7 @@ ENDPOINTS = (
     "tracks",
     "schedules",
     "submission-types",
+    "mail-templates",
 )
 
 
