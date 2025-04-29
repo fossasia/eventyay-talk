@@ -24,7 +24,7 @@ def test_user_can_access_url(orga_client, logged_in, url, template_patch):
         ("cfp.questions.create", 200, 404),
         ("cfp.questions.remind", 200, 404),
         ("cfp.text.view", 200, 404),
-        ("cfp.types.view", 200, 404),
+        ("cfp.types.list", 200, 404),
         ("mails.templates.list", 200, 404),
         ("mails.templates.create", 200, 404),
         ("mails.compose.choose", 200, 404),

@@ -1,9 +1,10 @@
-{% extends "orga/base.html" %}
+{% extends "orga/generic/list.html" %}
 
 {% load compress %}
 {% load i18n %}
 {% load static %}
 
+{% block create_button_label %}{% translate "New type" %}{% endblock create_button_label %}
 
 {% block stylesheets %}
     {% compress css %}
@@ -17,16 +18,15 @@
     {% endcompress %}
 {% endblock scripts %}
 
-{% block extra_title %}{% translate "Session types" %} :: {% endblock extra_title %}
+{% block page_title %}
+    {{ generic_title }}
+    <span class="dialog-anchor" data-target="#info-dialog" data-toggle="dialog">
+        <i class="fa fa-question-circle-o text-info ml-2"></i>
+    </span>
+{% endblock page_title %}
 
-{% block content %}
-    <h2>
-        {% translate "Session types" %}
-        <span class="dialog-anchor" data-target="#info-dialog" data-toggle="dialog">
-            <i class="fa fa-question-circle-o text-info"></i>
-        </span>
-    </h2>
-    <dialog class="info-dialog" id="info-dialog">
+{% block list_content %}
+    <dialog id="info-dialog">
         <div class="alert alert-info">
             {% blocktranslate trimmed %}
                 Different session types may help to guide speakers into different slot
@@ -35,12 +35,6 @@
             {% endblocktranslate %}
         </div>
     </dialog>
-    <div class="d-flex justify-content-end mb-3">
-        <a class="btn btn-info" href="{{ request.event.cfp.urls.new_type }}">
-            <i class="fa fa-plus"></i>
-            {% translate "New type" %}
-        </a>
-    </div>
     <div class="table-responsive-sm">
         <table class="table table-sm table-flip table-sticky">
             <thead>
@@ -52,7 +46,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for type in types %}
+                {% for type in submissiontype_list %}
                     <tr>
                         <td>
                             {% if type.requires_access_code %}
@@ -89,5 +83,4 @@
     </div>
 
     {% include "orga/includes/pagination.html" %}
-
-{% endblock content %}
+{% endblock list_content %}

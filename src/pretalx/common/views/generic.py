@@ -295,7 +295,8 @@ class CRUDView(PaginationMixin, Filterable, View):
         self.object = form.save()
         if message := self.messages.get(self.action):
             messages.success(self.request, message)
-        self.object.log_action(f".{self.action}", **self.get_log_kwargs())
+        if form.has_changed():
+            self.object.log_action(f".{self.action}", **self.get_log_kwargs())
         return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form):

@@ -463,48 +463,38 @@ class CfPQuestionRemind(EventPermissionRequired, FormView):
         return self.request.event.orga_urls.outbox
 
 
-class SubmissionTypeList(EventPermissionRequired, PaginationMixin, ListView):
-    template_name = "orga/cfp/submission_type_view.html"
-    context_object_name = "types"
-    permission_required = "orga.view_submission_type"
+class SubmissionTypeView(OrderActionMixin, OrgaCRUDView):
+    model = SubmissionType
+    form_class = SubmissionTypeForm
+    template_namespace = "orga/cfp"
 
     def get_queryset(self):
         return self.request.event.submission_types.all().order_by("default_duration")
 
+    def get_permission_required(self):
+        permission_map = {"list": "orga_list", "detail": "orga_detail"}
+        permission = permission_map.get(self.action, self.action)
+        return self.model.get_perm(permission)
 
-class SubmissionTypeDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
-    model = SubmissionType
-    form_class = SubmissionTypeForm
-    template_name = "orga/cfp/submission_type_form.html"
-    permission_required = "orga.edit_submission_type"
-    write_permission_required = "orga.edit_submission_type"
-
-    def get_success_url(self) -> str:
-        return self.request.event.cfp.urls.types
-
-    def get_object(self, queryset=None):
-        return self.request.event.submission_types.filter(
-            pk=self.kwargs.get("pk")
-        ).first()
-
-    def get_permission_object(self):
-        return self.get_object() or self.request.event
-
-    def get_form_kwargs(self):
-        result = super().get_form_kwargs()
-        result["event"] = self.request.event
-        return result
-
-    def form_valid(self, form):
-        messages.success(self.request, phrases.base.saved)
-        form.instance.event = self.request.event
-        result = super().form_valid(form)
-        if form.has_changed():
-            action = "pretalx.submission_type." + (
-                "update" if self.object else "create"
+    def get_generic_title(self, instance=None):
+        if instance:
+            return (
+                _("Session type")
+                + f" {phrases.base.quotation_open}{instance.name}{phrases.base.quotation_close}"
             )
-            form.instance.log_action(action, person=self.request.user, orga=True)
-        return result
+        if self.action == "create":
+            return _("New Session Type")
+        return _("Session types")
+
+    def delete_handler(self, request, *args, **kwargs):
+        try:
+            return super().delete_handler(request, *args, **kwargs)
+        except ProtectedError:
+            messages.error(
+                request,
+                _("This Session Type is in use in a proposal and cannot be deleted."),
+            )
+            return self.delete_view(request, *args, **kwargs)
 
 
 class SubmissionTypeDefault(PermissionRequired, View):

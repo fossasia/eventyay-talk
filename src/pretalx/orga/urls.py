@@ -193,37 +193,15 @@ urlpatterns = [
                     ),
                 ),
                 path("cfp/text", cfp.CfPTextDetail.as_view(), name="cfp.text.view"),
-                path(
-                    "cfp/types/",
-                    cfp.SubmissionTypeList.as_view(),
-                    name="cfp.types.view",
+                *cfp.SubmissionTypeView.get_urls(
+                    url_base="cfp/types",
+                    url_name="cfp.types",
+                    namespace="orga",
                 ),
                 path(
-                    "cfp/types/new",
-                    cfp.SubmissionTypeDetail.as_view(),
-                    name="cfp.types.create",
-                ),
-                path(
-                    "cfp/types/<int:pk>/",
-                    include(
-                        [
-                            path(
-                                "",
-                                cfp.SubmissionTypeDetail.as_view(),
-                                name="cfp.type.view",
-                            ),
-                            path(
-                                "delete",
-                                cfp.SubmissionTypeDelete.as_view(),
-                                name="cfp.type.delete",
-                            ),
-                            path(
-                                "default",
-                                cfp.SubmissionTypeDefault.as_view(),
-                                name="cfp.type.default",
-                            ),
-                        ]
-                    ),
+                    "cfp/types/<int:pk>/default/",
+                    cfp.SubmissionTypeDefault.as_view(),
+                    name="cfp.type.default",
                 ),
                 *cfp.TrackView.get_urls(
                     url_base="cfp/tracks",
