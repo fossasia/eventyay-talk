@@ -62,7 +62,7 @@ class SubmitterAccessCode(GenerateCode, PretalxModel):
         null=True,
         blank=True,
     )
-    redeemed = models.PositiveIntegerField(default=0)
+    redeemed = models.PositiveIntegerField(default=0, editable=False)
 
     _code_length = 32
 

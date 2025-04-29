@@ -3,6 +3,7 @@ from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 
 from pretalx.api.views import (
+    access_code,
     event,
     mail,
     question,
@@ -29,6 +30,9 @@ event_router.register(
 event_router.register("tracks", submission.TrackViewSet, basename="track")
 event_router.register(
     "mail-templates", mail.MailTemplateViewSet, basename="mail_template"
+)
+event_router.register(
+    "access-codes", access_code.SubmitterAccessCodeViewSet, basename="access_code"
 )
 event_router.register("speakers", speaker.SpeakerViewSet, basename="speaker")
 event_router.register("reviews", review.ReviewViewSet, basename="review")

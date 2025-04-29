@@ -38,6 +38,7 @@ ENDPOINTS = (
     "schedules",
     "submission-types",
     "mail-templates",
+    "access-codes",
 )
 
 

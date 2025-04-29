@@ -77,5 +77,9 @@ def postprocess_schema(result, generator, request, public):
             "name": "mail-templates",
             "description": "Mail templates are used to define standardized mail formats for standard situations, like acceptance or rejection mails, or to add custom email templates for your own use. Please note that the role attribute cannot be changed.",
         },
+        {
+            "name": "access-codes",
+            "description": "Access codes can be used to grant access to restricted tracks, or to allow for proposals to be submitted past the public deadline.",
+        },
     ]
     return result
