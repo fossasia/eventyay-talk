@@ -30,7 +30,7 @@ class LogoutView(View):
         response = self.get(request, *args, **kwargs)
         # Remove the JWT cookie
         response.delete_cookie("sso_token")  # Same domain used when setting the cookie
-        response.delete_cookie("customer_sso_token"s)
+        response.delete_cookie("customer_sso_token")
         return response
 
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponseRedirect:
