@@ -569,7 +569,7 @@ class TrackView(OrderActionMixin, OrgaCRUDView):
         return self.request.event.tracks.all()
 
     def get_permission_required(self):
-        permission_map = {"list": "orga_list", "detail": "orga_detail"}
+        permission_map = {"list": "orga_list", "detail": "orga_view"}
         permission = permission_map.get(self.action, self.action)
         return self.model.get_perm(permission)
 

@@ -39,6 +39,7 @@ ENDPOINTS = (
     "submission-types",
     "mail-templates",
     "access-codes",
+    "speaker-information",
 )
 
 

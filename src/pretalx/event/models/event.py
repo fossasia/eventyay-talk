@@ -381,6 +381,7 @@ class Event(PretalxModel):
         submission_types = "{base}submission-types/"
         mail_templates = "{base}mail-templates/"
         access_codes = "{base}access-codes/"
+        speaker_information = "{base}speaker-information/"
 
     class Meta:
         ordering = ("date_from",)

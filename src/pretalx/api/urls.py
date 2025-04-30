@@ -10,6 +10,7 @@ from pretalx.api.views import (
     review,
     room,
     speaker,
+    speaker_information,
     submission,
     upload,
     user,
@@ -40,6 +41,11 @@ event_router.register("reviews", review.ReviewViewSet, basename="review")
 event_router.register("rooms", room.RoomViewSet, basename="room")
 event_router.register("questions", question.QuestionViewSet, basename="question")
 event_router.register("answers", question.AnswerViewSet, basename="answer")
+event_router.register(
+    "speaker-information",
+    speaker_information.SpeakerInformationViewSet,
+    basename="speaker_information",
+)
 
 app_name = "api"
 urlpatterns = [

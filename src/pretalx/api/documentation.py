@@ -46,6 +46,10 @@ def postprocess_schema(result, generator, request, public):
     # Section headings
     result["tags"] = [
         {
+            "name": "speaker-information",
+            "description": "Speaker information can be used to provide important information to speakers, either to all speakers or only to accepted or confirmed speakers.",
+        },
+        {
             "name": "submission-types",
             "description": "Submission types define the types of proposals that can be submitted to an event, including their default duration.",
             "externalDocs": {

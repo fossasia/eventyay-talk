@@ -302,6 +302,11 @@ class SpeakerInformationView(OrgaCRUDView):
             .order_by("pk")
         )
 
+    def get_permission_required(self):
+        permission_map = {"detail": "orga_detail"}
+        permission = permission_map.get(self.action, self.action)
+        return self.model.get_perm(permission)
+
     def get_generic_title(self, instance=None):
         if self.action != "list":
             return _("Speaker Information Note")
