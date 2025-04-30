@@ -19,7 +19,6 @@ from pretalx.cfp.flow import CfPFlow
 from pretalx.common.forms import I18nFormSet
 from pretalx.common.text.phrases import phrases
 from pretalx.common.text.serialize import I18nStrJSONEncoder
-from pretalx.common.views import CreateOrUpdateView
 from pretalx.common.views.generic import OrgaCRUDView
 from pretalx.common.views.mixins import (
     ActionConfirmMixin,
@@ -108,87 +107,35 @@ class CfPTextDetail(PermissionRequired, ActionFromUrl, UpdateView):
         return result
 
 
-class CfPQuestionList(EventPermissionRequired, TemplateView):
-    template_name = "orga/cfp/question_view.html"
-    permission_required = "orga.view_question"
+class QuestionView(OrderActionMixin, OrgaCRUDView):
+    model = Question
+    form_class = QuestionForm
+    template_namespace = "orga/cfp"
+    context_object_name = "question"
+    detail_is_update = False
 
-    def post(self, request, *args, **kwargs):
-        order = request.POST.get("order")
-        if order:
-            order = order.split(",")
-        for index, pk in enumerate(order):
-            question = get_object_or_404(
-                Question.all_objects, event=request.event, pk=pk
-            )
-            question.position = index
-            question.save(update_fields=["position"])
-        return self.get(request, *args, **kwargs)
-
-    @context
-    def questions(self):
+    def get_queryset(self):
         return (
             Question.all_objects.filter(event=self.request.event)
             .annotate(answer_count=Count("answers"))
             .order_by("position")
         )
 
+    def get_generic_title(self, instance=None):
+        if instance:
+            return (
+                _("Custom field")
+                + f" {phrases.base.quotation_open}{instance.question}{phrases.base.quotation_close}"
+            )
+        if self.action == "create":
+            return _("New custom field")
+        return _("Custom fields")
 
-class CfPQuestionDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
-    model = Question
-    form_class = QuestionForm
-    permission_required = "orga.edit_question"
-    write_permission_required = "orga.edit_question"
+    def get_permission_required(self):
+        permission_map = {"list": "orga_list", "detail": "orga_view"}
+        permission = permission_map.get(self.action, self.action)
+        return self.model.get_perm(permission)
 
-    def get_template_names(self):
-        action = self.request.path.lstrip("/").rpartition("/")[2]
-        if action in ("edit", "new"):
-            return ["orga/cfp/question_form.html"]
-        return ["orga/cfp/question_detail.html"]
-
-    @cached_property
-    def permission_object(self):
-        return self.object or self.request.event
-
-    def get_permission_object(self):
-        return self.permission_object
-
-    def get_object(self, queryset=None) -> Question:
-        return Question.all_objects.filter(
-            event=self.request.event, pk=self.kwargs.get("pk")
-        ).first()
-
-    @cached_property
-    def object(self):
-        return self.get_object()
-
-    @context
-    @cached_property
-    def question(self):
-        return self.object
-
-    @context
-    @cached_property
-    def base_search_url(self):
-        if not self.question or self.question.target == "reviewer":
-            return
-        role = self.request.GET.get("role") or ""
-        track = self.request.GET.get("track") or ""
-        submission_type = self.request.GET.get("submission_type") or ""
-        if self.question.target == "submission":
-            url = self.request.event.orga_urls.submissions + "?"
-            if role == "accepted":
-                url = f"{url}state=accepted&state=confirmed&"
-            elif role == "confirmed":
-                url = f"{url}state=confirmed&"
-            if track:
-                url = f"{url}track={track}&"
-            if submission_type:
-                url = f"{url}submission_type={submission_type}&"
-        else:
-            url = self.request.event.orga_urls.speakers + "?"
-        return f"{url}&question={self.question.id}&"
-
-    @context
     @cached_property
     def formset(self):
         formset_class = inlineformset_factory(
@@ -257,42 +204,49 @@ class CfPQuestionDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
 
         return True
 
-    @context
     @cached_property
     def filter_form(self):
         return QuestionFilterForm(self.request.GET, event=self.request.event)
 
+    @cached_property
+    def base_search_url(self):
+        if not self.object or self.object.target == "reviewer":
+            return
+        role = self.request.GET.get("role") or ""
+        track = self.request.GET.get("track") or ""
+        submission_type = self.request.GET.get("submission_type") or ""
+        if self.object.target == "submission":
+            url = self.request.event.orga_urls.submissions + "?"
+            if role == "accepted":
+                url = f"{url}state=accepted&state=confirmed&"
+            elif role == "confirmed":
+                url = f"{url}state=confirmed&"
+            if track:
+                url = f"{url}track={track}&"
+            if submission_type:
+                url = f"{url}submission_type={submission_type}&"
+        else:
+            url = self.request.event.orga_urls.speakers + "?"
+        return f"{url}&question={self.object.id}&"
+
     def get_context_data(self, **kwargs):
         result = super().get_context_data(**kwargs)
-        question = self.object
-        if not question or not self.filter_form.is_valid():
+        if not self.object or not self.filter_form.is_valid():
             return result
-        result.update(self.filter_form.get_question_information(question))
+        result.update(self.filter_form.get_question_information(self.object))
         result["grouped_answers_json"] = json.dumps(
             list(result["grouped_answers"]), cls=I18nStrJSONEncoder
         )
+        if self.action == "detail":
+            result["base_search_url"] = self.base_search_url
+            result["filter_form"] = self.filter_form
+        if "form" in result:
+            result["formset"] = self.formset
         return result
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["event"] = self.request.event
-        if not self.object:
-            initial = kwargs["initial"] or {}
-            initial["target"] = self.request.GET.get("type")
-            kwargs["initial"] = initial
-        return kwargs
-
-    def get_success_url(self) -> str:
-        if "pk" in self.kwargs and self.object:
-            return self.object.urls.base
-        return self.request.event.cfp.urls.questions
-
-    @transaction.atomic
     def form_valid(self, form):
         form.instance.event = self.request.event
         self.instance = form.instance
-        # Last-ditch validation: We can't allow both a question option upload
-        # AND changes in the question option formset.
         if form.cleaned_data.get("variant") in ("choices", "multiple_choice"):
             changed_options = [
                 form.changed_data for form in self.formset if form.has_changed()
@@ -313,12 +267,6 @@ class CfPQuestionDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
             formset = self.save_formset(self.instance)
             if not formset:
                 return self.get(self.request, *self.args, **self.kwargs)
-        if form.has_changed():
-            action = "pretalx.question." + (
-                "update" if "pk" in self.kwargs else "create"
-            )
-            form.instance.log_action(action, person=self.request.user, orga=True)
-        messages.success(self.request, phrases.base.saved)
         return result
 
     def post(self, request, *args, **kwargs):
@@ -328,51 +276,28 @@ class CfPQuestionDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
         order = order.split(",")
         for index, pk in enumerate(order):
             option = get_object_or_404(
-                self.question.options,
+                self.object.options,
                 pk=pk,
             )
             option.position = index
             option.save(update_fields=["position"])
         return self.get(request, *args, **kwargs)
 
-
-class CfPQuestionDelete(PermissionRequired, ActionConfirmMixin, DetailView):
-    permission_required = "orga.remove_question"
-
-    def get_object(self, queryset=None) -> Question:
-        return get_object_or_404(
-            Question.all_objects, event=self.request.event, pk=self.kwargs.get("pk")
-        )
-
-    def action_object_name(self):
-        return _("Custom field") + f": {self.get_object().question}"
-
-    @property
-    def action_back_url(self):
-        return self.request.event.cfp.urls.questions
-
-    def post(self, request, *args, **kwargs):
-        question = self.get_object()
-
+    def perform_delete(self):
         try:
             with transaction.atomic():
-                question.options.all().delete()
-                question.logged_actions().delete()
-                question.delete()
-                request.event.log_action(
-                    "pretalx.question.delete", person=self.request.user, orga=True
-                )
-                messages.success(request, _("The custom field has been deleted."))
+                self.object.options.all().delete()
+                self.object.logged_actions().delete()
+                super().perform_delete()
         except ProtectedError:
-            question.active = False
-            question.save()
+            self.object.active = False
+            self.object.save()
             messages.error(
-                request,
+                self.request,
                 _(
                     "You cannot delete a custom field that has any responses. We have deactivated the field instead."
                 ),
             )
-        return redirect(self.request.event.cfp.urls.questions)
 
 
 class CfPQuestionToggle(PermissionRequired, View):
@@ -393,7 +318,7 @@ class CfPQuestionToggle(PermissionRequired, View):
 
 
 class CfPQuestionRemind(EventPermissionRequired, FormView):
-    template_name = "orga/cfp/question_remind.html"
+    template_name = "orga/cfp/question/remind.html"
     permission_required = "orga.view_question"
     form_class = ReminderFilterForm
 

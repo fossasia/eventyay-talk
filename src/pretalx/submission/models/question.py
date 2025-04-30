@@ -5,11 +5,14 @@ from django.utils.translation import gettext_lazy as _
 from django_scopes import ScopedManager
 from i18nfield.fields import I18nCharField
 
+from pretalx.agenda.rules import is_agenda_visible
 from pretalx.common.models.choices import Choices
 from pretalx.common.models.mixins import OrderedModel, PretalxModel
 from pretalx.common.text.path import path_with_hash
 from pretalx.common.text.phrases import phrases
 from pretalx.common.urls import EventUrls
+from pretalx.person.rules import can_change_event_settings
+from pretalx.submission.rules import is_cfp_open, orga_can_change_submissions
 
 
 def answer_file_path(instance, filename):
@@ -256,6 +259,24 @@ class Question(OrderedModel, PretalxModel):
     objects = ScopedManager(event="event", _manager_class=QuestionManager)
     all_objects = ScopedManager(event="event", _manager_class=AllQuestionManager)
 
+    log_prefix = "pretalx.question"
+
+    class Meta:
+        ordering = ("position", "id")
+        rules_permissions = {
+            "list": is_cfp_open | is_agenda_visible | orga_can_change_submissions,
+            "orga_list": orga_can_change_submissions,
+            "view": is_cfp_open | is_agenda_visible | orga_can_change_submissions,
+            "orga_view": orga_can_change_submissions,
+            "create": can_change_event_settings,
+            "update": can_change_event_settings,
+            "delete": can_change_event_settings,
+        }
+
+    @property
+    def log_parent(self):
+        return self.event
+
     @cached_property
     def required(self):
         _now = now()
@@ -274,9 +295,9 @@ class Question(OrderedModel, PretalxModel):
 
     class urls(EventUrls):
         base = "{self.event.cfp.urls.questions}{self.pk}/"
-        edit = "{base}edit"
-        delete = "{base}delete"
-        toggle = "{base}toggle"
+        edit = "{base}edit/"
+        delete = "{base}delete/"
+        toggle = "{self.event.cfp.urls.questions}{self.pk}/toggle/"
 
     def __str__(self):
         return str(self.question)
@@ -317,9 +338,6 @@ class Question(OrderedModel, PretalxModel):
             )
             return max(users.count() - answer_count, 0)
         return 0
-
-    class Meta:
-        ordering = ("position", "id")
 
 
 class AnswerOption(PretalxModel):

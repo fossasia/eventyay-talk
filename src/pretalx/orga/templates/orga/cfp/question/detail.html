@@ -22,9 +22,11 @@
     <h4>
         {{ quotation_open }}{{ question.question }}{{ quotation_close }}
         <small>({{ question.get_variant_display }})</small>
-        <a href="{{ question.urls.edit }}" class="btn btn-sm btn-outline-info">
-            <i class="fa fa-edit"></i>
-        </a>
+        {% if has_update_permission %}
+            <a href="{{ question.urls.edit }}" class="btn btn-sm btn-outline-info">
+                <i class="fa fa-edit"></i>
+            </a>
+        {% endif %}
     </h4>
 
     {% if answer_count %}

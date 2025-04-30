@@ -20,7 +20,7 @@ def test_user_can_access_url(orga_client, logged_in, url, template_patch):
     [
         ("event.dashboard", 200, 200),
         ("event.history", 200, 404),
-        ("cfp.questions.view", 200, 404),
+        ("cfp.questions.detail", 200, 404),
         ("cfp.questions.create", 200, 404),
         ("cfp.questions.remind", 200, 404),
         ("cfp.text.view", 200, 404),

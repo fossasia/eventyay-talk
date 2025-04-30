@@ -150,47 +150,20 @@ urlpatterns = [
                     name="cfp",
                 ),
                 path("cfp/flow/", cfp.CfPFlowEditor.as_view(), name="cfp.flow"),
-                path(
-                    "cfp/questions/",
-                    cfp.CfPQuestionList.as_view(),
-                    name="cfp.questions.view",
+                *cfp.QuestionView.get_urls(
+                    url_base="cfp/questions",
+                    url_name="cfp.questions",
+                    namespace="orga",
                 ),
                 path(
-                    "cfp/questions/new",
-                    cfp.CfPQuestionDetail.as_view(),
-                    name="cfp.questions.create",
-                ),
-                path(
-                    "cfp/questions/remind",
+                    "cfp/questions/remind/",
                     cfp.CfPQuestionRemind.as_view(),
                     name="cfp.questions.remind",
                 ),
                 path(
-                    "cfp/questions/<int:pk>/",
-                    include(
-                        [
-                            path(
-                                "",
-                                cfp.CfPQuestionDetail.as_view(),
-                                name="cfp.question.view",
-                            ),
-                            path(
-                                "delete",
-                                cfp.CfPQuestionDelete.as_view(),
-                                name="cfp.question.delete",
-                            ),
-                            path(
-                                "edit",
-                                cfp.CfPQuestionDetail.as_view(),
-                                name="cfp.question.edit",
-                            ),
-                            path(
-                                "toggle",
-                                cfp.CfPQuestionToggle.as_view(),
-                                name="cfp.question.toggle",
-                            ),
-                        ]
-                    ),
+                    "cfp/questions/<int:pk>/toggle/",
+                    cfp.CfPQuestionToggle.as_view(),
+                    name="cfp.question.toggle",
                 ),
                 path("cfp/text", cfp.CfPTextDetail.as_view(), name="cfp.text.view"),
                 *cfp.SubmissionTypeView.get_urls(

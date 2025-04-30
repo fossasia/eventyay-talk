@@ -1,11 +1,9 @@
-{% extends "orga/base.html" %}
+{% extends "orga/generic/_form.html" %}
 
 {% load compress %}
 {% load formset_tags %}
 {% load i18n %}
 {% load static %}
-
-{% block extra_title %}{% if form.instance.question %}{{ form.instance.question }}{% else %}{% translate "New custom field" %}{% endif %} :: {% endblock extra_title %}
 
 {% block stylesheets %}
     {% compress css %}
@@ -23,45 +21,12 @@
     {% endcompress %}
 {% endblock scripts %}
 
-{% block content %}
-    <h2>
-        {% if form.instance.question %}
-            {% translate "Custom field" %}: {{ form.instance.question }}
-        {% else %}
-            {% translate "New custom field" %}
-        {% endif %}
-    </h2>
+{% block form %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% include "common/forms/errors.html" %}
-        {% if action == "edit" and question.answers.count %}
-            <div class="alert alert-warning col-md-9 offset-md-3">
-                {% blocktranslate trimmed %}
-                    This custom field already has responses from some speakers – please consider
-                    carefully if modifying it would render those answers obsolete. You could also
-                    deactivate this field and create a new one instead.
-                {% endblocktranslate %}
-            </div>
-        {% endif %}
 
-        {% if action != "create" %}
-            {% if question.active %}
-                <div class="alert alert-info col-md-9 offset-md-3">
-                    <span>
-                        {% translate "This field is currently active, it will be asked during submission." %}
-                        <a class="btn btn-sm btn-outline-danger"
-                           href="{{ question.urls.toggle }}">{% translate "Hide field" %}</a>
-                    </span>
-                </div>
-            {% else %}
-                <div class="alert alert-info col-md-9 offset-md-3">
-                    <span>
-                        {% translate "This field is currently inactive, and will not be asked during submission." %}
-                        <a class="btn btn-sm btn-success" href="{{ question.urls.toggle }}">{% translate "Activate field" %}</a>
-                    </span>
-                </div>
-            {% endif %}
-        {% endif %}
+        {% block warnings %}{% endblock warnings %}
 
         {{ form.target.as_field_group }}
         {{ form.variant.as_field_group }}
@@ -179,4 +144,4 @@
         {% include "orga/includes/submit_row.html" %}
 
     </form>
-{% endblock content %}
+{% endblock form %}
