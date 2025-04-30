@@ -11,6 +11,7 @@ from pretalx.api.views import (
     room,
     speaker,
     submission,
+    upload,
     user,
 )
 
@@ -45,5 +46,6 @@ urlpatterns = [
     path("", include(default_router.urls)),
     path("me", user.MeView.as_view(), name="user.me"),
     path("auth/", obtain_auth_token),
+    path("upload/", upload.UploadView.as_view(), name="upload"),
     path("events/<slug:event>/", include(event_router.urls)),
 ]
