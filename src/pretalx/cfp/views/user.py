@@ -30,7 +30,7 @@ from pretalx.common.middleware.event import get_login_redirect
 from pretalx.common.text.phrases import phrases
 from pretalx.common.views import is_form_bound
 from pretalx.person.forms import LoginInfoForm, SpeakerProfileForm
-from pretalx.person.permissions import person_can_view_information
+from pretalx.person.rules import can_view_information
 from pretalx.schedule.forms import AvailabilitiesFormMixin
 from pretalx.submission.forms import InfoForm, QuestionsForm, ResourceForm
 from pretalx.submission.models import Resource, Submission, SubmissionStates
@@ -148,7 +148,7 @@ class SubmissionsListView(LoggedInEventPageMixin, ListView):
         return [
             info
             for info in self.request.event.information.all()
-            if person_can_view_information(self.request.user, info)
+            if can_view_information(self.request.user, info)
         ]
 
     @context

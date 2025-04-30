@@ -364,7 +364,7 @@ class Event(PretalxModel):
         talks_api = "{schedule_api}talks/"
         plugins = "{settings}plugins"
         information = "{base}info/"
-        new_information = "{base}info/new"
+        new_information = "{base}info/new/"
 
     class api_urls(EventUrls):
         base = "/api/events/{self.slug}/"

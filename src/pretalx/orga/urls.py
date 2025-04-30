@@ -461,32 +461,10 @@ urlpatterns = [
                         ]
                     ),
                 ),
-                path(
-                    "info/",
-                    speaker.InformationList.as_view(),
-                    name="speakers.information.list",
-                ),
-                path(
-                    "info/new",
-                    speaker.InformationDetail.as_view(),
-                    name="speakers.information.create",
-                ),
-                path(
-                    "info/<int:pk>/",
-                    include(
-                        [
-                            path(
-                                "",
-                                speaker.InformationDetail.as_view(),
-                                name="speakers.information.view",
-                            ),
-                            path(
-                                "delete",
-                                speaker.InformationDelete.as_view(),
-                                name="speakers.information.delete",
-                            ),
-                        ]
-                    ),
+                *speaker.SpeakerInformationView.get_urls(
+                    url_base="info",
+                    url_name="speakers.information",
+                    namespace="orga",
                 ),
                 path(
                     "reviews/",

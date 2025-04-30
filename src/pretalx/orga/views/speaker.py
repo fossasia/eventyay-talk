@@ -13,7 +13,7 @@ from django_context_decorator import context
 from pretalx.agenda.views.utils import get_schedule_exporters
 from pretalx.common.exceptions import SendMailException
 from pretalx.common.text.phrases import phrases
-from pretalx.common.views import CreateOrUpdateView
+from pretalx.common.views.generic import CreateOrUpdateView, OrgaCRUDView
 from pretalx.common.views.mixins import (
     ActionConfirmMixin,
     ActionFromUrl,
@@ -289,59 +289,23 @@ class SpeakerToggleArrived(SpeakerViewMixin, View):
         return redirect(self.profile.orga_urls.base)
 
 
-class InformationList(EventPermissionRequired, PaginationMixin, ListView):
-    queryset = SpeakerInformation.objects.none()
-    template_name = "orga/speaker/information_list.html"
-    context_object_name = "information"
-    permission_required = "orga.view_information"
-
-    def get_queryset(self):
-        return self.request.event.information.all().order_by("pk")
-
-
-class InformationDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
-    template_name = "orga/speaker/information_form.html"
+class SpeakerInformationView(OrgaCRUDView):
+    model = SpeakerInformation
     form_class = SpeakerInformationForm
-    model = SpeakerInformation
-    permission_required = "orga.view_information"
-    write_permission_required = "orga.change_information"
-
-    def get_permission_object(self):
-        return self.get_object() or self.request.event
-
-    def get_object(self):
-        if "pk" in self.kwargs:
-            return self.request.event.information.filter(pk=self.kwargs["pk"]).first()
-        return None
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.pop("read_only", None)
-        kwargs["event"] = self.request.event
-        return kwargs
-
-    def get_success_url(self):
-        return self.request.event.orga_urls.information
-
-
-class InformationDelete(PermissionRequired, ActionConfirmMixin, DetailView):
-    model = SpeakerInformation
-    permission_required = "orga.change_information"
-
-    def action_object_name(self):
-        return _("Speaker information note") + f": {self.get_object().title}"
-
-    def action_back_url(self):
-        return self.request.event.orga_urls.information
+    template_namespace = "orga/speaker"
+    context_object_name = "information"
 
     def get_queryset(self):
-        return self.request.event.information.all()
+        return (
+            self.request.event.information.all()
+            .prefetch_related("limit_tracks", "limit_types")
+            .order_by("pk")
+        )
 
-    def post(self, request, *args, **kwargs):
-        information = self.get_object()
-        information.delete()
-        messages.success(request, _("The information has been deleted."))
-        return redirect(request.event.orga_urls.information)
+    def get_generic_title(self, instance=None):
+        if self.action != "list":
+            return _("Speaker Information Note")
+        return _("Speaker Information Notes")
 
 
 class SpeakerExport(EventPermissionRequired, FormView):
