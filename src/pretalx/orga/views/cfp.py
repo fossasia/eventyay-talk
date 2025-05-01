@@ -46,6 +46,7 @@ from pretalx.submission.models import (
     SubmitterAccessCode,
     Track,
 )
+from pretalx.submission.rules import questions_for_user
 
 
 class CfPTextDetail(PermissionRequired, ActionFromUrl, UpdateView):
@@ -116,7 +117,7 @@ class QuestionView(OrderActionMixin, OrgaCRUDView):
 
     def get_queryset(self):
         return (
-            Question.all_objects.filter(event=self.request.event)
+            questions_for_user(self.request.event, self.request.user)
             .annotate(answer_count=Count("answers"))
             .order_by("position")
         )

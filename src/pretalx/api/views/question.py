@@ -1,59 +1,79 @@
+from django.db import transaction
+from django.db.models.deletion import ProtectedError
 from django_filters import rest_framework as filters
-from rest_framework import viewsets
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import exceptions, viewsets
 from rest_framework.permissions import SAFE_METHODS
 
+from pretalx.api.documentation import build_expand_docs, build_search_docs
 from pretalx.api.mixins import PretalxViewSetMixin
 from pretalx.api.serializers.question import (
     AnswerSerializer,
     AnswerWriteSerializer,
+    QuestionOrgaSerializer,
     QuestionSerializer,
 )
 from pretalx.submission.models import Answer, Question
+from pretalx.submission.rules import questions_for_user
+
+OPTIONS_HELP = (
+    "Please note that any update to the options field will delete the "
+    "existing question options (if still possible) and replace them with the new ones. "
+    "Use the AnswerOption API for granular question option modifications."
+)
 
 
-def get_questions_for_user(event, user, include_inactive=False):
-    if include_inactive:
-        base_queryset = event.questions(manager="all_objects").all()
-    else:
-        base_queryset = event.questions.all()
-    if user.has_perm("orga.change_submissions", event):
-        return base_queryset
-    # Anybody else cannot see inactive questions at the moment
-    base_queryset = base_queryset.filter(active=True)
-    if user.has_perm("orga.view_submissions", event) and user.has_perm(
-        "orga.view_speakers", event
-    ):
-        # This is a bit hacky: During anonymous review, reviewers can't use the API
-        # to retrieve questions and answers. We can fix that with a bit of work,
-        # but for now, it's an edge case. Leaving it as TODO.
-        return base_queryset.filter(is_visible_to_reviewers=True)
-    if user.has_perm("agenda.view_schedule", event):
-        return base_queryset.filter(is_public=True)
-    return event.questions.none()
-
-
+@extend_schema_view(
+    list=extend_schema(
+        summary="List Questions",
+        parameters=[
+            build_search_docs("question"),
+            build_expand_docs("options", "tracks", "submission_types"),
+        ],
+    ),
+    retrieve=extend_schema(
+        summary="Show Question",
+        parameters=[build_expand_docs("options", "tracks", "submission_types")],
+    ),
+    create=extend_schema(summary="Create Question"),
+    update=extend_schema(summary="Update Question", description=OPTIONS_HELP),
+    partial_update=extend_schema(
+        summary="Update Question (Partial Update)", description=OPTIONS_HELP
+    ),
+    destroy=extend_schema(summary="Delete Question"),
+)
 class QuestionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     queryset = Question.objects.none()
     serializer_class = QuestionSerializer
-    write_permission_required = "orga.edit_question"
     filterset_fields = ("is_public", "is_visible_to_reviewers", "target", "variant")
     search_fields = ("question",)
     endpoint = "questions"
 
     def get_queryset(self):
-        return get_questions_for_user(
-            self.request.event, self.request.user, include_inactive=True
-        )
+        queryset = questions_for_user(
+            self.request.event, self.request.user
+        ).select_related("event")
+        if fields := self.check_expanded_fields(
+            "tracks", "submission_types", "options"
+        ):
+            queryset = queryset.prefetch_related(*fields)
+        return queryset
 
-    def perform_create(self, serializer):
-        serializer.save(event=self.request.event)
+    def get_unversioned_serializer_class(self):
+        if self.request.method not in SAFE_METHODS or self.has_perm("update"):
+            return QuestionOrgaSerializer
+        return self.serializer_class
 
-    def perform_update(self, serializer):
-        serializer.save(event=self.request.event)
-
-
-def model_for_event(model, lookup="event"):
-    return lambda request: model.objects.all().filter(**{lookup: request.event})
+    def perform_destroy(self, instance):
+        try:
+            with transaction.atomic():
+                instance.options.all().delete()
+                instance.logged_actions().delete()
+                return super().perform_destroy(instance)
+        except ProtectedError:
+            raise exceptions.ValidationError(
+                "You cannot delete a question object that has answers."
+            )
 
 
 class AnswerFilterSet(filters.FilterSet):
@@ -84,7 +104,7 @@ class AnswerViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         return (
             Answer.objects.filter(
-                question_id__in=get_questions_for_user(
+                question_id__in=questions_for_user(
                     self.request.event, self.request.user
                 ).values_list("id", flat=True)
             )

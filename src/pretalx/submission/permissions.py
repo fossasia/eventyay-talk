@@ -2,7 +2,6 @@ import rules
 from django.db.models import Q
 
 from pretalx.person.rules import is_reviewer
-from pretalx.submission.models import SubmissionStates
 from pretalx.submission.rules import orga_can_change_submissions
 
 
@@ -20,6 +19,8 @@ def is_speaker(user, obj):
 
 @rules.predicate
 def can_be_withdrawn(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
     return obj and SubmissionStates.WITHDRAWN in SubmissionStates.valid_next_states.get(
         obj.state, []
     )
@@ -27,6 +28,8 @@ def can_be_withdrawn(user, obj):
 
 @rules.predicate
 def can_be_rejected(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
     return obj and SubmissionStates.REJECTED in SubmissionStates.valid_next_states.get(
         obj.state, []
     )
@@ -34,6 +37,8 @@ def can_be_rejected(user, obj):
 
 @rules.predicate
 def can_be_accepted(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
     return obj and SubmissionStates.ACCEPTED in SubmissionStates.valid_next_states.get(
         obj.state, []
     )
@@ -41,6 +46,8 @@ def can_be_accepted(user, obj):
 
 @rules.predicate
 def can_be_confirmed(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
     return obj and SubmissionStates.CONFIRMED in SubmissionStates.valid_next_states.get(
         obj.state, []
     )
@@ -48,6 +55,8 @@ def can_be_confirmed(user, obj):
 
 @rules.predicate
 def can_be_canceled(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
     return obj and SubmissionStates.CANCELED in SubmissionStates.valid_next_states.get(
         obj.state, []
     )
@@ -55,6 +64,8 @@ def can_be_canceled(user, obj):
 
 @rules.predicate
 def can_be_removed(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
     return obj and SubmissionStates.DELETED in SubmissionStates.valid_next_states.get(
         obj.state, []
     )
@@ -72,6 +83,8 @@ def is_review_author(user, obj):
 
 @rules.predicate
 def can_be_reviewed(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
     if not obj:
         return False
     obj = getattr(obj, "submission", obj)

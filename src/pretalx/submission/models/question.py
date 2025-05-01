@@ -11,7 +11,7 @@ from pretalx.common.models.mixins import OrderedModel, PretalxModel
 from pretalx.common.text.path import path_with_hash
 from pretalx.common.text.phrases import phrases
 from pretalx.common.urls import EventUrls
-from pretalx.person.rules import can_change_event_settings
+from pretalx.person.rules import can_change_event_settings, is_reviewer
 from pretalx.submission.rules import is_cfp_open, orga_can_change_submissions
 
 
@@ -264,9 +264,15 @@ class Question(OrderedModel, PretalxModel):
     class Meta:
         ordering = ("position", "id")
         rules_permissions = {
-            "list": is_cfp_open | is_agenda_visible | orga_can_change_submissions,
-            "orga_list": orga_can_change_submissions,
-            "view": is_cfp_open | is_agenda_visible | orga_can_change_submissions,
+            "list": is_cfp_open
+            | is_agenda_visible
+            | orga_can_change_submissions
+            | is_reviewer,
+            "orga_list": orga_can_change_submissions | is_reviewer,
+            "view": is_cfp_open
+            | is_agenda_visible
+            | orga_can_change_submissions
+            | is_reviewer,
             "orga_view": orga_can_change_submissions,
             "create": can_change_event_settings,
             "update": can_change_event_settings,

@@ -608,6 +608,19 @@ def orga_user_token(orga_user):
 
 
 @pytest.fixture
+def review_user_token(review_user):
+    token = UserApiToken.objects.create(
+        name="testtoken", user=review_user, team=review_user.teams.first()
+    )
+    token.endpoints = {
+        key: ["list", "retrieve", "create", "update", "destroy", "actions"]
+        for key in token.endpoints.keys()
+    }
+    token.save()
+    return token
+
+
+@pytest.fixture
 def orga_user_write_token(orga_user_token):
     orga_user_token.pk = None
     orga_user_token.endpoints = {
