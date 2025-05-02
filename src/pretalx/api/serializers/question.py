@@ -1,6 +1,10 @@
 from django.db import transaction
 from rest_flex_fields.serializers import FlexFieldsSerializerMixin
-from rest_framework.serializers import ModelSerializer, SlugRelatedField
+from rest_framework.serializers import (
+    ModelSerializer,
+    PrimaryKeyRelatedField,
+    SlugRelatedField,
+)
 
 from pretalx.api.mixins import PretalxSerializer, ReadOnlySerializerMixin
 from pretalx.api.versions import CURRENT_VERSION, register_serializer
@@ -9,44 +13,56 @@ from pretalx.submission.models import (
     Answer,
     AnswerOption,
     Question,
+    QuestionVariant,
     Submission,
     SubmissionType,
     Track,
 )
 
 
-@register_serializer()
-class AnswerOptionSerializer(ModelSerializer):
+@register_serializer(versions=[CURRENT_VERSION])
+class AnswerOptionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
+    question = PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = AnswerOption
-        fields = ("id", "answer")
+        fields = ("id", "question", "answer", "position")
+        expandable_fields = {
+            "question": (
+                "pretalx.api.serializers.question.QuestionSerializer",
+                {"read_only": True, "omit": ["options"]},
+            )
+        }
 
 
-@register_serializer(versions=["LEGACY"], class_name="QuestionSerializer")
-class LegacyQuestionSerializer(ReadOnlySerializerMixin, PretalxSerializer):
-    options = AnswerOptionSerializer(many=True, required=False)
+# This serializer exists mostly for documentation purposes, as otherwise
+# drf_spectacular will not pick up that questions can be set on create,
+# but not changed on update. And if we have a separate serializer already,
+# we might as well use it to isolate the create action fully.
+@register_serializer(
+    versions=[CURRENT_VERSION], class_name="AnswerOptionCreateSerializer"
+)
+class AnswerOptionCreateSerializer(AnswerOptionSerializer):
+    question = PrimaryKeyRelatedField(read_only=False, queryset=Question.objects.none())
 
-    class Meta:
-        model = Question
-        fields = (
-            "id",
-            "variant",
-            "question",
-            "question_required",
-            "deadline",
-            "required",
-            "read_only",
-            "freeze_after",
-            "target",
-            "options",
-            "help_text",
-            "default_answer",
-            "contains_personal_data",
-            "min_length",
-            "max_length",
-            "is_public",
-            "is_visible_to_reviewers",
-        )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = kwargs.get("context", {}).get("request")
+        if "question" in self.fields:
+            if request and hasattr(request, "event"):
+                self.fields["question"].queryset = request.event.questions(
+                    manager="all_objects"
+                ).filter(
+                    variant__in=[
+                        QuestionVariant.CHOICES,
+                        QuestionVariant.MULTIPLE,
+                    ]
+                )
+            else:
+                self.fields["question"].queryset = Question.objects.none()
+
+    class Meta(AnswerOptionSerializer.Meta):
+        expandable_fields = None
 
 
 @register_serializer(versions=[CURRENT_VERSION], class_name="QuestionSerializer")
@@ -79,7 +95,11 @@ class QuestionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
         expandable_fields = {
             "options": (
                 "pretalx.api.serializers.question.AnswerOptionSerializer",
-                {"many": True, "read_only": True},
+                {
+                    "many": True,
+                    "read_only": True,
+                    "fields": ("id", "answer", "position"),
+                },
             ),
             "tracks": (
                 "pretalx.api.serializers.submission.TrackSerializer",
@@ -92,9 +112,17 @@ class QuestionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
         }
 
 
+# Just for documentation purposes, as the docs will otherwise pick up the reduced
+# fields also for the primary AnswerOptionSerializer, for some unholy reason.
+class NestedAnswerOptionSerializer(AnswerOptionSerializer):
+    pass
+
+
 @register_serializer(versions=[CURRENT_VERSION], class_name="QuestionOrgaSerializer")
 class QuestionOrgaSerializer(QuestionSerializer):
-    options = AnswerOptionSerializer(many=True, required=False)
+    options = NestedAnswerOptionSerializer(
+        many=True, required=False, fields=("id", "answer", "position")
+    )
 
     class Meta(QuestionSerializer.Meta):
         fields = QuestionSerializer.Meta.fields + (
@@ -139,6 +167,40 @@ class QuestionOrgaSerializer(QuestionSerializer):
                 AnswerOption.objects.create(question=question, **option_data)
 
 
+@register_serializer(versions=["LEGACY"])
+class LegacyAnswerOptionSerializer(ModelSerializer):
+    class Meta:
+        model = AnswerOption
+        fields = ("id", "answer")
+
+
+@register_serializer(versions=["LEGACY"], class_name="QuestionSerializer")
+class LegacyQuestionSerializer(ReadOnlySerializerMixin, PretalxSerializer):
+    options = LegacyAnswerOptionSerializer(many=True, required=False)
+
+    class Meta:
+        model = Question
+        fields = (
+            "id",
+            "variant",
+            "question",
+            "question_required",
+            "deadline",
+            "required",
+            "read_only",
+            "freeze_after",
+            "target",
+            "options",
+            "help_text",
+            "default_answer",
+            "contains_personal_data",
+            "min_length",
+            "max_length",
+            "is_public",
+            "is_visible_to_reviewers",
+        )
+
+
 @register_serializer()
 class AnswerWriteSerializer(ModelSerializer):
     submission = SlugRelatedField(
@@ -153,7 +215,7 @@ class AnswerWriteSerializer(ModelSerializer):
         required=False,
         style={"input_type": "text", "base_template": "input.html"},
     )
-    options = AnswerOptionSerializer(many=True, required=False)
+    options = LegacyAnswerOptionSerializer(many=True, required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

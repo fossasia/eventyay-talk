@@ -32,6 +32,7 @@ ENDPOINTS = (
     "reviews",
     "rooms",
     "questions",
+    "question-options",
     "answers",
     "tags",
     "tracks",

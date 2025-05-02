@@ -8,12 +8,14 @@ from rest_framework.permissions import SAFE_METHODS
 from pretalx.api.documentation import build_expand_docs, build_search_docs
 from pretalx.api.mixins import PretalxViewSetMixin
 from pretalx.api.serializers.question import (
+    AnswerOptionCreateSerializer,
+    AnswerOptionSerializer,
     AnswerSerializer,
     AnswerWriteSerializer,
     QuestionOrgaSerializer,
     QuestionSerializer,
 )
-from pretalx.submission.models import Answer, Question
+from pretalx.submission.models import Answer, AnswerOption, Question, QuestionVariant
 from pretalx.submission.rules import questions_for_user
 
 OPTIONS_HELP = (
@@ -73,6 +75,67 @@ class QuestionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         except ProtectedError:
             raise exceptions.ValidationError(
                 "You cannot delete a question object that has answers."
+            )
+
+
+@extend_schema_view(
+    list=extend_schema(
+        summary="List Question Options",
+        parameters=[
+            build_search_docs("answer"),
+            build_expand_docs(
+                "question", "question.tracks", "question.submission_types"
+            ),
+        ],
+    ),
+    retrieve=extend_schema(
+        summary="Show Question Option",
+        parameters=[
+            build_expand_docs(
+                "question", "question.tracks", "question.submission_types"
+            )
+        ],
+    ),
+    create=extend_schema(summary="Create Question Option"),
+    update=extend_schema(summary="Update Question Option"),
+    partial_update=extend_schema(summary="Update Question Option (Partial Update)"),
+    destroy=extend_schema(
+        summary="Delete Question Option",
+        description="Deleting a question option is only possible if it hasn't been used in any answers yet.",
+    ),
+)
+class AnswerOptionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
+    queryset = AnswerOption.objects.none()
+    serializer_class = AnswerOptionSerializer
+    filterset_fields = ("question",)
+    search_fields = ("answer",)
+    endpoint = "question-options"
+
+    def get_queryset(self):
+        questions = questions_for_user(self.request.event, self.request.user)
+        queryset = AnswerOption.objects.filter(
+            question__in=questions,
+            question__variant__in=[QuestionVariant.CHOICES, QuestionVariant.MULTIPLE],
+        ).select_related("question", "question__event")
+        for field in self.check_expanded_fields(
+            "question.tracks", "question.submission_types"
+        ):
+            queryset = queryset.prefetch_related(field.replace(".", "__"))
+        return queryset
+
+    def get_unversioned_serializer_class(self):
+        if self.action == "create":
+            return AnswerOptionCreateSerializer
+        return AnswerOptionSerializer
+
+    def perform_destroy(self, instance):
+        try:
+            with transaction.atomic():
+                instance.logged_actions().delete()
+                return super().perform_destroy(instance)
+        except ProtectedError:
+            raise exceptions.ValidationError(
+                "You cannot delete an option object that has been used in answers."
             )
 
 

@@ -85,6 +85,18 @@ class QuestionRequired(Choices):
     ]
 
 
+# Question and question option permissions should be in sync
+QUESTION_PERMISSIONS = {
+    "list": is_cfp_open | is_agenda_visible | orga_can_change_submissions | is_reviewer,
+    "orga_list": orga_can_change_submissions | is_reviewer,
+    "view": is_cfp_open | is_agenda_visible | orga_can_change_submissions | is_reviewer,
+    "orga_view": orga_can_change_submissions,
+    "create": can_change_event_settings,
+    "update": can_change_event_settings,
+    "delete": can_change_event_settings,
+}
+
+
 class Question(OrderedModel, PretalxModel):
     """Questions can be asked per.
 
@@ -263,21 +275,7 @@ class Question(OrderedModel, PretalxModel):
 
     class Meta:
         ordering = ("position", "id")
-        rules_permissions = {
-            "list": is_cfp_open
-            | is_agenda_visible
-            | orga_can_change_submissions
-            | is_reviewer,
-            "orga_list": orga_can_change_submissions | is_reviewer,
-            "view": is_cfp_open
-            | is_agenda_visible
-            | orga_can_change_submissions
-            | is_reviewer,
-            "orga_view": orga_can_change_submissions,
-            "create": can_change_event_settings,
-            "update": can_change_event_settings,
-            "delete": can_change_event_settings,
-        }
+        rules_permissions = QUESTION_PERMISSIONS
 
     @property
     def log_parent(self):
@@ -360,17 +358,23 @@ class AnswerOption(PretalxModel):
     position = models.IntegerField(default=0)
 
     objects = ScopedManager(event="question__event")
+    log_prefix = "pretalx.question.option"
+
+    class Meta:
+        ordering = ("position", "id")
+        rules_permissions = QUESTION_PERMISSIONS
 
     @cached_property
     def event(self):
         return self.question.event
 
+    @property
+    def log_parent(self):
+        return self.question
+
     def __str__(self):
         """Used in choice forms."""
         return str(self.answer)
-
-    class Meta:
-        ordering = ("position", "id")
 
 
 class Answer(PretalxModel):

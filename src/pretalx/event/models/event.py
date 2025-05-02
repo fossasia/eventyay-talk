@@ -375,6 +375,7 @@ class Event(PretalxModel):
         reviews = "{base}reviews/"
         rooms = "{base}rooms/"
         questions = "{base}questions/"
+        question_options = "{base}question-options/"
         answers = "{base}answers/"
         tags = "{base}tags/"
         tracks = "{base}tracks/"

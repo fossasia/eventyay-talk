@@ -42,6 +42,9 @@ event_router.register("rooms", room.RoomViewSet, basename="room")
 event_router.register("questions", question.QuestionViewSet, basename="question")
 event_router.register("answers", question.AnswerViewSet, basename="answer")
 event_router.register(
+    "question-options", question.AnswerOptionViewSet, basename="question_option"
+)
+event_router.register(
     "speaker-information",
     speaker_information.SpeakerInformationViewSet,
     basename="speaker_information",
