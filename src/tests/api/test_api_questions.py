@@ -3,11 +3,7 @@ import json
 import pytest
 from django_scopes import scope
 
-from pretalx.api.serializers.question import (
-    AnswerOptionSerializer,
-    AnswerSerializer,
-    QuestionSerializer,
-)
+from pretalx.api.serializers.question import AnswerOptionSerializer, QuestionSerializer
 from pretalx.api.versions import LEGACY
 from pretalx.submission.models import AnswerOption, QuestionVariant
 
@@ -15,17 +11,6 @@ from pretalx.submission.models import AnswerOption, QuestionVariant
 @pytest.mark.django_db
 def test_question_serializer(answer):
     with scope(event=answer.question.event):
-        data = AnswerSerializer(answer).data
-        assert set(data.keys()) == {
-            "id",
-            "question",
-            "answer",
-            "answer_file",
-            "submission",
-            "person",
-            "review",
-            "options",
-        }
         data = QuestionSerializer(answer.question).data
     assert set(data.keys()) == {
         "id",

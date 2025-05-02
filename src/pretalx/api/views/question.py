@@ -8,10 +8,10 @@ from rest_framework.permissions import SAFE_METHODS
 from pretalx.api.documentation import build_expand_docs, build_search_docs
 from pretalx.api.mixins import PretalxViewSetMixin
 from pretalx.api.serializers.question import (
+    AnswerCreateSerializer,
     AnswerOptionCreateSerializer,
     AnswerOptionSerializer,
     AnswerSerializer,
-    AnswerWriteSerializer,
     QuestionOrgaSerializer,
     QuestionSerializer,
 )
@@ -126,7 +126,7 @@ class AnswerOptionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     def get_unversioned_serializer_class(self):
         if self.action == "create":
             return AnswerOptionCreateSerializer
-        return AnswerOptionSerializer
+        return self.serializer_class
 
     def perform_destroy(self, instance):
         try:
@@ -156,29 +156,62 @@ class AnswerFilterSet(filters.FilterSet):
         fields = ("question", "submission", "person", "review")
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List Answers",
+        parameters=[
+            build_search_docs("answer"),
+            build_expand_docs(
+                "question", "options", "question.tracks", "question.submission_types"
+            ),
+        ],
+    ),
+    retrieve=extend_schema(
+        summary="Show Answer",
+        parameters=[
+            build_expand_docs(
+                "question", "options", "question.tracks", "question.submission_types"
+            )
+        ],
+    ),
+    create=extend_schema(summary="Create Answer"),
+    update=extend_schema(summary="Update Answer"),
+    partial_update=extend_schema(summary="Update Answer (Partial Update)"),
+    destroy=extend_schema(summary="Delete Answer"),
+)
 class AnswerViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     queryset = Answer.objects.none()
     serializer_class = AnswerSerializer
-    write_permission_required = "orga.change_submissions"
     filterset_class = AnswerFilterSet
     search_fields = ("answer",)
     endpoint = "answers"
+    permission_map = {
+        "list": "submission.api_answer",
+        "retrieve": "submission.api_answer",
+        "create": "submission.api_answer",
+        "update": "submission.api_answer",
+        "partial_update": "submission.api_answer",
+        "destroy": "submission.api_answer",
+    }
 
     def get_queryset(self):
-        return (
-            Answer.objects.filter(
-                question_id__in=questions_for_user(
-                    self.request.event, self.request.user
-                ).values_list("id", flat=True)
-            )
-            .prefetch_related("options")
-            .select_related("question", "person", "review", "submission")
+        queryset = Answer.objects.filter(
+            question__in=questions_for_user(self.request.event, self.request.user)
+        ).select_related("question", "question__event")
+        question_fields = self.check_expanded_fields(
+            "question.tracks", "question.submissions"
         )
+        if question_fields or (
+            prefetch_fields := self.check_expanded_fields("options")
+        ):
+            question_fields = [q.replace(".", "__") for q in question_fields]
+            queryset = queryset.prefetch_related(*prefetch_fields, *question_fields)
+        return queryset
 
     def get_unversioned_serializer_class(self):
-        if self.request.method in SAFE_METHODS:
-            return self.serializer_class
-        return AnswerWriteSerializer
+        if self.action == "create":
+            return AnswerCreateSerializer
+        return self.serializer_class
 
     def perform_create(self, serializer):
         # We don't want duplicate answers

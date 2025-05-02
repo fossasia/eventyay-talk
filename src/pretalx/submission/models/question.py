@@ -418,9 +418,28 @@ class Answer(PretalxModel):
 
     objects = ScopedManager(event="question__event")
 
+    class Meta:
+        rules_permissions = {
+            # Getting the answer API right is even trickier than getting the
+            # question API right. Questions and options follow the same logic:
+            # if you can see or change the question, the same goes for the option.
+            # Not so with answers: Not all answers to public questions are public,
+            # for example, and answers to reviewer questions are visible to people
+            # depending on both their role and the current review phase.
+            # To escape this complexity, we restrict the entire endpoint to people
+            # with "change_event_settings" permissions for now, and tackle this
+            # properly if there is demand and a) funding or b) contributions.
+            "api": can_change_event_settings
+            & orga_can_change_submissions
+        }
+
     @cached_property
     def event(self):
         return self.question.event
+
+    @property
+    def log_parent(self):
+        return self.event
 
     def __str__(self):
         """Help when debugging."""
@@ -459,3 +478,13 @@ class Answer(PretalxModel):
     @property
     def is_answered(self):
         return bool(self.answer_string)
+
+    def log_action(self, *args, content_object=None, **kwargs):
+        if not content_object:
+            if self.question.target == QuestionTarget.SPEAKER:
+                content_object = self.person
+            elif self.question.target == QuestionTarget.SUBMISSION:
+                content_object = self.submission
+            elif self.question.target == QuestionTarget.REVIEWER:
+                content_object = self.review
+        return super().log_action(*args, content_object=content_object, **kwargs)

@@ -1,5 +1,6 @@
 from django.db import transaction
 from rest_flex_fields.serializers import FlexFieldsSerializerMixin
+from rest_framework import exceptions
 from rest_framework.serializers import (
     ModelSerializer,
     PrimaryKeyRelatedField,
@@ -7,17 +8,21 @@ from rest_framework.serializers import (
 )
 
 from pretalx.api.mixins import PretalxSerializer, ReadOnlySerializerMixin
+from pretalx.api.serializers.fields import UploadedFileField
 from pretalx.api.versions import CURRENT_VERSION, register_serializer
 from pretalx.person.models import User
 from pretalx.submission.models import (
     Answer,
     AnswerOption,
     Question,
+    QuestionTarget,
     QuestionVariant,
+    Review,
     Submission,
     SubmissionType,
     Track,
 )
+from pretalx.submission.rules import questions_for_user
 
 
 @register_serializer(versions=[CURRENT_VERSION])
@@ -201,38 +206,21 @@ class LegacyQuestionSerializer(ReadOnlySerializerMixin, PretalxSerializer):
         )
 
 
-@register_serializer()
-class AnswerWriteSerializer(ModelSerializer):
+@register_serializer(versions=[CURRENT_VERSION])
+class AnswerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
+    question = PrimaryKeyRelatedField(read_only=True)
     submission = SlugRelatedField(
-        queryset=Submission.objects.none(),
         slug_field="code",
+        read_only=True,
         required=False,
-        style={"input_type": "text", "base_template": "input.html"},
     )
     person = SlugRelatedField(
-        queryset=User.objects.all(),
         slug_field="code",
+        read_only=True,
         required=False,
-        style={"input_type": "text", "base_template": "input.html"},
     )
-    options = LegacyAnswerOptionSerializer(many=True, required=False)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        request = self.context.get("request")
-        if not request:
-            return
-        self.fields["question"].queryset = request.event.questions.all()
-        self.fields["submission"].queryset = request.event.submissions.all()
-        self.fields["review"].queryset = request.event.reviews.all()
-        self.fields["review"].style = {
-            "input_type": "number",
-            "base_template": "input.html",
-        }
-        self.fields["question"].style = {
-            "input_type": "number",
-            "base_template": "input.html",
-        }
+    review = PrimaryKeyRelatedField(read_only=True, required=False)
+    answer_file = UploadedFileField(required=False)
 
     class Meta:
         model = Answer
@@ -246,11 +234,146 @@ class AnswerWriteSerializer(ModelSerializer):
             "person",
             "options",
         )
+        expandable_fields = {
+            "question": (
+                "pretalx.api.serializers.question.QuestionSerializer",
+                {"read_only": True, "omit": ("options",)},
+            ),
+            "options": (
+                "pretalx.api.serializers.question.AnswerOptionSerializer",
+                {"many": True, "read_only": True, "omit": ("question",)},
+            ),
+            # TODO: make reviews, questions and speakers expandable once we have the new
+            # API
+        }
 
 
-@register_serializer()
-class AnswerSerializer(AnswerWriteSerializer):
+@register_serializer(versions=[CURRENT_VERSION], class_name="AnswerCreateSerializer")
+class AnswerCreateSerializer(AnswerSerializer):
+    question = PrimaryKeyRelatedField(queryset=Question.objects.none())
+    submission = SlugRelatedField(
+        queryset=Submission.objects.none(),
+        slug_field="code",
+        required=False,
+        allow_null=True,
+    )
+    person = SlugRelatedField(
+        queryset=User.objects.none(),
+        slug_field="code",
+        required=False,
+        allow_null=True,
+    )
+    review = PrimaryKeyRelatedField(
+        queryset=Review.objects.none(),
+        required=False,
+        allow_null=True,
+    )
+    options = PrimaryKeyRelatedField(
+        queryset=AnswerOption.objects.none(),
+        required=False,
+        many=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get("request")
+        if not request or not getattr(request, "event", None):
+            return
+        self.fields["question"].queryset = questions_for_user(
+            request.event, request.user
+        )
+        self.fields["submission"].queryset = request.event.submissions.all()
+        self.fields["person"].queryset = User.objects.filter(
+            submissions__event=request.event
+        )
+        self.fields["review"].queryset = request.event.reviews.all()
+
+    def validate(self, data):
+        question = data.get("question")
+
+        if question.variant in (QuestionVariant.CHOICES, QuestionVariant.MULTIPLE):
+            options = data.get("options")
+            if not options:
+                raise exceptions.ValidationError(
+                    {
+                        "options": "This field is required for choice or multiple-choice question."
+                    }
+                )
+            for option in options:
+                if option.question != question:
+                    raise exceptions.ValidationError(
+                        {
+                            "options": f"Option {option.pk} does not belong to question {question.pk}."
+                        }
+                    )
+
+        target = question.target
+        if target == QuestionTarget.SUBMISSION and not data.get("submission"):
+            raise exceptions.ValidationError(
+                {"submission": "This field is required for submission questions."}
+            )
+        if target == QuestionTarget.REVIEWER and not data.get("review"):
+            raise exceptions.ValidationError(
+                {"review": "This field is required for reviewer questions."}
+            )
+        if target == QuestionTarget.SPEAKER and not data.get("person"):
+            raise exceptions.ValidationError(
+                {"person": "This field is required for speaker questions."}
+            )
+
+        # Only allow the field matching the question target
+        if target == QuestionTarget.SUBMISSION and data.get("review"):
+            raise exceptions.ValidationError(
+                {"review": "Cannot set review for submission question."}
+            )
+        if target == QuestionTarget.REVIEWER and data.get("submission"):
+            raise exceptions.ValidationError(
+                {"submission": "Cannot set submission for reviewer question."}
+            )
+        if target == QuestionTarget.SPEAKER and data.get("submission"):
+            raise exceptions.ValidationError(
+                {"submission": "Cannot set submission for speaker question."}
+            )
+
+        return data
+
+    class Meta(AnswerSerializer.Meta):
+        expandable_fields = None
+
+
+@register_serializer(versions=["LEGACY"])
+class LegacyAnswerSerializer(ModelSerializer):
+    submission = SlugRelatedField(
+        queryset=Submission.objects.none(),
+        slug_field="code",
+        required=False,
+    )
+    person = SlugRelatedField(
+        queryset=User.objects.all(),
+        slug_field="code",
+        required=False,
+    )
+    options = LegacyAnswerOptionSerializer(many=True, required=False)
     question = QuestionSerializer(Question.objects.none(), fields=("id", "question"))
 
-    class Meta(AnswerWriteSerializer.Meta):
-        pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get("request")
+        if not request:
+            return
+        self.fields["question"].queryset = request.event.questions.all()
+        self.fields["submission"].queryset = request.event.submissions.all()
+        self.fields["review"].queryset = request.event.reviews.all()
+
+    class Meta:
+        model = Answer
+        fields = (
+            "id",
+            "question",
+            "answer",
+            "answer_file",
+            "submission",
+            "review",
+            "person",
+            "options",
+        )
