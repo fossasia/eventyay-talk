@@ -68,53 +68,35 @@ urlpatterns = [
                     name="organiser.settings",
                 ),
                 path(
-                    "settings/delete",
+                    "settings/delete/",
                     organiser.OrganiserDelete.as_view(),
                     name="organiser.delete",
                 ),
                 path("api/users", organiser.speaker_search, name="organiser.user_list"),
-                path("teams/", organiser.TeamList.as_view(), name="organiser.teams"),
-                path(
-                    "teams/new",
-                    organiser.TeamDetail.as_view(),
-                    name="organiser.teams.create",
+                *organiser.TeamView.get_urls(
+                    url_base="teams",
+                    url_name="organiser.teams",
+                    namespace="orga",
                 ),
                 path(
-                    "teams/<int:pk>/",
-                    include(
-                        [
-                            path(
-                                "",
-                                organiser.TeamDetail.as_view(),
-                                name="organiser.teams.view",
-                            ),
-                            path(
-                                "delete",
-                                organiser.TeamDelete.as_view(),
-                                name="organiser.teams.delete",
-                            ),
-                            path(
-                                "delete/<int:user_pk>",
-                                organiser.TeamDelete.as_view(),
-                                name="organiser.teams.delete_member",
-                            ),
-                            path(
-                                "reset/<int:user_pk>",
-                                organiser.TeamResetPassword.as_view(),
-                                name="organiser.team.password_reset",
-                            ),
-                            path(
-                                "uninvite",
-                                organiser.TeamUninvite.as_view(),
-                                name="organiser.teams.uninvite",
-                            ),
-                            path(
-                                "resend",
-                                organiser.TeamResend.as_view(),
-                                name="organiser.teams.resend",
-                            ),
-                        ]
-                    ),
+                    "teams/<int:team_pk>/members/<int:user_pk>/delete/",
+                    organiser.TeamMemberDelete.as_view(),
+                    name="organiser.teams.members.delete",
+                ),
+                path(
+                    "teams/<int:team_pk>/members/<int:user_pk>/reset/",
+                    organiser.TeamResetPassword.as_view(),
+                    name="organiser.teams.members.reset",
+                ),
+                path(
+                    "teams/<int:pk>/invites/<int:invite_pk>/uninvite/",
+                    organiser.TeamUninvite.as_view(),
+                    name="organiser.teams.invites.uninvite",
+                ),
+                path(
+                    "teams/<int:pk>/invites/<int:invite_pk>/resend/",
+                    organiser.TeamResend.as_view(),
+                    name="organiser.teams.invites.resend",
                 ),
                 path(
                     "speakers/",

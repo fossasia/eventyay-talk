@@ -413,13 +413,13 @@ def test_retract_invitation(orga_client, event):
     assert team.invites.count() == 1, response.content.decode()
     invite = team.invites.first()
     response = orga_client.get(
-        team.organiser.orga_urls.teams + f"{invite.id}/uninvite", follow=True
+        team.orga_urls.base + f"invites/{invite.id}/uninvite/", follow=True
     )
     assert response.status_code == 200
     assert team.members.count() == 1
     assert team.invites.count() == 1, response.content.decode()
     response = orga_client.post(
-        team.organiser.orga_urls.teams + f"{invite.id}/uninvite", follow=True
+        team.orga_urls.base + f"invites/{invite.id}/uninvite/", follow=True
     )
     assert response.status_code == 200
     assert team.members.count() == 1
@@ -433,7 +433,7 @@ def test_delete_team_member(orga_client, event, other_orga_user):
     team.save()
     member = team.members.first()
     count = team.members.count()
-    url = team.orga_urls.delete + f"/{member.pk}"
+    url = team.orga_urls.base + f"members/{member.pk}/delete/"
     assert count
     response = orga_client.get(url, follow=True)
     assert response.status_code == 200
@@ -451,7 +451,7 @@ def test_reset_team_member_password(orga_client, event, other_orga_user):
     team.save()
     member = team.members.first()
     assert not member.pw_reset_token
-    url = team.orga_urls.base + f"reset/{member.pk}"
+    url = team.orga_urls.base + f"members/{member.pk}/reset/"
     response = orga_client.post(url, follow=True)
     assert response.status_code == 200
     member.refresh_from_db()

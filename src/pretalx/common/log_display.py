@@ -63,6 +63,7 @@ LOG_NAMES = {
         "The invitation to the review team was retracted."
     ),
     "pretalx.invite.reviewer.send": _("The invitation to the review team was sent."),
+    "pretalx.team.member.remove": _("A team member was removed"),
     "pretalx.mail.create": _("An email was created."),
     "pretalx.mail.delete": _("A pending email was deleted."),
     "pretalx.mail.delete_all": _("All pending emails were deleted."),

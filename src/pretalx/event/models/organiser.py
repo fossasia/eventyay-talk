@@ -14,6 +14,7 @@ from i18nfield.fields import I18nCharField
 from pretalx.common.models.mixins import PretalxModel
 from pretalx.common.urls import EventUrls, build_absolute_uri
 from pretalx.event.models.event import FULL_SLUG_REGEX
+from pretalx.event.rules import can_change_teams
 from pretalx.person.models import User
 
 
@@ -53,11 +54,9 @@ def check_access_permissions(organiser):
         )
 
     for event in organiser.events.all():
-        event_teams = (
-            event.teams.all()
-            .annotate(member_count=models.Count("members"))
-            .filter(member_count__gt=0)
-        )
+        event_teams = teams.filter(
+            models.Q(limit_events=event) | models.Q(all_events=True)
+        ).distinct()
         if not event_teams:
             raise Exception(
                 str(
@@ -69,7 +68,7 @@ def check_access_permissions(organiser):
         if not [t for t in event_teams if t.can_change_event_settings]:
             warnings.append(
                 (
-                    "no_can_cange_event_settings",
+                    "no_can_change_event_settings",
                     str(
                         _(
                             "Nobody on your teams has the permissions to change settings for the event {event_name}"
@@ -113,11 +112,11 @@ class Organiser(PretalxModel):
 
     class orga_urls(EventUrls):
         base = "/orga/organiser/{self.slug}/"
-        settings = "/orga/organiser/{self.slug}/settings/"
-        delete = "{settings}delete"
+        settings = "{base}settings/"
+        delete = "{settings}delete/"
         teams = "{base}teams/"
-        new_team = "{teams}new"
-        user_search = "{base}api/users"
+        new_team = "{teams}new/"
+        user_search = "{base}api/users/"
 
     @transaction.atomic
     def shred(self, person=None):
@@ -201,6 +200,15 @@ class Team(PretalxModel):
 
     objects = models.Manager()
 
+    class Meta:
+        rules_permissions = {
+            "list": can_change_teams,
+            "view": can_change_teams,
+            "create": can_change_teams,
+            "update": can_change_teams,
+            "delete": can_change_teams,
+        }
+
     def __str__(self) -> str:
         """Help with debugging."""
         return _("{name} on {orga}").format(
@@ -235,12 +243,13 @@ class Team(PretalxModel):
     def remove_member(self, member):
         self.members.remove(member)
         with scopes_disabled():
-            if active_tokens := member.api_tokens.active().filter(team=self):
-                active_tokens.update(expires=now())
+            member.api_tokens.active().filter(team=self).update(expires=now())
+
+    remove_member.alters_data = True
 
     class orga_urls(EventUrls):
         base = "{self.organiser.orga_urls.teams}{self.pk}/"
-        delete = "{base}delete"
+        delete = "{base}delete/"
 
 
 def generate_invite_token():

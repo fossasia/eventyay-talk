@@ -3,6 +3,7 @@ import datetime as dt
 import rules
 from django.utils.timezone import now
 
+from pretalx.event.rules import can_change_teams
 from pretalx.person.permissions import is_administrator
 from pretalx.person.rules import can_change_event_settings, is_reviewer
 from pretalx.submission.permissions import (
@@ -54,22 +55,6 @@ def can_create_events(user, obj):
 
 
 @rules.predicate
-def can_change_teams(user, obj):
-    from pretalx.event.models import Organiser, Team
-
-    if isinstance(obj, Team):
-        obj = obj.organiser
-    if isinstance(obj, Organiser):
-        return user.teams.filter(organiser=obj, can_change_teams=True).exists()
-    event = getattr(obj, "event", None)
-    if not user or user.is_anonymous or not obj or not event:
-        return False
-    if user.is_administrator:
-        return True
-    return event.teams.filter(members__in=[user], can_change_teams=True).exists()
-
-
-@rules.predicate
 def reviews_are_open(user, obj):
     event = obj.event
     return bool(event.active_review_phase and event.active_review_phase.can_review)
@@ -113,7 +98,6 @@ rules.add_perm(
 rules.add_perm("orga.change_settings", can_change_event_settings)
 rules.add_perm("orga.change_organiser_settings", can_change_organiser_settings)
 rules.add_perm("orga.view_organisers", can_change_any_organiser_settings)
-rules.add_perm("orga.change_teams", is_administrator | can_change_teams)
 rules.add_perm("orga.view_submission_cards", orga_can_change_submissions)
 rules.add_perm("orga.edit_cfp", can_change_event_settings)
 rules.add_perm("orga.view_question", orga_can_change_submissions)
