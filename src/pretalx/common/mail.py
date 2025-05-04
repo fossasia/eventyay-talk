@@ -41,6 +41,13 @@ class TolerantDict(dict):
         return key
 
 
+DEBUG_DOMAINS = [
+    "localhost",
+    "example.org",
+    "example.com",
+]
+
+
 @app.task(bind=True, name="pretalx.common.send_mail")
 def mail_send_task(
     self,
@@ -65,14 +72,14 @@ def mail_send_task(
         to = [
             addr
             for addr in to
-            if (not addr.endswith("@localhost")) and (not addr.endswith("@example.org"))
+            if not any([addr.endswith(domain) for domain in DEBUG_DOMAINS])
         ]
     if not to:
         return
-    reply_to = (
-        [] if not reply_to or (len(reply_to) == 1 and reply_to[0] == "") else reply_to
-    )
     reply_to = reply_to.split(",") if isinstance(reply_to, str) else reply_to
+    reply_to = [addr for addr in reply_to if addr]
+    reply_to = reply_to or []
+
     if event:
         event = Event.objects.get(pk=event)
         backend = event.get_mail_backend()
