@@ -118,6 +118,10 @@ class Organiser(PretalxModel):
         new_team = "{teams}new/"
         user_search = "{base}api/users/"
 
+    @cached_property
+    def organiser(self):
+        return self
+
     @transaction.atomic
     def shred(self, person=None):
         """Irrevocably deletes the organiser and all related events and their
@@ -143,6 +147,18 @@ class Organiser(PretalxModel):
         self.delete()
 
     shred.alters_data = True
+
+
+TEAM_PERMISSIONS = {
+    "list": can_change_teams,
+    "view": can_change_teams,
+    "create": can_change_teams,
+    "update": can_change_teams,
+    "delete": can_change_teams,
+    "invite": can_change_teams,
+    "delete_invite": can_change_teams,
+    "remove_member": can_change_teams,
+}
 
 
 class Team(PretalxModel):
@@ -201,13 +217,7 @@ class Team(PretalxModel):
     objects = models.Manager()
 
     class Meta:
-        rules_permissions = {
-            "list": can_change_teams,
-            "view": can_change_teams,
-            "create": can_change_teams,
-            "update": can_change_teams,
-            "delete": can_change_teams,
-        }
+        rules_permissions = TEAM_PERMISSIONS
 
     def __str__(self) -> str:
         """Help with debugging."""
@@ -270,21 +280,27 @@ class TeamInvite(PretalxModel):
 
     objects = models.Manager()
 
+    class Meta:
+        rules_permissions = TEAM_PERMISSIONS
+
     def __str__(self) -> str:
         """Help with debugging."""
         return _("Invite to team {team} for {email}").format(
             team=str(self.team), email=self.email
         )
 
-    class urls(EventUrls):
-        invitation = "/orga/invitation/{self.token}"
+    @cached_property
+    def organiser(self):
+        return self.team.organiser
+
+    @cached_property
+    def invitation_url(self):
+        return build_absolute_uri("orga:invitation.view", kwargs={"code": self.token})
 
     def send(self):
         from pretalx.mail.models import QueuedMail
 
-        invitation_link = build_absolute_uri(
-            "orga:invitation.view", kwargs={"code": self.token}
-        )
+        invitation_link = self.invitation_url
         invitation_text = _(
             """Hi!
 You have been invited to the {name} event organiser team - Please click here to accept:

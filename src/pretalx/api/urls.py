@@ -12,14 +12,15 @@ from pretalx.api.views import (
     speaker,
     speaker_information,
     submission,
+    team,
     upload,
     user,
 )
 
-default_router = routers.DefaultRouter()
+default_router = routers.SimpleRouter()
 default_router.register("events", event.EventViewSet, basename="event")
 
-event_router = routers.DefaultRouter()
+event_router = routers.SimpleRouter()
 event_router.register(
     "submissions", submission.SubmissionViewSet, basename="submission"
 )
@@ -50,6 +51,10 @@ event_router.register(
     basename="speaker_information",
 )
 
+organiser_router = routers.DefaultRouter()
+organiser_router.register("teams", team.TeamViewSet, basename="team")
+
+
 app_name = "api"
 urlpatterns = [
     path("", include(default_router.urls)),
@@ -57,4 +62,5 @@ urlpatterns = [
     path("auth/", obtain_auth_token),
     path("upload/", upload.UploadView.as_view(), name="upload"),
     path("events/<slug:event>/", include(event_router.urls)),
+    path("organisers/<slug:organiser>/", include(organiser_router.urls)),
 ]

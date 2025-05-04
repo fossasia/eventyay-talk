@@ -21,6 +21,7 @@ class PretalxViewSetMixin:
         "update": ".update",
         "partial_update": ".update",
     }
+    action_permission_map = {}
 
     def get_versioned_serializer(self, name):
         try:
@@ -113,6 +114,17 @@ class PretalxSerializer(ModelSerializer):
         if self.override_locale:
             self.serializer_field_mapping[I18nCharField] = PlainI18nField
             self.serializer_field_mapping[I18nTextField] = PlainI18nField
+
+    def get_with_fallback(self, data, key):
+        """
+        Get key from dictionary, or fall back to `self.instance` if it exists.
+        Handy for validating data in partial updates.
+        (Yes, not terribly safe, but better than nothing.)
+        """
+        if key in data:
+            return data[key]
+        if self.instance:
+            return getattr(self.instance, key, None)
 
 
 PretalxSerializer.serializer_field_mapping[I18nCharField] = DocumentedI18nField

@@ -889,7 +889,7 @@ def invitation(event):
             can_change_organiser_settings=True, is_reviewer=False
         ).first()
         return TeamInvite.objects.create(
-            team=team, token="testtoken", email="some@test.mail"
+            team=team, token="testtoken", email="some@example.com"
         )
 
 

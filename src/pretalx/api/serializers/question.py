@@ -289,10 +289,10 @@ class AnswerCreateSerializer(AnswerSerializer):
         self.fields["review"].queryset = request.event.reviews.all()
 
     def validate(self, data):
-        question = data.get("question")
+        question = self.get_with_fallback(data, "question")
 
         if question.variant in (QuestionVariant.CHOICES, QuestionVariant.MULTIPLE):
-            options = data.get("options")
+            options = self.get_with_fallback(data, "options")
             if not options:
                 raise exceptions.ValidationError(
                     {
@@ -308,29 +308,32 @@ class AnswerCreateSerializer(AnswerSerializer):
                     )
 
         target = question.target
-        if target == QuestionTarget.SUBMISSION and not data.get("submission"):
+        submission = self.get_with_fallback(data, "submission")
+        review = self.get_with_fallback(data, "review")
+        person = self.get_with_fallback(data, "person")
+        if target == QuestionTarget.SUBMISSION and not submission:
             raise exceptions.ValidationError(
                 {"submission": "This field is required for submission questions."}
             )
-        if target == QuestionTarget.REVIEWER and not data.get("review"):
+        if target == QuestionTarget.REVIEWER and not review:
             raise exceptions.ValidationError(
                 {"review": "This field is required for reviewer questions."}
             )
-        if target == QuestionTarget.SPEAKER and not data.get("person"):
+        if target == QuestionTarget.SPEAKER and not person:
             raise exceptions.ValidationError(
                 {"person": "This field is required for speaker questions."}
             )
 
         # Only allow the field matching the question target
-        if target == QuestionTarget.SUBMISSION and data.get("review"):
+        if target == QuestionTarget.SUBMISSION and review:
             raise exceptions.ValidationError(
                 {"review": "Cannot set review for submission question."}
             )
-        if target == QuestionTarget.REVIEWER and data.get("submission"):
+        if target == QuestionTarget.REVIEWER and submission:
             raise exceptions.ValidationError(
                 {"submission": "Cannot set submission for reviewer question."}
             )
-        if target == QuestionTarget.SPEAKER and data.get("submission"):
+        if target == QuestionTarget.SPEAKER and submission:
             raise exceptions.ValidationError(
                 {"submission": "Cannot set submission for speaker question."}
             )

@@ -22,7 +22,7 @@ class ApiPermission(BasePermission):
     def get_permission_object(self, view, obj, request, detail=False):
         if func := getattr(view, "get_permission_object", None):
             return func()
-        return obj or request.event
+        return obj or getattr(request, "event", None) or request.organiser
 
     def has_permission(self, request, view):
         return self._has_permission(view, None, request)
@@ -39,14 +39,15 @@ class ApiPermission(BasePermission):
         - Does the user have the required additional object-level permissions
         """
         event = getattr(request, "event", None)
-        if not event:  # Only true for root API view
-            return True
-
         if request.auth:
-            if event not in request.auth.team.events:
+            if event:
+                if event not in request.auth.team.events:
+                    return False
+            elif request.organiser != request.auth.team.organiser:
                 return False
             if view.action and (endpoint := getattr(view, "endpoint", None)):
-                if not request.auth.has_endpoint_permission(endpoint, view.action):
+                action = view.action_permission_map.get(view.action, view.action)
+                if not request.auth.has_endpoint_permission(endpoint, action):
                     return False
 
         if view.detail and not obj:

@@ -26,6 +26,7 @@ PERMISSION_CHOICES = (
     ("actions", _("Additional actions")),
 )
 ENDPOINTS = (
+    "teams",
     "events",
     "submissions",
     "speakers",
