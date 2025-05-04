@@ -275,7 +275,11 @@ class TeamInvite(PretalxModel):
     team = models.ForeignKey(to=Team, related_name="invites", on_delete=models.CASCADE)
     email = models.EmailField(null=True, blank=True, verbose_name=_("Email"))
     token = models.CharField(
-        default=generate_invite_token, max_length=64, null=True, blank=True
+        default=generate_invite_token,
+        max_length=64,
+        null=True,
+        blank=True,
+        unique=True,
     )
 
     objects = models.Manager()
