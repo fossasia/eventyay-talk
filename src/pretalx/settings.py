@@ -608,7 +608,8 @@ STATICFILES_DIRS = [static_path] if static_path.exists() else []
 # Note that those apps must be built before running collectstatic.
 FRONTEND_DIR = BASE_DIR / "pretalx" / "frontend"
 # Note: We must assume that the directory exists,
-# because `collectstatic` only reads the settings before Vite runs.
+# because when `collectstatic` was invoked by `rebuild` command,
+# it only sees the settings before Vite runs.
 STATICFILES_DIRS.append(FRONTEND_DIR / "global-nav-menu" / "dist")
 
 STORAGES = {
