@@ -52,6 +52,7 @@ class Tag(PretalxModel):
             "delete": orga_can_change_submissions
             | (is_reviewer & reviewer_can_change_tags),
         }
+        unique_together = (("event", "tag"),)
 
     class urls(EventUrls):
         base = edit = "{self.event.orga_urls.tags}{self.pk}/"

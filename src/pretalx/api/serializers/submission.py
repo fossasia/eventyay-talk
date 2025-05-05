@@ -1,6 +1,7 @@
 from functools import partial
 
 from i18nfield.rest_framework import I18nAwareModelSerializer
+from rest_framework import exceptions
 from rest_framework.serializers import (
     ModelSerializer,
     SerializerMethodField,
@@ -164,9 +165,21 @@ class TagSerializer(PretalxSerializer):
         model = Tag
         fields = ("id", "tag", "description", "color", "is_public")
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.event = getattr(self.context.get("request"), "event", None)
+
     def create(self, validated_data):
-        validated_data["event"] = getattr(self.context.get("request"), "event", None)
+        validated_data["event"] = self.event
         return super().create(validated_data)
+
+    def validate_tag(self, value):
+        existing_tags = self.event.tags.all()
+        if self.instance and self.instance.pk:
+            existing_tags.exclude(pk=self.instance.pk)
+        if existing_tags.filter(tag=value).exists():
+            raise exceptions.ValidationError("Tag already exists in event.")
+        return value
 
 
 @register_serializer(versions=[CURRENT_VERSION])
