@@ -110,6 +110,27 @@ class AllSubmissionManager(models.Manager):
     pass
 
 
+class SpeakerRole(models.Model):
+    """Through model connecting speaker and submission."""
+
+    submission = models.ForeignKey(
+        to="submission.Submission",
+        on_delete=models.CASCADE,
+        related_name="speaker_roles",
+    )
+    user = models.ForeignKey(
+        to="person.User", on_delete=models.CASCADE, related_name="speaker_roles"
+    )
+
+    objects = ScopedManager(event="submission__event")
+
+    class Meta:
+        unique_together = (("submission", "user"),)
+
+    def __str__(self):
+        return f"SpeakerRole(submission={self.submission.code}, speaker={self.user})"
+
+
 class Submission(GenerateCode, PretalxModel):
     """Submissions are, next to :class:`~pretalx.event.models.event.Event`, the
     central model in pretalx.
@@ -133,7 +154,10 @@ class Submission(GenerateCode, PretalxModel):
 
     code = models.CharField(max_length=16, unique=True)
     speakers = models.ManyToManyField(
-        to="person.User", related_name="submissions", blank=True
+        to="person.User",
+        related_name="submissions",
+        through=SpeakerRole,
+        blank=True,
     )
     event = models.ForeignKey(
         to="event.Event", on_delete=models.PROTECT, related_name="submissions"
