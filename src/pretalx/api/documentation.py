@@ -16,9 +16,11 @@ def build_expand_docs(*params):
     )
 
 
-def build_search_docs(*params):
+def build_search_docs(*params, extra_description=None):
     fields = ",".join([f'`"{param}"`' for param in params])
     description = f"A search term, searching in {fields}."
+    if extra_description:
+        description = f"{description} {extra_description}"
     return OpenApiParameter(
         name="q",
         type=OpenApiTypes.STR,
@@ -84,6 +86,10 @@ def postprocess_schema(result, generator, request, public):
         {
             "name": "access-codes",
             "description": "Access codes can be used to grant access to restricted tracks, or to allow for proposals to be submitted past the public deadline.",
+        },
+        {
+            "name": "speakers",
+            "description": "Speakers can currently only updated, not created or deleted, as a speaker refers to a user object, and users can only be deleted by administrators. Organisers will see additional fields in the API, in line with the response to the update actions.",
         },
     ]
     return result

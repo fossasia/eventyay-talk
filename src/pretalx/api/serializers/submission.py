@@ -10,7 +10,10 @@ from rest_framework.serializers import (
 
 from pretalx.api.mixins import PretalxSerializer, ReadOnlySerializerMixin
 from pretalx.api.serializers.question import AnswerSerializer
-from pretalx.api.serializers.speaker import SubmitterOrgaSerializer, SubmitterSerializer
+from pretalx.api.serializers.speaker import (
+    LegacySubmitterOrgaSerializer,
+    LegacySubmitterSerializer,
+)
 from pretalx.api.versions import CURRENT_VERSION, register_serializer
 from pretalx.schedule.models import Schedule, TalkSlot
 from pretalx.submission.models import (
@@ -72,7 +75,7 @@ class SubmissionSerializer(I18nAwareModelSerializer):
     description = SerializerMethodField()
     answers = SerializerMethodField()
 
-    speaker_serializer_class = SubmitterSerializer
+    speaker_serializer_class = LegacySubmitterSerializer
 
     def __init__(self, *args, **kwargs):
         self.can_view_speakers = kwargs.pop("can_view_speakers", False)
@@ -260,7 +263,7 @@ class SubmissionOrgaSerializer(SubmissionSerializer):
     created = SerializerMethodField()
     favourite_count = SerializerMethodField()
 
-    speaker_serializer_class = SubmitterOrgaSerializer
+    speaker_serializer_class = LegacySubmitterOrgaSerializer
 
     def answers_queryset(self, obj):
         return obj.answers.all()

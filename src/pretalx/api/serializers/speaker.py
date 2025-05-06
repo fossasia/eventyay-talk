@@ -1,14 +1,28 @@
-from rest_framework.serializers import CharField, ModelSerializer, SerializerMethodField
+from pathlib import Path
 
+from django.utils.functional import cached_property
+from drf_spectacular.utils import extend_schema_field
+from rest_flex_fields.serializers import FlexFieldsSerializerMixin
+from rest_flex_fields.utils import split_levels
+from rest_framework import exceptions
+from rest_framework.serializers import (
+    CharField,
+    EmailField,
+    ModelSerializer,
+    SerializerMethodField,
+    URLField,
+)
+
+from pretalx.api.mixins import PretalxSerializer
+from pretalx.api.serializers.fields import UploadedFileField
 from pretalx.api.serializers.question import AnswerSerializer
 from pretalx.api.serializers.room import AvailabilitySerializer
-from pretalx.api.versions import register_serializer
+from pretalx.api.versions import CURRENT_VERSION, register_serializer
 from pretalx.person.models import SpeakerProfile, User
 from pretalx.schedule.models import Availability
 
 
-@register_serializer()
-class SubmitterSerializer(ModelSerializer):
+class LegacySubmitterSerializer(ModelSerializer):
     biography = SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
@@ -27,14 +41,12 @@ class SubmitterSerializer(ModelSerializer):
         return ""
 
 
-@register_serializer()
-class SubmitterOrgaSerializer(SubmitterSerializer):
-    class Meta(SubmitterSerializer.Meta):
-        fields = SubmitterSerializer.Meta.fields + ("email",)
+class LegacySubmitterOrgaSerializer(LegacySubmitterSerializer):
+    class Meta(LegacySubmitterSerializer.Meta):
+        fields = LegacySubmitterSerializer.Meta.fields + ("email",)
 
 
-@register_serializer()
-class SpeakerSerializer(ModelSerializer):
+class LegacySpeakerSerializer(ModelSerializer):
     code = CharField(source="user.code")
     name = CharField(source="user.name")
     avatar = SerializerMethodField()
@@ -53,7 +65,7 @@ class SpeakerSerializer(ModelSerializer):
     @staticmethod
     def get_avatar(obj):
         if obj.event.cfp.request_avatar:
-            return obj.user.get_avatar_url(event=obj.event)
+            return obj.avatar_url
 
     @staticmethod
     def get_submissions(obj):
@@ -82,8 +94,7 @@ class SpeakerSerializer(ModelSerializer):
         fields = ("code", "name", "biography", "submissions", "avatar", "answers")
 
 
-@register_serializer()
-class SpeakerOrgaSerializer(SpeakerSerializer):
+class LegacySpeakerOrgaSerializer(LegacySpeakerSerializer):
     email = CharField(source="user.email")
     availabilities = AvailabilitySerializer(
         Availability.objects.none(), many=True, read_only=True
@@ -97,14 +108,141 @@ class SpeakerOrgaSerializer(SpeakerSerializer):
             "code", flat=True
         )
 
-    class Meta(SpeakerSerializer.Meta):
-        fields = SpeakerSerializer.Meta.fields + ("email", "availabilities")
+    class Meta(LegacySpeakerSerializer.Meta):
+        fields = LegacySpeakerSerializer.Meta.fields + ("email", "availabilities")
 
 
-@register_serializer()
-class SpeakerReviewerSerializer(SpeakerOrgaSerializer):
+class LegacySpeakerReviewerSerializer(LegacySpeakerOrgaSerializer):
     def answers_queryset(self, obj):
         return obj.reviewer_answers.all()
 
-    class Meta(SpeakerOrgaSerializer.Meta):
+    class Meta(LegacySpeakerOrgaSerializer.Meta):
         pass
+
+
+@register_serializer(versions=[CURRENT_VERSION])
+class SpeakerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
+    code = CharField(source="user.code", read_only=True)
+    name = CharField(source="user.name")
+    avatar_url = URLField(read_only=True)
+    answers = SerializerMethodField()
+    submissions = SerializerMethodField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.event = getattr(self.context.get("request"), "event", None)
+        if self.event and not self.event.cfp.request_avatar:
+            self.fields.pop("avatar_url")
+
+    @extend_schema_field(list[str])
+    def get_submissions(self, obj):
+        submissions_queryset = self.context.get("submissions", [])
+        return obj.user.submissions.filter(
+            pk__in=submissions_queryset.values_list("pk", flat=True)
+        ).values_list("code", flat=True)
+
+    @cached_property
+    def extra_flex_field_config(self):
+        return {
+            key: split_levels(self._flex_options_rep_only[key])
+            for key in ("expand", "fields", "omit")
+        }
+
+    def get_extra_flex_field(self, extra_field, *args, **kwargs):
+
+        if extra_field in self._get_fields_names_to_remove(
+            [extra_field],
+            self.extra_flex_field_config["omit"][0],
+            self.extra_flex_field_config["fields"][0],
+            self.extra_flex_field_config["omit"][1],
+        ):
+            return
+
+        if extra_field in self.extra_flex_field_config["expand"][0]:
+            klass, settings = self.Meta.extra_expandable_fields[extra_field]
+            serializer_class = self._get_serializer_class_from_lazy_string(klass)
+            for key, value in self.extra_flex_field_config.items():
+                if value[1] and extra_field in value[1]:
+                    settings[key] = value[1][extra_field]
+            return serializer_class(*args, **settings, **kwargs)
+
+    @extend_schema_field(list[int])
+    def get_answers(self, obj):
+        questions = self.context.get("questions", [])
+        qs = obj.answers.filter(question__in=questions, question__event=self.event)
+        if serializer := self.get_extra_flex_field("answers", qs):
+            return serializer.data
+        return qs.values_list("pk", flat=True)
+
+    class Meta:
+        model = SpeakerProfile
+        fields = ("code", "name", "biography", "submissions", "avatar_url", "answers")
+        expandable_fields = {
+            "submissions": (
+                "pretalx.api.serializers.submission.SubmissionSerializer",
+                {"read_only": True, "many": True},
+            ),
+        }
+        extra_expandable_fields = {
+            "answers": (
+                "pretalx.api.serializers.question.AnswerSerializer",
+                {
+                    "many": True,
+                    "read_only": True,
+                },
+            ),
+        }
+
+
+@register_serializer(versions=[CURRENT_VERSION])
+class SpeakerOrgaSerializer(SpeakerSerializer):
+    email = EmailField(source="user.email")
+    timezone = CharField(source="user.timezone", read_only=True)
+    locale = CharField(source="user.locale", read_only=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.event:
+            for field in ("avatar", "availabilities"):
+                if not getattr(self.event.cfp, f"request_{field}"):
+                    self.fields.pop(field, None)
+                elif getattr(self.event.cfp, f"require_{field}"):
+                    self.fields[field].required = True
+
+    class Meta(SpeakerSerializer.Meta):
+        fields = SpeakerSerializer.Meta.fields + (
+            "email",
+            "timezone",
+            "locale",
+            "has_arrived",
+        )
+
+
+@register_serializer(versions=[CURRENT_VERSION])
+class SpeakerUpdateSerializer(SpeakerOrgaSerializer):
+    avatar = UploadedFileField(required=False, source="speaker.user")
+
+    def update(self, instance, validated_data):
+        avatar = validated_data.pop("avatar", None)
+        user_fields = validated_data.pop("user", None) or {}
+        instance = super().update(instance, validated_data)
+        for key, value in user_fields.items():
+            setattr(instance.user, key, value)
+            instance.user.save(update_fields=[key])
+        if avatar:
+            instance.avatar.save(Path(avatar.name).name, avatar)
+            instance.user.process_image("avatar", generate_thumbnail=True)
+        return instance
+
+    def validate_email(self, value):
+        value = value.lower()
+        if (
+            User.objects.exclude(pk=self.instance.pk)
+            .filter(email__iexact=value)
+            .exists()
+        ):
+            raise exceptions.ValidationError("Email already exists in system.")
+        return value
+
+    class Meta(SpeakerOrgaSerializer.Meta):
+        fields = SpeakerOrgaSerializer.Meta.fields + ("avatar",)

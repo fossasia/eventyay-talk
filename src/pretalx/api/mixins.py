@@ -1,3 +1,4 @@
+from django.utils.functional import cached_property
 from drf_spectacular.utils import extend_schema_field
 from i18nfield.fields import I18nCharField, I18nTextField
 from i18nfield.rest_framework import I18nField
@@ -23,10 +24,13 @@ class PretalxViewSetMixin:
     }
     action_permission_map = {}
 
+    @cached_property
+    def api_version(self):
+        return get_api_version_from_request(self.request)
+
     def get_versioned_serializer(self, name):
         try:
-            version = get_api_version_from_request(self.request)
-            return get_serializer_by_version(name, version)
+            return get_serializer_by_version(name, self.api_version)
         except KeyError:
             raise ApiVersionException()
 

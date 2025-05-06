@@ -243,8 +243,11 @@ class AnswerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
                 "pretalx.api.serializers.question.AnswerOptionSerializer",
                 {"many": True, "read_only": True, "omit": ("question",)},
             ),
-            # TODO: make reviews, questions and speakers expandable once we have the new
-            # API
+            "person": (
+                "pretalx.api.serializers.speaker.SpeakerSerializer",
+                {"read_only": True, "omit": ("answers",)},
+            ),
+            # TODO: make reviews and submissions expandable once we have the new API
         }
 
 
