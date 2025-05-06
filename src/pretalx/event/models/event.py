@@ -816,11 +816,10 @@ class Event(PretalxModel):
     def teams(self):
         """Returns all :class:`~pretalx.event.models.organiser.Team` objects
         that concern this event."""
-        from pretalx.event.models.organiser import Team
 
-        return Team.objects.filter(
-            models.Q(limit_events__in=[self]) | models.Q(all_events=True),
-            organiser=self.organiser,
+        return self.organiser.teams.all().filter(
+            models.Q(all_events=True)
+            | models.Q(models.Q(all_events=False) & models.Q(limit_events__in=[self]))
         )
 
     @cached_property

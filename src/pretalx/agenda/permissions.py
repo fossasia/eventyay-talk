@@ -1,17 +1,17 @@
 import rules
 
-from pretalx.agenda.rules import is_agenda_visible
+from pretalx.agenda.rules import (
+    can_view_schedule,
+    has_agenda,
+    is_agenda_visible,
+    is_speaker_viewable,
+)
 from pretalx.submission.rules import orga_can_change_submissions
 
 
 @rules.predicate
 def is_widget_always_visible(user, event):
     return event.get_feature_flag("show_widget_if_not_public")
-
-
-@rules.predicate
-def has_agenda(user, event):
-    return bool(event.current_schedule)
 
 
 @rules.predicate
@@ -70,20 +70,7 @@ def event_uses_feedback(user, event):
     return event and event.get_feature_flag("use_feedback")
 
 
-@rules.predicate
-def is_speaker_viewable(user, profile):
-    if not profile:
-        return False
-    is_speaker = profile.user.submissions.filter(
-        slots__schedule=profile.event.current_schedule
-    ).exists()
-    return is_speaker and is_agenda_visible(user, profile.event)
-
-
-rules.add_perm(
-    "agenda.view_schedule",
-    (has_agenda & is_agenda_visible) | orga_can_change_submissions,
-)
+rules.add_perm("agenda.view_schedule", can_view_schedule)
 rules.add_perm(
     "agenda.view_featured_submissions",
     are_featured_submissions_visible | orga_can_change_submissions,

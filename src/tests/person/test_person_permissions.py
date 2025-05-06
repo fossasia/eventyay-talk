@@ -1,7 +1,7 @@
 import pytest
 from django_scopes import scope
 
-from pretalx.person.permissions import can_view_information
+from pretalx.person.rules import can_view_information
 
 
 @pytest.mark.django_db

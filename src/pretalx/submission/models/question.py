@@ -88,7 +88,7 @@ class QuestionRequired(Choices):
 # Question and question option permissions should be in sync
 QUESTION_PERMISSIONS = {
     "list": is_cfp_open | is_agenda_visible | orga_can_change_submissions | is_reviewer,
-    "orga_list": orga_can_change_submissions | is_reviewer,
+    "orga_list": orga_can_change_submissions,
     "view": is_cfp_open | is_agenda_visible | orga_can_change_submissions | is_reviewer,
     "orga_view": orga_can_change_submissions,
     "create": can_change_event_settings,

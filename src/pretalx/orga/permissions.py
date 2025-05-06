@@ -4,8 +4,12 @@ import rules
 from django.utils.timezone import now
 
 from pretalx.event.rules import can_change_teams
-from pretalx.person.permissions import is_administrator
-from pretalx.person.rules import can_change_event_settings, is_reviewer
+from pretalx.orga.rules import can_view_speaker_names
+from pretalx.person.rules import (
+    can_change_event_settings,
+    is_administrator,
+    is_reviewer,
+)
 from pretalx.submission.permissions import (
     can_be_reviewed,
     can_view_all_reviews,
@@ -69,18 +73,6 @@ def can_edit_mail(user, obj):
 def can_mark_speakers_arrived(user, obj):
     event = obj.event
     return (event.date_from - dt.timedelta(days=1)) <= now().date() <= event.date_to
-
-
-@rules.predicate
-def can_view_speaker_names(user, obj):
-    """ONLY in use with users who don't have change permissions."""
-    event = obj.event
-    reviewer_teams = obj.event.teams.filter(members__in=[user], is_reviewer=True)
-    if reviewer_teams and all(team.force_hide_speaker_names for team in reviewer_teams):
-        return False
-    return bool(
-        event.active_review_phase and event.active_review_phase.can_see_speaker_names
-    )
 
 
 @rules.predicate

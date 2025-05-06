@@ -334,7 +334,7 @@ class OrganiserDetail(PermissionRequired, CreateOrUpdateView):
 
 
 class OrganiserDelete(PermissionRequired, ActionConfirmMixin, DetailView):
-    permission_required = "person.is_administrator"
+    permission_required = "person.administrator_user"
     model = Organiser
     action_text = (
         _(

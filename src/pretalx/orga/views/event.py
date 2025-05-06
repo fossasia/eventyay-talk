@@ -686,7 +686,7 @@ class EventWizard(PermissionRequired, SensibleBackWizardMixin, SessionWizardView
 
 
 class EventDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
-    permission_required = "person.is_administrator"
+    permission_required = "person.administrator_user"
     model = Event
     action_text = (
         _(

@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.syndication.views import Feed
 from django.db import transaction
-from django.db.models import Exists, OuterRef, Q, Subquery
+from django.db.models import Q
 from django.forms.models import BaseModelFormSet, inlineformset_factory
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -57,6 +57,11 @@ from pretalx.submission.models import (
     SubmissionStates,
     Tag,
 )
+from pretalx.submission.rules import (
+    annotate_assigned,
+    get_reviewer_tracks,
+    limit_for_reviewers,
+)
 
 
 class SubmissionViewMixin(PermissionRequired):
@@ -98,28 +103,7 @@ class ReviewerSubmissionFilter:
     @cached_property
     def limit_tracks(self):
         if self.user_permissions == {"is_reviewer"}:
-            teams = self.request.user.teams.filter(
-                Q(all_events=True)
-                | Q(Q(all_events=False) & Q(limit_events__in=[self.request.event])),
-                limit_tracks__isnull=False,
-                organiser=self.request.event.organiser,
-            ).prefetch_related("limit_tracks", "limit_tracks__event")
-            tracks = set()
-            for team in teams:
-                tracks.update(team.limit_tracks.filter(event=self.request.event))
-            return tracks
-
-    def limit_for_reviewers(self, queryset):
-        phase = self.request.event.active_review_phase
-        if not phase:
-            return queryset
-
-        if phase.proposal_visibility == "assigned":
-            return queryset.filter(is_assigned__gte=1)
-
-        if self.limit_tracks:
-            return queryset.filter(track__in=self.limit_tracks)
-        return queryset
+            return get_reviewer_tracks(self.request.event, self.request.user)
 
     @cached_property
     def user_permissions(self):
@@ -131,13 +115,14 @@ class ReviewerSubmissionFilter:
             .select_related("submission_type", "event", "track")
             .prefetch_related("speakers")
         )
-        if "is_reviewer" in self.user_permissions or for_review:
-            assigned = self.request.user.assigned_reviews.filter(
-                event=self.request.event, pk=OuterRef("pk")
-            )
-            queryset = queryset.annotate(is_assigned=Exists(Subquery(assigned)))
         if self.user_permissions == {"is_reviewer"}:
-            queryset = self.limit_for_reviewers(queryset)
+            queryset = limit_for_reviewers(
+                queryset, self.request.event, self.request.user, self.limit_tracks
+            )
+        if "is_reviewer" in self.user_permissions or for_review:
+            queryset = annotate_assigned(
+                queryset, self.request.event, self.request.user
+            )
         return queryset
 
 
@@ -656,7 +641,7 @@ class Anonymise(SubmissionViewMixin, UpdateView):
 
 class SubmissionHistory(SubmissionViewMixin, ListView):
     template_name = "orga/submission/history.html"
-    permission_required = "person.is_administrator"
+    permission_required = "person.administrator_user"
     paginate_by = 200
     context_object_name = "log_entries"
 
