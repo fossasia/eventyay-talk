@@ -29,6 +29,19 @@ How do I designate sessions as fallback/alternates?
     :ref:`Session Lifecycle <user-guide-proposals-pending>` section in the
     :ref:`Sessions & Proposals <user-guide-proposals>` guide.
 
+
+Schedule
+--------
+
+How can I export my schedule to PDF / print my schedule?
+    pretalx does not currently offer a PDF export of the schedule, because of the level of complexity
+    that comes with printing a schedule with an arbitrary amount of rooms.
+    However, the schedule editor page has print support, hiding the usual pretalx UI elements like the
+    menu sidebar. Combined with the schedule editor’s support for hiding rooms, this is the best PDF
+    version of the schedule pretalx offers. To use it, navigate to your schedule editor, select your
+    browser’s print dialogue, and then select “Print to PDF”.
+
+
 Email
 -----
 
