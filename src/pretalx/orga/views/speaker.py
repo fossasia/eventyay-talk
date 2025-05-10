@@ -30,6 +30,7 @@ from pretalx.person.forms import (
     SpeakerProfileForm,
 )
 from pretalx.person.models import SpeakerInformation, SpeakerProfile, User
+from pretalx.person.rules import is_only_reviewer
 from pretalx.submission.forms import QuestionsForm
 from pretalx.submission.models import Answer
 from pretalx.submission.models.submission import SubmissionStates
@@ -152,9 +153,7 @@ class SpeakerDetail(SpeakerViewMixin, ActionFromUrl, CreateOrUpdateView):
     @cached_property
     def submissions(self, **kwargs):
         qs = self.request.event.submissions.filter(speakers__in=[self.object])
-        if self.request.user.get_permissions_for_event(self.request.event) == {
-            "reviewer"
-        }:
+        if is_only_reviewer(self.request.user, self.request.event):
             return limit_for_reviewers(qs, self.request.user, self.request.event)
         return qs
 

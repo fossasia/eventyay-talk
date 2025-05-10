@@ -88,6 +88,8 @@ class UserApiToken(PretalxModel):
         if method == "partial_update":
             # We don't track separate permissions for partial updates
             method = "update"
+        elif method not in dict(PERMISSION_CHOICES):
+            method = "actions"
         perms = self.endpoints.get(
             endpoint, default_endpoint_permissions().get(endpoint, [])
         )

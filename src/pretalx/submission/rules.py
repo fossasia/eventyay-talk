@@ -1,7 +1,7 @@
 import rules
-from django.db.models import Exists, OuterRef, Subquery
+from django.db.models import Exists, OuterRef, Q, Subquery
 
-from pretalx.person.rules import is_reviewer
+from pretalx.person.rules import is_only_reviewer, is_reviewer
 
 
 @rules.predicate
@@ -10,6 +10,14 @@ def reviewer_can_create_tags(user, obj):
     return bool(
         event.active_review_phase
         and event.active_review_phase.can_tag_submissions == "create_tags"
+    )
+
+
+@rules.predicate
+def reviewer_can_change_submissions(user, obj):
+    return bool(
+        obj.event.active_review_phase
+        and obj.event.active_review_phase.can_change_submission_state
     )
 
 
@@ -33,12 +41,112 @@ def orga_can_change_submissions(user, obj):
 
 
 orga_can_view_submissions = orga_can_change_submissions | is_reviewer
+orga_or_reviewer_can_change_submission = orga_can_change_submissions | (
+    is_reviewer & reviewer_can_change_submissions
+)
 
 
 @rules.predicate
 def is_cfp_open(user, obj):
     event = getattr(obj, "event", None)
     return event and event.is_public and event.cfp.is_open
+
+
+@rules.predicate
+def use_tracks(user, obj):
+    event = obj.event
+    return event.get_feature_flag("use_tracks")
+
+
+@rules.predicate
+def is_speaker(user, obj):
+    obj = getattr(obj, "submission", obj)
+    return obj and user in obj.speakers.all()
+
+
+@rules.predicate
+def can_be_withdrawn(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
+    return obj and SubmissionStates.WITHDRAWN in SubmissionStates.valid_next_states.get(
+        obj.state, []
+    )
+
+
+@rules.predicate
+def can_be_rejected(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
+    return obj and SubmissionStates.REJECTED in SubmissionStates.valid_next_states.get(
+        obj.state, []
+    )
+
+
+@rules.predicate
+def can_be_accepted(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
+    return obj and SubmissionStates.ACCEPTED in SubmissionStates.valid_next_states.get(
+        obj.state, []
+    )
+
+
+@rules.predicate
+def can_be_confirmed(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
+    return obj and SubmissionStates.CONFIRMED in SubmissionStates.valid_next_states.get(
+        obj.state, []
+    )
+
+
+@rules.predicate
+def can_be_canceled(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
+    return obj and SubmissionStates.CANCELED in SubmissionStates.valid_next_states.get(
+        obj.state, []
+    )
+
+
+@rules.predicate
+def can_be_removed(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
+    return obj and SubmissionStates.DELETED in SubmissionStates.valid_next_states.get(
+        obj.state, []
+    )
+
+
+@rules.predicate
+def can_be_edited(user, obj):
+    return obj and obj.editable
+
+
+@rules.predicate
+def can_be_reviewed(user, obj):
+    from pretalx.submission.models import SubmissionStates
+
+    if not obj:
+        return False
+    obj = getattr(obj, "submission", obj)
+    phase = obj.event.active_review_phase and obj.event.active_review_phase.can_review
+    state = obj.state == SubmissionStates.SUBMITTED
+    return bool(state and phase)
+
+
+@rules.predicate
+def has_reviewer_access(user, obj):
+    obj = getattr(obj, "submission", obj)
+    if not obj or not obj.event or not obj.event.active_review_phase:
+        return False
+    if obj.event.active_review_phase.proposal_visibility == "all":
+        return obj.event.teams.filter(
+            Q(limit_tracks__isnull=True) | Q(limit_tracks__in=[obj.track]),
+            members__in=[user],
+            is_reviewer=True,
+        ).exists()
+    return user in obj.assigned_reviewers.all()
 
 
 def questions_for_user(event, user):
@@ -53,7 +161,7 @@ def questions_for_user(event, user):
         return event.questions(manager="all_objects").all()
     if (
         not user.is_anonymous
-        and user.get_permissions_for_event(event) == {"is_reviewer"}
+        and is_only_reviewer(user, event)
         and can_view_speaker_names(user, event)
     ):
         return event.questions(manager="all_objects").filter(
@@ -107,7 +215,7 @@ def submissions_for_user(event, user):
             return event.current_schedule.slots
         return event.submissions.none()
 
-    if user.get_permissions_for_event(event) == {"is_reviewer"}:
+    if is_only_reviewer(user, event):
         return limit_for_reviewers(event.submissions.all(), event, user)
 
     if user.has_perm("orga.view_submissions", event):

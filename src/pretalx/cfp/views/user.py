@@ -105,7 +105,7 @@ class ProfileView(LoggedInEventPageMixin, TemplateView):
 
 
 class SubmissionViewMixin:
-    permission_required = "submission.edit_submission"
+    permission_required = "submission.update_submission"
 
     def has_permission(self):
         return super().has_permission() or self.request.user.has_perm(
@@ -281,8 +281,8 @@ class SubmissionsEditView(LoggedInEventPageMixin, SubmissionViewMixin, UpdateVie
     model = Submission
     form_class = InfoForm
     context_object_name = "submission"
-    permission_required = "submission.view_submission"
-    write_permission_required = "submission.edit_submission"
+    permission_required = "submission.is_speaker"
+    write_permission_required = "submission.update_submission"
 
     def get_permission_object(self):
         return self.object

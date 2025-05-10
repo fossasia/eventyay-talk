@@ -15,9 +15,11 @@ from pretalx.submission.permissions import (
     can_view_all_reviews,
     can_view_reviews,
     is_review_author,
+)
+from pretalx.submission.rules import (
+    orga_can_change_submissions,
     reviewer_can_change_submissions,
 )
-from pretalx.submission.rules import orga_can_change_submissions
 
 
 @rules.predicate

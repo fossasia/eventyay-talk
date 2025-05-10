@@ -2,8 +2,7 @@ import rules
 
 from pretalx.person.rules import is_reviewer
 from pretalx.submission.models import SubmissionStates
-from pretalx.submission.permissions import can_be_edited
-from pretalx.submission.rules import orga_can_change_submissions
+from pretalx.submission.rules import can_be_edited, orga_can_change_submissions
 
 
 @rules.predicate

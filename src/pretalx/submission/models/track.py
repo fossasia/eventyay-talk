@@ -8,7 +8,11 @@ from pretalx.agenda.rules import is_agenda_visible
 from pretalx.common.models.mixins import OrderedModel, PretalxModel
 from pretalx.common.urls import EventUrls
 from pretalx.person.rules import can_change_event_settings
-from pretalx.submission.rules import is_cfp_open, orga_can_change_submissions
+from pretalx.submission.rules import (
+    is_cfp_open,
+    orga_can_change_submissions,
+    use_tracks,
+)
 
 
 class Track(OrderedModel, PretalxModel):
@@ -55,13 +59,14 @@ class Track(OrderedModel, PretalxModel):
     class Meta:
         ordering = ("position",)
         rules_permissions = {
-            "list": is_cfp_open | is_agenda_visible | orga_can_change_submissions,
-            "view": is_cfp_open | is_agenda_visible | orga_can_change_submissions,
-            "orga_list": orga_can_change_submissions,
-            "orga_view": orga_can_change_submissions,
-            "create": can_change_event_settings,
-            "update": can_change_event_settings,
-            "delete": can_change_event_settings,
+            "list": use_tracks & (is_agenda_visible | orga_can_change_submissions),
+            "view": use_tracks
+            & (is_cfp_open | is_agenda_visible | orga_can_change_submissions),
+            "orga_list": use_tracks & orga_can_change_submissions,
+            "orga_view": use_tracks & orga_can_change_submissions,
+            "create": use_tracks & can_change_event_settings,
+            "update": use_tracks & can_change_event_settings,
+            "delete": use_tracks & can_change_event_settings,
         }
 
     class urls(EventUrls):

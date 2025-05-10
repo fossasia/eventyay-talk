@@ -15,6 +15,11 @@ def is_reviewer(user, obj):
 
 
 @rules.predicate
+def is_only_reviewer(user, obj):
+    return user.get_permissions_for_event(obj.event) == {"is_reviewer"}
+
+
+@rules.predicate
 def can_change_event_settings(user, obj):
     event = getattr(obj, "event", None)
     if not event or not obj or not user or user.is_anonymous:

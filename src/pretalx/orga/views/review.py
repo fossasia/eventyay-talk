@@ -197,7 +197,7 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
         return self.request.event.submissions.filter(
             state=SubmissionStates.SUBMITTED
         ).exists() and self.request.user.has_perm(
-            "submission.accept_or_reject_submissions", self.request.event
+            "submission.accept_or_reject_submission", self.request.event
         )
 
     @context

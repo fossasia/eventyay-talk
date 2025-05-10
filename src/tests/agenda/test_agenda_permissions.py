@@ -45,7 +45,7 @@ def test_agenda_permission_is_feedback_ready(
     slot_visible, accept_feedback, result, slot, monkeypatch
 ):
     monkeypatch.setattr(
-        "pretalx.agenda.permissions.is_submission_visible", lambda x, y: slot_visible
+        "pretalx.agenda.rules.is_agenda_submission_visible", lambda x, y: slot_visible
     )
     monkeypatch.setattr(
         "pretalx.submission.models.submission.Submission.does_accept_feedback",

@@ -29,7 +29,7 @@
 
 {% block content %}
     {% if submission %}
-        {% has_perm "submission.edit_submission" request.user submission as can_edit_submission %}
+        {% has_perm "submission.update_submission" request.user submission as can_edit_submission %}
         {% has_perm "orga.view_reviews" request.user request.event as can_view_reviews %}
         {% has_perm "submission.review_submission" request.user submission as can_review %}
         {% has_perm "orga.view_speakers" request.user request.event as can_view_speakers %}
