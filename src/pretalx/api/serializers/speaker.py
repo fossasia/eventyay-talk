@@ -1,9 +1,7 @@
 from pathlib import Path
 
-from django.utils.functional import cached_property
 from drf_spectacular.utils import extend_schema_field
 from rest_flex_fields.serializers import FlexFieldsSerializerMixin
-from rest_flex_fields.utils import split_levels
 from rest_framework import exceptions
 from rest_framework.serializers import (
     CharField,
@@ -136,35 +134,13 @@ class SpeakerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
 
     @extend_schema_field(list[str])
     def get_submissions(self, obj):
-        submissions_queryset = self.context.get("submissions", [])
-        return obj.user.submissions.filter(
-            pk__in=submissions_queryset.values_list("pk", flat=True)
-        ).values_list("code", flat=True)
-
-    @cached_property
-    def extra_flex_field_config(self):
-        return {
-            key: split_levels(self._flex_options_rep_only[key])
-            for key in ("expand", "fields", "omit")
-        }
-
-    def get_extra_flex_field(self, extra_field, *args, **kwargs):
-
-        if extra_field in self._get_fields_names_to_remove(
-            [extra_field],
-            self.extra_flex_field_config["omit"][0],
-            self.extra_flex_field_config["fields"][0],
-            self.extra_flex_field_config["omit"][1],
-        ):
-            return
-
-        if extra_field in self.extra_flex_field_config["expand"][0]:
-            klass, settings = self.Meta.extra_expandable_fields[extra_field]
-            serializer_class = self._get_serializer_class_from_lazy_string(klass)
-            for key, value in self.extra_flex_field_config.items():
-                if value[1] and extra_field in value[1]:
-                    settings[key] = value[1][extra_field]
-            return serializer_class(*args, **settings, **kwargs)
+        submissions = self.context.get("submissions")
+        if not submissions:
+            return []
+        submissions = submissions.filter(speakers__in=[obj.user])
+        if serializer := self.get_extra_flex_field("submissions", submissions):
+            return serializer.data
+        return submissions.values_list("code", flat=True)
 
     @extend_schema_field(list[int])
     def get_answers(self, obj):
@@ -186,6 +162,13 @@ class SpeakerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
         extra_expandable_fields = {
             "answers": (
                 "pretalx.api.serializers.question.AnswerSerializer",
+                {
+                    "many": True,
+                    "read_only": True,
+                },
+            ),
+            "submissions": (
+                "pretalx.api.serializers.submission.SubmissionSerializer",
                 {
                     "many": True,
                     "read_only": True,

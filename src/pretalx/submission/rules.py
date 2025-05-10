@@ -210,16 +210,16 @@ def limit_for_reviewers(queryset, event, user, reviewer_tracks=None):
 
 
 def submissions_for_user(event, user):
-    if user.is_anonymous:
-        if user.has_perm("agenda.view_schedule", event):
-            return event.current_schedule.slots
-        return event.submissions.none()
+    if not user.is_anonymous:
+        if is_only_reviewer(user, event):
+            return limit_for_reviewers(event.submissions.all(), event, user)
+        if user.has_perm("orga.view_submissions", event):
+            return event.submissions.all()
 
-    if is_only_reviewer(user, event):
-        return limit_for_reviewers(event.submissions.all(), event, user)
-
-    if user.has_perm("orga.view_submissions", event):
-        return event.submissions.all()
+    # Fall through: both anon users and users without permissions
+    # get here, e.g. speakers or attendees.
+    if user.has_perm("agenda.view_schedule", event):
+        return event.current_schedule.slots
     return event.submissions.none()
 
 

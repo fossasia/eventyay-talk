@@ -3,6 +3,8 @@ from drf_spectacular.utils import extend_schema_field
 from i18nfield.fields import I18nCharField, I18nTextField
 from i18nfield.rest_framework import I18nField
 from rest_flex_fields import is_expanded
+from rest_flex_fields.serializers import FlexFieldsSerializerMixin
+from rest_flex_fields.utils import split_levels
 from rest_framework import exceptions
 from rest_framework.serializers import ModelSerializer
 
@@ -22,7 +24,6 @@ class PretalxViewSetMixin:
         "update": ".update",
         "partial_update": ".update",
     }
-    action_permission_map = {}
 
     @cached_property
     def api_version(self):
@@ -49,7 +50,7 @@ class PretalxViewSetMixin:
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        if locale := self.request.GET.get("locale"):
+        if locale := self.request.GET.get("lang"):
             if locale in self.request.event.locales:
                 context["override_locale"] = locale
         return context
@@ -82,6 +83,8 @@ class PretalxViewSetMixin:
         return self.request.user.has_perm(permission_name, obj)
 
     def check_expanded_fields(self, *args):
+        if not isinstance(self, FlexFieldsSerializerMixin):
+            return []
         return [arg for arg in args if is_expanded(self.request, arg)]
 
 
@@ -94,12 +97,11 @@ class PretalxViewSetMixin:
     component_name="Multi-language string",
 )
 class DocumentedI18nField(I18nField):
-    pass
-
-
-class PlainI18nField(DocumentedI18nField):
     def to_representation(self, value):
-        return str(value)
+        context = getattr(self.parent, "context", None) or {}
+        if context.get("override_locale"):
+            return str(value)
+        return super().to_representation(value)
 
 
 class PretalxSerializer(ModelSerializer):
@@ -115,9 +117,6 @@ class PretalxSerializer(ModelSerializer):
     def __init__(self, *args, **kwargs):
         self.override_locale = kwargs.get("context", {}).get("override_locale")
         super().__init__(*args, **kwargs)
-        if self.override_locale:
-            self.serializer_field_mapping[I18nCharField] = PlainI18nField
-            self.serializer_field_mapping[I18nTextField] = PlainI18nField
 
     def get_with_fallback(self, data, key):
         """
@@ -129,6 +128,35 @@ class PretalxSerializer(ModelSerializer):
             return data[key]
         if self.instance:
             return getattr(self.instance, key, None)
+
+    @cached_property
+    def extra_flex_field_config(self):
+        return {
+            key: split_levels(self._flex_options_rep_only[key])
+            for key in ("expand", "fields", "omit")
+        }
+
+    def get_extra_flex_field(self, extra_field, *args, **kwargs):
+        if not isinstance(self, FlexFieldsSerializerMixin) or not getattr(
+            self.Meta, "extra_expandable_fields", None
+        ):
+            return
+
+        if extra_field in self._get_fields_names_to_remove(
+            [extra_field],
+            self.extra_flex_field_config["omit"][0],
+            self.extra_flex_field_config["fields"][0],
+            self.extra_flex_field_config["omit"][1],
+        ):
+            return
+
+        if extra_field in self.extra_flex_field_config["expand"][0]:
+            klass, settings = self.Meta.extra_expandable_fields[extra_field]
+            serializer_class = self._get_serializer_class_from_lazy_string(klass)
+            for key, value in self.extra_flex_field_config.items():
+                if value[1] and extra_field in value[1]:
+                    settings[key] = value[1][extra_field]
+            return serializer_class(*args, **settings, **kwargs)
 
 
 PretalxSerializer.serializer_field_mapping[I18nCharField] = DocumentedI18nField

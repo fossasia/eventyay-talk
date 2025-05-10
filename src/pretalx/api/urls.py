@@ -1,3 +1,4 @@
+from django.http import HttpResponsePermanentRedirect
 from django.urls import include, path
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
@@ -17,6 +18,21 @@ from pretalx.api.views import (
     user,
 )
 
+
+def talks_to_submissions_redirect(request, event, subpath):
+    """
+    Redirects requests from /events/.../talks/... to /events/.../submissions/...
+    preserving the subpath and query parameters.
+    """
+    new_path = request.path.replace("/talks/", "/submissions/", 1)
+
+    query_string = request.META.get("QUERY_STRING", "")
+    if query_string:
+        new_path += "?" + query_string
+
+    return HttpResponsePermanentRedirect(new_path)
+
+
 default_router = routers.SimpleRouter()
 default_router.register("events", event.EventViewSet, basename="event")
 
@@ -24,7 +40,6 @@ event_router = routers.SimpleRouter()
 event_router.register(
     "submissions", submission.SubmissionViewSet, basename="submission"
 )
-event_router.register("talks", submission.SubmissionViewSet, basename="talks")
 event_router.register("schedules", submission.ScheduleViewSet, basename="schedule")
 event_router.register("tags", submission.TagViewSet, basename="tag")
 event_router.register(
@@ -60,6 +75,25 @@ urlpatterns = [
     path("", include(default_router.urls)),
     path("me", user.MeView.as_view(), name="user.me"),
     path("auth/", obtain_auth_token),
+    # We redirect the old pre-filtered /talks/ endpoint to  /submissions/
+    path(
+        "events/<slug:event>/talks/<path:subpath>",
+        talks_to_submissions_redirect,
+        name="event_talks_redirect",
+    ),
+    # The favourites endpoints are separate, as they are functions, not viewsets.
+    # They need to be separate from the viewset in order to permit session
+    # authentication.
+    path(
+        "events/<slug:event>/submissions/favourites/",
+        submission.favourites_view,
+        name="submission.favourites",
+    ),
+    path(
+        "events/<slug:event>/submissions/<slug:code>/favourite/",
+        submission.favourite_view,
+        name="submission.favourite",
+    ),
     path("upload/", upload.UploadView.as_view(), name="upload"),
     path("events/<slug:event>/", include(event_router.urls)),
     path("organisers/<slug:organiser>/", include(organiser_router.urls)),

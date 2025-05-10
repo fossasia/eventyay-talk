@@ -18,7 +18,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView, ListView, TemplateView, UpdateView, View
 from django_context_decorator import context
 
-from pretalx.agenda.permissions import is_submission_visible
+from pretalx.agenda.rules import is_agenda_submission_visible
 from pretalx.common.exceptions import SubmissionError
 from pretalx.common.forms.fields import SizeFileInput
 from pretalx.common.models import ActivityLog
@@ -42,6 +42,7 @@ from pretalx.orga.forms.submission import (
     SubmissionStateChangeForm,
 )
 from pretalx.person.models import User
+from pretalx.person.rules import is_only_reviewer
 from pretalx.submission.forms import (
     QuestionsForm,
     ResourceForm,
@@ -95,19 +96,15 @@ class SubmissionViewMixin(PermissionRequired):
     @context
     @cached_property
     def is_publicly_visible(self):
-        # check if the anonymous user could see this submission's page
-        return is_submission_visible(None, self.object)
+        # Check if an anonymous user could see this submission's page
+        return is_agenda_submission_visible(None, self.object)
 
 
 class ReviewerSubmissionFilter:
     @cached_property
     def limit_tracks(self):
-        if self.user_permissions == {"is_reviewer"}:
+        if is_only_reviewer(self.request.user, self.request.event):
             return get_reviewer_tracks(self.request.event, self.request.user)
-
-    @cached_property
-    def user_permissions(self):
-        return self.request.user.get_permissions_for_event(self.request.event)
 
     def get_queryset(self, for_review=False):
         queryset = (
@@ -115,7 +112,7 @@ class ReviewerSubmissionFilter:
             .select_related("submission_type", "event", "track")
             .prefetch_related("speakers")
         )
-        if self.user_permissions == {"is_reviewer"}:
+        if is_only_reviewer(self.request.user, self.request.event):
             queryset = limit_for_reviewers(
                 queryset, self.request.event, self.request.user, self.limit_tracks
             )
@@ -235,10 +232,7 @@ class SubmissionSpeakersDelete(SubmissionViewMixin, View):
         speaker = get_object_or_404(User, pk=request.GET.get("id"))
 
         if submission in speaker.submissions.all():
-            speaker.submissions.remove(submission)
-            submission.log_action(
-                "pretalx.submission.speakers.remove", person=request.user, orga=True
-            )
+            submission.remove_speaker(speaker, user=self.request.user)
             messages.success(
                 request, _("The speaker has been removed from the proposal.")
             )
@@ -309,7 +303,7 @@ class SubmissionContent(
     @cached_property
     def write_permission_required(self):
         if self.kwargs.get("code"):
-            return "submission.edit_submission"
+            return "submission.update_submission"
         return "orga.create_submission"
 
     @context
