@@ -10,6 +10,7 @@ from pretalx.api.views import (
     question,
     review,
     room,
+    schedule,
     speaker,
     speaker_information,
     submission,
@@ -40,7 +41,7 @@ event_router = routers.SimpleRouter()
 event_router.register(
     "submissions", submission.SubmissionViewSet, basename="submission"
 )
-event_router.register("schedules", submission.ScheduleViewSet, basename="schedule")
+event_router.register("schedules", schedule.ScheduleViewSet, basename="schedule")
 event_router.register("tags", submission.TagViewSet, basename="tag")
 event_router.register(
     "submission-types", submission.SubmissionTypeViewSet, basename="submission_type"

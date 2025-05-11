@@ -1,13 +1,7 @@
 from django.db import transaction
-from rest_framework.serializers import (
-    BooleanField,
-    CharField,
-    ModelSerializer,
-    SerializerMethodField,
-    UUIDField,
-)
+from rest_framework.serializers import BooleanField, ModelSerializer, UUIDField
 
-from pretalx.api.mixins import PretalxSerializer, ReadOnlySerializerMixin
+from pretalx.api.mixins import PretalxSerializer
 from pretalx.api.versions import CURRENT_VERSION, register_serializer
 from pretalx.schedule.models import Availability, Room
 
@@ -23,36 +17,6 @@ class AvailabilitySerializer(ModelSerializer):
     class Meta:
         model = Availability
         fields = ("start", "end", "allDay")
-
-
-@register_serializer(versions=["LEGACY"], class_name="RoomSerializer")
-class LegacyRoomSerializer(ReadOnlySerializerMixin, PretalxSerializer):
-    url = SerializerMethodField()
-    guid = CharField(source="uuid")
-
-    def get_url(self, obj):
-        return obj.urls.edit
-
-    class Meta:
-        model = Room
-        fields = (
-            "id",
-            "guid",
-            "name",
-            "description",
-            "capacity",
-            "position",
-            "url",
-        )
-
-
-@register_serializer(versions=["LEGACY"], class_name="RoomOrgaSerializer")
-class LegacyRoomOrgaSerializer(LegacyRoomSerializer):
-    availabilities = AvailabilitySerializer(many=True)
-
-    class Meta:
-        model = Room
-        fields = LegacyRoomSerializer.Meta.fields + ("speaker_info", "availabilities")
 
 
 @register_serializer(versions=[CURRENT_VERSION], class_name="RoomSerializer")

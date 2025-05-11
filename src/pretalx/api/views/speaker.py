@@ -6,10 +6,12 @@ from rest_framework.permissions import SAFE_METHODS
 
 from pretalx.api.documentation import build_expand_docs, build_search_docs
 from pretalx.api.mixins import PretalxViewSetMixin
-from pretalx.api.serializers.speaker import (
+from pretalx.api.serializers.legacy import (
     LegacySpeakerOrgaSerializer,
     LegacySpeakerReviewerSerializer,
     LegacySpeakerSerializer,
+)
+from pretalx.api.serializers.speaker import (
     SpeakerOrgaSerializer,
     SpeakerSerializer,
     SpeakerUpdateSerializer,
