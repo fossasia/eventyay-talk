@@ -201,9 +201,8 @@ class SubmissionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
         qs = obj.slots.filter(schedule=schedule)
         if public_slots:
             qs = qs.filter(is_visible=True)
-        # TODO expand slots
-        # if serializer := self.get_extra_flex_field("slots", qs):
-        # return serializer.data
+        if serializer := self.get_extra_flex_field("slots", qs):
+            return serializer.data
         return qs.values_list("pk", flat=True)
 
     class Meta:
@@ -248,8 +247,8 @@ class SubmissionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
         }
         extra_expandable_fields = {
             "slots": (
-                "pretalx.api.serializers.schedule.SlotSerializer",
-                {"read_only": True},
+                "pretalx.api.serializers.schedule.TalkSlotSerializer",
+                {"many": True, "read_only": True, "omit": ("submission", "schedule")},
             ),
             "answers": (
                 "pretalx.api.serializers.question.AnswerSerializer",

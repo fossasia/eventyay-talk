@@ -91,5 +91,21 @@ def postprocess_schema(result, generator, request, public):
             "name": "speakers",
             "description": "Speakers can currently only updated, not created or deleted, as a speaker refers to a user object, and users can only be deleted by administrators. Organisers will see additional fields in the API, in line with the response to the update actions.",
         },
+        {
+            "name": "submissions",
+            "description": "Submissions are the central component of pretalx. Note that changing the speakers and state of a submission requires you to use the individual action endpoints rather than a plain update.",
+            "externalDocs": {
+                "url": "https://docs.pretalx.org/user/sessions/",
+                "description": "User documentation",
+            },
+        },
+        {
+            "name": "slots",
+            "description": (
+                "Every block in a published pretalx schedule is a talk slot. Note that there are talk slots without associalted submission (e.g. breaks). "
+                "Each slot belongs to a schedule version – refer to the schedule endpoint for further documentation. "
+                "Note that slots cannot be created or deleted via the API – this happens automatically when a submission’s state changes."
+            ),
+        },
     ]
     return result

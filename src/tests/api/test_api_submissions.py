@@ -1361,6 +1361,8 @@ def test_public_submission_expandable_fields(client, event, slot, answer, track)
 
     expand_fields = [
         "track",
+        "slots",
+        "slots.room",
         "submission_type",
         "speakers",
         "answers",
@@ -1386,6 +1388,8 @@ def test_public_submission_expandable_fields(client, event, slot, answer, track)
         assert submission_data["speakers"][0]["name"] == speaker_user.name
         assert "email" not in submission_data["speakers"]
         assert submission_data["answers"][0]["question"]["id"] == answer.question_id
+        assert len(submission_data["slots"]) == 1
+        assert submission_data["slots"][0]["room"]["id"] == slot.room_id
 
 
 @pytest.mark.django_db

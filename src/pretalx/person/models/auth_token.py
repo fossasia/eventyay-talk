@@ -38,6 +38,7 @@ ENDPOINTS = (
     "tags",
     "tracks",
     "schedules",
+    "slots",
     "submission-types",
     "mail-templates",
     "access-codes",

@@ -42,6 +42,7 @@ event_router.register(
     "submissions", submission.SubmissionViewSet, basename="submission"
 )
 event_router.register("schedules", schedule.ScheduleViewSet, basename="schedule")
+event_router.register("slots", schedule.TalkSlotViewSet, basename="slots")
 event_router.register("tags", submission.TagViewSet, basename="tag")
 event_router.register(
     "submission-types", submission.SubmissionTypeViewSet, basename="submission_type"

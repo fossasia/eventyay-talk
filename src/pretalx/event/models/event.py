@@ -369,6 +369,7 @@ class Event(PretalxModel):
     class api_urls(EventUrls):
         base = "/api/events/{self.slug}/"
         submissions = "{base}submissions/"
+        slots = "{base}slots/"
         talks = "{base}talks/"
         schedules = "{base}schedules/"
         speakers = "{base}speakers/"

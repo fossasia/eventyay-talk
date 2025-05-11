@@ -78,6 +78,7 @@ with scopes_disabled():
                 "submission_type",
                 "tags",
                 "slots",
+                "slots.room",
                 "answers",
                 "answers.question",
                 "resources",
@@ -93,6 +94,7 @@ with scopes_disabled():
                 "submission_type",
                 "tags",
                 "slots",
+                "slots.room",
                 "answers",
                 "resources",
             ),
@@ -244,11 +246,11 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         )
         if self.check_expanded_fields("speakers.user"):
             queryset = queryset.prefetch_related("speakers__profiles")
-        # TODO expand slots with rooms
         if fields := self.check_expanded_fields(
             "answers.question",
             "answers.question.tracks",
             "answers.question.submission_types",
+            "slots.room",
         ):
             queryset = queryset.prefetch_related(
                 *[field.replace(".", "__") for field in fields]

@@ -223,6 +223,11 @@ def submissions_for_user(event, user):
     return event.submissions.none()
 
 
+@rules.predicate
+def is_wip(user, slot):
+    return not slot.schedule.version
+
+
 def speaker_profiles_for_user(event, user, submissions=None):
     submissions = submissions or submissions_for_user(event, user)
     from pretalx.person.models import SpeakerProfile, User
