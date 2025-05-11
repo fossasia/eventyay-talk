@@ -92,7 +92,7 @@ def test_orga_can_see_single_room(client, orga_user_token, room):
 @pytest.mark.django_db
 def test_orga_can_see_single_room_locale_override(client, orga_user_token, room):
     response = client.get(
-        room.event.api_urls.rooms + f"{room.pk}/?locale=en",
+        room.event.api_urls.rooms + f"{room.pk}/?lang=en",
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )

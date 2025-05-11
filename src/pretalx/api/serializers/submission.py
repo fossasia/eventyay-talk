@@ -31,10 +31,6 @@ class TagSerializer(PretalxSerializer):
         model = Tag
         fields = ("id", "tag", "description", "color", "is_public")
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.event = getattr(self.context.get("request"), "event", None)
-
     def create(self, validated_data):
         validated_data["event"] = self.event
         return super().create(validated_data)
@@ -59,10 +55,6 @@ class SubmissionTypeSerializer(PretalxSerializer):
             "deadline",
             "requires_access_code",
         )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.event = getattr(self.context.get("request"), "event", None)
 
     def create(self, validated_data):
         validated_data["event"] = self.event
@@ -101,10 +93,6 @@ class TrackSerializer(PretalxSerializer):
             "position",
             "requires_access_code",
         )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.event = getattr(self.context.get("request"), "event", None)
 
     def create(self, validated_data):
         validated_data["event"] = self.event
@@ -148,7 +136,6 @@ class SubmissionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.event = getattr(self.context.get("request"), "event", None)
         if not self.event:
             return
         self.fields["submission_type"].queryset = self.event.submission_types.all()

@@ -75,23 +75,19 @@ class SpeakerViewSet(
     filter_backends = (SpeakerSearchFilter, DjangoFilterBackend)
 
     def get_legacy_serializer_class(self):
-        if self.request.user.has_perm("orga.change_submissions", self.request.event):
+        if self.request.user.has_perm("orga.change_submissions", self.event):
             return LegacySpeakerOrgaSerializer
-        if self.request.user.has_perm("orga.view_speakers", self.request.event):
+        if self.request.user.has_perm("orga.view_speakers", self.event):
             return LegacySpeakerReviewerSerializer
         return LegacySpeakerSerializer
 
     def get_legacy_queryset(self):
-        if self.request.user.has_perm("orga.view_speakers", self.request.event):
+        if self.request.user.has_perm("orga.view_speakers", self.event):
+            return SpeakerProfile.objects.filter(event=self.event, user__isnull=False)
+        if self.event.current_schedule and self.event.get_feature_flag("show_schedule"):
             return SpeakerProfile.objects.filter(
-                event=self.request.event, user__isnull=False
-            )
-        if self.request.event.current_schedule and self.request.event.get_feature_flag(
-            "show_schedule"
-        ):
-            return SpeakerProfile.objects.filter(
-                event=self.request.event,
-                user__submissions__pk__in=self.request.event.current_schedule.talks.all().values_list(
+                event=self.event,
+                user__submissions__pk__in=self.event.current_schedule.talks.all().values_list(
                     "submission_id", flat=True
                 ),
             ).distinct()
@@ -110,10 +106,6 @@ class SpeakerViewSet(
             "orga.view_submissions", self.event
         )
 
-    @cached_property
-    def event(self):
-        return getattr(self.request, "event", None)
-
     def get_unversioned_serializer_class(self):
         if self.api_version == "LEGACY":
             return self.get_legacy_serializer_class()
@@ -125,9 +117,9 @@ class SpeakerViewSet(
 
     @cached_property
     def submissions_for_user(self):
-        return submissions_for_user(
-            self.request.event, self.request.user
-        ).select_related("event")
+        return submissions_for_user(self.event, self.request.user).select_related(
+            "event"
+        )
 
     def get_serializer_context(self):
         context = super().get_serializer_context()

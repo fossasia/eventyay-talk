@@ -67,7 +67,7 @@ def test_orga_can_see_single_mail_template_locale_override(
     client, orga_user_token, mail_template
 ):
     response = client.get(
-        mail_template.event.api_urls.mail_templates + f"{mail_template.pk}/?locale=en",
+        mail_template.event.api_urls.mail_templates + f"{mail_template.pk}/?lang=en",
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )

@@ -51,7 +51,7 @@ class PretalxViewSetMixin:
     def get_serializer_context(self):
         context = super().get_serializer_context()
         if locale := self.request.GET.get("lang"):
-            if locale in self.request.event.locales:
+            if locale in self.event.locales:
                 context["override_locale"] = locale
         return context
 
@@ -75,12 +75,15 @@ class PretalxViewSetMixin:
         ):
             parent.log_action(action, person=self.request.user, orga=True)
 
+    @cached_property
+    def event(self):
+        # request.event is not present when building API docs
+        return getattr(self.request, "event", None)
+
     def has_perm(self, permission, obj=None):
         model = getattr(self, "model", None) or self.queryset.model
         permission_name = model.get_perm(permission)
-        # request.event is not present when building API docs
-        obj = obj or getattr(self.request, "event", None)
-        return self.request.user.has_perm(permission_name, obj)
+        return self.request.user.has_perm(permission_name, obj or self.event)
 
     def check_expanded_fields(self, *args):
         if not isinstance(self, FlexFieldsSerializerMixin):
@@ -116,6 +119,7 @@ class PretalxSerializer(ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         self.override_locale = kwargs.get("context", {}).get("override_locale")
+        self.event = getattr(kwargs.get("context", {}).get("request"), "event", None)
         super().__init__(*args, **kwargs)
 
     def get_with_fallback(self, data, key):
@@ -132,7 +136,7 @@ class PretalxSerializer(ModelSerializer):
     @cached_property
     def extra_flex_field_config(self):
         return {
-            key: split_levels(self._flex_options_rep_only[key])
+            key: split_levels(self._flex_options_all[key])
             for key in ("expand", "fields", "omit")
         }
 

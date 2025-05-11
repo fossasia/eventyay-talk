@@ -14,31 +14,28 @@ class ReviewViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     endpoint = "reviews"
 
     def get_unversioned_serializer_class(self):
-        if not self.request.user.has_perm(
-            "orga.view_reviewer_names", self.request.event
-        ):
+        if not self.request.user.has_perm("orga.view_reviewer_names", self.event):
             return AnonymousReviewSerializer
         return self.serializer_class
 
     def get_queryset(self):
-        if not self.request.user.has_perm("orga.view_reviews", self.request.event):
+        if not self.request.user.has_perm("orga.view_reviews", self.event):
             return Review.objects.none()
         queryset = (
-            Review.objects.filter(submission__event=self.request.event)
+            Review.objects.filter(submission__event=self.event)
             .exclude(submission__speakers__in=[self.request.user])
             .exclude(submission__state=SubmissionStates.DELETED)
         )
         limit_tracks = self.request.user.teams.filter(
             models.Q(all_events=True)
             | models.Q(
-                models.Q(all_events=False)
-                & models.Q(limit_events__in=[self.request.event])
+                models.Q(all_events=False) & models.Q(limit_events__in=[self.event])
             ),
             limit_tracks__isnull=False,
         )
         if limit_tracks.exists():
             tracks = set()
             for team in limit_tracks:
-                tracks.update(team.limit_tracks.filter(event=self.request.event))
+                tracks.update(team.limit_tracks.filter(event=self.event))
             queryset = queryset.filter(submission__track__in=tracks)
         return queryset.order_by("created")

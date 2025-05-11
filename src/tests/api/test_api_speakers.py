@@ -84,21 +84,13 @@ def test_speaker_list_reviewer_public_names_hidden(
         event.active_review_phase.can_see_speaker_names = False
         event.active_review_phase.save()
         event.save()
-    with scope(event=event):
-        speaker = accepted_submission.speakers.first()
 
     response = client.get(
         event.api_urls.speakers,
         follow=True,
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 200
-    content = json.loads(response.content.decode())
-    assert content["count"] == 2
-    assert speaker.code in (
-        content["results"][0]["code"],
-        content["results"][1]["code"],
-    )
+    assert response.status_code == 403
 
 
 @pytest.mark.django_db

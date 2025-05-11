@@ -150,26 +150,24 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     endpoint = "submissions"
 
     def get_legacy_queryset(self):
-        base_qs = self.request.event.submissions.all().order_by("code")
-        if not self.request.user.has_perm("orga.view_submissions", self.request.event):
+        base_qs = self.event.submissions.all().order_by("code")
+        if not self.request.user.has_perm("orga.view_submissions", self.event):
             if (
-                not self.request.user.has_perm(
-                    "agenda.view_schedule", self.request.event
-                )
-                or not self.request.event.current_schedule
+                not self.request.user.has_perm("agenda.view_schedule", self.event)
+                or not self.event.current_schedule
             ):
                 return Submission.objects.none()
             return base_qs.filter(
-                pk__in=self.request.event.current_schedule.talks.filter(
+                pk__in=self.event.current_schedule.talks.filter(
                     is_visible=True
                 ).values_list("submission_id", flat=True)
             )
         return base_qs
 
     def get_legacy_serializer_class(self):
-        if self.request.user.has_perm("orga.change_submissions", self.request.event):
+        if self.request.user.has_perm("orga.change_submissions", self.event):
             return LegacySubmissionOrgaSerializer
-        if self.request.user.has_perm("orga.view_submissions", self.request.event):
+        if self.request.user.has_perm("orga.view_submissions", self.event):
             return LegacySubmissionReviewerSerializer
         return LegacySubmissionSerializer
 
@@ -178,14 +176,14 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
             ","
         )
         can_view_speakers = self.request.user.has_perm(
-            "agenda.view_schedule", self.request.event
-        ) or self.request.user.has_perm("orga.view_speakers", self.request.event)
+            "agenda.view_schedule", self.event
+        ) or self.request.user.has_perm("orga.view_speakers", self.event)
         if self.request.query_params.get("anon"):
             can_view_speakers = False
         return super().get_serializer(
             *args,
             can_view_speakers=can_view_speakers,
-            event=self.request.event,
+            event=self.event,
             questions=serializer_questions,
             **kwargs,
         )
@@ -206,10 +204,6 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
             "orga.view_submissions", self.event
         )
 
-    @cached_property
-    def event(self):
-        return getattr(self.request, "event", None)
-
     def get_serializer(self, *args, **kwargs):
         if self.api_version == "LEGACY":
             return self.get_legacy_serializer(*args, **kwargs)
@@ -229,7 +223,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
             target=QuestionTarget.SUBMISSION
         )
         context["speakers"] = self.speaker_profiles_for_user
-        context["schedule"] = self.request.event.current_schedule
+        context["schedule"] = self.event.current_schedule
         context["public_slots"] = not self.has_perm("delete")
         return context
 
@@ -429,7 +423,7 @@ class TagViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     search_fields = ("tag",)
 
     def get_queryset(self):
-        return self.request.event.tags.all()
+        return self.event.tags.all()
 
 
 @extend_schema_view(
@@ -449,7 +443,7 @@ class SubmissionTypeViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     search_fields = ("name",)
 
     def get_queryset(self):
-        return self.request.event.submission_types.all()
+        return self.event.submission_types.all()
 
 
 @extend_schema_view(
@@ -467,4 +461,4 @@ class TrackViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     search_fields = ("name",)
 
     def get_queryset(self):
-        return self.request.event.tracks.all()
+        return self.event.tracks.all()

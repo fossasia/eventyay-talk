@@ -26,7 +26,6 @@ class SpeakerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.event = getattr(self.context.get("request"), "event", None)
         if self.event and not self.event.cfp.request_avatar:
             self.fields.pop("avatar_url")
 

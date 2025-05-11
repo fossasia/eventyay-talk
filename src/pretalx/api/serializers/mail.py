@@ -19,10 +19,6 @@ class MailTemplateSerializer(PretalxSerializer):
             "bcc",
         )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.event = getattr(self.context.get("request"), "event", None)
-
     def create(self, validated_data):
         validated_data["event"] = self.event
         return super().create(validated_data)
