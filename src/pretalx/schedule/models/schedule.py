@@ -11,12 +11,16 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from i18nfield.fields import I18nTextField
 
+from pretalx.agenda.rules import is_agenda_visible
 from pretalx.agenda.tasks import export_schedule_html
 from pretalx.common.models.mixins import PretalxModel
 from pretalx.common.text.phrases import phrases
 from pretalx.common.urls import EventUrls
+from pretalx.orga.rules import can_view_speaker_names
+from pretalx.person.rules import is_reviewer
 from pretalx.schedule.notifications import render_notifications
 from pretalx.schedule.signals import schedule_release
+from pretalx.submission.rules import is_wip, orga_can_change_submissions
 
 
 class Schedule(PretalxModel):
@@ -49,6 +53,15 @@ class Schedule(PretalxModel):
     class Meta:
         ordering = ("-published",)
         unique_together = (("event", "version"),)
+        rules_permissions = {
+            "list": is_agenda_visible
+            | orga_can_change_submissions
+            | (is_reviewer & can_view_speaker_names),
+            "view": (~is_wip & is_agenda_visible)
+            | orga_can_change_submissions
+            | (is_reviewer & can_view_speaker_names),
+            "release": orga_can_change_submissions,
+        }
 
     class urls(EventUrls):
         public = "{self.event.urls.schedule}v/{self.url_version}/"
@@ -620,8 +633,12 @@ class Schedule(PretalxModel):
     generate_notifications.alters_data = True
 
     @cached_property
+    def version_with_fallback(self):
+        return self.version or "wip"
+
+    @cached_property
     def url_version(self):
-        return quote(self.version) if self.version else "wip"
+        return quote(self.version_with_fallback)
 
     @cached_property
     def is_archived(self):

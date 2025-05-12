@@ -224,8 +224,14 @@ def submissions_for_user(event, user):
 
 
 @rules.predicate
-def is_wip(user, slot):
-    return not slot.schedule.version
+def is_wip(user, obj):
+    schedule = getattr(obj, "schedule", None) or obj
+    return not schedule.version
+
+
+@rules.predicate
+def is_break(user, obj):
+    return not obj.submission
 
 
 def speaker_profiles_for_user(event, user, submissions=None):

@@ -1,41 +1,74 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_flex_fields.serializers import FlexFieldsSerializerMixin
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import (
+    CharField,
     DateTimeField,
     SerializerMethodField,
     SlugRelatedField,
 )
 
-from pretalx.api.mixins import PretalxSerializer
+from pretalx.api.mixins import PretalxSerializer, ReadOnlySerializerMixin
 from pretalx.api.versions import CURRENT_VERSION, register_serializer
 from pretalx.schedule.models import Schedule, TalkSlot
 
 
 @register_serializer()
-class ScheduleListSerializer(PretalxSerializer):
-    version = SerializerMethodField()
-
-    @staticmethod
-    def get_version(obj):
-        return obj.version or "wip"
+class ScheduleListSerializer(
+    FlexFieldsSerializerMixin, ReadOnlySerializerMixin, PretalxSerializer
+):
+    version = CharField(source="version_with_fallback")
 
     class Meta:
         model = Schedule
-        fields = ("version", "published")
+        fields = ["id", "version", "published"]
 
 
 @register_serializer(versions=[CURRENT_VERSION])
-class ScheduleSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
-    version = SerializerMethodField()
-    # TODO slots etc
+class ScheduleSerializer(ScheduleListSerializer):
+    slots = SerializerMethodField()
 
-    @staticmethod
-    def get_version(obj) -> str:
-        return obj.version or "wip"
+    @extend_schema_field(list[int])
+    def get_slots(self, obj):
+        public_slots = self.context.get("public_slots", True)
+        if public_slots and not obj.version:
+            # This should never happen, but better safe than sorry.
+            return []
+        if public_slots:
+            qs = obj.scheduled_talks
+        else:
+            qs = obj.talks.all()
+        if serializer := self.get_extra_flex_field("slots", qs):
+            return serializer.data
+        return qs.values_list("pk", flat=True)
+
+    class Meta(ScheduleListSerializer.Meta):
+        fields = ScheduleListSerializer.Meta.fields + ["comment", "slots"]
+        extra_expandable_fields = {
+            "slots": (
+                "pretalx.api.serializers.schedule.TalkSlotSerializer",
+                {"read_only": True, "many": True, "omit": ("schedule",)},
+            )
+        }
+
+
+@register_serializer(versions=[CURRENT_VERSION])
+class ScheduleReleaseSerializer(PretalxSerializer):
+    version = serializers.CharField(required=True)
+    comment = serializers.CharField(required=False, allow_null=True, allow_blank=True)
 
     class Meta:
         model = Schedule
-        fields = ("version", "published")
+        fields = ("version", "comment")
+
+    def validate_version(self, value):
+        event = self.context["request"].event
+        if event.schedules.filter(version=value).exists():
+            raise ValidationError(
+                f"A schedule with the version '{value}' already exists for this event."
+            )
+        return value
 
 
 @register_serializer(versions=[CURRENT_VERSION])

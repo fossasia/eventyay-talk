@@ -1,10 +1,16 @@
-import django_filters.rest_framework
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils.functional import cached_property
-from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import mixins, viewsets
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiResponse,
+    extend_schema,
+    extend_schema_view,
+)
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
 
 from pretalx.api.documentation import build_expand_docs, build_search_docs
 from pretalx.api.filters.schedule import TalkSlotFilter
@@ -12,50 +18,156 @@ from pretalx.api.mixins import PretalxViewSetMixin
 from pretalx.api.serializers.legacy import LegacyScheduleSerializer
 from pretalx.api.serializers.schedule import (
     ScheduleListSerializer,
+    ScheduleReleaseSerializer,
+    ScheduleSerializer,
     TalkSlotOrgaSerializer,
     TalkSlotSerializer,
 )
 from pretalx.schedule.models import Schedule, TalkSlot
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List Schedules",
+        description=(
+            "This endpoint returns a list of schedules. "
+            "As schedule data can get very complex when expanded, the list endpoint only contains metadata. "
+            "Please refer to the detail endpoint documentation to see how to retrieve slots, submissions and speakers."
+        ),
+        parameters=[build_search_docs("version")],
+    ),
+    retrieve=extend_schema(
+        summary="Show Schedule",
+        description=(
+            "In addition to the standard lookup by ID, you can also use the special /wip/ and /latest/ URL paths to access the unpublished and latest published schedules. "
+            "To receive most schedule data, query the endpoint with ``?expand=room,slots.submission.speakers``."
+        ),
+        parameters=[
+            build_expand_docs(
+                "room",
+                "slots",
+                "slots.submission",
+                "slots.submission.speakers",
+                "slots.submission.track",
+                "slots.submission.submission_type",
+            ),
+        ],
+    ),
+)
 class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = LegacyScheduleSerializer
     queryset = Schedule.objects.none()
-    lookup_value_regex = "[^/]+"
     endpoint = "schedules"
+    search_fields = ("version",)
+    # We look up schedules by IDs, but we permit the special names "wip" and "latest"
+    lookup_value_regex = "[^/]+"
+    permission_map = {
+        "redirect_version": "schedule.list_schedule",
+    }
 
     def get_unversioned_serializer_class(self):
         if self.action == "list":
             return ScheduleListSerializer
-        return LegacyScheduleSerializer  # self.action == 'retrieve'
-
-    def get_object(self):
-        schedules = self.get_queryset()
-        query = self.kwargs.get(self.lookup_field)
-        if query == "wip":
-            schedule = schedules.filter(version__isnull=True).first()
-        else:
-            if query == "latest" and self.event.current_schedule:
-                query = self.event.current_schedule.version
-            schedule = schedules.filter(version__iexact=query).first()
-        if not schedule:
-            raise Http404
-        return schedule
+        if self.action == "release":
+            return ScheduleReleaseSerializer
+        return ScheduleSerializer
 
     def get_queryset(self):
         if not self.event:
             return self.queryset
-        is_public = self.event.is_public and self.event.get_feature_flag(
-            "show_schedule"
-        )
         current_schedule = (
             self.event.current_schedule.pk if self.event.current_schedule else None
         )
-        if self.request.user.has_perm("orga.view_schedule", self.event):
+        if self.has_perm("release", self.event):
             return self.event.schedules.all()
-        if is_public:
-            return self.event.schedules.filter(pk=current_schedule)
-        return self.queryset
+        return self.event.schedules.filter(pk=current_schedule)
+
+    def get_object(self):
+        identifier = self.kwargs.get(self.lookup_field)
+        if identifier == "wip":
+            queryset = self.get_queryset()
+            obj = get_object_or_404(queryset, version=None)
+            self.check_object_permissions(self.request, obj)
+            return obj
+        if identifier == "latest":
+            if not self.event or not self.event.current_schedule:
+                raise Http404
+            obj = get_object_or_404(
+                self.get_queryset(), pk=self.event.current_schedule.pk
+            )
+            self.check_object_permissions(self.request, obj)
+            return obj
+
+        return super().get_object()
+
+    @extend_schema(
+        summary="Redirect to a schedule by its version",
+        description="This endpoint redirects to a specific schedule using its version name (e.g., '1.0', 'My Release') instead of its numeric ID.",
+        parameters=[
+            OpenApiParameter(
+                name="version",
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=True,
+                description="The version string/name of the schedule (e.g., '1.0', 'Final Version').",
+            )
+        ],
+        responses={
+            302: OpenApiResponse(),
+            404: OpenApiResponse(),
+        },
+    )
+    @action(detail=False, url_path="by-version")
+    def redirect_version(self, request, event):
+        version = request.query_params.get("version")
+        if not version:
+            raise Http404
+
+        schedule = get_object_or_404(self.event.schedules, version=version)
+        if not self.has_perm("view", schedule):
+            raise Http404
+        redirect_url = reverse(
+            "api:schedule-detail", kwargs={"event": event, "pk": schedule.pk}
+        )
+        return HttpResponseRedirect(redirect_url)
+
+    @extend_schema(
+        summary="Release a new schedule version",
+        description="Freezes the current Work-in-Progress (WIP) schedule, creating a new named version. This makes the WIP schedule available under the given version name and creates a new empty WIP schedule.",
+        request=ScheduleReleaseSerializer,
+        responses={
+            201: OpenApiResponse(
+                description="Schedule released successfully.",
+                response=ScheduleSerializer,
+            ),
+            400: OpenApiResponse(
+                description="Invalid data provided (e.g., version name already exists)."
+            ),
+            403: OpenApiResponse(description="Permission denied."),
+        },
+    )
+    @action(detail=False, methods=["POST"])
+    def release(self, request, event):
+        wip_schedule = request.event.wip_schedule
+        serializer = ScheduleReleaseSerializer(
+            data=request.data, context=self.get_serializer_context()
+        )
+        serializer.is_valid(raise_exception=True)
+
+        version_name = serializer.validated_data.get("version")
+        comment = serializer.validated_data.get("comment")
+
+        schedule, _ = wip_schedule.freeze(
+            name=version_name,
+            user=request.user,
+            notify_speakers=False,
+            comment=comment,
+        )
+
+        response_serializer = ScheduleSerializer(
+            schedule, context=self.get_serializer_context()
+        )
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
 
 @extend_schema_view(
@@ -114,10 +226,6 @@ class TalkSlotViewSet(
     queryset = TalkSlot.objects.none()
     endpoint = "slots"
     search_fields = ("submission__title", "submission__speakers__name")
-    filter_backends = (
-        django_filters.rest_framework.DjangoFilterBackend,
-        SearchFilter,
-    )
     filterset_class = TalkSlotFilter
     permission_map = {"ical": "schedule.view_talkslot"}
 

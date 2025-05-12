@@ -157,6 +157,8 @@ class PretalxSerializer(ModelSerializer):
         if extra_field in self.extra_flex_field_config["expand"][0]:
             klass, settings = self.Meta.extra_expandable_fields[extra_field]
             serializer_class = self._get_serializer_class_from_lazy_string(klass)
+            settings["context"] = self.context
+            settings["parent"] = self
             for key, value in self.extra_flex_field_config.items():
                 if value[1] and extra_field in value[1]:
                     settings[key] = value[1][extra_field]
