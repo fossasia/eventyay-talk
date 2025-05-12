@@ -22,7 +22,7 @@ class ResourceSerializer(ModelSerializer):
 
     class Meta:
         model = Resource
-        fields = ("resource", "description")
+        fields = ("id", "resource", "description")
 
 
 @register_serializer(versions=[CURRENT_VERSION])
@@ -130,6 +130,9 @@ class SubmissionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     # These fields are SerializerMethodFields rather than direct querysets in order
     # to dynamically filter the shown objects (e.g. only answers to public questions
     # for non-authenticated users, only the slots in the current schedule, etc.)
+    # This would not be possible by just setting e.g. self.fields["speakers"].queryset:
+    # the .queryset attribute serves to validate write actions, but not to limit read
+    # actions!
     speakers = serializers.SerializerMethodField()
     answers = serializers.SerializerMethodField()
     slots = serializers.SerializerMethodField()
@@ -142,7 +145,7 @@ class SubmissionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
         self.fields["track"].queryset = self.event.tracks.all()
         self.fields["tags"].queryset = self.event.tags.all()
 
-        if not self.event.settings.use_tracks:
+        if not self.event.get_feature_flag("use_tracks"):
             self.fields.pop("track", None)
         request_require_fields = [
             "title",

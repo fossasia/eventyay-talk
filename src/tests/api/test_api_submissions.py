@@ -371,7 +371,6 @@ def test_orga_can_see_single_legacy_tag(client, orga_user_token, tag):
     orga_user_token.refresh_from_db()
     assert orga_user_token.version == "LEGACY"
 
-    # With the token version is saved, we should see the same result without the header
     response = client.get(
         tag.event.api_urls.tags + f"{tag.pk}/",
         follow=True,
@@ -883,7 +882,6 @@ def test_orga_cannot_update_submission_types_readonly_token(
 def test_orga_can_delete_submission_types(
     client, orga_user_write_token, event, submission_type
 ):
-    # Create a new submission type because the default one can't be deleted (it's used by the CfP)
     response = client.delete(
         event.api_urls.submission_types + f"{submission_type.pk}/",
         follow=True,

@@ -720,7 +720,6 @@ def test_organiser_can_edit_question_options(
 
     with scope(event=event):
         choice_question.refresh_from_db()
-        # Check that options were replaced
         assert choice_question.options.count() == 2
         new_options = [o.answer for o in choice_question.options.all()]
         assert "Updated Option 1" in new_options
@@ -990,7 +989,6 @@ def test_organiser_can_expand_question_option_fields(
         assert option_count > 0
         choice_question.tracks.add(track)
 
-    # Test expanding just the question
     response = client.get(
         event.api_urls.question_options + "?expand=question",
         headers={"Authorization": f"Token {orga_user_token.token}"},
@@ -1002,7 +1000,6 @@ def test_organiser_can_expand_question_option_fields(
     assert content["results"][0]["question"]["id"] == choice_question.pk
     assert content["results"][0]["question"]["tracks"][0] == track.pk
 
-    # Test expanding question and its tracks
     response = client.get(
         event.api_urls.question_options + "?expand=question,question.tracks",
         headers={"Authorization": f"Token {orga_user_token.token}"},
