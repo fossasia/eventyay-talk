@@ -617,7 +617,9 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
         if self.tags_form and not self.tags_form.is_valid():
             messages.error(self.request, phrases.base.error_saving_changes)
             return super().form_invalid(form)
+        action = ".create" if not form.instance else ".update"
         form.save()
+        form.instance.log_action(action, person=self.request.user, orga=True)
         self.qform.review = form.instance
         self.qform.save()
         if self.tags_form:
@@ -686,7 +688,7 @@ class ReviewSubmissionDelete(
 
     def post(self, request, *args, **kwargs):
         self.object.answers.all().delete()
-        self.object.delete()
+        self.object.delete(log_kwargs={"person": self.request.user, "orga": True})
         messages.success(request, _("The review has been deleted."))
         return redirect(self.submission.orga_urls.reviews)
 

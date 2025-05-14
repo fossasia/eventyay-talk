@@ -102,8 +102,12 @@ class SubmissionViewMixin(PermissionRequired):
 
 class ReviewerSubmissionFilter:
     @cached_property
+    def is_only_reviewer(self):
+        return is_only_reviewer(self.request.user, self.request.event)
+
+    @cached_property
     def limit_tracks(self):
-        if is_only_reviewer(self.request.user, self.request.event):
+        if self.is_only_reviewer:
             return get_reviewer_tracks(self.request.event, self.request.user)
 
     def get_queryset(self, for_review=False):
@@ -112,11 +116,13 @@ class ReviewerSubmissionFilter:
             .select_related("submission_type", "event", "track")
             .prefetch_related("speakers")
         )
-        if is_only_reviewer(self.request.user, self.request.event):
+        if self.is_only_reviewer:
             queryset = limit_for_reviewers(
                 queryset, self.request.event, self.request.user, self.limit_tracks
             )
-        if "is_reviewer" in self.user_permissions or for_review:
+        if for_review or "is_reviewer" in self.request.user.get_permissions_for_event(
+            self.request.event
+        ):
             queryset = annotate_assigned(
                 queryset, self.request.event, self.request.user
             )
@@ -396,7 +402,9 @@ class SubmissionContent(
                 }
                 change_data["id"] = form.instance.pk
                 obj.log_action(
-                    "pretalx.submission.resource.update", person=self.request.user
+                    "pretalx.submission.resource.update",
+                    person=self.request.user,
+                    orga=True,
                 )
 
         extra_forms = [

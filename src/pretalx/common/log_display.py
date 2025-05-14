@@ -174,7 +174,7 @@ def default_activitylog_object_link(sender: Event, activitylog: ActivityLog, **k
     elif isinstance(activitylog.content_object, Review):
         url = activitylog.content_object.submission.orga_urls.reviews
         link_text = escape(activitylog.content_object.submission.title)
-        text = _submission_label_text(activitylog.content_object)
+        text = _submission_label_text(activitylog.content_object.submission)
     elif isinstance(activitylog.content_object, Question):
         url = activitylog.content_object.urls.base
         link_text = escape(activitylog.content_object.question)
