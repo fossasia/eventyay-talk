@@ -46,10 +46,6 @@ ENDPOINTS = (
 )
 
 
-def default_endpoint_permissions():
-    return {endpoint: READ_PERMISSIONS for endpoint in ENDPOINTS}
-
-
 class UserApiTokenManager(models.Manager):
 
     def active(self):
@@ -66,18 +62,14 @@ class UserApiToken(PretalxModel):
         related_name="api_tokens",
         on_delete=models.CASCADE,
     )
-    # TODO: make sure the token is deactivated if the user is removed from the team
-    # TODO: show that users have active tokens in team list
-    team = models.ForeignKey(
-        to="event.Team",
-        related_name="api_tokens",
-        on_delete=models.CASCADE,
-        verbose_name=_("Team"),
+    events = models.ManyToManyField(
+        to="event.Event",
+        related_name="+",
+        verbose_name=_("Events"),
     )
-    # TODO: make sure we check token.expires before allowing access
     expires = models.DateTimeField(null=True, blank=True, verbose_name=_("Expiry date"))
     # TODO document field structure
-    endpoints = models.JSONField(default=default_endpoint_permissions, blank=True)
+    endpoints = models.JSONField(default=dict, blank=True)
     version = models.CharField(
         max_length=12, null=True, blank=True, verbose_name=_("API version")
     )
@@ -91,10 +83,7 @@ class UserApiToken(PretalxModel):
             method = "update"
         elif method not in dict(PERMISSION_CHOICES):
             method = "actions"
-        perms = self.endpoints.get(
-            endpoint, default_endpoint_permissions().get(endpoint, [])
-        )
-        return method in perms
+        return method in self.endpoints.get(endpoint, [])
 
     @property
     def is_active(self):
@@ -109,3 +98,17 @@ class UserApiToken(PretalxModel):
             "endpoints": self.endpoints,
             "version": self.version,
         }
+
+    def update_events(self):
+        """Called when a user loses access to a team. Should remove any events the user
+        does not have access anymore from this token’s events."""
+        user_permitted_events = set(self.user.get_events_with_any_permission())
+        token_current_events = set(self.events.all())
+
+        events_to_remove = token_current_events - user_permitted_events
+        if events_to_remove:
+            for event in events_to_remove:
+                self.events.remove(event)
+            if not self.events.all():
+                self.expires = now()
+                self.save()

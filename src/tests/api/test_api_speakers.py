@@ -571,8 +571,9 @@ def test_speaker_retrieve_answers_scoped_to_event(
         team = other_event.teams.first()
         team.members.add(orga_user)
         other_orga_user_token = UserApiToken.objects.create(
-            name="testtoken", user=orga_user, team=team
+            name="testtoken", user=orga_user, endpoints=orga_user_token.endpoints
         )
+        other_orga_user_token.events.add(other_event)
 
     response1 = client.get(
         event.api_urls.speakers + f"{speaker.code}/?expand=answers",

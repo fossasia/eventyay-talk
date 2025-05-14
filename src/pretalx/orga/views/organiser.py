@@ -1,12 +1,11 @@
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
-from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView, TemplateView
 from django_context_decorator import context
@@ -86,20 +85,7 @@ class TeamView(OrgaCRUDView):
         context = super().get_context_data(**kwargs)
         if self.action == "update":
             context["invite_form"] = self.invite_form
-            context["members"] = (
-                self.object.members.all()
-                .order_by("name")
-                .annotate(
-                    active_tokens=Count(
-                        "api_tokens",
-                        filter=Q(api_tokens__team=self.object)
-                        & Q(
-                            Q(api_tokens__expires__isnull=True)
-                            | Q(api_tokens__expires__gt=now())
-                        ),
-                    )
-                )
-            )
+            context["members"] = self.object.members.all().order_by("name")
             context["invites"] = self.object.invites.all()
         return context
 

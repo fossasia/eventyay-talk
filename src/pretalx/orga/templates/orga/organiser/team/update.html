@@ -20,9 +20,6 @@
                             <tr>
                                 <td>
                                     {% include "orga/includes/user_name.html" with user=member lightbox=True %}
-                                    {% if member.active_tokens %}
-                                        <br><small class="text-muted">{% translate "Active API tokens" %}: {{ member.active_tokens }}</small>
-                                    {% endif %}
                                 </td>
                                 <td>
                                     <a href="mailto:{{ member.email }}">{{ member.email }}</a>

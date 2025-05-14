@@ -5,7 +5,6 @@ from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
-from django.utils.timezone import now
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 from django_scopes import scope, scopes_disabled
@@ -253,7 +252,8 @@ class Team(PretalxModel):
     def remove_member(self, member):
         self.members.remove(member)
         with scopes_disabled():
-            member.api_tokens.active().filter(team=self).update(expires=now())
+            for token in member.api_tokens.active().filter(events__in=self.events):
+                token.update_events()
 
     remove_member.alters_data = True
 
