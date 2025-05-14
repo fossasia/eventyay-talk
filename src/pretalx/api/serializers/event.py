@@ -1,22 +1,36 @@
 from rest_framework.serializers import ModelSerializer
-from urlman.serializers import UrlManField
 
+from pretalx.api.serializers.fields import UploadedFileField
 from pretalx.api.versions import register_serializer
 from pretalx.event.models import Event
 
 
 @register_serializer()
-class EventSerializer(ModelSerializer):
-    urls = UrlManField(urls=["base", "schedule", "login", "feed"])
-
+class EventListSerializer(ModelSerializer):
     class Meta:
         model = Event
-        fields = (
+        fields = [
             "name",
             "slug",
             "is_public",
             "date_from",
             "date_to",
             "timezone",
-            "urls",
-        )
+        ]
+
+
+@register_serializer()
+class EventSerializer(EventListSerializer):
+    logo = UploadedFileField(required=False)
+
+    class Meta(EventListSerializer.Meta):
+        fields = EventListSerializer.Meta.fields + [
+            "email",  # Email is public in the footer anyway
+            "primary_color",
+            "custom_domain",
+            "logo",
+            "header_image",
+            "locale",
+            "locales",
+            "content_locales",
+        ]
