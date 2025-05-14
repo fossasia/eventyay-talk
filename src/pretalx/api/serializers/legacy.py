@@ -8,7 +8,7 @@ from rest_framework.serializers import (
     SlugRelatedField,
 )
 
-from pretalx.api.mixins import PretalxSerializer, ReadOnlySerializerMixin
+from pretalx.api.mixins import PretalxSerializer
 from pretalx.api.serializers.question import AnswerSerializer
 from pretalx.api.serializers.room import AvailabilitySerializer
 from pretalx.api.serializers.submission import ResourceSerializer
@@ -240,7 +240,7 @@ class LegacySubmissionSerializer(I18nAwareModelSerializer):
 
 
 @register_serializer(versions="LEGACY", class_name="TagSerializer")
-class LegacyTagSerializer(ReadOnlySerializerMixin, PretalxSerializer):
+class LegacyTagSerializer(PretalxSerializer):
     class Meta:
         model = Tag
         fields = ["id", "tag", "description", "color"]
@@ -302,7 +302,7 @@ class LegacyScheduleSerializer(ModelSerializer):
 
 
 @register_serializer(versions=["LEGACY"], class_name="RoomSerializer")
-class LegacyRoomSerializer(ReadOnlySerializerMixin, PretalxSerializer):
+class LegacyRoomSerializer(PretalxSerializer):
     url = SerializerMethodField()
     guid = CharField(source="uuid")
 
@@ -338,7 +338,7 @@ class LegacyAnswerOptionSerializer(ModelSerializer):
 
 
 @register_serializer(versions=["LEGACY"], class_name="QuestionSerializer")
-class LegacyQuestionSerializer(ReadOnlySerializerMixin, ModelSerializer):
+class LegacyQuestionSerializer(ModelSerializer):
     options = LegacyAnswerOptionSerializer(many=True, required=False)
 
     class Meta:

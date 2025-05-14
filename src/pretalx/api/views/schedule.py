@@ -72,6 +72,13 @@ class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
             return ScheduleReleaseSerializer
         return ScheduleSerializer
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["public_slots"] = self.event and self.has_perm(
+            "orga.view_schedule", self.event
+        )
+        return context
+
     def get_queryset(self):
         if not self.event:
             return self.queryset
@@ -120,9 +127,6 @@ class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     @action(detail=False, url_path="by-version")
     def redirect_version(self, request, event):
         version = request.query_params.get("version")
-        if not version:
-            raise Http404
-
         schedule = get_object_or_404(self.event.schedules, version=version)
         if not self.has_perm("view", schedule):
             raise Http404

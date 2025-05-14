@@ -7,7 +7,6 @@ from pretalx.api.serializers.question import AnswerSerializer
 from pretalx.api.versions import CURRENT_VERSION, register_serializer
 from pretalx.person.models import User
 from pretalx.submission.models import (
-    Answer,
     Review,
     ReviewScore,
     ReviewScoreCategory,
@@ -91,6 +90,10 @@ class ReviewWriteSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
                 "pretalx.api.serializers.submission.SubmissionSerializer",
                 {"read_only": True, "omit": ("slots",)},
             ),
+            "answers": (
+                "pretalx.api.serializers.question.AnswerSerializer",
+                {"read_only": True, "many": True},
+            ),
             "user": (
                 "pretalx.api.serializers.review.ReviewerSerializer",
                 {"read_only": True},
@@ -100,9 +103,6 @@ class ReviewWriteSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
                 {"read_only": True, "many": True},
             ),
         }
-
-    def get_answers(self, obj):
-        return AnswerSerializer(Answer.objects.filter(review=obj), many=True).data
 
     def validate_scores(self, value):
         if not len(value) == len(set([s.category for s in value])):
@@ -139,6 +139,7 @@ class ReviewWriteSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
 class ReviewSerializer(ReviewWriteSerializer):
     scores = ReviewScoreSerializer(many=True)
     user = SlugRelatedField(slug_field="code", read_only=True)
+    answers = AnswerSerializer(read_only=True, many=True)
 
     class Meta(ReviewWriteSerializer.Meta):
         fields = ReviewWriteSerializer.Meta.fields + ["user"]

@@ -124,6 +124,24 @@ def test_legacy_room_api(client, orga_user_token, room):
 
 
 @pytest.mark.django_db
+def test_invalid_api_version(client, orga_user_token, room):
+
+    response = client.get(
+        room.event.api_urls.rooms + f"{room.pk}/",
+        follow=True,
+        headers={
+            "Authorization": f"Token {orga_user_token.token}",
+            "Pretalx-Version": "YOLO",
+        },
+    )
+    assert response.status_code == 400
+    content = json.loads(response.content.decode())
+    assert "id" not in content
+    orga_user_token.refresh_from_db()
+    assert not orga_user_token.version
+
+
+@pytest.mark.django_db
 def test_orga_can_create_rooms(client, orga_user_write_token, event):
     response = client.post(
         event.api_urls.rooms,

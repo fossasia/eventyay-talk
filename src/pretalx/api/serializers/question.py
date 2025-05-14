@@ -49,18 +49,17 @@ class AnswerOptionCreateSerializer(AnswerOptionSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         request = kwargs.get("context", {}).get("request")
-        if "question" in self.fields:
-            if request and hasattr(request, "event"):
-                self.fields["question"].queryset = request.event.questions(
-                    manager="all_objects"
-                ).filter(
-                    variant__in=[
-                        QuestionVariant.CHOICES,
-                        QuestionVariant.MULTIPLE,
-                    ]
-                )
-            else:
-                self.fields["question"].queryset = Question.objects.none()
+        if request and hasattr(request, "event"):
+            self.fields["question"].queryset = request.event.questions(
+                manager="all_objects"
+            ).filter(
+                variant__in=[
+                    QuestionVariant.CHOICES,
+                    QuestionVariant.MULTIPLE,
+                ]
+            )
+        else:
+            self.fields["question"].queryset = Question.objects.none()
 
     class Meta(AnswerOptionSerializer.Meta):
         expandable_fields = None

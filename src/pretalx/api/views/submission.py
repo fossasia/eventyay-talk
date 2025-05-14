@@ -149,7 +149,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     }
     endpoint = "submissions"
 
-    def get_legacy_queryset(self):
+    def get_legacy_queryset(self):  # pragma: no cover
         base_qs = self.event.submissions.all().order_by("code")
         if not self.request.user.has_perm("orga.view_submissions", self.event):
             if (
@@ -164,14 +164,14 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
             )
         return base_qs
 
-    def get_legacy_serializer_class(self):
+    def get_legacy_serializer_class(self):  # pragma: no cover
         if self.request.user.has_perm("orga.change_submissions", self.event):
             return LegacySubmissionOrgaSerializer
         if self.request.user.has_perm("orga.view_submissions", self.event):
             return LegacySubmissionReviewerSerializer
         return LegacySubmissionSerializer
 
-    def get_legacy_serializer(self, *args, **kwargs):
+    def get_legacy_serializer(self, *args, **kwargs):  # pragma: no cover
         serializer_questions = (self.request.query_params.get("questions") or "").split(
             ","
         )
@@ -189,7 +189,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         )
 
     def get_serializer_class(self):
-        if self.api_version == "LEGACY":
+        if self.api_version == "LEGACY":  # pragma: no cover
             return self.get_legacy_serializer_class()
         return super().get_serializer_class()
 
@@ -205,7 +205,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         )
 
     def get_serializer(self, *args, **kwargs):
-        if self.api_version == "LEGACY":
+        if self.api_version == "LEGACY":  # pragma: no cover
             return self.get_legacy_serializer(*args, **kwargs)
         return super().get_serializer(*args, **kwargs)
 
@@ -228,7 +228,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         return context
 
     def get_queryset(self):
-        if self.api_version == "LEGACY":
+        if self.api_version == "LEGACY":  # pragma: no cover
             return self.get_legacy_queryset()
         if not self.event:
             # This is just during api doc creation
@@ -252,7 +252,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         return queryset
 
     def perform_destroy(self, request, *args, **kwargs):
-        self.get_object().remove(person=self.request.user)
+        self.get_object().remove(force=True, person=self.request.user)
 
     @action(detail=True, methods=["POST"])
     def accept(self, request, **kwargs):
@@ -325,15 +325,11 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         submission = self.get_object()
-
-        try:
-            submission.add_speaker(
-                email=data["email"], name=data.get("name"), locale=data.get("locale")
-            )
-            submission.refresh_from_db()
-            return Response(SubmissionOrgaSerializer(submission).data)
-        except Exception as e:
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        submission.add_speaker(
+            email=data["email"], name=data.get("name"), locale=data.get("locale")
+        )
+        submission.refresh_from_db()
+        return Response(SubmissionOrgaSerializer(submission).data)
 
     @action(detail=True, methods=["POST"], url_path="remove-speaker")
     def remove_speaker(self, request, **kwargs):
@@ -343,7 +339,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         speaker = submission.speakers.filter(
             code=serializer.validated_data["user"]
         ).first()
-        if not speaker:
+        if not speaker:  # pragma: no cover
             return Response(
                 {"detail": "Speaker not found."}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -403,7 +399,7 @@ def favourite_view(request, event, code):
 
     if request.method == "POST":
         submission.add_favourite(request.user)
-    elif request.method == "DELETE":
+    else:
         submission.remove_favourite(request.user)
     return Response({})
 

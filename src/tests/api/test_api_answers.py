@@ -91,6 +91,34 @@ def test_organizer_can_create_answer(
         assert answer.answer == "Tralalalala"
 
 
+@pytest.mark.parametrize("target", ("submission", "reviewer", "speaker"))
+@pytest.mark.django_db
+def test_organizer_cannot_create_answer_superflous_fields(
+    event, orga_user_write_token, client, question, submission, speaker, review, target
+):
+    with scope(event=event):
+        count = Answer.objects.filter(question__event=event).count()
+        question.target = target
+        question.save()
+    response = client.post(
+        event.api_urls.answers,
+        data=json.dumps(
+            {
+                "question": question.id,
+                "submission": submission.code,
+                "person": speaker.code,
+                "review": review.pk,
+                "answer": "Tralalalala",
+            }
+        ),
+        content_type="application/json",
+        headers={"Authorization": f"Token {orga_user_write_token.token}"},
+    )
+    assert response.status_code == 400, response.content.decode()
+    with scope(event=event):
+        assert Answer.objects.filter(question__event=event).count() == count
+
+
 @pytest.mark.django_db
 def test_duplicate_answer_updates_existing_answer(
     event, orga_user_write_token, client, question, submission, speaker, answer

@@ -986,6 +986,22 @@ def test_orga_can_update_submission(client, orga_user_write_token, submission):
 
 
 @pytest.mark.django_db
+def test_orga_can_delete_submission(client, orga_user_write_token, submission):
+    assert submission.title != "Updated Submission"
+    response = client.delete(
+        submission.event.api_urls.submissions + f"{submission.code}/",
+        follow=True,
+        headers={
+            "Authorization": f"Token {orga_user_write_token.token}",
+        },
+    )
+    assert response.status_code == 204
+    with scope(event=submission.event):
+        submission.refresh_from_db()
+        assert submission.state == "deleted"
+
+
+@pytest.mark.django_db
 def test_orga_cannot_update_submission_readonly_token(
     client, orga_user_token, submission
 ):
@@ -1363,6 +1379,7 @@ def test_public_submission_expandable_fields(client, event, slot, answer, track)
         "slots.room",
         "submission_type",
         "speakers",
+        "speakers.user",
         "answers",
         "answers.question",
     ]

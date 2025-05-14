@@ -3,7 +3,6 @@ from drf_spectacular.utils import extend_schema_field
 from i18nfield.fields import I18nCharField, I18nTextField
 from i18nfield.rest_framework import I18nField
 from rest_flex_fields import is_expanded
-from rest_flex_fields.serializers import FlexFieldsSerializerMixin
 from rest_flex_fields.utils import split_levels
 from rest_framework import exceptions
 from rest_framework.serializers import ModelSerializer
@@ -27,7 +26,10 @@ class PretalxViewSetMixin:
 
     @cached_property
     def api_version(self):
-        return get_api_version_from_request(self.request)
+        try:
+            return get_api_version_from_request(self.request)
+        except Exception:
+            raise ApiVersionException()
 
     def get_versioned_serializer(self, name):
         try:
@@ -40,40 +42,22 @@ class PretalxViewSetMixin:
             base_class = self.get_unversioned_serializer_class()
         elif hasattr(self, "serializer_class"):
             base_class = self.serializer_class
-        elif hasattr(self, "serializer_class_name"):
-            base_class = self.serializer_class_name
-
-        if not isinstance(base_class, str):
-            base_class = base_class.__name__
-
-        return self.get_versioned_serializer(base_class)
+        return self.get_versioned_serializer(base_class.__name__)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        if locale := self.request.GET.get("lang"):
-            if locale in self.event.locales:
-                context["override_locale"] = locale
+        locale = self.request.GET.get("lang")
+        if locale and locale in self.event.locales:
+            context["override_locale"] = locale
         return context
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
-        if self.logtype_map and (action := self.logtype_map.get(self.action)):
-            serializer.instance.log_action(action, person=self.request.user, orga=True)
+        serializer.instance.log_action(".create", person=self.request.user, orga=True)
 
     def perform_update(self, serializer):
         super().perform_update(serializer)
-        if self.logtype_map and (action := self.logtype_map.get(self.action)):
-            serializer.instance.log_action(action, person=self.request.user, orga=True)
-
-    def perform_destroy(self, instance):
-        parent = getattr(instance, "log_parent", None)
-        super().perform_destroy(instance)
-        if (
-            parent
-            and self.logtype_map
-            and (action := self.logtype_map.get(self.action))
-        ):
-            parent.log_action(action, person=self.request.user, orga=True)
+        serializer.instance.log_action(".update", person=self.request.user, orga=True)
 
     @cached_property
     def event(self):
@@ -86,8 +70,6 @@ class PretalxViewSetMixin:
         return self.request.user.has_perm(permission_name, obj or self.event)
 
     def check_expanded_fields(self, *args):
-        if not isinstance(self, FlexFieldsSerializerMixin):
-            return []
         return [arg for arg in args if is_expanded(self.request, arg)]
 
 
@@ -141,19 +123,6 @@ class PretalxSerializer(ModelSerializer):
         }
 
     def get_extra_flex_field(self, extra_field, *args, **kwargs):
-        if not isinstance(self, FlexFieldsSerializerMixin) or not getattr(
-            self.Meta, "extra_expandable_fields", None
-        ):
-            return
-
-        if extra_field in self._get_fields_names_to_remove(
-            [extra_field],
-            self.extra_flex_field_config["omit"][0],
-            self.extra_flex_field_config["fields"][0],
-            self.extra_flex_field_config["omit"][1],
-        ):
-            return
-
         if extra_field in self.extra_flex_field_config["expand"][0]:
             klass, settings = self.Meta.extra_expandable_fields[extra_field]
             serializer_class = self._get_serializer_class_from_lazy_string(klass)
@@ -167,21 +136,3 @@ class PretalxSerializer(ModelSerializer):
 
 PretalxSerializer.serializer_field_mapping[I18nCharField] = DocumentedI18nField
 PretalxSerializer.serializer_field_mapping[I18nTextField] = DocumentedI18nField
-
-
-class ReadOnlySerializerMixin:
-    """
-    Used in order to safeguard pre-writable-API serializers from write actions.
-    To be removed once the legacy API is dropped.
-    """
-
-    msg = "Please upgrade your API token in order to use write actions!"
-
-    def perform_create(self, validated_data):
-        raise exceptions.APIException(self.msg)
-
-    def perform_update(self, validated_data):
-        raise exceptions.APIException(self.msg)
-
-    def perform_destroy(self, validated_data):
-        raise exceptions.APIException(self.msg)

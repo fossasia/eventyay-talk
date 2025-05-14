@@ -11,7 +11,8 @@ class UserTokenAuthentication(TokenAuthentication):
         model = self.get_model()
         try:
             token = (
-                model.objects.active().select_related("user")
+                model.objects.active()
+                .select_related("user")
                 .prefetch_related("events")
                 .get(token=key)
             )

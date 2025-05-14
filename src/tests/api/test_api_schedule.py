@@ -643,6 +643,31 @@ def test_update_slot_orga_write_token_change_room_non_wip(
     assert response.status_code == 403
 
 
+@pytest.mark.parametrize("has_submission", (True, False))
+@pytest.mark.django_db
+def test_update_slot_orga_write_submission_fields(
+    client, event, slot, other_room, orga_user_write_token, has_submission
+):
+    with scope(event=event):
+        wip_slot = event.wip_schedule.talks.filter(submission=slot.submission).first()
+        if not has_submission:
+            wip_slot.submission = None
+            wip_slot.save()
+    response = client.patch(
+        event.api_urls.slots + f"{wip_slot.pk}/",
+        data=json.dumps({"description": "test", "end": wip_slot.end.isoformat()}),
+        content_type="application/json",
+        headers={"Authorization": f"Token {orga_user_write_token.token}"},
+    )
+    content = json.loads(response.content.decode())
+    if has_submission:
+        assert response.status_code == 400
+        assert "end" in content
+        assert "description" in content
+    else:
+        assert content["description"]["en"] == "test"
+
+
 @pytest.mark.django_db
 def test_talk_slot_expand_parameters(client, orga_user_token, event, slot):
     url = event.api_urls.slots + f"{slot.pk}/"

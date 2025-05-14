@@ -5,7 +5,7 @@ import pytest
 from django_scopes import scope
 
 from pretalx.api.serializers.review import ReviewSerializer
-from pretalx.submission.models import Review, ReviewScore, ReviewScoreCategory
+from pretalx.submission.models import Answer, Review, ReviewScore, ReviewScoreCategory
 
 
 @pytest.fixture
@@ -54,7 +54,7 @@ def test_anon_cannot_see_reviews(client, event, review):
 @pytest.mark.django_db
 def test_orga_can_see_reviews(client, orga_user_token, event, review):
     response = client.get(
-        event.api_urls.reviews,
+        event.api_urls.reviews + "?expand=answers",
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
@@ -66,7 +66,13 @@ def test_orga_can_see_reviews(client, orga_user_token, event, review):
 
 @pytest.mark.django_db
 def test_orga_can_see_expanded_reviews(
-    client, orga_user_token, event, review, track, review_score_value_positive
+    client,
+    orga_user_token,
+    event,
+    review,
+    track,
+    review_score_value_positive,
+    review_question,
 ):
     with scope(event=event):
         review.submission.track = track
@@ -76,6 +82,7 @@ def test_orga_can_see_expanded_reviews(
         submission_type = review.submission.submission_type
         user = review.user
         category = review_score_value_positive.category
+        Answer.objects.create(review=review, question=review_question, answer="text!")
 
     params = ",".join(
         [
@@ -84,6 +91,7 @@ def test_orga_can_see_expanded_reviews(
             "submission.speakers",
             "submission.track",
             "submission.submission_type",
+            "answers",
         ]
     )
     response = client.get(
@@ -102,6 +110,7 @@ def test_orga_can_see_expanded_reviews(
     assert data["submission"]["submission_type"]["name"]["en"] == submission_type.name
     assert data["user"]["code"] == user.code
     assert data["scores"][0]["category"]["name"]["en"] == category.name
+    assert data["answers"][0]["answer"] == "text!"
 
 
 @pytest.mark.django_db

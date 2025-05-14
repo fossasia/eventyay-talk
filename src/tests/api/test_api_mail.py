@@ -168,6 +168,35 @@ def test_orga_can_update_mail_templates(
         )
 
 
+@pytest.mark.parametrize("field", ("text", "subject"))
+@pytest.mark.parametrize(
+    "value", ("test {invalidplaceholder}", "{invalid placeholder}")
+)
+@pytest.mark.django_db
+def test_orga_update_mail_template_invalid_placeholder(
+    client, orga_user_write_token, event, mail_template, field, value
+):
+    assert mail_template.subject != "newtesttemplate"
+    response = client.patch(
+        event.api_urls.mail_templates + f"{mail_template.pk}/",
+        follow=True,
+        data=json.dumps({field: value}),
+        headers={
+            "Authorization": f"Token {orga_user_write_token.token}",
+            "Content-Type": "application/json",
+        },
+    )
+    assert response.status_code == 400
+    with scope(event=mail_template.event):
+        mail_template.refresh_from_db()
+        assert getattr(mail_template, field) != value
+        assert not (
+            mail_template.logged_actions()
+            .filter(action_type="pretalx.mail_template.update")
+            .exists()
+        )
+
+
 @pytest.mark.django_db
 def test_orga_cannot_update_mail_template_roles(client, orga_user_write_token, event):
     with scope(event=event):

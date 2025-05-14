@@ -42,9 +42,7 @@ class RoomViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     search_fields = ("name",)
 
     def get_queryset(self):
-        if self.request.user.has_perm("agenda.view_schedule", self.event):
-            return self.event.rooms.all().select_related("event")
-        return self.event.rooms.none()
+        return self.event.rooms.all().select_related("event")
 
     def get_unversioned_serializer_class(self):
         if self.request.method not in SAFE_METHODS or self.has_perm("update"):

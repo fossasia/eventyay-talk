@@ -9,15 +9,13 @@ from rest_framework.serializers import (
     SlugRelatedField,
 )
 
-from pretalx.api.mixins import PretalxSerializer, ReadOnlySerializerMixin
+from pretalx.api.mixins import PretalxSerializer
 from pretalx.api.versions import CURRENT_VERSION, register_serializer
 from pretalx.schedule.models import Schedule, TalkSlot
 
 
 @register_serializer()
-class ScheduleListSerializer(
-    FlexFieldsSerializerMixin, ReadOnlySerializerMixin, PretalxSerializer
-):
+class ScheduleListSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     version = CharField(source="version_with_fallback")
 
     class Meta:
