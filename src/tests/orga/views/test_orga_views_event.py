@@ -170,28 +170,6 @@ def test_add_custom_css_as_administrator(event, administrator_client, path):
     assert event.custom_css
 
 
-@pytest.mark.skip
-@pytest.mark.django_db
-def test_add_logo(event, orga_client):
-    assert not event.logo
-    response = orga_client.get(event.urls.base, follow=True)
-    assert '<img loading="lazy" "src="/media' not in response.content.decode()
-    with open("../assets/icon.png", "rb") as logo:
-        data = get_settings_form_data(event)
-        data["logo"] = logo
-        data["slug"] = "logotest"
-        data["primary_color"] = "#00ff00"
-        response = orga_client.post(event.orga_urls.edit_settings, data, follow=True)
-    event.refresh_from_db()
-    assert event.primary_color == "#00ff00"
-    assert response.status_code == 200
-    assert event.logo
-    response = orga_client.get(event.urls.base, follow=True)
-    assert (
-        '<img loading="lazy" src="/media' in response.content.decode()
-    ), response.content.decode()
-
-
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "domain,result",

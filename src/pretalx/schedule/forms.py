@@ -8,7 +8,6 @@ from django.utils.translation import gettext_lazy as _
 from django_scopes.forms import SafeModelChoiceField
 from i18nfield.forms import I18nModelForm
 
-from pretalx.api.serializers.room import AvailabilitySerializer
 from pretalx.common.forms.mixins import ReadOnlyFlag
 from pretalx.common.forms.widgets import HtmlDateInput, HtmlTimeInput
 from pretalx.schedule.models import Availability, Room, TalkSlot
@@ -27,9 +26,7 @@ class AvailabilitiesFormMixin(forms.Form):
 
     def _serialize(self, event, instance):
         if instance:
-            availabilities = AvailabilitySerializer(
-                instance.availabilities.all(), many=True
-            ).data
+            availabilities = [av.serialize() for av in instance.availabilities.all()]
         else:
             availabilities = []
 

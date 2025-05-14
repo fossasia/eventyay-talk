@@ -392,12 +392,12 @@ class Event(PretalxModel):
         return str(self.name)
 
     @cached_property
-    def locales(self) -> list:
+    def locales(self) -> list[str]:
         """Is a list of active event locales."""
         return self.locale_array.split(",")
 
     @cached_property
-    def content_locales(self) -> list:
+    def content_locales(self) -> list[str]:
         """Is a list of active content locales."""
         return self.content_locale_array.split(",")
 

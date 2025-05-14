@@ -23,12 +23,7 @@ def test_answer_serializer(answer):
         }
         assert data["id"] == answer.id
         assert data["question"] == answer.question_id
-        if answer.submission:
-            assert data["submission"] == answer.submission.code
-        if answer.person:
-            assert data["person"] == answer.person.code
-        if answer.review:
-            assert data["review"] == answer.review_id
+        assert data["submission"] == answer.submission.code
 
 
 @pytest.mark.django_db

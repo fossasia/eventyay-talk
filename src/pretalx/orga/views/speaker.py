@@ -154,7 +154,7 @@ class SpeakerDetail(SpeakerViewMixin, ActionFromUrl, CreateOrUpdateView):
     def submissions(self, **kwargs):
         qs = self.request.event.submissions.filter(speakers__in=[self.object])
         if is_only_reviewer(self.request.user, self.request.event):
-            return limit_for_reviewers(qs, self.request.user, self.request.event)
+            return limit_for_reviewers(qs, self.request.event, self.request.user)
         return qs
 
     @context

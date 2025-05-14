@@ -10,10 +10,10 @@ from pretalx.person.rules import (
     is_administrator,
     is_reviewer,
 )
-from pretalx.submission.permissions import can_view_reviews
 from pretalx.submission.rules import (
     can_be_reviewed,
     can_view_all_reviews,
+    can_view_reviews,
     is_review_author,
     orga_can_change_submissions,
     reviewer_can_change_submissions,

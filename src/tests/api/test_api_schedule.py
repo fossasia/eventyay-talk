@@ -429,8 +429,7 @@ def test_list_slots_orga_sees_slots_in_current_schedule_by_default(
     slot_ids_in_response = {r["id"] for r in content["results"]}
     assert slot.pk in slot_ids_in_response
     assert invisible_slot.pk in slot_ids_in_response
-    if wip_slot:
-        assert wip_slot.pk not in slot_ids_in_response
+    assert wip_slot.pk not in slot_ids_in_response
 
 
 @pytest.mark.django_db

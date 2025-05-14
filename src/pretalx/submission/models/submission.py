@@ -316,7 +316,7 @@ class Submission(GenerateCode, PretalxModel):
             "withdraw": can_be_withdrawn & is_speaker,
             "reject": can_be_rejected & orga_or_reviewer_can_change_submission,
             "accept": can_be_accepted & orga_or_reviewer_can_change_submission,
-            "confirm": can_be_confirmed & orga_can_change_submissions,
+            "confirm": can_be_confirmed & (is_speaker | orga_can_change_submissions),
             "cancel": can_be_canceled & orga_can_change_submissions,
             "remove": can_be_removed & orga_can_change_submissions,
         }

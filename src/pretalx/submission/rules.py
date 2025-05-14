@@ -139,6 +139,18 @@ def can_view_all_reviews(user, obj):
 
 
 @rules.predicate
+def can_view_reviews(user, obj):
+    if can_view_all_reviews(user, obj):
+        return True
+    phase = obj.event.active_review_phase
+    return bool(
+        phase
+        and phase.can_see_other_reviews == "after_review"
+        and obj.reviews.filter(user=user).exists()
+    )
+
+
+@rules.predicate
 def can_be_reviewed(user, obj):
     from pretalx.submission.models import SubmissionStates
 

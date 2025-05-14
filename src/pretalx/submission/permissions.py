@@ -10,24 +10,6 @@ from pretalx.submission.rules import (
 
 
 @rules.predicate
-def has_submissions(user, obj):
-    event = obj.event
-    return event.submissions.filter(speakers__in=[user]).exists()
-
-
-@rules.predicate
-def can_view_reviews(user, obj):
-    phase = obj.event.active_review_phase
-    if not phase:
-        return False
-    if phase.can_see_other_reviews == "always":
-        return True
-    if phase.can_see_other_reviews == "after_review":
-        return obj.reviews.filter(user=user).exists()
-    return False
-
-
-@rules.predicate
 def is_comment_author(user, obj):
     return obj and obj.user == user
 

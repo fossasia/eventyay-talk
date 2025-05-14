@@ -1,6 +1,6 @@
 import rules
 
-from pretalx.submission.rules import orga_can_change_submissions
+from pretalx.submission.rules import is_speaker, orga_can_change_submissions
 
 
 @rules.predicate
@@ -65,9 +65,8 @@ def is_agenda_submission_visible(user, submission):
 
 @rules.predicate
 def is_speaker_viewable(user, profile):
-    if not profile:
+    if not profile or not profile.event.current_schedule:
         return False
-    is_speaker = profile.user.submissions.filter(
-        slots__schedule=profile.event.current_schedule
-    ).exists()
-    return is_speaker and can_view_schedule(user, profile.event)
+    return is_speaker(profile.user, profile.event) and can_view_schedule(
+        user, profile.event
+    )

@@ -84,9 +84,10 @@ def test_can_see_talk_edit_btn(
 
 
 @pytest.mark.django_db
-def test_can_see_talk_do_not_record(client, django_assert_num_queries, slot):
-    slot.submission.do_not_record = True
-    slot.submission.save()
+def test_can_see_talk_do_not_record(client, event, django_assert_num_queries, slot):
+    with scope(event=event):
+        slot.submission.do_not_record = True
+        slot.submission.save()
     with django_assert_num_queries(20):
         response = client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
@@ -99,9 +100,10 @@ def test_can_see_talk_do_not_record(client, django_assert_num_queries, slot):
 def test_can_see_talk_does_accept_feedback(
     client, django_assert_num_queries, event, slot
 ):
-    slot.start = now() - dt.timedelta(days=1)
-    slot.end = slot.start + dt.timedelta(hours=1)
-    slot.save()
+    with scope(event=event):
+        slot.start = now() - dt.timedelta(days=1)
+        slot.end = slot.start + dt.timedelta(hours=1)
+        slot.save()
     with django_assert_num_queries(21):
         response = client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
