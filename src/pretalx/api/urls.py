@@ -16,7 +16,6 @@ from pretalx.api.views import (
     submission,
     team,
     upload,
-    user,
 )
 
 
@@ -75,7 +74,6 @@ organiser_router.register("teams", team.TeamViewSet, basename="team")
 app_name = "api"
 urlpatterns = [
     path("", include(default_router.urls)),
-    path("me", user.MeView.as_view(), name="user.me"),
     path("auth/", obtain_auth_token),
     # We redirect the old pre-filtered /talks/ endpoint to  /submissions/
     path(
