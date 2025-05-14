@@ -20,6 +20,7 @@ from pretalx.submission.models import (
     AnswerOption,
     Question,
     Resource,
+    Review,
     Submission,
     SubmissionStates,
     Tag,
@@ -399,3 +400,26 @@ class LegacyAnswerSerializer(ModelSerializer):
             "person",
             "options",
         )
+
+
+@register_serializer(versions=["LEGACY"], class_name="ReviewSerializer")
+class LegacyReviewSerializer(ModelSerializer):
+    submission = SlugRelatedField(slug_field="code", read_only=True)
+    user = SlugRelatedField(slug_field="name", read_only=True)
+    answers = SerializerMethodField()
+
+    def get_answers(self, obj):
+        return AnswerSerializer(Answer.objects.filter(review=obj), many=True).data
+
+    class Meta:
+        model = Review
+        fields = [
+            "id",
+            "submission",
+            "text",
+            "score",
+            "created",
+            "updated",
+            "answers",
+            "user",
+        ]

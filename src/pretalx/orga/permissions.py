@@ -10,15 +10,14 @@ from pretalx.person.rules import (
     is_administrator,
     is_reviewer,
 )
-from pretalx.submission.permissions import (
+from pretalx.submission.permissions import can_view_reviews
+from pretalx.submission.rules import (
     can_be_reviewed,
     can_view_all_reviews,
-    can_view_reviews,
     is_review_author,
-)
-from pretalx.submission.rules import (
     orga_can_change_submissions,
     reviewer_can_change_submissions,
+    reviews_are_open,
 )
 
 
@@ -58,12 +57,6 @@ def is_any_organiser(user, obj):
 @rules.predicate
 def can_create_events(user, obj):
     return user.is_administrator or user.teams.filter(can_create_events=True).exists()
-
-
-@rules.predicate
-def reviews_are_open(user, obj):
-    event = obj.event
-    return bool(event.active_review_phase and event.active_review_phase.can_review)
 
 
 @rules.predicate

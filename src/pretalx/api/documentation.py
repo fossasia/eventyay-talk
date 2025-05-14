@@ -107,5 +107,14 @@ def postprocess_schema(result, generator, request, public):
                 "Note that slots cannot be created or deleted via the API – this happens automatically when a submission’s state changes."
             ),
         },
+        {
+            "name": "reviews",
+            "description": (
+                "Reviews can be created, updated and deleted in the API depending on permissions (user, token and team), "
+                "the current review phase, and so on. "
+                "As with the other endpoints, this endpoint is not available to users/tokens with only reviewer permissions "
+                "while an anonymised review phase is active."
+            ),
+        },
     ]
     return result

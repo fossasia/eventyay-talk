@@ -3,6 +3,7 @@ import rules
 from pretalx.submission.rules import (
     can_be_reviewed,
     has_reviewer_access,
+    is_review_author,
     is_speaker,
     orga_can_change_submissions,
 )
@@ -15,11 +16,6 @@ def has_submissions(user, obj):
 
 
 @rules.predicate
-def is_review_author(user, obj):
-    return obj and obj.user == user
-
-
-@rules.predicate
 def can_view_reviews(user, obj):
     phase = obj.event.active_review_phase
     if not phase:
@@ -29,14 +25,6 @@ def can_view_reviews(user, obj):
     if phase.can_see_other_reviews == "after_review":
         return obj.reviews.filter(user=user).exists()
     return False
-
-
-@rules.predicate
-def can_view_all_reviews(user, obj):
-    phase = obj.event.active_review_phase
-    if not phase:
-        return False
-    return phase.can_see_other_reviews == "always"
 
 
 @rules.predicate

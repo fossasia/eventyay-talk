@@ -1,5 +1,5 @@
 import rules
-from django.db.models import Exists, OuterRef, Q, Subquery
+from django.db.models import Count, Exists, OuterRef, Q, Subquery
 
 from pretalx.person.rules import is_only_reviewer, is_reviewer
 
@@ -124,6 +124,21 @@ def can_be_edited(user, obj):
 
 
 @rules.predicate
+def reviews_are_open(user, obj):
+    event = obj.event
+    return bool(event.active_review_phase and event.active_review_phase.can_review)
+
+
+@rules.predicate
+def can_view_all_reviews(user, obj):
+    event = obj.event
+    return bool(
+        event.active_review_phase
+        and event.active_review_phase.can_see_other_reviews == "always"
+    )
+
+
+@rules.predicate
 def can_be_reviewed(user, obj):
     from pretalx.submission.models import SubmissionStates
 
@@ -196,12 +211,17 @@ def get_reviewer_tracks(event, user):
     return tracks
 
 
-def limit_for_reviewers(queryset, event, user, reviewer_tracks=None):
+def limit_for_reviewers(
+    queryset, event, user, reviewer_tracks=None, add_assignments=False
+):
     if not (phase := event.active_review_phase):
         return event.submissions.none()
+    queryset = queryset.exclude(speakers__in=[user])
     if phase.proposal_visibility == "assigned":
         queryset = annotate_assigned(queryset, event, user)
         return queryset.filter(is_assigned__gte=1)
+    if add_assignments:
+        queryset = annotate_assigned(queryset, event, user)
     if reviewer_tracks is None:
         reviewer_tracks = get_reviewer_tracks(event, user)
     if reviewer_tracks:
@@ -234,6 +254,11 @@ def is_break(user, obj):
     return not obj.submission
 
 
+@rules.predicate
+def is_review_author(user, obj):
+    return obj and obj.user == user
+
+
 def speaker_profiles_for_user(event, user, submissions=None):
     submissions = submissions or submissions_for_user(event, user)
     from pretalx.person.models import SpeakerProfile, User
@@ -241,3 +266,31 @@ def speaker_profiles_for_user(event, user, submissions=None):
     return SpeakerProfile.objects.filter(
         event=event, user__in=User.objects.filter(submissions__in=submissions)
     )
+
+
+def get_reviewable_submissions(event, user, queryset=None):
+    """Returns all submissions the user is permitted to review.
+
+    Excludes submissions this user has submitted, and takes track team permissions,
+    assignments and review phases into account. The result is ordered by review count.
+    """
+    from pretalx.submission.models import SubmissionStates
+
+    if not queryset:
+        queryset = event.submissions.filter(state=SubmissionStates.SUBMITTED)
+    queryset = limit_for_reviewers(queryset, event, user, add_assignments=True)
+    queryset = queryset.annotate(review_count=Count("reviews"))
+    # This is not randomised, because order_by("review_count", "?") sets all annotated
+    # review_count values to 1.
+    return queryset.order_by("-is_assigned", "review_count")
+
+
+def get_missing_reviews(event, user, ignore=None):
+    from pretalx.submission.models import SubmissionStates
+
+    queryset = event.submissions.filter(state=SubmissionStates.SUBMITTED).exclude(
+        reviews__user=user
+    )
+    if ignore:
+        queryset = queryset.exclude(pk__in=ignore)
+    return get_reviewable_submissions(event, user, queryset=queryset)
