@@ -54,7 +54,7 @@ def test_orga_can_see_new_talk(
     orga_client, django_assert_num_queries, event, unreleased_slot
 ):
     slot = unreleased_slot
-    with django_assert_num_queries(28):
+    with django_assert_num_queries(27):
         response = orga_client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
     content = response.content.decode()
@@ -74,8 +74,9 @@ def test_orga_can_see_new_talk(
 def test_can_see_talk_edit_btn(
     orga_client, django_assert_num_queries, orga_user, event, slot
 ):
-    slot.submission.speakers.add(orga_user)
-    with django_assert_num_queries(26):
+    with scope(event=event):
+        slot.submission.speakers.add(orga_user)
+    with django_assert_num_queries(25):
         response = orga_client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
     content = response.content.decode()

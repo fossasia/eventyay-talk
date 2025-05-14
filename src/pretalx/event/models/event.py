@@ -779,11 +779,9 @@ class Event(PretalxModel):
 
     @cached_property
     def current_schedule(self):
-        """Returns the latest released.
-
-        :class:`~pretalx.schedule.models.schedule.Schedule`, or ``None`` before
-        the first release.
-        """
+        if pk := getattr(self, "_current_schedule_pk", None):
+            # The event middleware prefetches the current schedule
+            return self.schedules.get(pk=pk)
         return (
             self.schedules.order_by("-published")
             .filter(published__isnull=False)
@@ -925,9 +923,7 @@ class Event(PretalxModel):
 
         if self.current_schedule:
             return (
-                self.submissions.filter(
-                    slots__in=self.current_schedule.talks.filter(is_visible=True)
-                )
+                self.submissions.filter(slots__in=self.current_schedule.scheduled_talks)
                 .select_related("submission_type")
                 .prefetch_related("speakers")
             )
