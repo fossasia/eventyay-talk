@@ -54,6 +54,7 @@ class AuthTokenForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         self.instance.user = self.user
+        self.instance.endpoints = self.cleaned_data["endpoints"]
         return super().save(*args, **kwargs)
 
     class Meta:
@@ -71,6 +72,7 @@ class AuthTokenForm(forms.ModelForm):
         elif data.get("permission_preset") == "write":
             data["endpoints"] = {endpoint: WRITE_PERMISSIONS for endpoint in ENDPOINTS}
         else:
+            data["endpoints"] = {}
             for field_name in self.endpoint_fields.keys():
                 permissions = self.cleaned_data.get(field_name)
                 endpoint = field_name.replace("endpoint_", "")

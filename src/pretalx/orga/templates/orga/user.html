@@ -48,7 +48,7 @@
                             <tr>
                                 <th>{% translate "Name" %}</th>
                                 <th>{% translate "Version" %}</th>
-                                <th>{% translate "Team" %}</th>
+                                <th>{% translate "Events" %}</th>
                                 <th>{% translate "Last used" %}</th>
                                 <th>{% translate "Created" %}</th>
                                 <th>{% translate "Expires" %}</th>
@@ -60,10 +60,9 @@
                                 <tr class="{% if not token.is_active %}bg-muted{% endif %}">
                                     <td>{{ token.name }}</td>
                                     <td>{{ token.version|default:'-' }}</token>
-                                    <td>{{ token.team }}
-                                        <br>
+                                    <td>
                                         <ul>
-                                            {% for event in token.team.events %}
+                                            {% for event in token.events.all %}
                                                 <li><a href="{{ event.orga_urls.base }}">{{ event.name }}</a></li>
                                             {% endfor %}
                                         </td>
@@ -95,7 +94,7 @@
                     {% csrf_token %}
 
                     {{ token_form.name.as_field_group }}
-                    {{ token_form.team.as_field_group }}
+                    {{ token_form.events.as_field_group }}
                     {{ token_form.expires.as_field_group }}
                     {{ token_form.permission_preset.as_field_group }}
 
