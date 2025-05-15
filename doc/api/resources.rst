@@ -1,3 +1,5 @@
+.. _`api-endpoints`:
+
 Endpoints and resources
 =======================
 
@@ -35,6 +37,7 @@ You can also view this API schema as an `OpenAPI schema file </schema.yml>`_.
                 a.className = 'reference internal';
                 a.href = '#' + tag.id;
                 a.textContent = title.replace(/-/g, ' ').charAt(0).toUpperCase() + title.replace(/-/g, ' ').slice(1);
+                h2.textContent = a.textContent
                 li.appendChild(a);
                 ul.appendChild(li);
             });
