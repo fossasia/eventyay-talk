@@ -1,7 +1,6 @@
 from django.http import HttpResponsePermanentRedirect
 from django.urls import include, path
 from rest_framework import routers
-from rest_framework.authtoken.views import obtain_auth_token
 
 from pretalx.api.views import (
     access_code,
@@ -74,7 +73,6 @@ organiser_router.register("teams", team.TeamViewSet, basename="team")
 app_name = "api"
 urlpatterns = [
     path("", include(default_router.urls)),
-    path("auth/", obtain_auth_token),
     # We redirect the old pre-filtered /talks/ endpoint to  /submissions/
     path(
         "events/<slug:event>/talks/<path:subpath>",

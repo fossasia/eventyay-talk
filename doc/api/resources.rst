@@ -1,4 +1,4 @@
-Resources and endpoints
+Endpoints and resources
 =======================
 
 You can also view this API schema as an `OpenAPI schema file </schema.yml>`_.

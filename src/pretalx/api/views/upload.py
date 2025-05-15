@@ -54,7 +54,7 @@ class UploadView(APIView):
             201: FileResponseSerializer,
             400: {"type": "object", "description": "Validation error"},
         },
-        tags=["api"],
+        tags=["file-uploads"],
     )
     def post(self, request):
         if "file" not in request.data:

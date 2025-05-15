@@ -8,8 +8,10 @@ from pretalx.event.models import Event
 
 
 @extend_schema_view(
-    list=extend_schema(summary="List Events", parameters=[build_search_docs("name")]),
-    retrieve=extend_schema(summary="Show Events"),
+    list=extend_schema(
+        summary="List Events", parameters=[build_search_docs("name")], tags=["events"]
+    ),
+    retrieve=extend_schema(summary="Show Events", tags=["events"]),
 )
 class EventViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = EventSerializer
