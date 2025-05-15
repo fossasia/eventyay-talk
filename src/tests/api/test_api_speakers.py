@@ -157,11 +157,11 @@ def test_speaker_list_orga_nopublic(
 
 
 @pytest.mark.django_db
-def test_speaker_list_orga_pagination(
+def test_speaker_list_orga_pagination_limit_offset(
     client, orga_user_token, event, accepted_submission, rejected_submission
 ):
     response = client.get(
-        event.api_urls.speakers + "?limit=1",
+        event.api_urls.speakers + "?limit=1&offset=0",
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
@@ -170,6 +170,22 @@ def test_speaker_list_orga_pagination(
     assert content["count"] == 2
     assert len(content["results"]) == 1
     assert "offset=1" in content["next"]
+
+
+@pytest.mark.django_db
+def test_speaker_list_orga_pagination_page_number(
+    client, orga_user_token, event, accepted_submission, rejected_submission
+):
+    response = client.get(
+        event.api_urls.speakers + "?page_size=1",
+        follow=True,
+        headers={"Authorization": f"Token {orga_user_token.token}"},
+    )
+    assert response.status_code == 200
+    content = json.loads(response.content.decode())
+    assert content["count"] == 2
+    assert len(content["results"]) == 1
+    assert "page=2" in content["next"]
 
 
 @pytest.mark.django_db

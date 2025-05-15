@@ -52,7 +52,7 @@ of:
 
     {
         "count": 117,
-        "next": "https://pretalx.yourdomain.com/api/v1/organisers/?limit=20&offset=40",
+        "next": "https://pretalx.yourdomain.com/api/v1/organisers/?page=2",
         "previous": null,
         "results": []
     }
@@ -60,10 +60,12 @@ of:
 As you can see, the response contains the total number of results in the field
 ``count``.  The fields ``next`` and ``previous`` contain links to the next and
 previous page of results, respectively, or ``null`` if there is no such page.
-You can use those URLs to retrieve the respective page.
+You can also use the special ``?page=last`` parameter to retrieve the last
+page.
 
-The field ``results`` contains a list of objects representing the first
-results. For most objects, every page contains 25 results.
+By default, the page size (that is, the length of the ``results`` field) is 50.
+You can decrease the page size with the ``page_size`` parameter, but for
+performance reasons, you cannot increase it past 50.
 
 Errors
 ------
