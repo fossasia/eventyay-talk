@@ -56,7 +56,7 @@ class UserApiTokenManager(models.Manager):
 
 class UserApiToken(PretalxModel):
     name = models.CharField(max_length=190, verbose_name=_("Name"))
-    token = models.CharField(default=generate_api_token, max_length=64)
+    token = models.CharField(default=generate_api_token, max_length=64, unique=True)
     user = models.ForeignKey(
         to="person.User",
         related_name="api_tokens",
@@ -93,7 +93,7 @@ class UserApiToken(PretalxModel):
         return {
             "name": self.name,
             "token": self.token,
-            "team": self.team_id,
+            "events": [e.slug for e in self.events.all()],
             "expires": self.expires.isoformat() if self.expires else None,
             "endpoints": self.endpoints,
             "version": self.version,
