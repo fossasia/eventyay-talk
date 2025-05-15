@@ -7,7 +7,7 @@ from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from pretalx.api.mixins import PretalxSerializer
 from pretalx.api.serializers.fields import UploadedFileField
-from pretalx.api.versions import CURRENT_VERSION, register_serializer
+from pretalx.api.versions import CURRENT_VERSIONS, register_serializer
 from pretalx.person.models import SpeakerProfile, User
 from pretalx.submission.models import Resource, Submission, SubmissionType, Tag, Track
 
@@ -25,7 +25,7 @@ class ResourceSerializer(ModelSerializer):
         fields = ("id", "resource", "description")
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class TagSerializer(PretalxSerializer):
     class Meta:
         model = Tag
@@ -44,7 +44,7 @@ class TagSerializer(PretalxSerializer):
         return value
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class SubmissionTypeSerializer(PretalxSerializer):
     class Meta:
         model = SubmissionType
@@ -81,7 +81,7 @@ class SubmissionTypeSerializer(PretalxSerializer):
         return result
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class TrackSerializer(PretalxSerializer):
     class Meta:
         model = Track
@@ -107,7 +107,7 @@ class TrackSerializer(PretalxSerializer):
         return value
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class SubmissionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     submission_type = serializers.PrimaryKeyRelatedField(
         queryset=SubmissionType.objects.none(),

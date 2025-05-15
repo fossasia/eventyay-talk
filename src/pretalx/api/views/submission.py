@@ -29,6 +29,7 @@ from pretalx.api.serializers.submission import (
     TagSerializer,
     TrackSerializer,
 )
+from pretalx.api.versions import LEGACY
 from pretalx.common.auth import TokenAuthentication
 from pretalx.common.exceptions import SubmissionError
 from pretalx.submission.models import (
@@ -189,7 +190,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         )
 
     def get_serializer_class(self):
-        if self.api_version == "LEGACY":  # pragma: no cover
+        if self.api_version == LEGACY:  # pragma: no cover
             return self.get_legacy_serializer_class()
         return super().get_serializer_class()
 
@@ -205,7 +206,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         )
 
     def get_serializer(self, *args, **kwargs):
-        if self.api_version == "LEGACY":  # pragma: no cover
+        if self.api_version == LEGACY:  # pragma: no cover
             return self.get_legacy_serializer(*args, **kwargs)
         return super().get_serializer(*args, **kwargs)
 
@@ -228,7 +229,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         return context
 
     def get_queryset(self):
-        if self.api_version == "LEGACY":  # pragma: no cover
+        if self.api_version == LEGACY:  # pragma: no cover
             return self.get_legacy_queryset()
         if not self.event:
             # This is just during api doc creation

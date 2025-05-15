@@ -181,9 +181,9 @@ def questions_for_user(event, user):
     from django.db.models import Q
 
     from pretalx.orga.permissions import can_view_speaker_names
-    from pretalx.submission.models import Question, QuestionTarget
+    from pretalx.submission.models import QuestionTarget
 
-    if user.has_perm(Question.get_perm("update"), event):
+    if user.has_perm("submission.update_question", event):
         # Organisers with edit permissions can see everything
         return event.questions(manager="all_objects").all()
     if (
@@ -195,7 +195,7 @@ def questions_for_user(event, user):
             Q(is_visible_to_reviewers=True) | Q(target=QuestionTarget.REVIEWER),
             active=True,
         )
-    if user.has_perm(Question.get_perm("orga_list"), event):
+    if user.has_perm("submission.orga_list_question", event):
         # Other team members can either view all active questions
         # or only questions open to reviewers
         return event.questions(manager="all_objects").all()
@@ -203,7 +203,7 @@ def questions_for_user(event, user):
     # Now we are left with anonymous users or users with very limited permissions.
     # They can see all public (non-reviewer) questions if they are already publicly
     # visible in the schedule. Otherwise, nothing.
-    if user.has_perm(Question.get_perm("list"), event):
+    if user.has_perm("submission.list_question", event):
         return event.questions.all().filter(is_public=True)
     return event.questions.none()
 

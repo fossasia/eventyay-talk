@@ -12,11 +12,11 @@ from rest_framework.serializers import (
 
 from pretalx.api.mixins import PretalxSerializer
 from pretalx.api.serializers.fields import UploadedFileField
-from pretalx.api.versions import CURRENT_VERSION, register_serializer
+from pretalx.api.versions import CURRENT_VERSIONS, register_serializer
 from pretalx.person.models import SpeakerProfile, User
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class SpeakerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     code = CharField(source="user.code", read_only=True)
     name = CharField(source="user.name")
@@ -74,7 +74,7 @@ class SpeakerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
         }
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class SpeakerOrgaSerializer(SpeakerSerializer):
     email = EmailField(source="user.email")
     timezone = CharField(source="user.timezone", read_only=True)
@@ -98,7 +98,7 @@ class SpeakerOrgaSerializer(SpeakerSerializer):
         )
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class SpeakerUpdateSerializer(SpeakerOrgaSerializer):
     avatar = UploadedFileField(required=False, source="speaker.user")
 

@@ -5,7 +5,7 @@ from rest_framework.serializers import PrimaryKeyRelatedField, SlugRelatedField
 
 from pretalx.api.mixins import PretalxSerializer
 from pretalx.api.serializers.fields import UploadedFileField
-from pretalx.api.versions import CURRENT_VERSION, register_serializer
+from pretalx.api.versions import CURRENT_VERSIONS, register_serializer
 from pretalx.person.models import User
 from pretalx.submission.models import (
     Answer,
@@ -21,7 +21,7 @@ from pretalx.submission.models import (
 from pretalx.submission.rules import questions_for_user
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class AnswerOptionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     question = PrimaryKeyRelatedField(read_only=True)
 
@@ -40,9 +40,7 @@ class AnswerOptionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
 # drf_spectacular will not pick up that questions can be set on create,
 # but not changed on update. And if we have a separate serializer already,
 # we might as well use it to isolate the create action fully.
-@register_serializer(
-    versions=[CURRENT_VERSION], class_name="AnswerOptionCreateSerializer"
-)
+@register_serializer(versions=CURRENT_VERSIONS)
 class AnswerOptionCreateSerializer(AnswerOptionSerializer):
     question = PrimaryKeyRelatedField(read_only=False, queryset=Question.objects.none())
 
@@ -65,7 +63,7 @@ class AnswerOptionCreateSerializer(AnswerOptionSerializer):
         expandable_fields = None
 
 
-@register_serializer(versions=[CURRENT_VERSION], class_name="QuestionSerializer")
+@register_serializer(versions=CURRENT_VERSIONS)
 class QuestionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     class Meta:
         model = Question
@@ -118,7 +116,7 @@ class NestedAnswerOptionSerializer(AnswerOptionSerializer):
     pass
 
 
-@register_serializer(versions=[CURRENT_VERSION], class_name="QuestionOrgaSerializer")
+@register_serializer(versions=CURRENT_VERSIONS)
 class QuestionOrgaSerializer(QuestionSerializer):
     options = NestedAnswerOptionSerializer(
         many=True, required=False, fields=("id", "answer", "position")
@@ -167,7 +165,7 @@ class QuestionOrgaSerializer(QuestionSerializer):
                 AnswerOption.objects.create(question=question, **option_data)
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class AnswerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     question = PrimaryKeyRelatedField(read_only=True)
     submission = SlugRelatedField(
@@ -212,7 +210,7 @@ class AnswerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
         }
 
 
-@register_serializer(versions=[CURRENT_VERSION], class_name="AnswerCreateSerializer")
+@register_serializer(versions=CURRENT_VERSIONS)
 class AnswerCreateSerializer(AnswerSerializer):
     question = PrimaryKeyRelatedField(queryset=Question.objects.none())
     submission = SlugRelatedField(

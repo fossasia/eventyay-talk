@@ -1,11 +1,11 @@
 from rest_flex_fields.serializers import FlexFieldsSerializerMixin
 
 from pretalx.api.mixins import PretalxSerializer
-from pretalx.api.versions import CURRENT_VERSION, register_serializer
+from pretalx.api.versions import CURRENT_VERSIONS, register_serializer
 from pretalx.submission.models import SubmitterAccessCode
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class SubmitterAccessCodeSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     class Meta:
         model = SubmitterAccessCode

@@ -86,7 +86,7 @@ class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
             name = url.url_name
 
         if name.startswith("export."):
-            name = name[len("export.")]
+            name = name[len("export.") :]
         response = get_schedule_exporter_content(request, name, self.schedule)
         if not response:
             raise Http404()

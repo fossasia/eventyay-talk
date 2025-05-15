@@ -16,6 +16,7 @@ from pretalx.api.serializers.speaker import (
     SpeakerSerializer,
     SpeakerUpdateSerializer,
 )
+from pretalx.api.versions import LEGACY
 from pretalx.person.models import SpeakerProfile
 from pretalx.submission.models import QuestionTarget
 from pretalx.submission.rules import (
@@ -94,7 +95,7 @@ class SpeakerViewSet(
         return SpeakerProfile.objects.none()
 
     def get_serializer(self, *args, **kwargs):
-        if self.api_version == "LEGACY":  # pragma: no cover
+        if self.api_version == LEGACY:  # pragma: no cover
             kwargs["questions"] = (
                 self.request.query_params.get("questions") or ""
             ).split(",")
@@ -107,7 +108,7 @@ class SpeakerViewSet(
         )
 
     def get_unversioned_serializer_class(self):
-        if self.api_version == "LEGACY":  # pragma: no cover
+        if self.api_version == LEGACY:  # pragma: no cover
             return self.get_legacy_serializer_class()
         if self.is_orga:
             if self.request.method not in SAFE_METHODS:
@@ -134,7 +135,7 @@ class SpeakerViewSet(
         return context
 
     def get_queryset(self):
-        if self.api_version == "LEGACY":  # pragma: no cover
+        if self.api_version == LEGACY:  # pragma: no cover
             queryset = self.get_legacy_queryset() or self.queryset
             return queryset.select_related("user", "event", "event__cfp")
         if not self.event:

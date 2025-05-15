@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework.serializers import BooleanField, ModelSerializer, UUIDField
 
 from pretalx.api.mixins import PretalxSerializer
-from pretalx.api.versions import CURRENT_VERSION, register_serializer
+from pretalx.api.versions import CURRENT_VERSIONS, register_serializer
 from pretalx.schedule.models import Availability, Room
 
 
@@ -19,7 +19,7 @@ class AvailabilitySerializer(ModelSerializer):
         fields = ("start", "end", "allDay")
 
 
-@register_serializer(versions=[CURRENT_VERSION], class_name="RoomSerializer")
+@register_serializer(versions=CURRENT_VERSIONS)
 class RoomSerializer(PretalxSerializer):
     uuid = UUIDField(
         help_text="The uuid field is equal the the guid field if a guid has been set. Otherwise, it will contain a computed (stable) UUID.",
@@ -39,7 +39,7 @@ class RoomSerializer(PretalxSerializer):
         )
 
 
-@register_serializer(versions=[CURRENT_VERSION], class_name="RoomOrgaSerializer")
+@register_serializer(versions=CURRENT_VERSIONS)
 class RoomOrgaSerializer(RoomSerializer):
     availabilities = AvailabilitySerializer(many=True, required=False)
 
