@@ -3,11 +3,12 @@ import logging
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.dispatch import receiver
+from django.utils.timezone import now
 from requests import get
 
 from pretalx.celery_app import app
-from pretalx.common.signals import periodic_task
-from pretalx.person.models.user import User
+from pretalx.common.signals import minimum_interval, periodic_task
+from pretalx.person.models.user import User, UserApiToken
 
 logger = logging.getLogger(__name__)
 
@@ -60,3 +61,9 @@ def refetch_gravatars(sender, **kwargs):
 
     for user in users_with_gravatar:
         gravatar_cache.apply_async(args=(user.pk,), ignore_result=True)
+
+
+@receiver(signal=periodic_task)
+@minimum_interval(minutes_after_success=60)
+def run_update_check(sender, **kwargs):
+    UserApiToken.objects.filter(expires__lt=now()).delete()
