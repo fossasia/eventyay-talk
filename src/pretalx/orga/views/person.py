@@ -11,6 +11,7 @@ from django.views.generic import TemplateView, View
 from django_context_decorator import context
 from django_scopes import scopes_disabled
 
+from pretalx.api.versions import CURRENT_VERSION
 from pretalx.common.text.phrases import phrases
 from pretalx.common.views import is_form_bound
 from pretalx.person.forms import AuthTokenForm, LoginInfoForm, OrgaProfileForm
@@ -30,6 +31,10 @@ class UserSettings(TemplateView):
             user=self.request.user,
             data=self.request.POST if is_form_bound(self.request, "login") else None,
         )
+
+    @context
+    def current_version(self):
+        return CURRENT_VERSION
 
     @context
     @cached_property
@@ -69,6 +74,14 @@ class UserSettings(TemplateView):
                 request.user.log_action(
                     "pretalx.user.token.create", data=token.serialize()
                 )
+        elif token_id := request.POST.get("tokenupgrade"):
+            token = request.user.api_tokens.filter(pk=token_id).first()
+            token.version = CURRENT_VERSION
+            token.save()
+            request.user.log_action(
+                "pretalx.user.token.upgrade", data=token.serialize()
+            )
+            messages.success(request, _("The API token has been upgraded."))
         elif token_id := request.POST.get("revoke"):
             with scopes_disabled():
                 token = request.user.api_tokens.filter(pk=token_id).first()

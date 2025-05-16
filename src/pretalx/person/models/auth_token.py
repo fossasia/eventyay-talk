@@ -6,6 +6,7 @@ from django.utils.crypto import get_random_string
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
+from pretalx.api.versions import CURRENT_VERSIONS
 from pretalx.common.models.mixins import PretalxModel
 
 
@@ -87,6 +88,10 @@ class UserApiToken(PretalxModel):
     @property
     def is_active(self):
         return not self.expires or self.expires > now()
+
+    @property
+    def is_latest_version(self):
+        return not self.version or self.version in CURRENT_VERSIONS
 
     def serialize(self):
         return {

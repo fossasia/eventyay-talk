@@ -47,7 +47,7 @@
                         <thead>
                             <tr>
                                 <th>{% translate "Name" %}</th>
-                                <th>{% translate "Version" %}</th>
+                                <th class="text-center">{% translate "Version" %}</th>
                                 <th>{% translate "Events" %}</th>
                                 <th>{% translate "Last used" %}</th>
                                 <th>{% translate "Created" %}</th>
@@ -59,7 +59,19 @@
                             {% for token in tokens %}
                                 <tr class="{% if not token.is_active %}bg-muted{% endif %}">
                                     <td>{{ token.name }}</td>
-                                    <td>{{ token.version|default:'-' }}</token>
+                                    <td class="text-center">
+                                        <span class="text-{% if not token.is_latest_version %}danger{% else %}success{% endif %}">
+                                            {{ token.version|default:'-' }}
+                                        </span>
+                                        {% if not token.is_latest_version and token.is_active %}
+                                            <form method="post">
+                                                {% csrf_token %}
+                                                <button name="tokenupgrade" value="{{ token.pk }}" class="btn btn-outline-info btn-sm">
+                                                    {% translate "Updgrade" %}&nbsp;({{ current_version }})
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         <ul>
                                             {% for event in token.events.all %}
