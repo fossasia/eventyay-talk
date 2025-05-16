@@ -11,6 +11,10 @@ from rest_framework.serializers import (
 )
 
 from pretalx.api.mixins import PretalxSerializer
+from pretalx.api.serializers.availability import (
+    AvailabilitiesMixin,
+    AvailabilitySerializer,
+)
 from pretalx.api.serializers.fields import UploadedFileField
 from pretalx.api.versions import CURRENT_VERSIONS, register_serializer
 from pretalx.person.models import SpeakerProfile, User
@@ -47,6 +51,13 @@ class SpeakerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
             return serializer.data
         return qs.values_list("pk", flat=True)
 
+    def update(self, instance, validated_data):
+        availabilities_data = validated_data.pop("availabilities", None)
+        profile = super().update(instance, validated_data)
+        if availabilities_data is not None:
+            self._handle_availabilities(profile, availabilities_data, field="person")
+        return profile
+
     class Meta:
         model = SpeakerProfile
         fields = ("code", "name", "biography", "submissions", "avatar_url", "answers")
@@ -75,10 +86,11 @@ class SpeakerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
 
 
 @register_serializer(versions=CURRENT_VERSIONS)
-class SpeakerOrgaSerializer(SpeakerSerializer):
+class SpeakerOrgaSerializer(AvailabilitiesMixin, SpeakerSerializer):
     email = EmailField(source="user.email")
     timezone = CharField(source="user.timezone", read_only=True)
     locale = CharField(source="user.locale", read_only=True)
+    availabilities = AvailabilitySerializer(many=True, required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -95,7 +107,14 @@ class SpeakerOrgaSerializer(SpeakerSerializer):
             "timezone",
             "locale",
             "has_arrived",
+            "availabilities",
         )
+        expandable_fields = {
+            "submissions": (
+                "pretalx.api.serializers.submission.SubmissionSerializer",
+                {"read_only": True, "many": True},
+            ),
+        }
 
 
 @register_serializer(versions=CURRENT_VERSIONS)

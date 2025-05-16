@@ -5423,6 +5423,10 @@ components:
         has_arrived:
           type: boolean
           title: The speaker has arrived
+        availabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Availability'
       required:
       - answers
       - avatar_url
@@ -5455,6 +5459,10 @@ components:
         has_arrived:
           type: boolean
           title: The speaker has arrived
+        availabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/AvailabilityRequest'
         avatar:
           type: str
           description: When reading data, a URL pointing to a downloadable file. When
