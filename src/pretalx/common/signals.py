@@ -240,8 +240,17 @@ As with all event-plugin signals, the ``sender`` keyword argument will contain t
 
 auth_html = django.dispatch.Signal()
 """
-To display additional HTML content on the login page, the ``pretalx.common.signals.auth_html``
-signal will be sent out.
+Responses to the ``pretalx.common.signals.auth_html`` signal will be displayed as
+additional content on any sign-up or login page, for example a login link to your
+custom authentication method (see :ref:`plugin-auth`).
+
+As with all event-plugin signals, the ``sender`` keyword argument will contain the event
+if an event-specific login view is used (for the generic ``/orga/`` login page, the
+``sender`` is ``None``).
+
+Additionally, the signal is passed the ``request`` keyword argument, and an optional
+``next_url`` keyword argument. If ``next_url`` is not empty, you should direct the
+user to the given link once they have completed the authentication.
 """
 
 profile_bottom_html = django.dispatch.Signal()

@@ -1,8 +1,10 @@
 .. highlight:: python
    :linenothreshold: 5
 
+.. _`plugin-auth`:
+
 Writing an authentication plugin
-==========================
+================================
 
 An authentication plugin allows you to add a new way to allow users to log in to your pretalx
 instance. This can be useful if you want to integrate with an existing user database, or if
@@ -17,7 +19,7 @@ a framework for adding custom OAuth2 providers.
 Please read :ref:`Creating a plugin <pluginsetup>` first, if you haven’t already.
 
 Authentication registration
----------------------
+---------------------------
 
 The Pretalx auth plugin system is based around Django’s authentication backends, with a couple
 of signals to integrate with the Pretalx interface.
@@ -48,10 +50,11 @@ parameter, which is the path the user should be redirected to after logging in.:
 
    @receiver(auth_html)
    def render_login_auth_options(sender, request, next_url=None, **kwargs):
-      next_path = request.GET.get("next", next_url)
       login_url = reverse("plugins:my_auth_plugin:do_login")
+      if next_url:
+          login_url = f"{login_url}?next={next_url}"
 
-      button = mark_safe(f"<a class="btn btn-lg btn-info btn-block" href="{login_url}?next={next_path}">Sign in with Plugin</a>)
+      button = mark_safe(f"<a class="btn btn-lg btn-info btn-block" href="{login_url}">Sign in with Plugin</a>)
       return button
 
 The `do_login` view should be implemented in your plugin, and should handle the actual
@@ -72,7 +75,7 @@ remove any associated data for the `user` parameter.::
 
 
 Login HTML signal
-------------------
+-----------------
 
 .. automodule:: pretalx.common.signals
    :no-index:

@@ -470,6 +470,12 @@ class UserStep(GenericFlowStep, FormFlowStep):
     def is_applicable(self, request):
         return not request.user.is_authenticated
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Needed for support for external auth providers
+        context["success_url"] = context["next_url"]
+        return context
+
     def done(self, request, draft=False):
         if not getattr(request.user, "is_authenticated", False):
             form = self.get_form(from_storage=True)
