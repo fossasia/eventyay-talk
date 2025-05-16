@@ -3,6 +3,7 @@
 {% load compress %}
 {% load i18n %}
 {% load static %}
+{% load html_signal %}
 
 {% block scripts %}
     {% compress js %}
@@ -25,4 +26,5 @@
 
     {% include "common/user_api_token.html" with orga="true" %}
 
+    {% html_signal "pretalx.common.signals.profile_bottom_html" sender=request.event user=user orga="true" %}
 {% endblock content %}

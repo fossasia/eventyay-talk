@@ -1,6 +1,7 @@
 {% load compress %}
 {% load i18n %}
 {% load static %}
+{% load html_signal %}
 
 {% include "common/forms/errors.html" %}
 {% if no_form %}
@@ -39,6 +40,9 @@
                 {{ phrases.base.password_reset_heading }}
             </a>
         {% endif %}
+        {% with get_success_url|default:'' as success_url %}
+        {% html_signal "pretalx.common.signals.auth_html" sender=request.event request=request next_url=next_url|default:success_url %}
+        {% endwith %}
     </div>
 {% endif %}
 {% if not hide_register %}

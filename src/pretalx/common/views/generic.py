@@ -62,6 +62,7 @@ class GenericLoginView(FormView):
             return url + params
         return fallback + params
 
+    @context
     def get_success_url(self, ignore_next=False):
         return self.get_next_url_or_fallback(
             self.request, self.success_url, ignore_next=ignore_next
