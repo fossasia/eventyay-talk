@@ -16,7 +16,11 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override, pgettext_lazy
 from django_scopes import ScopedManager
 
-from pretalx.agenda.rules import is_agenda_submission_visible, is_agenda_visible
+from pretalx.agenda.rules import (
+    event_uses_feedback,
+    is_agenda_submission_visible,
+    is_agenda_visible,
+)
 from pretalx.common.exceptions import SubmissionError
 from pretalx.common.models.choices import Choices
 from pretalx.common.models.mixins import GenerateCode, PretalxModel
@@ -26,6 +30,7 @@ from pretalx.common.text.serialize import serialize_duration
 from pretalx.common.urls import EventUrls
 from pretalx.person.rules import is_reviewer
 from pretalx.submission.rules import (
+    are_featured_submissions_visible,
     can_be_accepted,
     can_be_canceled,
     can_be_confirmed,
@@ -34,7 +39,10 @@ from pretalx.submission.rules import (
     can_be_removed,
     can_be_reviewed,
     can_be_withdrawn,
+    can_request_speakers,
+    can_view_reviews,
     has_reviewer_access,
+    is_feedback_ready,
     is_speaker,
     orga_can_change_submissions,
     orga_or_reviewer_can_change_submission,
@@ -301,13 +309,19 @@ class Submission(GenerateCode, PretalxModel):
     class Meta:
         rules_permissions = {
             "list": is_agenda_visible | orga_can_change_submissions | is_reviewer,
+            "list_featured": are_featured_submissions_visible
+            | orga_can_change_submissions,
             "view": is_agenda_submission_visible
             | is_speaker
             | orga_can_change_submissions
             | has_reviewer_access,
+            "view_public": is_agenda_submission_visible | orga_can_change_submissions,
             "orga_list": orga_can_change_submissions | is_reviewer,
-            "orga_view": orga_can_change_submissions,
+            "orga_update": orga_can_change_submissions,
             "review": has_reviewer_access & can_be_reviewed,
+            "view_reviews": has_reviewer_access | orga_can_change_submissions,
+            "view_all_reviews": (has_reviewer_access & can_view_reviews)
+            | orga_can_change_submissions,
             "create": orga_can_change_submissions,
             "update": (can_be_edited & is_speaker) | orga_can_change_submissions,
             "delete": orga_can_change_submissions,
@@ -319,6 +333,13 @@ class Submission(GenerateCode, PretalxModel):
             "confirm": can_be_confirmed & (is_speaker | orga_can_change_submissions),
             "cancel": can_be_canceled & orga_can_change_submissions,
             "remove": can_be_removed & orga_can_change_submissions,
+            "view_feedback_page": event_uses_feedback & is_agenda_submission_visible,
+            "view_feedback": is_speaker
+            | has_reviewer_access
+            | orga_can_change_submissions,
+            "give_feedback": is_agenda_submission_visible & is_feedback_ready,
+            "is_speaker": is_speaker,
+            "add_speaker": can_be_edited & can_request_speakers,
         }
 
     class urls(EventUrls):
@@ -882,8 +903,6 @@ class Submission(GenerateCode, PretalxModel):
 
         :class:`~pretalx.schedule.models.schedule.Schedule`.
         """
-        from pretalx.agenda.permissions import is_agenda_visible
-
         if not is_agenda_visible(None, self.event):
             return []
         return self.current_slots

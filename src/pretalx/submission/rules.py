@@ -37,7 +37,7 @@ def orga_can_change_submissions(user, obj):
         return False
     if user.is_administrator:
         return True
-    return event.teams.filter(members__in=[user], can_change_submissions=True).exists()
+    return "can_change_submissions" in user.get_permissions_for_event(event)
 
 
 orga_can_view_submissions = orga_can_change_submissions | is_reviewer
@@ -50,6 +50,18 @@ orga_or_reviewer_can_change_submission = orga_can_change_submissions | (
 def is_cfp_open(user, obj):
     event = getattr(obj, "event", None)
     return event and event.is_public and event.cfp.is_open
+
+
+@rules.predicate
+def are_featured_submissions_visible(user, event):
+    from pretalx.agenda.rules import is_agenda_visible
+
+    show_featured = event.get_feature_flag("show_featured")
+    if not event.is_public or show_featured == "never":
+        return False
+    if show_featured == "always":
+        return True
+    return (not is_agenda_visible(user, event)) or not event.current_schedule
 
 
 @rules.predicate
@@ -124,6 +136,16 @@ def can_be_edited(user, obj):
 
 
 @rules.predicate
+def can_request_speakers(user, submission):
+    from pretalx.submission.models import SubmissionStates
+
+    return (
+        submission.state != SubmissionStates.DRAFT
+        and submission.event.cfp.request_additional_speaker
+    )
+
+
+@rules.predicate
 def reviews_are_open(user, obj):
     event = obj.event
     return bool(event.active_review_phase and event.active_review_phase.can_review)
@@ -135,6 +157,14 @@ def can_view_all_reviews(user, obj):
     return bool(
         event.active_review_phase
         and event.active_review_phase.can_see_other_reviews == "always"
+    )
+
+
+@rules.predicate
+def can_view_reviewer_names(user, obj):
+    event = obj.event
+    return bool(
+        event.active_review_phase and event.active_review_phase.can_see_reviewer_names
     )
 
 
@@ -180,7 +210,7 @@ def questions_for_user(event, user):
     """Used to retrieve synced querysets in the orga list and the API list."""
     from django.db.models import Q
 
-    from pretalx.orga.permissions import can_view_speaker_names
+    from pretalx.orga.rules import can_view_speaker_names
     from pretalx.submission.models import QuestionTarget
 
     if user.has_perm("submission.update_question", event):
@@ -245,12 +275,12 @@ def submissions_for_user(event, user):
     if not user.is_anonymous:
         if is_only_reviewer(user, event):
             return limit_for_reviewers(event.submissions.all(), event, user)
-        if user.has_perm("orga.view_submissions", event):
+        if user.has_perm("submission.orga_list_submission", event):
             return event.submissions.all()
 
     # Fall through: both anon users and users without permissions
     # get here, e.g. speakers or attendees.
-    if user.has_perm("agenda.view_schedule", event):
+    if user.has_perm("schedule.list_schedule", event):
         return event.current_schedule.slots
     return event.submissions.none()
 
@@ -262,6 +292,11 @@ def is_wip(user, obj):
 
 
 @rules.predicate
+def is_feedback_ready(user, obj):
+    return obj.does_accept_feedback
+
+
+@rules.predicate
 def is_break(user, obj):
     return not obj.submission
 
@@ -269,6 +304,16 @@ def is_break(user, obj):
 @rules.predicate
 def is_review_author(user, obj):
     return obj and obj.user == user
+
+
+@rules.predicate
+def is_comment_author(user, obj):
+    return obj and obj.user == user
+
+
+@rules.predicate
+def submission_comments_active(user, obj):
+    return obj.event.get_feature_flag("use_submission_comments")
 
 
 def speaker_profiles_for_user(event, user, submissions=None):

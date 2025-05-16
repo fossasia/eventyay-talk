@@ -48,7 +48,7 @@ class OutboxList(
     )
     sortable_fields = ("to", "subject", "pk")
     paginate_by = 25
-    permission_required = "orga.view_mails"
+    permission_required = "mail.list_queuedmail"
 
     def get_queryset(self):
         qs = (
@@ -95,7 +95,7 @@ class SentMail(
     default_sort_field = "-sent"
     sortable_fields = ("to", "subject", "sent")
     paginate_by = 25
-    permission_required = "orga.view_mails"
+    permission_required = "mail.list_queuedmail"
 
     def get_filter_form(self):
         return QueuedMailFilterForm(
@@ -120,7 +120,7 @@ class SentMail(
 
 
 class OutboxSend(ActionConfirmMixin, OutboxList):
-    permission_required = "orga.send_mails"
+    permission_required = "mail.send_queuedmail"
     action_object_name = ""
     action_confirm_label = phrases.base.send
     action_confirm_color = "success"
@@ -183,7 +183,7 @@ class OutboxSend(ActionConfirmMixin, OutboxList):
 
 
 class MailDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
-    permission_required = "orga.purge_mails"
+    permission_required = "mail.delete_queuedmail"
     action_object_name = ""
 
     def get_permission_object(self):
@@ -248,7 +248,7 @@ class MailDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
 
 
 class OutboxPurge(ActionConfirmMixin, OutboxList):
-    permission_required = "orga.purge_mails"
+    permission_required = "mail.delete_queuedmail"
     action_object_name = ""
 
     @context
@@ -282,8 +282,8 @@ class MailDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
     model = QueuedMail
     form_class = MailDetailForm
     template_name = "orga/mails/outbox_form.html"
-    write_permission_required = "orga.edit_mails"
-    permission_required = "orga.view_mails"
+    write_permission_required = "mail.update_queuedmail"
+    permission_required = "mail.view_queuedmail"
 
     def get_object(self, queryset=None) -> QueuedMail:
         return self.request.event.queued_mails.filter(pk=self.kwargs.get("pk")).first()
@@ -312,7 +312,7 @@ class MailDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
 
 
 class MailCopy(PermissionRequired, View):
-    permission_required = "orga.send_mails"
+    permission_required = "mail.send_queuedmail"
 
     def get_object(self) -> QueuedMail:
         return get_object_or_404(
@@ -327,7 +327,7 @@ class MailCopy(PermissionRequired, View):
 
 
 class MailPreview(PermissionRequired, View):
-    permission_required = "orga.send_mails"
+    permission_required = "mail.send_queuedmail"
 
     def get_object(self) -> QueuedMail:
         return get_object_or_404(
@@ -341,11 +341,11 @@ class MailPreview(PermissionRequired, View):
 
 class ComposeMailChoice(EventPermissionRequired, TemplateView):
     template_name = "orga/mails/compose_choice.html"
-    permission_required = "orga.send_mails"
+    permission_required = "mail.send_queuedmail"
 
 
 class ComposeMailBaseView(EventPermissionRequired, FormView):
-    permission_required = "orga.send_mails"
+    permission_required = "mail.send_queuedmail"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -442,7 +442,7 @@ class ComposeMailBaseView(EventPermissionRequired, FormView):
 class ComposeTeamsMail(ComposeMailBaseView):
     form_class = WriteTeamsMailForm
     template_name = "orga/mails/compose_reviewer_mail_form.html"
-    permission_required = "orga.send_reviewer_mails"
+    permission_required = "event.update_team"
 
     def get_success_url(self):
         return self.request.event.orga_urls.outbox
@@ -472,7 +472,7 @@ class ComposeSessionMail(ComposeMailBaseView):
 class ComposeDraftReminders(EventPermissionRequired, FormView):
     form_class = DraftRemindersForm
     template_name = "orga/mails/send_draft_reminders.html"
-    permission_required = "orga.send_mails"
+    permission_required = "mail.send_queuedmail"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

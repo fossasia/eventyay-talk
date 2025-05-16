@@ -109,7 +109,7 @@ class SubmissionViewMixin:
 
     def has_permission(self):
         return super().has_permission() or self.request.user.has_perm(
-            "orga.view_submissions", self.request.event
+            "submission.orga_list_submission", self.request.event
         )
 
     def dispatch(self, request, *args, **kwargs):
@@ -167,7 +167,7 @@ class SubmissionsWithdrawView(LoggedInEventPageMixin, SubmissionViewMixin, Detai
     template_name = "cfp/event/user_submission_withdraw.html"
     model = Submission
     context_object_name = "submission"
-    permission_required = "submission.perform_actions"
+    permission_required = "submission.is_speaker_submission"
 
     def get_permission_object(self):
         return self.get_object()
@@ -220,7 +220,9 @@ class SubmissionConfirmView(LoggedInEventPageMixin, SubmissionViewMixin, FormVie
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_anonymous:
             return get_login_redirect(request)
-        if not request.user.has_perm("submission.perform_actions", self.submission):
+        if not request.user.has_perm(
+            "submission.is_speaker_submission", self.submission
+        ):
             self.template_name = "cfp/event/user_submission_confirm_error.html"
         return super().dispatch(request, *args, **kwargs)
 
@@ -445,7 +447,7 @@ class DeleteAccountView(LoggedInEventPageMixin, View):
 class SubmissionInviteView(LoggedInEventPageMixin, SubmissionViewMixin, FormView):
     form_class = SubmissionInvitationForm
     template_name = "cfp/event/user_submission_invitation.html"
-    permission_required = "cfp.add_speakers"
+    permission_required = "submission.add_speaker_submission"
 
     def get_permission_object(self):
         return self.get_object()
@@ -491,7 +493,9 @@ class SubmissionInviteAcceptView(LoggedInEventPageMixin, DetailView):
     @context
     @cached_property
     def can_accept_invite(self):
-        return self.request.user.has_perm("cfp.add_speakers", self.get_object())
+        return self.request.user.has_perm(
+            "submission.add_speaker_submission", self.get_object()
+        )
 
     def post(self, request, *args, **kwargs):
         if not self.can_accept_invite:

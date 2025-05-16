@@ -20,7 +20,7 @@ def test_can_see_schedule(
 ):
     with scope(event=event):
         del event.current_schedule
-        assert user.has_perm("agenda.view_schedule", event)
+        assert user.has_perm("schedule.list_schedule", event)
         url = event.urls.schedule if version == "js" else event.urls.schedule_nojs
 
     with django_assert_num_queries(queries):
@@ -72,7 +72,7 @@ def test_cannot_see_schedule_by_setting(
     with scope(event=event):
         event.feature_flags["show_schedule"] = False
         event.save()
-        assert not user.has_perm("agenda.view_schedule", event)
+        assert not user.has_perm("schedule.list_schedule", event)
         event.feature_flags["show_featured"] = featured
         event.save()
     response = client.get(event.urls.schedule, HTTP_ACCEPT="text/html")
@@ -92,7 +92,7 @@ def test_cannot_see_no_schedule(client, user, event, slot, other_slot, featured)
         del event.current_schedule
         event.feature_flags["show_featured"] = featured
         event.save()
-        assert not user.has_perm("agenda.view_schedule", event)
+        assert not user.has_perm("schedule.list_schedule", event)
     response = client.get(event.urls.schedule, HTTP_ACCEPT="text/html")
     if featured == "never":
         assert response.status_code == 404

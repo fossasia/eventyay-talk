@@ -41,7 +41,7 @@ from pretalx.submission.rules import (
 
 class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
     template_name = "orga/review/dashboard.html"
-    permission_required = "orga.view_review_dashboard"
+    permission_required = "submission.list_review"
     paginate_by = 100
     max_page_size = 100_000
     usable_states = (
@@ -193,7 +193,9 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
     @context
     @cached_property
     def can_change_submissions(self):
-        return self.request.user.has_perm("orga.change_submissions", self.request.event)
+        return self.request.user.has_perm(
+            "submission.orga_update_submission", self.request.event
+        )
 
     @context
     @cached_property
@@ -207,7 +209,9 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
     @context
     @cached_property
     def can_see_all_reviews(self):
-        return self.request.user.has_perm("orga.view_all_reviews", self.request.event)
+        return self.request.user.has_perm(
+            "submission.list_all_review", self.request.event
+        )
 
     @context
     @cached_property
@@ -339,7 +343,7 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
 
 class BulkReview(EventPermissionRequired, TemplateView):
     template_name = "orga/review/bulk.html"
-    permission_required = "orga.perform_reviews"
+    permission_required = "submission.create_review"
     paginate_by = None
 
     @context
@@ -479,7 +483,7 @@ class ReviewViewMixin:
             return True
         if self.object and self.object.pk:
             return not self.request.user.has_perm(
-                "submission.edit_review", self.get_object()
+                "submission.update_review", self.get_object()
             )
         return not self.request.user.has_perm(
             "submission.review_submission", self.get_object() or self.submission
@@ -490,7 +494,7 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
     form_class = ReviewForm
     model = Review
     template_name = "orga/submission/review.html"
-    permission_required = "submission.view_reviews"
+    permission_required = "submission.view_reviews_submission"
     write_permission_required = "submission.review_submission"
 
     @context
@@ -674,7 +678,7 @@ class ReviewSubmissionDelete(
     EventPermissionRequired, ReviewViewMixin, ActionConfirmMixin, TemplateView
 ):
     template_name = "orga/submission/review_delete.html"
-    permission_required = "orga.remove_review"
+    permission_required = "submission.delete_review"
 
     def get_permission_object(self):
         return self.object
@@ -696,7 +700,7 @@ class ReviewSubmissionDelete(
 class RegenerateDecisionMails(
     EventPermissionRequired, ActionConfirmMixin, TemplateView
 ):
-    permission_required = "orga.change_submissions"
+    permission_required = "submission.accept_or_reject_submission"
     action_title = _("Regenerate decision emails")
     action_confirm_label = _("Regenerate decision emails")
     action_confirm_color = "success"
@@ -742,7 +746,7 @@ class RegenerateDecisionMails(
 
 class ReviewAssignment(EventPermissionRequired, FormView):
     template_name = "orga/review/assignment.html"
-    permission_required = "orga.change_settings"
+    permission_required = "event.update_event"
 
     @cached_property
     def form_type(self):
@@ -788,7 +792,7 @@ class ReviewAssignment(EventPermissionRequired, FormView):
 
 class ReviewAssignmentImport(EventPermissionRequired, FormView):
     template_name = "orga/review/assignment-import.html"
-    permission_required = "orga.change_settings"
+    permission_required = "event.update_event"
     form_class = ReviewAssignImportForm
 
     def get_form_kwargs(self):
@@ -804,7 +808,7 @@ class ReviewAssignmentImport(EventPermissionRequired, FormView):
 
 
 class ReviewExport(EventPermissionRequired, FormView):
-    permission_required = "orga.change_settings"
+    permission_required = "event.update_event"
     template_name = "orga/review/export.html"
     form_class = ReviewExportForm
 

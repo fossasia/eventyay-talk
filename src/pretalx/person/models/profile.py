@@ -7,7 +7,11 @@ from pretalx.common.models.mixins import PretalxModel
 from pretalx.common.text.phrases import phrases
 from pretalx.common.urls import EventUrls
 from pretalx.orga.rules import can_view_speaker_names
-from pretalx.person.rules import is_administrator, is_reviewer
+from pretalx.person.rules import (
+    can_mark_speakers_arrived,
+    is_administrator,
+    is_reviewer,
+)
 from pretalx.submission.rules import orga_can_change_submissions
 
 
@@ -47,6 +51,7 @@ class SpeakerProfile(PretalxModel):
         # These permissions largely apply to event-scoped user actions
         rules_permissions = {
             "list": can_view_schedule | (is_reviewer & can_view_speaker_names),
+            "reviewer_list": is_reviewer & can_view_speaker_names,
             "orga_list": orga_can_change_submissions
             | (is_reviewer & can_view_speaker_names),
             "view": is_speaker_viewable
@@ -56,6 +61,7 @@ class SpeakerProfile(PretalxModel):
             | (is_reviewer & can_view_speaker_names),
             "create": is_administrator,
             "update": orga_can_change_submissions,
+            "mark_arrived": orga_can_change_submissions & can_mark_speakers_arrived,
             "delete": is_administrator,
         }
 

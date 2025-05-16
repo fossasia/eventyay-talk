@@ -30,8 +30,7 @@
         </p>
     {% endif %}
 
-    {% has_perm "orga.mark_speakers_arrived" request.user request.event as can_mark_speaker %}
-    {% has_perm "orga.see_speakers_arrival" request.user request.event as can_see_speaker_status %}
+    {% has_perm "person.mark_arrived_speakerprofile" request.user request.event as can_mark_speaker %}
     <div class="table-responsive-md">
         <table class="table table-sm table-flip table-sticky">
             <thead>
@@ -39,7 +38,7 @@
                     <th>{% translate "Name" %}</th>
                     <th class="numeric">{% translate "Accepted Proposals" %}</th>
                     <th class="numeric">{% translate "Proposals" %}</th>
-                    {% if can_mark_speaker or can_see_speaker_status %}<th></th>{% endif %}
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -52,22 +51,26 @@
                         </td>
                         <td class="numeric">{{ profile.accepted_submission_count }}</td>
                         <td class="numeric">{{ profile.submission_count }}</td>
-                        {% if can_mark_speaker or can_see_speaker_status %}
-                            <td class="text-right">
-                                {% if profile.accepted_submission_count %}
-                                    {% if can_mark_speaker %}
-                                        {% include "orga/includes/mark_speakers_arrived.html" with speaker=profile arrived_btn_class="sm-" %}
-                                    {% else %}
+                        <td class="text-right">
+                            {% if profile.accepted_submission_count %}
+                                {% if can_mark_speaker %}
+                                    <a class="btn btn-sm btn-{{ profile.has_arrived|yesno:"success,info" }}" href="{{ profile.orga_urls.toggle_arrived }}?from=list">
                                         {% if profile.has_arrived %}
-                                            <a><i class="fa fa-check"></i> {% translate "Arrived" %}</a>
+                                            {% translate "Mark speaker as not arrived" %}
                                         {% else %}
-                                            <a><i class="fa fa-times"></i> {% translate "Not arrived" %}</a>
+                                            {% translate "Mark speaker as arrived" %}
                                         {% endif %}
+                                    </a>
+                                {% else %}
+                                    {% if profile.has_arrived %}
+                                        <a><i class="fa fa-check"></i> {% translate "Arrived" %}</a>
+                                    {% else %}
+                                        <a><i class="fa fa-times"></i> {% translate "Not arrived" %}</a>
                                     {% endif %}
                                 {% endif %}
-                            </td>
-                        {% endif %}
-                    </tr>
+                                </td>
+                            {% endif %}
+                        </tr>
                 {% endfor %}
             </tbody>
         </table>

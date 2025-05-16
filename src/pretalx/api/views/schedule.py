@@ -76,8 +76,8 @@ class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context["public_slots"] = self.event and self.has_perm(
-            "orga.view_schedule", self.event
+        context["only_visible_slots"] = self.event and not self.has_perm(
+            "schedule.orga_view_schedule", self.event
         )
         return context
 
@@ -270,7 +270,7 @@ class TalkSlotViewSet(
     @cached_property
     def is_orga(self):
         return self.event and self.request.user.has_perm(
-            "orga.view_schedule", self.event
+            "schedule.orga_view_schedule", self.event
         )
 
     def get_unversioned_serializer_class(self):

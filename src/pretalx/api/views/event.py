@@ -5,6 +5,7 @@ from pretalx.api.documentation import build_search_docs
 from pretalx.api.mixins import PretalxViewSetMixin
 from pretalx.api.serializers.event import EventListSerializer, EventSerializer
 from pretalx.event.models import Event
+from pretalx.event.rules import get_events_for_user
 
 
 @extend_schema_view(
@@ -29,9 +30,4 @@ class EventViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
         return EventSerializer
 
     def get_queryset(self):
-        queryset = Event.objects.filter(is_public=True)
-        if not self.request.user.is_anonymous:
-            queryset = queryset.union(
-                self.request.user.get_events_with_any_permission()
-            )
-        return queryset.order_by("-date_from")
+        return get_events_for_user(self.request.user).order_by("-date_from")

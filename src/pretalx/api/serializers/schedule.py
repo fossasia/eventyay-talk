@@ -29,11 +29,11 @@ class ScheduleSerializer(ScheduleListSerializer):
 
     @extend_schema_field(list[int])
     def get_slots(self, obj):
-        public_slots = self.context.get("public_slots", True)
-        if public_slots and not obj.version:
+        only_visible_slots = self.context.get("only_visible_slots", True)
+        if only_visible_slots and not obj.version:
             # This should never happen, but better safe than sorry.
             return []
-        if public_slots:
+        if only_visible_slots:
             qs = obj.scheduled_talks
         else:
             qs = obj.talks.all()

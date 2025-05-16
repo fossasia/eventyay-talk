@@ -6,7 +6,7 @@ from i18nfield.fields import I18nCharField
 from pretalx.agenda.rules import is_agenda_visible
 from pretalx.common.models.mixins import PretalxModel
 from pretalx.common.urls import EventUrls
-from pretalx.person.rules import can_change_event_settings
+from pretalx.event.rules import can_change_event_settings
 from pretalx.submission.rules import is_cfp_open, orga_can_change_submissions
 
 

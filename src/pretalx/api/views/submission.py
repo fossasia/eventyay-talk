@@ -152,9 +152,11 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
 
     def get_legacy_queryset(self):  # pragma: no cover
         base_qs = self.event.submissions.all().order_by("code")
-        if not self.request.user.has_perm("orga.view_submissions", self.event):
+        if not self.request.user.has_perm(
+            "submission.orga_list_submission", self.event
+        ):
             if (
-                not self.request.user.has_perm("agenda.view_schedule", self.event)
+                not self.request.user.has_perm("schedule.list_schedule", self.event)
                 or not self.event.current_schedule
             ):
                 return Submission.objects.none()
@@ -166,9 +168,9 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         return base_qs
 
     def get_legacy_serializer_class(self):  # pragma: no cover
-        if self.request.user.has_perm("orga.change_submissions", self.event):
+        if self.request.user.has_perm("submission.orga_update_submission", self.event):
             return LegacySubmissionOrgaSerializer
-        if self.request.user.has_perm("orga.view_submissions", self.event):
+        if self.request.user.has_perm("submission.orga_list_submission", self.event):
             return LegacySubmissionReviewerSerializer
         return LegacySubmissionSerializer
 
@@ -177,8 +179,8 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
             ","
         )
         can_view_speakers = self.request.user.has_perm(
-            "agenda.view_schedule", self.event
-        ) or self.request.user.has_perm("orga.view_speakers", self.event)
+            "schedule.list_schedule", self.event
+        ) or self.request.user.has_perm("person.orga_list_speakerprofile", self.event)
         if self.request.query_params.get("anon"):
             can_view_speakers = False
         return super().get_serializer(
@@ -202,7 +204,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     @cached_property
     def is_orga(self):
         return self.event and self.request.user.has_perm(
-            "orga.view_submissions", self.event
+            "submission.orga_list_submission", self.event
         )
 
     def get_serializer(self, *args, **kwargs):
@@ -360,7 +362,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
 @permission_classes([IsAuthenticated])
 @authentication_classes((SessionAuthentication, TokenAuthentication))
 def favourites_view(request, event):
-    if not request.user.has_perm("agenda.view_schedule", request.event):
+    if not request.user.has_perm("schedule.list_schedule", request.event):
         raise PermissionDenied()
     # Return ical file if accept header is set to text/calendar
     # TODO implement ical retrieval
@@ -388,7 +390,7 @@ def favourites_view(request, event):
 @permission_classes([IsAuthenticated])
 @authentication_classes((SessionAuthentication, TokenAuthentication))
 def favourite_view(request, event, code):
-    if not request.user.has_perm("agenda.view_schedule", request.event):
+    if not request.user.has_perm("schedule.list_schedule", request.event):
         raise PermissionDenied()
     submission = (
         submissions_for_user(request.event, request.user)

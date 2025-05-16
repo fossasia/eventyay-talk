@@ -81,7 +81,7 @@ def test_event_dashboard(
         assert event.slug in response.content.decode(), response.content.decode()
         assert speaker.name in response.content.decode()
     elif test_user == "reviewer":
-        assert not review_user.has_perm("orga.view_speakers", event)
+        assert not review_user.has_perm("person.orga_list_speakerprofile", event)
         assert response.status_code == 200
         assert event.slug in response.content.decode(), response.content.decode()
         assert speaker.name not in response.content.decode()

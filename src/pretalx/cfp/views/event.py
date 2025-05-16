@@ -7,11 +7,11 @@ from django.views.generic import TemplateView
 from django_context_decorator import context
 
 from pretalx.common.views.mixins import PermissionRequired
-from pretalx.event.models import Event
+from pretalx.event.rules import get_events_for_user
 
 
 class EventPageMixin(PermissionRequired):
-    permission_required = "cfp.view_event"
+    permission_required = "event.view_event"
 
     def get_permission_object(self):
         return getattr(self.request, "event", None)
@@ -68,26 +68,15 @@ class EventCfP(EventStartpage):
 class GeneralView(TemplateView):
     template_name = "cfp/index.html"
 
-    def filter_events(self, events):
-        if self.request.user.is_anonymous:
-            events.filter(is_public=True)
-        return [
-            event
-            for event in events
-            if event.is_public or self.request.user.has_perm("cfp.view_event", event)
-        ]
-
     def get_context_data(self, **kwargs):
         result = super().get_context_data(**kwargs)
         _now = now().date()
-        qs = Event.objects.order_by("-date_to")
+        qs = get_events_for_user(self.request.user)
         if self.request.uses_custom_domain:
             qs = qs.filter(custom_domain=f"https://{self.request.host}")
         else:
             qs = qs.filter(custom_domain__isnull=True)
-        result["current_events"] = self.filter_events(
-            qs.filter(date_from__lte=_now, date_to__gte=_now)
-        )
-        result["past_events"] = self.filter_events(qs.filter(date_to__lt=_now))
-        result["future_events"] = self.filter_events(qs.filter(date_from__gt=_now))
+        result["current_events"] = qs.filter(date_from__lte=_now, date_to__gte=_now)
+        result["past_events"] = qs.filter(date_to__lt=_now)
+        result["future_events"] = qs.filter(date_from__gt=_now)
         return result

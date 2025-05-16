@@ -50,7 +50,7 @@ if settings.VITE_DEV_MODE:
 )
 class ScheduleView(EventPermissionRequired, TemplateView):
     template_name = "orga/schedule/index.html"
-    permission_required = "orga.view_schedule"
+    permission_required = "schedule.orga_view_schedule"
 
     def get_context_data(self, **kwargs):
         result = super().get_context_data(**kwargs)
@@ -72,7 +72,7 @@ class ScheduleView(EventPermissionRequired, TemplateView):
 
 class ScheduleExportView(EventPermissionRequired, FormView):
     template_name = "orga/schedule/export.html"
-    permission_required = "orga.change_settings"
+    permission_required = "event.update_event"
     form_class = ScheduleExportForm
 
     def get_form_kwargs(self):
@@ -105,7 +105,7 @@ class ScheduleExportView(EventPermissionRequired, FormView):
 
 
 class ScheduleExportTriggerView(EventPermissionRequired, View):
-    permission_required = "orga.change_settings"
+    permission_required = "event.update_event"
 
     def post(self, request, event):
         if settings.HAS_CELERY:
@@ -129,7 +129,7 @@ class ScheduleExportTriggerView(EventPermissionRequired, View):
 
 
 class ScheduleExportDownloadView(EventPermissionRequired, View):
-    permission_required = "orga.change_settings"
+    permission_required = "event.update_event"
 
     def get(self, request, event):
         try:
@@ -151,7 +151,7 @@ class ScheduleExportDownloadView(EventPermissionRequired, View):
 
 class ScheduleReleaseView(EventPermissionRequired, FormView):
     form_class = ScheduleReleaseForm
-    permission_required = "orga.release_schedule"
+    permission_required = "schedule.release_schedule"
     template_name = "orga/schedule/release.html"
 
     def get_form_kwargs(self):
@@ -190,7 +190,7 @@ class ScheduleReleaseView(EventPermissionRequired, FormView):
 
 
 class ScheduleResetView(EventPermissionRequired, View):
-    permission_required = "orga.edit_schedule"
+    permission_required = "schedule.release_schedule"
 
     def dispatch(self, request, event):
         super().dispatch(request, event)
@@ -212,7 +212,7 @@ class ScheduleResetView(EventPermissionRequired, View):
 
 
 class ScheduleToggleView(EventPermissionRequired, View):
-    permission_required = "orga.edit_schedule"
+    permission_required = "event.update_event"
 
     def dispatch(self, request, event):
         super().dispatch(request, event)
@@ -224,7 +224,7 @@ class ScheduleToggleView(EventPermissionRequired, View):
 
 
 class ScheduleResendMailsView(EventPermissionRequired, View):
-    permission_required = "orga.edit_schedule"
+    permission_required = "schedule.release_schedule"
 
     def dispatch(self, request, event):
         super().dispatch(request, event)
@@ -296,7 +296,7 @@ def serialize_slot(slot, warnings=None):
 
 
 class TalkList(EventPermissionRequired, View):
-    permission_required = "orga.edit_schedule"
+    permission_required = "schedule.release_schedule"
 
     def get(self, request, event):
         version = self.request.GET.get("version")
@@ -357,7 +357,7 @@ class TalkList(EventPermissionRequired, View):
 
 
 class ScheduleWarnings(EventPermissionRequired, View):
-    permission_required = "orga.edit_schedule"
+    permission_required = "schedule.release_schedule"
 
     def get(self, request, event):
         return JsonResponse(
@@ -369,7 +369,7 @@ class ScheduleWarnings(EventPermissionRequired, View):
 
 
 class ScheduleAvailabilities(EventPermissionRequired, View):
-    permission_required = "orga.edit_schedule"
+    permission_required = "schedule.release_schedule"
 
     def get(self, request, event):
         return JsonResponse(
@@ -427,10 +427,7 @@ class ScheduleAvailabilities(EventPermissionRequired, View):
 
 
 class TalkUpdate(PermissionRequired, View):
-    permission_required = "orga.schedule_talk"
-
-    def get_permission_object(self):
-        return self.request.event
+    permission_required = "schedule.update_talkslot"
 
     def get_object(self):
         return self.request.event.wip_schedule.talks.filter(
@@ -491,7 +488,7 @@ class TalkUpdate(PermissionRequired, View):
 
 
 class QuickScheduleView(PermissionRequired, UpdateView):
-    permission_required = "orga.schedule_talk"
+    permission_required = "schedule.update_talkslot"
     form_class = QuickScheduleForm
     template_name = "orga/schedule/quick.html"
 

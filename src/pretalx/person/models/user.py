@@ -186,6 +186,7 @@ class User(
         super().__init__(*args, **kwargs)
         self.permission_cache = {}
         self.event_profile_cache = {}
+        self.event_permission_cache = {}
 
     def has_perm(self, perm, obj, *args, **kwargs):
         cached_result = None
@@ -425,6 +426,8 @@ class User(
 
         :type event: :class:`~pretalx.event.models.event.Event`
         """
+        if permissions := self.event_permission_cache.get(event.pk):
+            return permissions
         if self.is_administrator:
             return {
                 "can_create_events",
@@ -434,10 +437,12 @@ class User(
                 "can_change_submissions",
                 "is_reviewer",
             }
+        permissions = set()
         teams = event.teams.filter(members__in=[self])
-        if not teams:
-            return set()
-        return set().union(*[team.permission_set for team in teams])
+        if teams:
+            permissions = set().union(*[team.permission_set for team in teams])
+        self.event_permission_cache[event.pk] = permissions
+        return permissions
 
     def regenerate_token(self) -> Token:
         """Generates a new API access token, deleting the old one."""

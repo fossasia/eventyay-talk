@@ -131,7 +131,7 @@ class ReviewerSubmissionFilter:
 
 class SubmissionStateChange(SubmissionViewMixin, FormView):
     form_class = SubmissionStateChangeForm
-    permission_required = "orga.change_submission_state"
+    permission_required = "submission.state_change_submission"
     template_name = "orga/submission/state_change.html"
     TARGETS = {
         "submit": SubmissionStates.SUBMITTED,
@@ -230,7 +230,7 @@ class SubmissionStateChange(SubmissionViewMixin, FormView):
 
 
 class SubmissionSpeakersDelete(SubmissionViewMixin, View):
-    permission_required = "submission.edit_speaker_list"
+    permission_required = "submission.update_submission"
 
     def dispatch(self, request, *args, **kwargs):
         super().dispatch(request, *args, **kwargs)
@@ -249,7 +249,7 @@ class SubmissionSpeakersDelete(SubmissionViewMixin, View):
 
 class SubmissionSpeakers(ReviewerSubmissionFilter, SubmissionViewMixin, FormView):
     template_name = "orga/submission/speakers.html"
-    permission_required = "orga.view_speakers"
+    permission_required = "person.orga_list_speakerprofile"
     form_class = AddSpeakerInlineForm
 
     @context
@@ -296,7 +296,7 @@ class SubmissionContent(
     model = Submission
     form_class = SubmissionForm
     template_name = "orga/submission/content.html"
-    permission_required = "orga.view_submissions"
+    permission_required = "submission.orga_list_submission"
 
     def get_object(self):
         try:
@@ -310,7 +310,7 @@ class SubmissionContent(
     def write_permission_required(self):
         if self.kwargs.get("code"):
             return "submission.update_submission"
-        return "orga.create_submission"
+        return "submission.create_submission"
 
     @context
     def size_warning(self):
@@ -362,10 +362,10 @@ class SubmissionContent(
             "event": self.request.event,
             "for_reviewers": (
                 not self.request.user.has_perm(
-                    "orga.change_submissions", self.request.event
+                    "submission.orga_update_submission", self.request.event
                 )
                 and self.request.user.has_perm(
-                    "orga.view_review_dashboard", self.request.event
+                    "submission.list_review", self.request.event
                 )
             ),
             "readonly": form_kwargs["read_only"],
@@ -428,8 +428,8 @@ class SubmissionContent(
 
     def get_permission_required(self):
         if "code" in self.kwargs:
-            return ["orga.view_submissions"]
-        return ["orga.create_submission"]
+            return ["submission.orga_list_submission"]
+        return ["submission.create_submission"]
 
     @property
     def permission_object(self):
@@ -485,7 +485,9 @@ class SubmissionContent(
         instance = kwargs.get("instance")
         kwargs["anonymise"] = getattr(
             instance, "pk", None
-        ) and not self.request.user.has_perm("orga.view_speakers", instance)
+        ) and not self.request.user.has_perm(
+            "person.orga_list_speakerprofile", instance
+        )
         kwargs["read_only"] = kwargs["read_only"] or kwargs["anonymise"]
         return kwargs
 
@@ -493,7 +495,7 @@ class SubmissionContent(
     @cached_property
     def can_edit(self):
         return self.object and self.request.user.has_perm(
-            "orga.change_submissions", self.request.event
+            "submission.orga_update_submission", self.request.event
         )
 
 
@@ -527,7 +529,9 @@ class BaseSubmissionList(Sortable, ReviewerSubmissionFilter, PaginationMixin, Li
 
     def get_default_filters(self, *args, **kwargs):
         default_filters = {"code__icontains", "title__icontains"}
-        if self.request.user.has_perm("orga.view_speakers", self.request.event):
+        if self.request.user.has_perm(
+            "person.orga_list_speakerprofile", self.request.event
+        ):
             default_filters.add("speakers__name__icontains")
         return default_filters
 
@@ -545,7 +549,7 @@ class BaseSubmissionList(Sortable, ReviewerSubmissionFilter, PaginationMixin, Li
 
 class SubmissionList(EventPermissionRequired, BaseSubmissionList):
     template_name = "orga/submission/list.html"
-    permission_required = "orga.view_submissions"
+    permission_required = "submission.orga_list_submission"
     paginate_by = 25
     default_sort_field = "state"
     secondary_sort = {"state": ("pending_state",)}
@@ -571,7 +575,7 @@ class FeedbackList(SubmissionViewMixin, PaginationMixin, ListView):
     template_name = "orga/submission/feedback_list.html"
     context_object_name = "feedback"
     paginate_by = 25
-    permission_required = "submission.view_feedback"
+    permission_required = "submission.view_feedback_submission"
 
     def get_queryset(self):
         return self.submission.feedback.all().order_by("pk")
@@ -591,7 +595,7 @@ class FeedbackList(SubmissionViewMixin, PaginationMixin, ListView):
 
 
 class ToggleFeatured(SubmissionViewMixin, View):
-    permission_required = "orga.change_submissions"
+    permission_required = "submission.orga_update_submission"
 
     def get_permission_object(self):
         return self.object or self.request.event
@@ -603,7 +607,7 @@ class ToggleFeatured(SubmissionViewMixin, View):
 
 
 class ApplyPending(SubmissionViewMixin, View):
-    permission_required = "orga.change_submissions"
+    permission_required = "submission.state_change_submission"
 
     def post(self, request, *args, **kwargs):
         submission = self.object
@@ -615,7 +619,7 @@ class ApplyPending(SubmissionViewMixin, View):
 
 
 class Anonymise(SubmissionViewMixin, UpdateView):
-    permission_required = "orga.change_submissions"
+    permission_required = "submission.orga_update_submission"
     template_name = "orga/submission/anonymise.html"
     form_class = AnonymiseForm
 
@@ -674,7 +678,7 @@ class SubmissionHistory(SubmissionViewMixin, ListView):
 
 
 class SubmissionFeed(PermissionRequired, Feed):
-    permission_required = "orga.view_submission"
+    permission_required = "submission.orga_list_submission"
     feed_type = feedgenerator.Atom1Feed
 
     def get_object(self, request, *args, **kwargs):
@@ -710,12 +714,9 @@ class SubmissionFeed(PermissionRequired, Feed):
         return item.created
 
 
-class SubmissionStats(PermissionRequired, TemplateView):
+class SubmissionStats(EventPermissionRequired, TemplateView):
     template_name = "orga/submission/stats.html"
-    permission_required = "orga.view_submissions"
-
-    def get_permission_object(self):
-        return self.request.event
+    permission_required = "submission.orga_list_submission"
 
     @context
     def show_submission_types(self):
@@ -944,8 +945,7 @@ class AllFeedbacksList(EventPermissionRequired, PaginationMixin, ListView):
     model = Feedback
     context_object_name = "feedback"
     template_name = "orga/submission/feedbacks_list.html"
-
-    permission_required = "orga.view_submissions"
+    permission_required = "submission.orga_list_submission"
     paginate_by = 25
 
     def get_queryset(self):
@@ -977,8 +977,8 @@ class TagView(OrgaCRUDView):
 
 class CommentList(SubmissionViewMixin, FormView):
     template_name = "orga/submission/comments.html"
-    permission_required = "submission.view_submission_comments"
-    write_permission_required = "submission.add_submission_comments"
+    permission_required = "submission.view_submissioncomment"
+    write_permission_required = "submission.add_submissioncomment"
     form_class = SubmissionCommentForm
 
     def get_form_kwargs(self):
@@ -999,7 +999,7 @@ class CommentList(SubmissionViewMixin, FormView):
 
 
 class CommentDelete(SubmissionViewMixin, ActionConfirmMixin, TemplateView):
-    permission_required = "submission.delete_submission_comment"
+    permission_required = "submission.delete_submissioncomment"
 
     @property
     def action_back_url(self):
@@ -1027,7 +1027,7 @@ class CommentDelete(SubmissionViewMixin, ActionConfirmMixin, TemplateView):
 
 
 class ApplyPendingBulk(EventPermissionRequired, BaseSubmissionList):
-    permission_required = "orga.change_submissions"
+    permission_required = "submission.state_change_submission"
     template_name = "orga/submission/apply_pending.html"
 
     @cached_property

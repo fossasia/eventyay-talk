@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from i18nfield.fields import I18nTextField
 
-from pretalx.agenda.rules import is_agenda_visible
+from pretalx.agenda.rules import can_view_schedule, is_agenda_visible, is_widget_visible
 from pretalx.agenda.tasks import export_schedule_html
 from pretalx.common.models.mixins import PretalxModel
 from pretalx.common.text.phrases import phrases
@@ -54,11 +54,12 @@ class Schedule(PretalxModel):
         ordering = ("-published",)
         unique_together = (("event", "version"),)
         rules_permissions = {
-            "list": is_agenda_visible
-            | orga_can_change_submissions
-            | (is_reviewer & can_view_speaker_names),
+            "list": can_view_schedule,
+            "view_widget": is_widget_visible | orga_can_change_submissions,
             "view": (~is_wip & is_agenda_visible)
             | orga_can_change_submissions
+            | (is_reviewer & can_view_speaker_names),
+            "orga_view": orga_can_change_submissions
             | (is_reviewer & can_view_speaker_names),
             "release": orga_can_change_submissions,
         }

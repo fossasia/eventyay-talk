@@ -76,14 +76,14 @@ class SpeakerViewSet(
     filter_backends = (SpeakerSearchFilter, DjangoFilterBackend)
 
     def get_legacy_serializer_class(self):  # pragma: no cover
-        if self.request.user.has_perm("orga.change_submissions", self.event):
+        if self.request.user.has_perm("submission.orga_update_submission", self.event):
             return LegacySpeakerOrgaSerializer
-        if self.request.user.has_perm("orga.view_speakers", self.event):
+        if self.request.user.has_perm("person.orga_list_speakerprofile", self.event):
             return LegacySpeakerReviewerSerializer
         return LegacySpeakerSerializer
 
     def get_legacy_queryset(self):  # pragma: no cover
-        if self.request.user.has_perm("orga.view_speakers", self.event):
+        if self.request.user.has_perm("person.orga_list_speakerprofile", self.event):
             return SpeakerProfile.objects.filter(event=self.event, user__isnull=False)
         if self.event.current_schedule and self.event.get_feature_flag("show_schedule"):
             return SpeakerProfile.objects.filter(
@@ -104,7 +104,7 @@ class SpeakerViewSet(
     @cached_property
     def is_orga(self):
         return self.event and self.request.user.has_perm(
-            "orga.view_submissions", self.event
+            "submission.orga_list_submission", self.event
         )
 
     def get_unversioned_serializer_class(self):

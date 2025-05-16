@@ -21,7 +21,7 @@ from pretalx.submission.models import Submission, SubmissionStates
 
 
 class TalkMixin(PermissionRequired):
-    permission_required = "agenda.view_submission"
+    permission_required = "submission.view_public_submission"
 
     def get_queryset(self):
         return self.request.event.submissions.prefetch_related(
@@ -75,11 +75,11 @@ class TalkView(TalkMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        schedule = self.request.event.current_schedule
-        if not schedule and self.request.user.has_perm(
-            "orga.view_schedule", self.request.event
-        ):
-            schedule = self.request.event.wip_schedule
+        schedule = (
+            self.request.event.current_schedule or self.request.event.wip_schedule
+        )
+        if not self.request.user.has_perm("schedule.view_schedule", schedule):
+            return ctx
         qs = (
             schedule.talks.filter(room__isnull=False).select_related("room")
             if schedule
@@ -188,7 +188,7 @@ class SingleICalView(EventPageMixin, TalkMixin, View):
 
 class FeedbackView(TalkMixin, FormView):
     form_class = FeedbackForm
-    permission_required = "agenda.view_feedback_page"
+    permission_required = "submission.view_feedback_page_submission"
 
     def get_queryset(self):
         return self.request.event.submissions.prefetch_related(
@@ -205,7 +205,9 @@ class FeedbackView(TalkMixin, FormView):
     @context
     @cached_property
     def can_give_feedback(self):
-        return self.request.user.has_perm("agenda.give_feedback", self.talk)
+        return self.request.user.has_perm(
+            "submission.give_feedback_submission", self.talk
+        )
 
     @context
     @cached_property

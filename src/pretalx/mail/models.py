@@ -1,5 +1,6 @@
 from copy import deepcopy
 
+import rules
 from django.conf import settings
 from django.db import models, transaction
 from django.template.loader import get_template
@@ -273,6 +274,11 @@ class MailTemplate(PretalxModel):
         return valid_placeholders
 
 
+@rules.predicate
+def can_edit_mail(user, obj):
+    return getattr(obj, "sent", False) is None
+
+
 class QueuedMail(PretalxModel):
     """Emails in pretalx are rarely sent directly, hence the name QueuedMail.
 
@@ -343,6 +349,16 @@ class QueuedMail(PretalxModel):
         to="submission.Submission",
         related_name="mails",
     )
+
+    class Meta:
+        rules_permissions = {
+            "list": orga_can_change_submissions,
+            "view": orga_can_change_submissions,
+            "create": orga_can_change_submissions,
+            "update": can_edit_mail & orga_can_change_submissions,
+            "delete": orga_can_change_submissions,
+            "send": orga_can_change_submissions,
+        }
 
     class urls(EventUrls):
         base = edit = "{self.event.orga_urls.mail}{self.pk}/"
