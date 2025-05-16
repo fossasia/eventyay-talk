@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 from django_context_decorator import context
 
 from pretalx.common.views.mixins import PermissionRequired
+from pretalx.event.models import Event
 from pretalx.event.rules import get_events_for_user
 
 
@@ -71,12 +72,19 @@ class GeneralView(TemplateView):
     def get_context_data(self, **kwargs):
         result = super().get_context_data(**kwargs)
         _now = now().date()
-        qs = get_events_for_user(self.request.user)
         if self.request.uses_custom_domain:
-            qs = qs.filter(custom_domain=f"https://{self.request.host}")
+            qs = Event.objects.filter(custom_domain=f"https://{self.request.host}")
         else:
-            qs = qs.filter(custom_domain__isnull=True)
-        result["current_events"] = qs.filter(date_from__lte=_now, date_to__gte=_now)
-        result["past_events"] = qs.filter(date_to__lt=_now)
-        result["future_events"] = qs.filter(date_from__gt=_now)
+            qs = Event.objects.filter(custom_domain__isnull=True)
+        qs = get_events_for_user(self.request.user, qs)
+        result["current_events"] = []
+        result["past_events"] = []
+        result["future_events"] = []
+        for event in qs:
+            if event.date_from <= _now <= event.date_to:
+                result["current_events"].append(event)
+            elif event.date_to < _now:
+                result["past_events"].append(event)
+            else:
+                result["future_events"].append(event)
         return result

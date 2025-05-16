@@ -54,7 +54,7 @@ def test_orga_can_see_new_talk(
     orga_client, django_assert_num_queries, event, unreleased_slot
 ):
     slot = unreleased_slot
-    with django_assert_num_queries(27):
+    with django_assert_num_queries(24):
         response = orga_client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
     content = response.content.decode()
@@ -253,7 +253,7 @@ def test_talk_speaker_other_submissions_only_if_visible(
 def test_talk_review_page(
     client, django_assert_num_queries, event, submission, other_submission
 ):
-    with django_assert_num_queries(15):
+    with django_assert_num_queries(14):
         response = client.get(submission.urls.review, follow=True)
     assert response.status_code == 200
     assert submission.title in response.content.decode()

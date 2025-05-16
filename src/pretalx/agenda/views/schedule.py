@@ -21,7 +21,7 @@ from pretalx.agenda.views.utils import (
     get_schedule_exporter_content,
     get_schedule_exporters,
 )
-from pretalx.common.views.mixins import EventPermissionRequired
+from pretalx.common.views.mixins import EventPermissionRequired, PermissionRequired
 from pretalx.schedule.ascii import draw_ascii_schedule
 from pretalx.schedule.exporters import ScheduleData
 
@@ -34,17 +34,28 @@ class ScheduleMixin:
         return None
 
     def get_object(self):
+        schedule = None
         if self.version:
             with suppress(Exception):
-                return self.request.event.schedules.filter(
-                    version__iexact=self.version
-                ).first()
-        return self.request.event.current_schedule
+                schedule = (
+                    self.request.event.schedules.filter(version__iexact=self.version)
+                    .select_related("event")
+                    .first()
+                )
+        schedule = schedule or self.request.event.current_schedule
+        if schedule:
+            # make use of existing caches and prefetches
+            schedule.event = self.request.event
+        return schedule
+
+    @cached_property
+    def object(self):
+        return self.get_object()
 
     @context
     @cached_property
     def schedule(self):
-        return self.get_object()
+        return self.object
 
     def dispatch(self, request, *args, **kwargs):
         if version := request.GET.get("version"):

@@ -187,6 +187,7 @@ class Schedule(PretalxModel):
                 "submission__event",
                 "room",
             )
+            .prefetch_related("submission__speakers")
             .filter(
                 room__isnull=False,
                 start__isnull=False,
