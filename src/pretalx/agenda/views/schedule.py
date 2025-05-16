@@ -236,3 +236,11 @@ class ScheduleNoJsView(ScheduleView):
 class ChangelogView(EventPermissionRequired, TemplateView):
     template_name = "agenda/changelog.html"
     permission_required = "schedule.list_schedule"
+
+    @context
+    def schedules(self):
+        return (
+            self.request.event.schedules.all()
+            .filter(version__isnull=False)
+            .select_related("event")
+        )
