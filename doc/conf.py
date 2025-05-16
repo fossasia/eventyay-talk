@@ -46,7 +46,7 @@ language = "en"
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 pygments_style = "sphinx"
-html_static_path = ["_themes/pretalx_theme/static"]
+html_static_path = ["_themes/pretalx_theme/static", "_static"]
 html_additional_pages = {"index": "index.html"}
 html_extra_path = ["api/schema.yml"]
 html_theme = "pretalx_theme"
@@ -85,3 +85,13 @@ copybutton_prompt_text = (
 )
 copybutton_prompt_is_regexp = True
 copybutton_line_continuation_character = "\\"
+
+
+def include_redoc_for_docs(app, page_name, template_name, context, doctree):
+    if page_name == "api/resources":
+        app.add_js_file("redoc.standalone.js")
+        app.add_js_file("rest.js")
+
+
+def setup(app):
+    app.connect("html-page-context", include_redoc_for_docs)
