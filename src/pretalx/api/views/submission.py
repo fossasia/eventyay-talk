@@ -364,9 +364,6 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
 def favourites_view(request, event):
     if not request.user.has_perm("schedule.list_schedule", request.event):
         raise PermissionDenied()
-    # Return ical file if accept header is set to text/calendar
-    # TODO implement ical retrieval
-    # if request.accepted_renderer.format == "ics":
     return Response(
         [
             sub.code

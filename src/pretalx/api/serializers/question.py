@@ -206,7 +206,10 @@ class AnswerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
                 "pretalx.api.serializers.speaker.SpeakerSerializer",
                 {"read_only": True, "omit": ("answers",)},
             ),
-            # TODO: make reviews and submissions expandable once we have the new API
+            # submissions and reviews are currently not expandable due to permissions
+            # concerns: We’d have to make sure that users with access to e.g. some
+            # submission answers and some review answers would only see the ones from
+            # their assigned tracks or submissions.
         }
 
 

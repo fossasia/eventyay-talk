@@ -68,7 +68,6 @@ class UserApiToken(PretalxModel):
         verbose_name=_("Events"),
     )
     expires = models.DateTimeField(null=True, blank=True, verbose_name=_("Expiry date"))
-    # TODO document field structure
     endpoints = models.JSONField(default=dict, blank=True)
     version = models.CharField(
         max_length=12, null=True, blank=True, verbose_name=_("API version")

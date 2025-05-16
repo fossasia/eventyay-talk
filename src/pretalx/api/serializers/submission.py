@@ -347,6 +347,6 @@ class SubmissionOrgaSerializer(SubmissionSerializer):
             "median_score",
             "mean_score",
         ]
-        # todo make access code expandable
-        # todo make assigned_reviewers expandable
-        # TODO: make reviews expandable
+        # Reviews and assigned reviewers are currently not expandable because
+        # reviewers are also receiving the ReviewerOrgaSerializer, but may
+        # not be cleared to see all reviews or who is assigned to which review.
