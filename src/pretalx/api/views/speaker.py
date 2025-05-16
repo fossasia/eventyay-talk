@@ -147,6 +147,7 @@ class SpeakerViewSet(
             )
             .select_related("user", "event")
             .prefetch_related("user__submissions", "user__answers")
+            .order_by("pk")
         )
         if fields := self.check_expanded_fields(
             "answers.question",

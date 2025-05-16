@@ -33,7 +33,11 @@ class SubmitterAccessCodeViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     search_fields = ("code",)
 
     def get_queryset(self):
-        queryset = self.event.submitter_access_codes.all().select_related("event")
+        queryset = (
+            self.event.submitter_access_codes.all()
+            .select_related("event")
+            .order_by("pk")
+        )
         if fields := self.check_expanded_fields("track", "submission_type"):
             queryset = queryset.select_related(*fields)
         return queryset

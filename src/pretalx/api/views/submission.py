@@ -240,6 +240,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
             submissions_for_user(self.event, self.request.user)
             .select_related("event", "track", "submission_type")
             .prefetch_related("speakers", "answers", "slots")
+            .order_by("code")
         )
         if self.check_expanded_fields("speakers.user"):
             queryset = queryset.prefetch_related("speakers__profiles")
@@ -419,7 +420,7 @@ class TagViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     search_fields = ("tag",)
 
     def get_queryset(self):
-        return self.event.tags.all()
+        return self.event.tags.all().order_by("pk")
 
 
 @extend_schema_view(

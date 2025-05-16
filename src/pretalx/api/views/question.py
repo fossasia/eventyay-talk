@@ -201,9 +201,13 @@ class AnswerViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
-        queryset = Answer.objects.filter(
-            question__in=questions_for_user(self.event, self.request.user)
-        ).select_related("question", "question__event")
+        queryset = (
+            Answer.objects.filter(
+                question__in=questions_for_user(self.event, self.request.user)
+            )
+            .select_related("question", "question__event")
+            .order_by("pk")
+        )
         question_fields = self.check_expanded_fields(
             "question.tracks", "question.submissions"
         )

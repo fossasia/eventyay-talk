@@ -89,6 +89,7 @@ class ReviewViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
                 "submission",
             )
             .prefetch_related("scores", "scores__category")
+            .order_by("pk")
         )
         if fields := self.check_expanded_fields(
             "submission.track", "submission.submission_type", "user"

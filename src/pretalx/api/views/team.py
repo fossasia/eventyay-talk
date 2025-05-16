@@ -56,7 +56,11 @@ class TeamViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     search_fields = ("name",)
 
     def get_queryset(self):
-        queryset = self.request.organiser.teams.all().select_related("organiser")
+        queryset = (
+            self.request.organiser.teams.all()
+            .select_related("organiser")
+            .order_by("pk")
+        )
         if fields := self.check_expanded_fields("members", "limit_tracks", "invites"):
             queryset = queryset.prefetch_related(*fields)
         return queryset
