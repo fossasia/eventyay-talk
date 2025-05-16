@@ -63,6 +63,7 @@ linkcheck_ignore = [
     "https://pretalx.yourdomain.com",
     "http://localhost",
     "http://127.0.0.1",
+    "/schema.yml",
     r"https://github.com/pretalx/pretalx/issues/\d+",  # The release notes are auto generated and contain a LOT of issue links
     r"https://github.com/pretalx/pretalx/issues/new",  # Requires login
     r"https://github.com/pretalx/pretalx/discussions/new",  # Requires login

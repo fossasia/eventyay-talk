@@ -25,7 +25,7 @@ many ways. The v1 API released in pretalx v2025.1.0 makes sweeping changes to th
 introduces the new auth tokens, allows organisers to use the writable API.
 The changes are too numerous to list here – for example, related objects were included
 in many places by name (e.g. a room name) instead of a reliable and fixed ID.
-There was no option to expand nested resources, to coerce multilang strings into
+There was no option to expand nested resources, to coerce multi-lingual strings into
 simple strings, and no versioning at all.
 
 Old API tokens will continue to work and will continue to use the legacy API for the most
