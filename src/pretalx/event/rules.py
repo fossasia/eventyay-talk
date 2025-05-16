@@ -1,4 +1,5 @@
 import rules
+from django.db.models import Q
 
 
 @rules.predicate
@@ -10,9 +11,11 @@ def get_events_for_user(user, queryset=None):
     from pretalx.event.models import Event
 
     queryset = queryset or Event.objects.all()
-    queryset = queryset.filter(is_public=True)
-    if not user.is_anonymous:
-        queryset = queryset.union(user.get_events_with_any_permission())
+    if user.is_anonymous:
+        queryset = queryset.filter(is_public=True)
+    else:
+        events = user.get_events_with_any_permission().values_list("pk", flat=True)
+        queryset = queryset.filter(Q(is_public=True) | Q(pk__in=events))
     return queryset.order_by("-date_from")
 
 
