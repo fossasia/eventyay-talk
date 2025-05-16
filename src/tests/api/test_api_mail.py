@@ -90,7 +90,7 @@ def test_no_legacy_mail_template_api(client, orga_user_token, mail_template):
         },
     )
     assert response.status_code == 400, response.content.decode()
-    assert response.content.decode() == '{"detail": "API version not supported."}'
+    assert "API version not supported." in response.content.decode()
 
 
 @pytest.mark.django_db

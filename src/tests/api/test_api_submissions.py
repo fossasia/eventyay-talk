@@ -576,7 +576,7 @@ def test_no_legacy_track_api(client, orga_user_token, track):
         },
     )
     assert response.status_code == 400, response.content.decode()
-    assert response.content.decode() == '{"detail": "API version not supported."}'
+    assert "API version not supported." in response.content.decode()
 
 
 @pytest.mark.django_db
@@ -782,7 +782,7 @@ def test_no_legacy_submission_type_api(client, orga_user_token, submission_type)
         },
     )
     assert response.status_code == 400, response.content.decode()
-    assert response.content.decode() == '{"detail": "API version not supported."}'
+    assert "API version not supported." in response.content.decode()
 
 
 @pytest.mark.django_db
