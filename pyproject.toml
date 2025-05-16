@@ -55,7 +55,7 @@ dependencies = [
   "publicsuffixlist~=1.0.0",
   "python-dateutil~=2.9.0",
   "qrcode~=8.0",
-  "reportlab~=4.3.0",
+  "reportlab~=4.4.0",
   "requests~=2.32.0",
   "rules~=3.5.0",
   "setuptools",
