@@ -3,9 +3,9 @@ from django.contrib import messages
 from django.db import transaction
 from django.db.models import Count, Exists, OuterRef, Q
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, FormView, ListView, View
 from django_context_decorator import context
@@ -181,6 +181,12 @@ class SpeakerDetail(SpeakerViewMixin, ActionFromUrl, CreateOrUpdateView):
 
     @context
     @cached_property
+    def accepted_submissions(self, **kwargs):
+        qs = self.submissions.filter(state__in=SubmissionStates.accepted_states)
+        return qs
+
+    @context
+    @cached_property
     def mails(self):
         return self.object.mails.filter(
             sent__isnull=False, event=self.request.event
@@ -277,10 +283,9 @@ class SpeakerToggleArrived(SpeakerViewMixin, View):
             person=self.request.user,
             orga=True,
         )
-        if request.GET.get("from") == "list":
-            return redirect(
-                reverse("orga:speakers.list", kwargs={"event": self.kwargs["event"]})
-            )
+        if url := self.request.GET.get("next"):
+            if url and url_has_allowed_host_and_scheme(url, allowed_hosts=None):
+                return redirect(url)
         return redirect(self.profile.orga_urls.base)
 
 
