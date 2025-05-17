@@ -62,13 +62,7 @@
             </p>
             {% if can_edit_speakers %}
                 {% if can_mark_speaker and submission.state in 'accepted,confirmed' %}
-                    <a class="btn btn-{{ speaker.profile.has_arrived|yesno:"success,info" }}" href="{{ speaker.profile.orga_urls.toggle_arrived }}?next={{ request.path }}">
-                        {% if speaker.profile.has_arrived %}
-                            {% translate "Mark speaker as not arrived" %}
-                        {% else %}
-                            {% translate "Mark speaker as arrived" %}
-                        {% endif %}
-                    </a>
+                    {% include "orga/includes/mark_speakers_arrived.html" with speaker=speaker.profile %}
                 {% endif %}
                 {% if can_send_mails %}
                     <a class="btn btn-outline-info" href="{{ request.event.orga_urls.compose_mails_sessions }}?speakers={{ speaker.user.code }}">
