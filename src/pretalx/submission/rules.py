@@ -259,7 +259,7 @@ def limit_for_reviewers(
     if not (phase := event.active_review_phase):
         queryset = event.submissions.none()
     queryset = queryset.exclude(speakers__in=[user])
-    if phase.proposal_visibility == "assigned":
+    if phase and phase.proposal_visibility == "assigned":
         queryset = annotate_assigned(queryset, event, user)
         return queryset.filter(is_assigned__gte=1)
     if add_assignments:
