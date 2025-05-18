@@ -162,7 +162,9 @@ class SubmissionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
             if not getattr(self.event.cfp, f"request_{field}"):
                 self.fields.pop(field, None)
             else:
-                self.fields[field].required = getattr(self.event.cfp, f"require_{field}")
+                self.fields[field].required = getattr(
+                    self.event.cfp, f"require_{field}"
+                )
 
     @extend_schema_field(list[str])
     def get_speakers(self, obj):
