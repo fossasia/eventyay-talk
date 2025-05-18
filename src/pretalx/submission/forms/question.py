@@ -37,7 +37,9 @@ class QuestionsForm(CfPFormMixin, QuestionFieldsMixin, forms.Form):
         if self.target_type:
             self.queryset = self.queryset.filter(target=self.target_type)
         else:
-            self.queryset = self.queryset.exclude(target=QuestionTarget.REVIEWER)
+            self.queryset = self.queryset.exclude(
+                target=QuestionTarget.REVIEWER
+            ).order_by("-target", "position")
         if skip_limited_questions:
             self.queryset = self.queryset.filter(
                 tracks__isnull=True,
