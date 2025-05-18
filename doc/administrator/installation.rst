@@ -49,7 +49,8 @@ Step 1: Unix user
 .. hint:: All code lines prepended with a ``#`` symbol are commands that you
           need to execute on your server as the ``root`` user (e.g. using
           ``sudo``); you should run all lines prepended with a ``$`` symbol as
-          the ``pretalx`` user.
+          the ``pretalx`` user. If the prompt reads ``(env)$``, your virtual
+          Python environment should be active.
 
 As we do not want to run pretalx as root, we first create a new unprivileged user::
 
