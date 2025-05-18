@@ -10,8 +10,8 @@ def collect_signal(signal, kwargs):
     result = []
     for _, response in signal.send_robust(**kwargs):
         if isinstance(response, list):
-            result += response
-        else:
+            result += [r for r in response if not isinstance(r, Exception)]
+        elif not isinstance(response, Exception):
             result.append(response)
     return result
 
