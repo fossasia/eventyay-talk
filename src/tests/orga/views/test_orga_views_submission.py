@@ -54,7 +54,7 @@ def test_reviewer_cannot_search_submissions_by_speaker_when_anonymised(
     with scope(event=event):
         submission.event.active_review_phase.can_see_speaker_names = False
         submission.event.active_review_phase.save()
-        assert not review_user.has_perm("orga.view_speakers", event)
+        assert not review_user.has_perm("person.orga_list_speakerprofile", event)
     response = review_client.get(
         event.orga_urls.submissions + f"?q={submission.speakers.first().name[:5]}",
         follow=True,
@@ -72,7 +72,7 @@ def test_reviewer_cannot_search_submissions_by_speaker_when_anonymised_on_team_l
         team.force_hide_speaker_names = True
         team.save()
         assert submission.event.active_review_phase.can_see_speaker_names
-        assert not review_user.has_perm("orga.view_speakers", event)
+        assert not review_user.has_perm("person.orga_list_speakerprofile", event)
     response = review_client.get(
         event.orga_urls.submissions + f"?q={submission.speakers.first().name[:5]}",
         follow=True,
@@ -672,7 +672,7 @@ def test_orga_can_anonymise_submission(
     with scope(event=submission.event):
         submission.event.active_review_phase.can_see_speaker_names = False
         submission.event.active_review_phase.save()
-        assert not review_user.has_perm("orga.view_speakers", submission)
+        assert not review_user.has_perm("person.orga_list_speakerprofile", submission)
     response = orga_client.post(
         submission.orga_urls.anonymise, follow=True, data={"description": "CENSORED!"}
     )

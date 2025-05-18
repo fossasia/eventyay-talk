@@ -5,14 +5,16 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView, View
 from django_context_decorator import context
-from rest_framework.authtoken.models import Token
+from django_scopes import scopes_disabled
 
+from pretalx.api.versions import CURRENT_VERSION
 from pretalx.common.text.phrases import phrases
 from pretalx.common.views import is_form_bound
-from pretalx.person.forms import LoginInfoForm, OrgaProfileForm
+from pretalx.person.forms import AuthTokenForm, LoginInfoForm, OrgaProfileForm
 
 
 class UserSettings(TemplateView):
@@ -31,6 +33,10 @@ class UserSettings(TemplateView):
         )
 
     @context
+    def current_version(self):
+        return CURRENT_VERSION
+
+    @context
     @cached_property
     def profile_form(self):
         return OrgaProfileForm(
@@ -39,10 +45,12 @@ class UserSettings(TemplateView):
         )
 
     @context
-    def token(self):
-        return Token.objects.filter(
-            user=self.request.user
-        ).first() or Token.objects.create(user=self.request.user)
+    @cached_property
+    def token_form(self):
+        return AuthTokenForm(
+            user=self.request.user,
+            data=self.request.POST if is_form_bound(self.request, "token") else None,
+        )
 
     def post(self, request, *args, **kwargs):
         if self.login_form.is_bound and self.login_form.is_valid():
@@ -53,13 +61,47 @@ class UserSettings(TemplateView):
             self.profile_form.save()
             messages.success(request, phrases.base.saved)
             request.user.log_action("pretalx.user.profile.update")
-        elif request.POST.get("form") == "token":
-            request.user.regenerate_token()
-            messages.success(request, phrases.cfp.token_regenerated)
+        elif self.token_form.is_bound and self.token_form.is_valid():
+            token = self.token_form.save()
+            if token:
+                messages.success(
+                    request,
+                    _(
+                        "Your API token has been regenerated. Please make sure to save it, as it will not be shown again:"
+                    )
+                    + f" {token.token}",
+                )
+                request.user.log_action(
+                    "pretalx.user.token.create", data=token.serialize()
+                )
+        elif token_id := request.POST.get("tokenupgrade"):
+            token = request.user.api_tokens.filter(pk=token_id).first()
+            token.version = CURRENT_VERSION
+            token.save()
+            request.user.log_action(
+                "pretalx.user.token.upgrade", data=token.serialize()
+            )
+            messages.success(request, _("The API token has been upgraded."))
+        elif token_id := request.POST.get("revoke"):
+            with scopes_disabled():
+                token = request.user.api_tokens.filter(pk=token_id).first()
+                if token:
+                    token.expires = now()
+                    token.save()
+                    request.user.log_action(
+                        "pretalx.user.token.revoke", data=token.serialize()
+                    )
+                    messages.success(request, _("The API token has been revoked."))
         else:
             messages.error(self.request, phrases.base.error_saving_changes)
             return self.get(request, *args, **kwargs)
         return redirect(self.get_success_url())
+
+    @context
+    @cached_property
+    def tokens(self):
+        with scopes_disabled():
+            return self.request.user.api_tokens.all().order_by("-expires")
 
 
 class SubuserView(View):

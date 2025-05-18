@@ -91,6 +91,7 @@ LOCAL_APPS = [
 FALLBACK_APPS = [
     "django.forms",
     "rest_framework",
+    "drf_spectacular",
 ]
 INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + LOCAL_APPS + FALLBACK_APPS
 
@@ -498,7 +499,7 @@ LOGIN_URL = "/orga/login"
 DEFAULT_AUTHENTICATION_BACKENDS = [
     "rules.permissions.ObjectPermissionBackend",
     "django.contrib.auth.backends.ModelBackend",
-    "pretalx.common.auth.AuthenticationTokenBackend",
+    "pretalx.common.auth.UserTokenAuthentication",
 ]
 EXTRA_AUTH_BACKENDS = [
     backend
@@ -508,6 +509,7 @@ EXTRA_AUTH_BACKENDS = [
     if backend
 ]
 AUTHENTICATION_BACKENDS = DEFAULT_AUTHENTICATION_BACKENDS + EXTRA_AUTH_BACKENDS
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
@@ -532,7 +534,6 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",  # Set some sensible defaults, now, before responses are modified
     "pretalx.common.middleware.SessionMiddleware",  # Add session handling
     "django.contrib.auth.middleware.AuthenticationMiddleware",  # Uses sessions
-    "pretalx.common.auth.AuthenticationTokenMiddleware",  # Make auth tokens work
     "csp.middleware.CSPMiddleware",  # Modifies/sets CSP headers
     "pretalx.common.middleware.MultiDomainMiddleware",  # Check which host is used and if it is valid
     "pretalx.common.middleware.EventPermissionMiddleware",  # Sets locales, request.event, available events, etc.
@@ -638,25 +639,49 @@ COMPRESS_FILTERS = {
 
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ("i18nfield.rest_framework.I18nJSONRenderer",),
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("pretalx.common.auth.UserTokenAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("pretalx.api.permissions.ApiPermission",),
+    "DEFAULT_PARSER_CLASSES": ("rest_framework.parsers.JSONParser",),
     "DEFAULT_FILTER_BACKENDS": (
         "rest_framework.filters.SearchFilter",
         "django_filters.rest_framework.DjangoFilterBackend",
     ),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-    "PAGE_SIZE": 25,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_PAGINATION_CLASS": "pretalx.api.pagination.PageNumberPagination",
+    "PAGE_SIZE": 50,
     "SEARCH_PARAM": "q",
     "ORDERING_PARAM": "o",
-    "VERSIONING_PARAM": "v",
     "DATETIME_FORMAT": "iso-8601",
     "EXCEPTION_HANDLER": "pretalx.api.exceptions.api_exception_handler",
 }
 if DEBUG:
     REST_FRAMEWORK["COMPACT_JSON"] = False
+
+SPECTACULAR_SETTINGS = {
+    "SCHEMA_PATH_PREFIX": "/api/events/{event}/",
+    "SCHEMA_COERCE_PATH_PK_SUFFIX": True,
+    "COMPONENT_SPLIT_PATCH": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SORT_OPERATIONS": True,
+    "AUTHENTICATION_WHITELIST": [],
+    "ENABLE_DJANGO_DEPLOY_CHECK": False,
+    "VERSION": None,
+    "TITLE": "pretalx API",
+    "SERVERS": [{"url": "https://pretalx.com"}],
+    "EXTERNAL_DOCS": {"url": "https://docs.pretalx.org/api/"},
+    "PATH_CONVERTER_OVERRIDES": {
+        "slug": {"type": "string", "description": "The event’s slug"},
+    },
+    "POSTPROCESSING_HOOKS": [
+        "drf_spectacular.hooks.postprocess_schema_enums",
+        "pretalx.api.documentation.postprocess_schema",
+    ],
+}
+REST_FLEX_FIELDS = {
+    "WILDCARD_VALUES": [],
+    "RECURSIVE_EXPANSION_PERMITTED": False,
+    "MAXIMUM_EXPANSION_DEPTH": 3,
+}
 
 WSGI_APPLICATION = "pretalx.wsgi.application"
 

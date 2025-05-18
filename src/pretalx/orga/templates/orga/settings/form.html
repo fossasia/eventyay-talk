@@ -2,7 +2,6 @@
 
 {% load compress %}
 {% load i18n %}
-{% load rules %}
 {% load static %}
 
 {% block stylesheets %}
@@ -123,8 +122,7 @@
         </section>
         <div class="submit-group panel">
             <span>
-                {% has_perm "person.is_administrator" request.user request.event as can_delete_event %}
-                {% if can_delete_event %}
+                {% if request.user.is_administrator %}
                     <a class="btn btn-outline-danger btn-lg" href="{{ request.event.orga_urls.delete }}">
                         {% translate "Delete event" %}
                     </a>

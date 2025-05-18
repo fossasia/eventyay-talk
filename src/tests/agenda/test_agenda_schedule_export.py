@@ -304,7 +304,7 @@ def test_html_export_event_unknown(event):
         }
     }
 )
-def test_html_export_release_without_celery(mocker, event):
+def test_html_export_release_without_celery(event):
     with scope(event=event):
         event.cache.delete("rebuild_schedule_export")
         assert not event.cache.get("rebuild_schedule_export")

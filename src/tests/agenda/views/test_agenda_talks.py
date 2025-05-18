@@ -54,7 +54,7 @@ def test_orga_can_see_new_talk(
     orga_client, django_assert_num_queries, event, unreleased_slot
 ):
     slot = unreleased_slot
-    with django_assert_num_queries(28):
+    with django_assert_num_queries(24):
         response = orga_client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
     content = response.content.decode()
@@ -74,8 +74,9 @@ def test_orga_can_see_new_talk(
 def test_can_see_talk_edit_btn(
     orga_client, django_assert_num_queries, orga_user, event, slot
 ):
-    slot.submission.speakers.add(orga_user)
-    with django_assert_num_queries(26):
+    with scope(event=event):
+        slot.submission.speakers.add(orga_user)
+    with django_assert_num_queries(25):
         response = orga_client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
     content = response.content.decode()
@@ -84,9 +85,10 @@ def test_can_see_talk_edit_btn(
 
 
 @pytest.mark.django_db
-def test_can_see_talk_do_not_record(client, django_assert_num_queries, slot):
-    slot.submission.do_not_record = True
-    slot.submission.save()
+def test_can_see_talk_do_not_record(client, event, django_assert_num_queries, slot):
+    with scope(event=event):
+        slot.submission.do_not_record = True
+        slot.submission.save()
     with django_assert_num_queries(20):
         response = client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
@@ -99,9 +101,10 @@ def test_can_see_talk_do_not_record(client, django_assert_num_queries, slot):
 def test_can_see_talk_does_accept_feedback(
     client, django_assert_num_queries, event, slot
 ):
-    slot.start = now() - dt.timedelta(days=1)
-    slot.end = slot.start + dt.timedelta(hours=1)
-    slot.save()
+    with scope(event=event):
+        slot.start = now() - dt.timedelta(days=1)
+        slot.end = slot.start + dt.timedelta(hours=1)
+        slot.save()
     with django_assert_num_queries(21):
         response = client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
@@ -250,7 +253,7 @@ def test_talk_speaker_other_submissions_only_if_visible(
 def test_talk_review_page(
     client, django_assert_num_queries, event, submission, other_submission
 ):
-    with django_assert_num_queries(15):
+    with django_assert_num_queries(14):
         response = client.get(submission.urls.review, follow=True)
     assert response.status_code == 200
     assert submission.title in response.content.decode()

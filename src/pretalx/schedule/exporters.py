@@ -53,7 +53,7 @@ class ScheduleData(BaseExporter):
                 "submission__track",
                 "room",
             )
-            .prefetch_related("submission__speakers", "submission__resources")
+            .prefetch_related("submission__speakers")
             .order_by("start")
             .exclude(submission__state="deleted")
         )
@@ -331,7 +331,7 @@ class FavedICalExporter(BaseExporter):
         return (
             "agenda" in request.resolver_match.namespaces
             and request.user.is_authenticated
-            and request.user.has_perm("agenda.view_schedule", request.event)
+            and request.user.has_perm("schedule.list_schedule", request.event)
         )
 
     def render(self, request, **kwargs):

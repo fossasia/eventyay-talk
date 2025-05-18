@@ -81,8 +81,7 @@ def test_talk_schedule_api_update_wrong_slot(orga_client, event, schedule, slot)
         data=json.dumps({"room": 100, "start": start.isoformat()}),
         follow=True,
     )
-    assert response.status_code == 200
-    assert response.json() == {"error": "Talk not found"}
+    assert response.status_code == 404
 
 
 @pytest.mark.django_db
@@ -211,7 +210,7 @@ def test_talk_schedule_api_delete_bogus_slot(orga_client, event, schedule):
         reverse("orga:schedule.api.update", kwargs={"event": event.slug, "pk": 100}),
         follow=True,
     )
-    assert response.status_code == 200
+    assert response.status_code == 404
 
 
 @pytest.mark.django_db
@@ -415,6 +414,10 @@ def test_delete_room(orga_client, event, room):
     with scope(event=event):
         assert event.rooms.count() == 1
     response = orga_client.get(room.urls.delete, follow=True)
+    assert response.status_code == 200
+    with scope(event=event):
+        assert event.rooms.count() == 1
+    response = orga_client.post(room.urls.delete, follow=True)
     assert response.status_code == 200
     with scope(event=event):
         assert event.rooms.count() == 0

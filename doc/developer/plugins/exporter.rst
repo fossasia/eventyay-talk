@@ -50,11 +50,7 @@ The exporter class
 
       This is an abstract attribute, you **must** override this!
 
-   .. automethod:: show_qrcode
-
    .. automethod:: get_qrcode
-
-   .. automethod:: urls
 
    .. autoattribute:: icon
 

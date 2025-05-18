@@ -12,7 +12,7 @@ from django_context_decorator import context
 from pretalx.common.language import language
 from pretalx.common.mail import TolerantDict
 from pretalx.common.text.phrases import phrases
-from pretalx.common.views import CreateOrUpdateView
+from pretalx.common.views.generic import CreateOrUpdateView, OrgaCRUDView
 from pretalx.common.views.mixins import (
     ActionConfirmMixin,
     ActionFromUrl,
@@ -22,12 +22,7 @@ from pretalx.common.views.mixins import (
     PermissionRequired,
     Sortable,
 )
-from pretalx.mail.models import (
-    MailTemplate,
-    MailTemplateRoles,
-    QueuedMail,
-    get_prefixed_subject,
-)
+from pretalx.mail.models import MailTemplate, QueuedMail, get_prefixed_subject
 from pretalx.orga.forms.mails import (
     DraftRemindersForm,
     MailDetailForm,
@@ -53,7 +48,7 @@ class OutboxList(
     )
     sortable_fields = ("to", "subject", "pk")
     paginate_by = 25
-    permission_required = "orga.view_mails"
+    permission_required = "mail.list_queuedmail"
 
     def get_queryset(self):
         qs = (
@@ -100,7 +95,7 @@ class SentMail(
     default_sort_field = "-sent"
     sortable_fields = ("to", "subject", "sent")
     paginate_by = 25
-    permission_required = "orga.view_mails"
+    permission_required = "mail.list_queuedmail"
 
     def get_filter_form(self):
         return QueuedMailFilterForm(
@@ -125,7 +120,7 @@ class SentMail(
 
 
 class OutboxSend(ActionConfirmMixin, OutboxList):
-    permission_required = "orga.send_mails"
+    permission_required = "mail.send_queuedmail"
     action_object_name = ""
     action_confirm_label = phrases.base.send
     action_confirm_color = "success"
@@ -188,7 +183,7 @@ class OutboxSend(ActionConfirmMixin, OutboxList):
 
 
 class MailDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
-    permission_required = "orga.purge_mails"
+    permission_required = "mail.delete_queuedmail"
     action_object_name = ""
 
     def get_permission_object(self):
@@ -253,7 +248,7 @@ class MailDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
 
 
 class OutboxPurge(ActionConfirmMixin, OutboxList):
-    permission_required = "orga.purge_mails"
+    permission_required = "mail.delete_queuedmail"
     action_object_name = ""
 
     @context
@@ -287,8 +282,8 @@ class MailDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
     model = QueuedMail
     form_class = MailDetailForm
     template_name = "orga/mails/outbox_form.html"
-    write_permission_required = "orga.edit_mails"
-    permission_required = "orga.view_mails"
+    write_permission_required = "mail.update_queuedmail"
+    permission_required = "mail.view_queuedmail"
 
     def get_object(self, queryset=None) -> QueuedMail:
         return self.request.event.queued_mails.filter(pk=self.kwargs.get("pk")).first()
@@ -317,7 +312,7 @@ class MailDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
 
 
 class MailCopy(PermissionRequired, View):
-    permission_required = "orga.send_mails"
+    permission_required = "mail.send_queuedmail"
 
     def get_object(self) -> QueuedMail:
         return get_object_or_404(
@@ -332,7 +327,7 @@ class MailCopy(PermissionRequired, View):
 
 
 class MailPreview(PermissionRequired, View):
-    permission_required = "orga.send_mails"
+    permission_required = "mail.send_queuedmail"
 
     def get_object(self) -> QueuedMail:
         return get_object_or_404(
@@ -346,11 +341,11 @@ class MailPreview(PermissionRequired, View):
 
 class ComposeMailChoice(EventPermissionRequired, TemplateView):
     template_name = "orga/mails/compose_choice.html"
-    permission_required = "orga.send_mails"
+    permission_required = "mail.send_queuedmail"
 
 
 class ComposeMailBaseView(EventPermissionRequired, FormView):
-    permission_required = "orga.send_mails"
+    permission_required = "mail.send_queuedmail"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -447,7 +442,7 @@ class ComposeMailBaseView(EventPermissionRequired, FormView):
 class ComposeTeamsMail(ComposeMailBaseView):
     form_class = WriteTeamsMailForm
     template_name = "orga/mails/compose_reviewer_mail_form.html"
-    permission_required = "orga.send_reviewer_mails"
+    permission_required = "event.update_team"
 
     def get_success_url(self):
         return self.request.event.orga_urls.outbox
@@ -477,7 +472,7 @@ class ComposeSessionMail(ComposeMailBaseView):
 class ComposeDraftReminders(EventPermissionRequired, FormView):
     form_class = DraftRemindersForm
     template_name = "orga/mails/send_draft_reminders.html"
-    permission_required = "orga.send_mails"
+    permission_required = "mail.send_queuedmail"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -496,97 +491,27 @@ class ComposeDraftReminders(EventPermissionRequired, FormView):
         return super().form_valid(form)
 
 
-class TemplateList(EventPermissionRequired, TemplateView):
-    template_name = "orga/mails/template_list.html"
-    permission_required = "orga.view_mail_templates"
-
-    def get_context_data(self, **kwargs):
-        result = super().get_context_data(**kwargs)
-        templates = [
-            self.request.event.get_mail_template(role)
-            for role, __ in MailTemplateRoles.choices
-        ]
-        result["template_forms"] = [
-            MailTemplateForm(
-                instance=template,
-                read_only=True,
-                event=self.request.event,
-            )
-            for template in templates
-        ]
-        templates = self.request.event.mail_templates.filter(
-            is_auto_created=False, role__isnull=True
-        )
-        result["template_forms"] += [
-            MailTemplateForm(
-                instance=template,
-                read_only=True,
-                event=self.request.event,
-            )
-            for template in templates.order_by("subject")
-        ]
-        return result
-
-
-class TemplateDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
+class MailTemplateView(OrgaCRUDView):
     model = MailTemplate
     form_class = MailTemplateForm
-    template_name = "orga/mails/template_form.html"
-    permission_required = "orga.view_mail_templates"
-    write_permission_required = "orga.edit_mail_templates"
+    template_namespace = "orga/mails"
+    messages = {
+        "create": phrases.base.saved,
+        "update": _(
+            "The template has been saved - note that already pending emails that are based on this template will not be changed!"
+        ),
+        "delete": phrases.base.deleted,
+    }
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["event"] = self.request.event
-        return kwargs
+    def get_queryset(self):
+        return self.request.event.mail_templates.all().order_by("role")
 
-    def get_object(self) -> MailTemplate:
-        return MailTemplate.objects.filter(
-            event=self.request.event, pk=self.kwargs.get("pk"), is_auto_created=False
-        ).first()
-
-    @cached_property
-    def object(self):
-        return self.get_object()
-
-    @cached_property
-    def permission_object(self):
-        return self.object or self.request.event
-
-    def get_permission_object(self):
-        return self.permission_object
-
-    def get_success_url(self):
-        return self.request.event.orga_urls.mail_templates
-
-    def form_valid(self, form):
-        form.instance.event = self.request.event
-        if form.has_changed():
-            action = "pretalx.mail_template." + ("update" if self.object else "create")
-            form.instance.log_action(action, person=self.request.user, orga=True)
-        messages.success(
-            self.request,
-            "The template has been saved - note that already pending emails that are based on this template will not be changed!",
-        )
-        return super().form_valid(form)
-
-
-class TemplateDelete(PermissionRequired, View):
-    permission_required = "orga.edit_mail_templates"
-
-    def get_object(self) -> MailTemplate:
-        return get_object_or_404(
-            MailTemplate.objects.all(),
-            event=self.request.event,
-            pk=self.kwargs.get("pk"),
-        )
-
-    def dispatch(self, request, *args, **kwargs):
-        super().dispatch(request, *args, **kwargs)
-        template = self.get_object()
-        template.log_action(
-            "pretalx.mail_template.delete", person=self.request.user, orga=True
-        )
-        template.delete()
-        messages.success(request, "The template has been deleted.")
-        return redirect(request.event.orga_urls.mail_templates)
+    def get_generic_title(self, instance=None):
+        if instance:
+            if not instance.role:
+                return _("Email template") + f": {instance.subject}"
+            else:
+                return _("Email template") + f": {instance.get_role_display()}"
+        if self.action == "create":
+            return _("New email template")
+        return _("Email templates")

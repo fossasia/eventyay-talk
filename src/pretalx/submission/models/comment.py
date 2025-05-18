@@ -6,6 +6,12 @@ from django_scopes import ScopedManager
 from pretalx.common.models.mixins import PretalxModel
 from pretalx.common.text.phrases import phrases
 from pretalx.common.urls import EventUrls
+from pretalx.submission.rules import (
+    has_reviewer_access,
+    is_comment_author,
+    orga_can_change_submissions,
+    submission_comments_active,
+)
 
 
 class SubmissionComment(PretalxModel):
@@ -36,6 +42,15 @@ class SubmissionComment(PretalxModel):
 
     class Meta:
         ordering = ("created",)
+        rules_permissions = {
+            "view": submission_comments_active
+            & (has_reviewer_access | orga_can_change_submissions),
+            "create": submission_comments_active
+            & (has_reviewer_access | orga_can_change_submissions),
+            "delete": submission_comments_active
+            & (has_reviewer_access | orga_can_change_submissions)
+            & is_comment_author,
+        }
 
     def __str__(self):
         return f'Comment by {self.user.get_display_name()} on "{self.submission.title}"'

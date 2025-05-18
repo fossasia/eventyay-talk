@@ -10,7 +10,7 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.http import condition
 from i18nfield.utils import I18nJSONEncoder
 
-from pretalx.agenda.permissions import is_agenda_visible, is_widget_always_visible
+from pretalx.agenda.rules import is_widget_visible
 from pretalx.agenda.views.schedule import ScheduleView
 from pretalx.common.language import language
 from pretalx.common.views import conditional_cache_page
@@ -37,7 +37,7 @@ def widget_js_etag(request, event, **kwargs):
 
 class WidgetData(ScheduleView):
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.has_perm("agenda.view_widget", request.event):
+        if not request.user.has_perm("schedule.view_widget_schedule", request.event):
             raise Http404()
         return super().dispatch(request, *args, **kwargs)
 
@@ -144,10 +144,7 @@ def is_public_and_versioned(request, event, version=None):
     if version and version == "wip":
         # We never cache the wip schedule
         return False
-    if not (
-        is_widget_always_visible(None, request.event)
-        or is_agenda_visible(None, request.event)
-    ):
+    if not is_widget_visible(None, request.event):
         # This will be either a 404, or a page only accessible to the user
         # due to their logged-in status, so we don't want to cache it.
         return False
@@ -195,13 +192,13 @@ def widget_data(request, event, version=None):
         response["Access-Control-Allow-Origin"] = "*"
         response["Access-Control-Allow-Headers"] = "authorization,content-type"
         return response
-    if not request.user.has_perm("agenda.view_widget", event):
+    if not request.user.has_perm("schedule.view_widget_schedule", event):
         raise Http404()
 
     version = version or unquote(request.GET.get("v") or "")
     schedule = None
     if version and version == "wip":
-        if not request.user.has_perm("orga.view_schedule", event):
+        if not request.user.has_perm("schedule.orga_view_schedule", event):
             raise Http404()
         schedule = request.event.wip_schedule
     elif version:
@@ -226,7 +223,7 @@ def widget_script(request, event):
     # /<event>/widget/schedule.js path, as it cuts down the transferred data
     # by about 80% for the schedule.js file, which is the largest file on the
     # main schedule page).
-    if not request.user.has_perm("agenda.view_widget", request.event):
+    if not request.user.has_perm("schedule.view_widget_schedule", request.event):
         raise Http404()
 
     file_path = finders.find(WIDGET_PATH)

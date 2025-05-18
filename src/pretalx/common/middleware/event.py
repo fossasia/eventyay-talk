@@ -3,6 +3,7 @@ from contextlib import suppress
 from urllib.parse import quote, urljoin
 
 from django.conf import settings
+from django.db.models import OuterRef, Subquery
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, reverse
 from django.urls import resolve
@@ -15,6 +16,7 @@ from django.utils.translation.trans_real import (
 from django_scopes import scope, scopes_disabled
 
 from pretalx.event.models import Event, Organiser
+from pretalx.schedule.models import Schedule
 
 
 def get_login_redirect(request):
@@ -72,12 +74,20 @@ class EventPermissionMiddleware:
         if event_slug:
             with scopes_disabled():
                 try:
-                    request.event = get_object_or_404(
-                        Event.objects.prefetch_related(
-                            "schedules", "submissions", "extra_links"
-                        ),
-                        slug__iexact=event_slug,
+                    queryset = Event.objects.prefetch_related(
+                        "submissions", "extra_links", "schedules"
+                    ).select_related("organiser")
+                    latest_schedule_subquery = (
+                        Schedule.objects.filter(
+                            event=OuterRef("pk"), published__isnull=False
+                        )
+                        .order_by("-published")
+                        .values("pk")[:1]
                     )
+                    queryset = queryset.annotate(
+                        _current_schedule_pk=Subquery(latest_schedule_subquery)
+                    )
+                    request.event = get_object_or_404(queryset, slug__iexact=event_slug)
                 except ValueError:
                     # Happens mostly on malformed or malicious input
                     raise Http404()

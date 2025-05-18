@@ -14,4 +14,4 @@ over time.
    :maxdepth: 2
 
    fundamentals
-   resources/index
+   resources

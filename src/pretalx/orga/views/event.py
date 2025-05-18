@@ -58,8 +58,8 @@ from pretalx.submission.tasks import recalculate_all_review_scores
 
 
 class EventSettingsPermission(EventPermissionRequired):
-    permission_required = "orga.change_settings"
-    write_permission_required = "orga.change_settings"
+    permission_required = "event.update_event"
+    write_permission_required = "event.update_event"
 
     @property
     def permission_object(self):
@@ -69,7 +69,6 @@ class EventSettingsPermission(EventPermissionRequired):
 class EventDetail(EventSettingsPermission, ActionFromUrl, UpdateView):
     model = Event
     form_class = EventForm
-    permission_required = "orga.change_settings"
     template_name = "orga/settings/form.html"
 
     def get_object(self, queryset=None):
@@ -138,7 +137,6 @@ class EventDetail(EventSettingsPermission, ActionFromUrl, UpdateView):
 
 class EventLive(EventSettingsPermission, TemplateView):
     template_name = "orga/event/live.html"
-    permission_required = "orga.change_settings"
 
     def get_context_data(self, **kwargs):
         result = super().get_context_data(**kwargs)
@@ -259,7 +257,6 @@ class EventHistory(EventSettingsPermission, ListView):
 class EventReviewSettings(EventSettingsPermission, ActionFromUrl, FormView):
     form_class = ReviewSettingsForm
     template_name = "orga/settings/review.html"
-    write_permission_required = "orga.change_settings"
 
     def get_success_url(self) -> str:
         return self.request.event.orga_urls.review_settings
@@ -421,8 +418,7 @@ class EventReviewSettings(EventSettingsPermission, ActionFromUrl, FormView):
         return True
 
 
-class PhaseActivate(PermissionRequired, View):
-    permission_required = "orga.change_settings"
+class PhaseActivate(EventSettingsPermission, View):
 
     def get_object(self):
         return get_object_or_404(
@@ -439,7 +435,6 @@ class PhaseActivate(PermissionRequired, View):
 class EventMailSettings(EventSettingsPermission, ActionFromUrl, FormView):
     form_class = MailSettingsForm
     template_name = "orga/settings/mail.html"
-    write_permission_required = "orga.change_settings"
 
     def get_success_url(self) -> str:
         return self.request.event.orga_urls.mail_settings
@@ -539,7 +534,7 @@ def condition_copy(wizard):
 
 
 class EventWizard(PermissionRequired, SensibleBackWizardMixin, SessionWizardView):
-    permission_required = "orga.create_events"
+    permission_required = "event.create_event"
     file_storage = FileSystemStorage(location=Path(settings.MEDIA_ROOT) / "new_event")
     form_list = [
         ("initial", EventWizardInitialForm),
@@ -552,13 +547,6 @@ class EventWizard(PermissionRequired, SensibleBackWizardMixin, SessionWizardView
 
     def get_template_names(self):
         return [f"orga/event/wizard/{self.steps.current}.html"]
-
-    @context
-    def has_organiser(self):
-        return (
-            self.request.user.teams.filter(can_create_events=True).exists()
-            or self.request.user.is_administrator
-        )
 
     @context
     def organiser(self):
@@ -686,7 +674,7 @@ class EventWizard(PermissionRequired, SensibleBackWizardMixin, SessionWizardView
 
 
 class EventDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
-    permission_required = "person.is_administrator"
+    permission_required = "person.administrator_user"
     model = Event
     action_text = (
         _(
@@ -713,9 +701,8 @@ class EventDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
 
 
 @method_decorator(csp_update(SCRIPT_SRC="'self' 'unsafe-eval'"), name="dispatch")
-class WidgetSettings(EventPermissionRequired, FormView):
+class WidgetSettings(EventSettingsPermission, FormView):
     form_class = WidgetSettingsForm
-    permission_required = "orga.change_settings"
     template_name = "orga/settings/widget.html"
 
     def form_valid(self, form):

@@ -16,6 +16,7 @@ from pretalx.submission.models import (
     AnswerOption,
     CfP,
     Question,
+    Review,
     Submission,
     SubmissionComment,
     SubmissionStates,
@@ -63,6 +64,7 @@ LOG_NAMES = {
         "The invitation to the review team was retracted."
     ),
     "pretalx.invite.reviewer.send": _("The invitation to the review team was sent."),
+    "pretalx.team.member.remove": _("A team member was removed"),
     "pretalx.mail.create": _("An email was created."),
     "pretalx.mail.delete": _("A pending email was deleted."),
     "pretalx.mail.delete_all": _("All pending emails were deleted."),
@@ -81,6 +83,8 @@ LOG_NAMES = {
     "pretalx.tag.delete": _("A tag was deleted."),
     "pretalx.tag.update": _("A tag was modified."),
     "pretalx.room.create": _("A new room was added."),
+    "pretalx.room.update": _("A room was modified."),
+    "pretalx.room.delete": _("A room was deleted."),
     "pretalx.schedule.release": _("A new schedule version was released."),
     "pretalx.submission.accept": _("The proposal was accepted."),
     "pretalx.submission.cancel": _("The proposal was cancelled."),
@@ -91,6 +95,9 @@ LOG_NAMES = {
     "pretalx.submission.resource.create": _("A proposal resource was added."),
     "pretalx.submission.resource.delete": _("A proposal resource was deleted."),
     "pretalx.submission.resource.update": _("A proposal resource was modified."),
+    "pretalx.submission.review.delete": _("A review was deleted."),
+    "pretalx.submission.review.update": _("A review was modified."),
+    "pretalx.submission.review.create": _("A review was added."),
     "pretalx.submission.speakers.add": _("A speaker was added to the proposal."),
     "pretalx.submission.speakers.invite": _("A speaker was invited to the proposal."),
     "pretalx.submission.speakers.remove": _("A speaker was removed from the proposal."),
@@ -114,7 +121,14 @@ LOG_NAMES = {
     "pretalx.track.update": _("A track was modified."),
     "pretalx.speaker.arrived": _("A speaker has been marked as arrived."),
     "pretalx.speaker.unarrived": _("A speaker has been marked as not arrived."),
+    "pretalx.speaker_information.create": _("A speaker information note was added."),
+    "pretalx.speaker_information.update": _("A speaker information note was modified."),
+    "pretalx.speaker_information.delete": _("A speaker information note was deleted."),
     "pretalx.user.token.reset": _("The API token was reset."),
+    "pretalx.user.token.revoke": _("The API token was revoked."),
+    "pretalx.user.token.upgrade": _(
+        "The API token was upgraded to the latest version."
+    ),
     "pretalx.user.password.reset": phrases.base.password_reset_success,
     "pretalx.user.password.update": _("The password was modified."),
     "pretalx.user.profile.update": _("The profile was modified."),
@@ -159,6 +173,10 @@ def default_activitylog_object_link(sender: Event, activitylog: ActivityLog, **k
             activitylog.content_object.submission.orga_urls.comments
             + f"#comment-{activitylog.content_object.pk}"
         )
+        link_text = escape(activitylog.content_object.submission.title)
+        text = _submission_label_text(activitylog.content_object.submission)
+    elif isinstance(activitylog.content_object, Review):
+        url = activitylog.content_object.submission.orga_urls.reviews
         link_text = escape(activitylog.content_object.submission.title)
         text = _submission_label_text(activitylog.content_object.submission)
     elif isinstance(activitylog.content_object, Question):

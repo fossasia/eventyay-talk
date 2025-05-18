@@ -22,7 +22,7 @@ from pretalx.person.models import User
 
 class AdminDashboard(PermissionRequired, TemplateView):
     template_name = "orga/admin/admin.html"
-    permission_required = "person.is_administrator"
+    permission_required = "person.administrator_user"
 
     @context
     def queue_length(self):
@@ -45,7 +45,7 @@ class AdminDashboard(PermissionRequired, TemplateView):
 
 class UpdateCheckView(PermissionRequired, FormView):
     template_name = "orga/admin/update.html"
-    permission_required = "person.is_administrator"
+    permission_required = "person.administrator_user"
     form_class = UpdateSettingsForm
 
     def post(self, request, *args, **kwargs):
@@ -79,7 +79,7 @@ class UpdateCheckView(PermissionRequired, FormView):
 
 class AdminUserList(PermissionRequired, ListView):
     template_name = "orga/admin/user_list.html"
-    permission_required = "person.is_administrator"
+    permission_required = "person.administrator_user"
     model = User
     context_object_name = "users"
     paginate_by = "250"
@@ -117,7 +117,7 @@ class AdminUserList(PermissionRequired, ListView):
 
 class AdminUserDetail(PermissionRequired, DetailView):
     template_name = "orga/admin/user_detail.html"
-    permission_required = "person.is_administrator"
+    permission_required = "person.administrator_user"
     model = User
     context_object_name = "user"
     slug_url_kwarg = "code"
