@@ -499,7 +499,7 @@ LOGIN_URL = "/orga/login"
 DEFAULT_AUTHENTICATION_BACKENDS = [
     "rules.permissions.ObjectPermissionBackend",
     "django.contrib.auth.backends.ModelBackend",
-    "pretalx.common.auth.AuthenticationTokenBackend",
+    "pretalx.common.auth.UserTokenAuthentication",
 ]
 EXTRA_AUTH_BACKENDS = [
     backend
