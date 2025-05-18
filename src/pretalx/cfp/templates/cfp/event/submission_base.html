@@ -64,7 +64,9 @@
                             </button>
                             <button type="submit" class="btn btn-link text-center" name="action" value="draft">
                                 {% translate "or save as draft for now" %}
-                                <i class="fa fa-question-circle" data-toggle="tooltip" title="{% translate "You can save your proposal as a draft and submit it later. Organisers will not be able to see your proposal, though they will be able to send you reminder emails about the upcoming deadline." %}"></i>
+                                <span data-toggle="tooltip" data-placement="bottom-left" class="tooltip-textbox" title="{% translate "You can save your proposal as a draft and submit it later. Organisers will not be able to see your proposal, though they will be able to send you reminder emails about the upcoming deadline." %}">
+                                    <i class="fa fa-question-circle"></i>
+                                </span>
                             </button>
                         {% endif %}
                     </div>
