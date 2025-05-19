@@ -21,6 +21,7 @@ ALLOWED_TAGS = {
     "blockquote",
     "br",
     "code",
+    "del",
     "div",
     "em",
     "hr",
