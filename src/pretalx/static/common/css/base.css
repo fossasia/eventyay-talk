@@ -51,7 +51,6 @@ summary.btn {
   text-align: center;
   user-select: none;
   text-decoration: none;
-  font-family: var(--font-family-title);
 
   border: 1px solid var(--highlight-color);
   border-radius: var(--size-border-radius);
