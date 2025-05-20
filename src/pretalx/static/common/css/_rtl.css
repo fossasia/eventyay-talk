@@ -158,9 +158,9 @@ input[lang="ar"],
 textarea[lang="ar"],
 div[lang="ar"],
 pre[lang="ar"],
-input[lang="hw"],
-textarea[lang="hw"],
-div[lang="hw"],
-pre[lang="hw"] {
+input[lang="he"],
+textarea[lang="he"],
+div[lang="he"],
+pre[lang="he"] {
   direction: rtl;
 }
