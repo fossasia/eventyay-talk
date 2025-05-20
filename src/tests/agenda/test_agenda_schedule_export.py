@@ -64,12 +64,9 @@ def test_schedule_json_schema_is_up_to_date():
 
 
 @pytest.mark.django_db
+@pytest.mark.usefixtures("break_slot")
 def test_schedule_frab_xml_export(
-    slot,
-    client,
-    django_assert_max_num_queries,
-    schedule_schema_xml,
-    break_slot,
+    slot, client, django_assert_max_num_queries, schedule_schema_xml
 ):
     with django_assert_max_num_queries(15):
         response = client.get(
@@ -123,9 +120,9 @@ def test_schedule_frab_xml_export_control_char(
 
 
 @pytest.mark.django_db
+@pytest.mark.usefixtures("break_slot")
 def test_schedule_frab_json_export(
     slot,
-    break_slot,
     client,
     django_assert_max_num_queries,
     orga_user,
@@ -171,9 +168,8 @@ def test_schedule_frab_json_export(
 
 
 @pytest.mark.django_db
-def test_schedule_frab_xcal_export(
-    slot, client, django_assert_max_num_queries, break_slot
-):
+@pytest.mark.usefixtures("break_slot")
+def test_schedule_frab_xcal_export(slot, client, django_assert_max_num_queries):
     with django_assert_max_num_queries(11):
         response = client.get(
             reverse(
@@ -362,7 +358,8 @@ def test_html_export_release_disabled(mocker, event):
 
 
 @pytest.mark.django_db
-def test_html_export_language(event, slot):
+@pytest.mark.usefixtures("slot")
+def test_html_export_language(event):
     from django.core.management import (  # Import here to avoid overriding mocks
         call_command,
     )
@@ -382,7 +379,8 @@ def test_html_export_language(event, slot):
 
 
 @pytest.mark.django_db
-def test_schedule_export_schedule_html_task(mocker, event, slot):
+@pytest.mark.usefixtures("slot")
+def test_schedule_export_schedule_html_task(mocker, event):
     mocker.patch("django.core.management.call_command")
     from django.core.management import (  # Import here to avoid overriding mocks
         call_command,
@@ -394,7 +392,8 @@ def test_schedule_export_schedule_html_task(mocker, event, slot):
 
 
 @pytest.mark.django_db
-def test_schedule_export_schedule_html_task_nozip(mocker, event, slot):
+@pytest.mark.usefixtures("slot")
+def test_schedule_export_schedule_html_task_nozip(mocker, event):
     mocker.patch("django.core.management.call_command")
     from django.core.management import (  # Import here to avoid overriding mocks
         call_command,
@@ -614,14 +613,10 @@ def test_empty_speaker_csv_export(orga_client, django_assert_max_num_queries, ev
 
 
 @pytest.mark.django_db
-def test_submission_question_csv_export(
-    slot,
-    orga_client,
-    answer,
-    answered_choice_question,
-    impersonal_answer,
-    personal_answer,
-):
+@pytest.mark.usefixtures(
+    "answer", "answered_choice_question", "impersonal_answer", "personal_answer"
+)
+def test_submission_question_csv_export(slot, orga_client):
     response = orga_client.get(
         reverse(
             "agenda:export",
@@ -637,14 +632,10 @@ def test_submission_question_csv_export(
 
 
 @pytest.mark.django_db
-def test_speaker_question_csv_export(
-    slot,
-    orga_client,
-    answer,
-    answered_choice_question,
-    impersonal_answer,
-    personal_answer,
-):
+@pytest.mark.usefixtures(
+    "answer", "answered_choice_question", "impersonal_answer", "personal_answer"
+)
+def test_speaker_question_csv_export(slot, orga_client):
     response = orga_client.get(
         reverse(
             "agenda:export",

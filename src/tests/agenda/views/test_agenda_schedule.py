@@ -7,16 +7,10 @@ from django_scopes import scope
 
 
 @pytest.mark.django_db
+@pytest.mark.usefixtures("other_slot")
 @pytest.mark.parametrize("version,queries", (("js", 6), ("nojs", 8)))
 def test_can_see_schedule(
-    client,
-    django_assert_num_queries,
-    user,
-    event,
-    slot,
-    other_slot,
-    version,
-    queries,
+    client, django_assert_num_queries, user, event, slot, version, queries
 ):
     with scope(event=event):
         del event.current_schedule
@@ -33,8 +27,9 @@ def test_can_see_schedule(
 
 
 @pytest.mark.django_db
+@pytest.mark.usefixtures("other_slot")
 @pytest.mark.parametrize("version", ("js", "nojs"))
-def test_orga_can_see_wip_schedule(orga_client, user, event, slot, other_slot, version):
+def test_orga_can_see_wip_schedule(orga_client, event, slot, version):
     with scope(event=event):
         url = event.urls.schedule + "v/wip/"
         if version != "js":
@@ -47,7 +42,8 @@ def test_orga_can_see_wip_schedule(orga_client, user, event, slot, other_slot, v
 
 
 @pytest.mark.django_db
-def test_can_see_text_schedule(client, user, event, slot, other_slot):
+@pytest.mark.usefixtures("other_slot")
+def test_can_see_text_schedule(client, event, slot):
     response = client.get(event.urls.schedule, follow=True, HTTP_ACCEPT="*/*")
     assert response.status_code == 200
     with scope(event=event):
@@ -55,9 +51,8 @@ def test_can_see_text_schedule(client, user, event, slot, other_slot):
 
 
 @pytest.mark.django_db
-def test_can_see_schedule_with_broken_accept_header(
-    client, user, event, slot, other_slot
-):
+@pytest.mark.usefixtures("slot", "other_slot")
+def test_can_see_schedule_with_broken_accept_header(client, event):
     response = client.get(event.urls.schedule, follow=True, HTTP_ACCEPT="foo/bar")
     assert response.status_code == 200
     with scope(event=event):
@@ -65,10 +60,9 @@ def test_can_see_schedule_with_broken_accept_header(
 
 
 @pytest.mark.django_db
+@pytest.mark.usefixtures("slot", "other_slot")
 @pytest.mark.parametrize("featured", ("always", "never", "pre_schedule"))
-def test_cannot_see_schedule_by_setting(
-    client, user, event, slot, other_slot, featured
-):
+def test_cannot_see_schedule_by_setting(client, user, event, featured):
     with scope(event=event):
         event.feature_flags["show_schedule"] = False
         event.save()
@@ -84,8 +78,9 @@ def test_cannot_see_schedule_by_setting(
 
 
 @pytest.mark.django_db
+@pytest.mark.usefixtures("slot", "other_slot")
 @pytest.mark.parametrize("featured", ("always", "never", "pre_schedule"))
-def test_cannot_see_no_schedule(client, user, event, slot, other_slot, featured):
+def test_cannot_see_no_schedule(client, user, event, featured):
     with scope(event=event):
         event.current_schedule.talks.all().delete()
         event.current_schedule.delete()
@@ -102,9 +97,8 @@ def test_cannot_see_no_schedule(client, user, event, slot, other_slot, featured)
 
 
 @pytest.mark.django_db
-def test_speaker_list(
-    client, django_assert_num_queries, event, speaker, slot, other_slot
-):
+@pytest.mark.usefixtures("slot", "other_slot")
+def test_speaker_list(client, django_assert_num_queries, event, speaker):
     url = event.urls.speakers
     with django_assert_num_queries(9):
         response = client.get(url, follow=True)
@@ -113,14 +107,9 @@ def test_speaker_list(
 
 
 @pytest.mark.django_db
+@pytest.mark.usefixtures("other_slot")
 def test_speaker_page(
-    client,
-    django_assert_num_queries,
-    event,
-    speaker,
-    slot,
-    other_slot,
-    other_submission,
+    client, django_assert_num_queries, event, speaker, slot, other_submission
 ):
     with scope(event=event):
         other_submission.speakers.add(speaker)
@@ -141,14 +130,9 @@ def test_speaker_page(
 
 
 @pytest.mark.django_db
+@pytest.mark.usefixtures("other_slot")
 def test_speaker_page_other_submissions_only_if_visible(
-    client,
-    django_assert_num_queries,
-    event,
-    speaker,
-    slot,
-    other_slot,
-    other_submission,
+    client, django_assert_num_queries, event, speaker, slot, other_submission
 ):
     with scope(event=event):
         other_submission.speakers.add(speaker)
@@ -170,7 +154,8 @@ def test_speaker_page_other_submissions_only_if_visible(
 
 
 @pytest.mark.django_db
-def test_speaker_social_media(client, django_assert_num_queries, event, speaker, slot):
+@pytest.mark.usefixtures("slot")
+def test_speaker_social_media(client, django_assert_num_queries, event, speaker):
     url = reverse(
         "agenda:speaker-social", kwargs={"code": speaker.code, "event": event.slug}
     )
@@ -180,9 +165,8 @@ def test_speaker_social_media(client, django_assert_num_queries, event, speaker,
 
 
 @pytest.mark.django_db
-def test_speaker_redirect(
-    client, django_assert_num_queries, event, speaker, slot, other_slot
-):
+@pytest.mark.usefixtures("slot", "other_slot")
+def test_speaker_redirect(client, event, speaker):
     target_url = reverse(
         "agenda:speaker", kwargs={"code": speaker.code, "event": event.slug}
     )
@@ -204,9 +188,8 @@ def test_speaker_redirect_unknown(client, event, submission):
 
 
 @pytest.mark.django_db
-def test_schedule_page_text_table(
-    client, django_assert_num_queries, event, speaker, slot, schedule, other_slot
-):
+@pytest.mark.usefixtures("other_slot")
+def test_schedule_page_text_table(client, django_assert_num_queries, event, slot):
     url = event.urls.schedule
     with django_assert_num_queries(8):
         response = client.get(url, follow=True)
@@ -218,14 +201,9 @@ def test_schedule_page_text_table(
 
 
 @pytest.mark.django_db
+@pytest.mark.usefixtures("other_slot")
 def test_schedule_page_text_table_explicit_header(
-    client,
-    django_assert_num_queries,
-    event,
-    speaker,
-    slot,
-    schedule,
-    other_slot,
+    client, django_assert_num_queries, event, slot
 ):
     url = event.urls.schedule
     with django_assert_num_queries(8):
@@ -245,16 +223,9 @@ def test_schedule_page_text_table_explicit_header(
     ),
 )
 @pytest.mark.django_db
+@pytest.mark.usefixtures("slot", "other_slot")
 def test_schedule_page_redirects(
-    client,
-    django_assert_num_queries,
-    event,
-    speaker,
-    slot,
-    schedule,
-    other_slot,
-    header,
-    target,
+    client, django_assert_num_queries, event, header, target
 ):
     url = event.urls.schedule
     with django_assert_num_queries(6):
@@ -265,9 +236,8 @@ def test_schedule_page_redirects(
 
 
 @pytest.mark.django_db
-def test_schedule_page_text_list(
-    client, django_assert_num_queries, event, speaker, slot, schedule, other_slot
-):
+@pytest.mark.usefixtures("other_slot")
+def test_schedule_page_text_list(client, django_assert_num_queries, event, slot):
     url = event.urls.schedule
     with django_assert_num_queries(8):
         response = client.get(url, {"format": "list"}, follow=True)
@@ -276,8 +246,9 @@ def test_schedule_page_text_list(
 
 
 @pytest.mark.django_db
+@pytest.mark.usefixtures("other_slot")
 def test_schedule_page_text_wrong_format(
-    client, django_assert_num_queries, event, speaker, slot, schedule, other_slot
+    client, django_assert_num_queries, event, slot
 ):
     url = event.urls.schedule
     with django_assert_num_queries(8):
@@ -289,17 +260,16 @@ def test_schedule_page_text_wrong_format(
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "version,queries_main,queries_versioned,queries_redirect",
-    (("js", 6, 8, 13), ("nojs", 7, 12, 15)),
+    (("js", 6, 8, 13), ("nojs", 7, 12, 16)),
 )
+@pytest.mark.usefixtures("other_slot")
 def test_versioned_schedule_page(
     client,
     django_assert_num_queries,
     django_assert_max_num_queries,
     event,
-    speaker,
     slot,
     schedule,
-    other_slot,
     version,
     queries_main,
     queries_versioned,
