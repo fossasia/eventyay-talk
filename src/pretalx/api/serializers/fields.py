@@ -52,7 +52,7 @@ class UploadedFileField(serializers.Field):
 
         try:
             url = value.url
-        except AttributeError:  # pragma: no cover
+            request = self.context["request"]
+        except (AttributeError, KeyError):  # pragma: no cover
             return None
-        request = self.context["request"]
         return request.build_absolute_uri(url)
