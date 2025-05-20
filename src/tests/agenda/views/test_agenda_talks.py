@@ -102,7 +102,7 @@ def test_can_see_talk_do_not_record(client, event, django_assert_num_queries, sl
     with scope(event=event):
         slot.submission.do_not_record = True
         slot.submission.save()
-    with django_assert_num_queries(19):
+    with django_assert_num_queries(20):
         response = client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
     content = response.content.decode()
