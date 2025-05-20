@@ -73,22 +73,6 @@ class ScheduleMixin:
 class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
     permission_required = "schedule.list_schedule"
 
-    def get_context_data(self, **kwargs):
-        result = super().get_context_data(**kwargs)
-        schedule = self.schedule
-
-        if not schedule and self.version:
-            result["version"] = self.version
-            result["error"] = f'Schedule "{self.version}" not found.'
-            return result
-        if not schedule:
-            result["error"] = "Schedule not found."
-            return result
-        result["schedules"] = self.request.event.schedules.filter(
-            published__isnull=False
-        ).values_list("version")
-        return result
-
     def get(self, request, *args, **kwargs):
         url = resolve(self.request.path_info)
         if url.url_name == "export":
@@ -130,7 +114,7 @@ class ScheduleView(PermissionRequired, ScheduleMixin, TemplateView):
             output_format = "table"
         try:
             result = draw_ascii_schedule(data, output_format=output_format)
-        except StopIteration:
+        except StopIteration:  # pragma: no cover
             result = draw_ascii_schedule(data, output_format="list")
         result += "\n\n  📆 powered by pretalx"
         return HttpResponse(
@@ -221,10 +205,11 @@ class ScheduleNoJsView(ScheduleView):
     template_name = "agenda/schedule_nojs.html"
 
     def get_schedule_data(self):
+        schedule = self.get_object()
         data = ScheduleData(
             event=self.request.event,
-            schedule=self.schedule,
-            with_accepted=self.schedule and not self.schedule.version,
+            schedule=schedule,
+            with_accepted=schedule and not schedule.version,
             with_breaks=True,
         ).data
         for date in data:
@@ -236,11 +221,8 @@ class ScheduleNoJsView(ScheduleView):
 
     def get_context_data(self, **kwargs):
         result = super().get_context_data(**kwargs)
-        if "schedule" not in result:
-            return result
-
         result.update(**self.get_schedule_data())
-        result["day_count"] = len(result["data"])
+        result["day_count"] = len(result.get("data", []))
         return result
 
 

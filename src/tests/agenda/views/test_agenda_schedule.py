@@ -170,6 +170,16 @@ def test_speaker_page_other_submissions_only_if_visible(
 
 
 @pytest.mark.django_db
+def test_speaker_social_media(client, django_assert_num_queries, event, speaker, slot):
+    url = reverse(
+        "agenda:speaker-social", kwargs={"code": speaker.code, "event": event.slug}
+    )
+    with django_assert_num_queries(10):
+        response = client.get(url, follow=True)
+    assert response.status_code == 404  # no images available
+
+
+@pytest.mark.django_db
 def test_speaker_redirect(
     client, django_assert_num_queries, event, speaker, slot, other_slot
 ):

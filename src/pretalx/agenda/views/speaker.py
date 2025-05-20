@@ -148,9 +148,7 @@ class SpeakerTalksIcalView(PermissionRequired, DetailView):
 
 class SpeakerSocialMediaCard(SocialMediaCardMixin, SpeakerView):
     def get_image(self):
-        user = self.profile.user
-        if user.avatar:
-            return user.avatar
+        return self.profile.avatar
 
 
 @cache_page(60 * 60)

@@ -67,9 +67,7 @@ class TalkView(TalkMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
-        csp_update = {}
-        if self.recording.get("csp_header"):
-            csp_update["frame-src"] = self.recording.get("csp_header")
+        csp_update = {"frame-src": self.recording.get("csp_header")}
         response._csp_update = csp_update
         return response
 

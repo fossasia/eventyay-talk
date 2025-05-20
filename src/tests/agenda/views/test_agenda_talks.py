@@ -18,8 +18,6 @@ def test_can_see_talk_list(client, django_assert_num_queries, event, slot, other
 def test_can_see_talk(client, django_assert_num_queries, event, slot, other_slot):
     with django_assert_num_queries(21):
         response = client.get(slot.submission.urls.public, follow=True)
-    with scope(event=event):
-        assert event.schedules.count() == 2
     assert response.status_code == 200
     content = response.content.decode()
     with scope(event=event):
@@ -31,6 +29,18 @@ def test_can_see_talk(client, django_assert_num_queries, event, slot, other_slot
         assert str(slot.room.name) in content
         assert "fa-edit" not in content  # edit btn
         assert "fa-video" not in content  # do not record
+        assert "<iframe" not in content  # test plugin not active
+
+
+@pytest.mark.django_db
+def test_can_see_talk_with_iframe(client, django_assert_num_queries, event, slot):
+    event.plugins = "tests"
+    event.save()
+    with django_assert_num_queries(21):
+        response = client.get(slot.submission.urls.public, follow=True)
+    assert response.status_code == 200
+    content = response.content.decode()
+    assert "<iframe" in content
 
 
 @pytest.mark.django_db
@@ -89,7 +99,7 @@ def test_can_see_talk_do_not_record(client, event, django_assert_num_queries, sl
     with scope(event=event):
         slot.submission.do_not_record = True
         slot.submission.save()
-    with django_assert_num_queries(20):
+    with django_assert_num_queries(19):
         response = client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
     content = response.content.decode()
