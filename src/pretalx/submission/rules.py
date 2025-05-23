@@ -333,7 +333,7 @@ def get_reviewable_submissions(event, user, queryset=None):
     """
     from pretalx.submission.models import SubmissionStates
 
-    if not queryset:
+    if queryset is None:
         queryset = event.submissions.filter(state=SubmissionStates.SUBMITTED)
     queryset = limit_for_reviewers(queryset, event, user, add_assignments=True)
     queryset = queryset.annotate(review_count=Count("reviews"))
