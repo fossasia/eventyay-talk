@@ -3979,7 +3979,6 @@ components:
       - vi
       - zh-hant
       - zh-hans
-      - en-mozilla
       type: string
       description: |-
         * `en` - English
@@ -3999,7 +3998,6 @@ components:
         * `vi` - Vietnamese
         * `zh-hant` - Traditional Chinese (Taiwan)
         * `zh-hans` - Simplified Chinese
-        * `en-mozilla` - English (mozilla)
     MailTemplate:
       type: object
       description: |-
