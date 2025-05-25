@@ -6445,7 +6445,7 @@ tags:
     This is the only API endpoint that does not use the event setting on your access
     token, as teams exist outside the event structure.
 - name: submissions
-  description: Submissions are the central component of pretalx. The subissions available
+  description: Submissions are the central component of pretalx. The submissions available
     to an authenticated user via the API depend on their permissions within the event,
     the current review phase, and so on. To a non-authenticated user, only submissions
     that are a part of the current public schedule will be visible. Note that changing
@@ -6468,7 +6468,7 @@ tags:
     redirect offered at ``by-version/?version=latest`` to check for a new release.
 - name: slots
   description: Every block in a published pretalx schedule is a talk slot. Note that
-    there are talk slots without associalted submission (e.g. breaks). Each slot belongs
+    there are talk slots without associated submission (e.g. breaks). Each slot belongs
     to a schedule version – refer to the schedule endpoint for further documentation.
     Note that slots cannot be created or deleted via the API – this happens automatically
     when a submission’s state changes.

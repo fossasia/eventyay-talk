@@ -66,7 +66,7 @@ def postprocess_schema(result, generator, request, public):
             "name": "submissions",
             "description": (
                 "Submissions are the central component of pretalx. "
-                "The subissions available to an authenticated user via the API depend on their permissions within the event, "
+                "The submissions available to an authenticated user via the API depend on their permissions within the event, "
                 "the current review phase, and so on. "
                 "To a non-authenticated user, only submissions that are a part of the current public schedule will be visible. "
                 "Note that changing the speakers and state of a submission requires you to use the individual action endpoints rather than a plain update."
@@ -93,7 +93,7 @@ def postprocess_schema(result, generator, request, public):
         {
             "name": "slots",
             "description": (
-                "Every block in a published pretalx schedule is a talk slot. Note that there are talk slots without associalted submission (e.g. breaks). "
+                "Every block in a published pretalx schedule is a talk slot. Note that there are talk slots without associated submission (e.g. breaks). "
                 "Each slot belongs to a schedule version – refer to the schedule endpoint for further documentation. "
                 "Note that slots cannot be created or deleted via the API – this happens automatically when a submission’s state changes."
             ),
