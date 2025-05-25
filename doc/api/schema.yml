@@ -69,7 +69,7 @@ paths:
             enum:
             - submission_type
             - track
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - name: page
         required: false
         in: query
@@ -141,7 +141,7 @@ paths:
             enum:
             - submission_type
             - track
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: path
         name: id
         schema:
@@ -262,7 +262,7 @@ paths:
             - question
             - question.submission_types
             - question.tracks
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - name: page
         required: false
         in: query
@@ -352,7 +352,7 @@ paths:
             - question
             - question.submission_types
             - question.tracks
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: path
         name: id
         schema:
@@ -647,7 +647,7 @@ paths:
             - question
             - question.submission_types
             - question.tracks
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - name: page
         required: false
         in: query
@@ -724,7 +724,7 @@ paths:
             - question
             - question.submission_types
             - question.tracks
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: path
         name: id
         schema:
@@ -846,7 +846,7 @@ paths:
             - options
             - submission_types
             - tracks
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: query
         name: is_public
         schema:
@@ -968,7 +968,7 @@ paths:
             - options
             - submission_types
             - tracks
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: path
         name: id
         schema:
@@ -1098,7 +1098,7 @@ paths:
             - submission.tags
             - submission.track
             - user
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - name: page
         required: false
         in: query
@@ -1186,7 +1186,7 @@ paths:
             - scores.category
             - submission
             - user
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: path
         name: id
         schema:
@@ -1525,7 +1525,7 @@ paths:
             - slots.submission.speakers
             - slots.submission.submission_type
             - slots.submission.track
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: path
         name: id
         schema:
@@ -1667,7 +1667,7 @@ paths:
             - submission.speakers
             - submission.submission_type
             - submission.track
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: query
         name: is_visible
         schema:
@@ -1746,7 +1746,7 @@ paths:
             - submission.speakers
             - submission.submission_type
             - submission.track
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: path
         name: id
         schema:
@@ -1875,7 +1875,7 @@ paths:
             enum:
             - limit_tracks
             - limit_types
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - name: page
         required: false
         in: query
@@ -1947,7 +1947,7 @@ paths:
             enum:
             - limit_tracks
             - limit_types
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: path
         name: id
         schema:
@@ -2067,7 +2067,7 @@ paths:
             - answers
             - answers.question
             - submissions
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - name: page
         required: false
         in: query
@@ -2116,7 +2116,7 @@ paths:
             - answers
             - answers.question
             - submissions
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: path
         name: user__code__iexact
         schema:
@@ -2394,7 +2394,7 @@ paths:
             - submission_type
             - tags
             - track
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: query
         name: is_featured
         schema:
@@ -2515,7 +2515,7 @@ paths:
             - submission_type
             - tags
             - track
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       tags:
       - submissions
       responses:
@@ -3252,7 +3252,7 @@ paths:
             - invites
             - limit_tracks
             - members
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: path
         name: organiser
         schema:
@@ -3325,7 +3325,7 @@ paths:
             - invites
             - limit_tracks
             - members
-        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.
+        description: Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.
       - in: path
         name: id
         schema:

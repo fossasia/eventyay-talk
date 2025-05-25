@@ -5,7 +5,7 @@ from pretalx.mail.models import MailTemplateRoles
 
 
 def build_expand_docs(*params):
-    description = 'Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expansion">expand</a>.'
+    description = 'Select fields to <a href="https://docs.pretalx.org/api/fundamentals/#expanding-linked-resources">expand</a>.'
     return OpenApiParameter(
         name="expand",
         type=OpenApiTypes.STR,
