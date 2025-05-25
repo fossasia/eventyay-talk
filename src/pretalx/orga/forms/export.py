@@ -28,7 +28,7 @@ class ExportForm(forms.Form):
         required=False,
         label=_("Data delimiter"),
         help_text=_(
-            "How do you want to separate data within a single cell (for example, multiple speakers in one session)?"
+            "How do you want to separate data within a single cell (for example, multiple speakers in one session/multiple sessions for one speaker)?"
         ),
         choices=(
             ("newline", _("Newline")),
