@@ -235,7 +235,7 @@ class SubmissionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
             ),
             "resources": (
                 "pretalx.api.serializers.submission.ResourceSerializer",
-                {"source": "resources", "many": True, "read_only": True},
+                {"many": True, "read_only": True},
             ),
         }
         extra_expandable_fields = {
