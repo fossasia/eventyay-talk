@@ -42,7 +42,8 @@ class ExportForm(forms.Form):
         super().__init__(*args, **kwargs)
         self._build_model_fields()
         self._build_question_fields()
-        self.fields["data_delimiter"].widget.attrs["class"] = "hide-optional"
+        if "data_delimiter" in self.fields:
+            self.fields["data_delimiter"].widget.attrs["class"] = "hide-optional"
 
     @property
     def questions(self):
