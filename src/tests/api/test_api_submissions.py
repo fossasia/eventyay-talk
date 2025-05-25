@@ -1358,7 +1358,9 @@ def test_orga_cannot_remove_speaker_from_submission_readonly_token(
 
 
 @pytest.mark.django_db
-def test_public_submission_expandable_fields(client, event, slot, answer, track):
+def test_public_submission_expandable_fields(
+    client, event, slot, answer, track, speaker_answer
+):
     with scope(event=slot.submission.event):
         slot.submission.event.is_public = True
         slot.submission.event.save()
@@ -1372,6 +1374,8 @@ def test_public_submission_expandable_fields(client, event, slot, answer, track)
         answer.question.is_public = True
         answer.question.target = "submission"
         answer.question.save()
+        speaker_answer.question.is_public = True
+        speaker_answer.question.save()
 
     expand_fields = [
         "track",
@@ -1380,6 +1384,8 @@ def test_public_submission_expandable_fields(client, event, slot, answer, track)
         "submission_type",
         "speakers",
         "speakers.user",
+        "speakers.answers",
+        "speakers.answers.question",
         "answers",
         "answers.question",
     ]
@@ -1401,8 +1407,14 @@ def test_public_submission_expandable_fields(client, event, slot, answer, track)
             == slot.submission.submission_type.name
         )
         assert submission_data["speakers"][0]["name"] == speaker_user.name
+        assert len(submission_data["speakers"][0]["answers"]) == 1
+        assert (
+            submission_data["speakers"][0]["answers"][0]["question"]["id"]
+            == speaker_answer.question_id
+        )
         assert "email" not in submission_data["speakers"]
         assert submission_data["answers"][0]["question"]["id"] == answer.question_id
+        assert len(submission_data["answers"]) == 1
         assert len(submission_data["slots"]) == 1
         assert submission_data["slots"][0]["room"]["id"] == slot.room_id
 

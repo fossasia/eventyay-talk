@@ -18,6 +18,7 @@ from pretalx.api.serializers.availability import (
 from pretalx.api.serializers.fields import UploadedFileField
 from pretalx.api.versions import CURRENT_VERSIONS, register_serializer
 from pretalx.person.models import SpeakerProfile, User
+from pretalx.submission.models import QuestionTarget
 
 
 @register_serializer(versions=CURRENT_VERSIONS)
@@ -46,7 +47,11 @@ class SpeakerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     @extend_schema_field(list[int])
     def get_answers(self, obj):
         questions = self.context.get("questions", [])
-        qs = obj.answers.filter(question__in=questions, question__event=self.event)
+        qs = obj.answers.filter(
+            question__in=questions,
+            question__event=self.event,
+            question__target=QuestionTarget.SPEAKER,
+        )
         if serializer := self.get_extra_flex_field("answers", qs):
             return serializer.data
         return qs.values_list("pk", flat=True)

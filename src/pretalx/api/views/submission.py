@@ -33,7 +33,6 @@ from pretalx.api.versions import LEGACY
 from pretalx.common.auth import TokenAuthentication
 from pretalx.common.exceptions import SubmissionError
 from pretalx.submission.models import (
-    QuestionTarget,
     Submission,
     SubmissionStates,
     SubmissionType,
@@ -222,9 +221,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         context = super().get_serializer_context()
         if not self.event:
             return context
-        context["questions"] = questions_for_user(self.event, self.request.user).filter(
-            target=QuestionTarget.SUBMISSION
-        )
+        context["questions"] = questions_for_user(self.event, self.request.user)
         context["speakers"] = self.speaker_profiles_for_user
         context["schedule"] = self.event.current_schedule
         context["public_slots"] = not self.has_perm("delete")
