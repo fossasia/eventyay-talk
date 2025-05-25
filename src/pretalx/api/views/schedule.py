@@ -45,8 +45,8 @@ from pretalx.schedule.models import Schedule, TalkSlot
         ),
         parameters=[
             build_expand_docs(
-                "room",
                 "slots",
+                "slots.room",
                 "slots.submission",
                 "slots.submission.speakers",
                 "slots.submission.track",
