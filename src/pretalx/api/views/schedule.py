@@ -76,9 +76,7 @@ class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context["only_visible_slots"] = self.event and not self.has_perm(
-            "schedule.orga_view_schedule", self.event
-        )
+        context["only_visible_slots"] = self.event and not self.has_perm("orga_view")
         return context
 
     def get_queryset(self):

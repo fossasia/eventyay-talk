@@ -103,7 +103,9 @@ def test_user_cannot_access_wip_schedule_shortcut(client, event, slot):
 
 
 @pytest.mark.django_db
-def test_orga_can_access_latest_schedule_shortcut(client, orga_user_token, event, slot):
+def test_orga_can_access_latest_schedule_shortcut(
+    client, orga_user_token, event, slot, break_slot
+):
     with scope(event=event):
         assert event.current_schedule is not None
         current_schedule_version = event.current_schedule.version
@@ -115,6 +117,7 @@ def test_orga_can_access_latest_schedule_shortcut(client, orga_user_token, event
     assert response.status_code == 200
     content = json.loads(response.content.decode())
     assert content["version"] == current_schedule_version
+    assert len(content["slots"]) == 2
 
 
 @pytest.mark.django_db
