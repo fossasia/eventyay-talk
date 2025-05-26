@@ -1,3 +1,4 @@
+import html
 import json
 import random
 import uuid
@@ -13,6 +14,7 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
@@ -75,6 +77,15 @@ class UserManager(BaseUserManager):
         return user
 
 
+def validate_username(value):
+    from pretalx.common.templatetags.rich_text import render_markdown
+
+    result = render_markdown(value)[3:-4]  # strip <p> tags
+    result = html.unescape(result)  # permit single <, > etc
+    if result != value:
+        raise ValidationError(_("Your username must not contain HTML or other markup."))
+
+
 class User(
     PermissionsMixin,
     RulesModelMixin,
@@ -113,6 +124,7 @@ class User(
         help_text=_(
             "Please enter the name you wish to be displayed publicly. This name will be used for all events you are participating in on this server."
         ),
+        validators=[validate_username],
     )
     email = models.EmailField(
         unique=True,
