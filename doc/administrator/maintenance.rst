@@ -29,9 +29,10 @@ These commands update pretalx first, then the database, then the static files.
 Once you have executed these steps without seeing any errors, do not forget to
 restart your service(s)::
 
-    $ pip3 install --user --upgrade-strategy eager -U pretalx
-    $ python -m pretalx migrate
-    $ python -m pretalx rebuild --npm-install
+    (env)$ pip3 install --upgrade-strategy eager -U pretalx
+    (env)$ python -m pretalx check --deploy
+    (env)$ python -m pretalx migrate
+    (env)$ python -m pretalx rebuild --npm-install
     # systemctl restart pretalx-web
     # systemctl restart pretalx-worker  # If you’re running celery
 

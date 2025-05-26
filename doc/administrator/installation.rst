@@ -150,6 +150,10 @@ We also need to create a data directory::
 
     $ mkdir -p /var/pretalx/data/media
 
+Finally, check that your configuration is ready for production::
+
+    (venv)$ python -m pretalx check --deploy
+
 We compile static files and translation data and create the database structure::
 
     (venv)$ python -m pretalx migrate

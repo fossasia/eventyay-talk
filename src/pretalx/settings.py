@@ -702,11 +702,15 @@ with suppress(ImportError):
 if "--no-pretalx-information" in sys.argv:
     sys.argv.remove("--no-pretalx-information")
 else:
-    log_initial(
-        debug=DEBUG,
-        config_files=CONFIG_FILES,
-        db_name=db_name,
-        db_backend=db_backend,
-        log_dir=LOG_DIR,
-        plugins=PLUGINS,
-    )
+    log_initial()
+
+SILENCED_SYSTEM_CHECKS = [
+    "security.W003",  # CsrfMiddleware modified but in use
+    "security.W004",  # HSTS belongs to the proxy, not Django
+    "security.W008",  # We have our own HTTPS check
+    "security.W010",  # We have our own HTTPS check
+    "security.W018",  # We have our own DEBUG check (to link our docs)
+]
+
+with suppress(ImportError):
+    from .override_settings import *  # noqa
