@@ -26,7 +26,7 @@ class AdminDashboard(PermissionRequired, TemplateView):
 
     @context
     def queue_length(self):
-        if not settings.HAS_CELERY:
+        if settings.CELERY_TASK_ALWAYS_EAGER:
             return None
         try:
             client = app.broker_connection().channel().client

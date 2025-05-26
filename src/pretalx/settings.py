@@ -182,12 +182,12 @@ else:
             f.write(SECRET_KEY)
 
 ## TASK RUNNER SETTINGS
-HAS_CELERY = bool(config.get("celery", "broker", fallback=None))
-if HAS_CELERY:
+if bool(config.get("celery", "broker")):
     CELERY_BROKER_URL = config.get("celery", "broker")
     CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
     CELERY_RESULT_BACKEND = config.get("celery", "backend")
     CELERY_RESULT_BACKEND_THREAD_SAFE = True
+    CELERY_TASK_ALWAYS_EAGER = False
 else:
     CELERY_TASK_ALWAYS_EAGER = True
 
@@ -301,14 +301,6 @@ CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
 REAL_CACHE_USED = False
 SESSION_ENGINE = None
 
-HAS_MEMCACHED = bool(os.getenv("PRETALX_MEMCACHE", ""))
-if HAS_MEMCACHED:
-    REAL_CACHE_USED = True
-    CACHES["default"] = {
-        "BACKEND": "django.core.cache.backends.memcached.PyLibMCCache",
-        "LOCATION": os.getenv("PRETALX_MEMCACHE"),
-    }
-
 HAS_REDIS = config.get("redis", "location") != "False"
 if HAS_REDIS:
     CACHES["redis"] = {
@@ -320,10 +312,6 @@ if HAS_REDIS:
         "LOCATION": config.get("redis", "location"),
         "TIMEOUT": 3600 * 24 * 30,
     }
-    if not HAS_MEMCACHED:
-        CACHES["default"] = CACHES["redis"]
-        REAL_CACHE_USED = True
-
     if config.getboolean("redis", "session"):
         SESSION_ENGINE = "django.contrib.sessions.backends.cache"
         SESSION_CACHE_ALIAS = "redis_sessions"
@@ -695,9 +683,6 @@ if DEBUG:
             .decode()
             .strip()
         )
-
-with suppress(ImportError):
-    from .override_settings import *  # noqa
 
 if "--no-pretalx-information" in sys.argv:
     sys.argv.remove("--no-pretalx-information")
