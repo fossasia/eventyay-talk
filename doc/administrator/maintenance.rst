@@ -43,7 +43,7 @@ If you want to upgrade pretalx to a specific release, you can pin the version
 in the pip command. Substitute ``pretalx`` with ``pretalx==1.2.3`` in the pip
 install line above like this::
 
-    $ pip3 install --user --upgrade-strategy eager pretalx==1.2.3
+    (env)$ pip3 install --user --upgrade-strategy eager pretalx==1.2.3
 
 .. _installing-a-commit:
 
@@ -54,7 +54,7 @@ If you’re sure that you know what you’re doing, you can also install a speci
 commit or branch of pretalx. You can replace ``main`` with a short or long
 commit ID for a specific commit::
 
-    $ pip3 install --user --upgrade-strategy eager -U "git+https://github.com/pretalx/pretalx.git@main#egg=pretalx"
+    (env)$ pip3 install --user --upgrade-strategy eager -U "git+https://github.com/pretalx/pretalx.git@main#egg=pretalx"
 
 
 Backups
