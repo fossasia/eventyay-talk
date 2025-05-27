@@ -322,9 +322,9 @@ class ICalExporter(BaseExporter):
 class FavedICalExporter(BaseExporter):
     identifier = "faved.ics"
     verbose_name = _("iCal (your starred sessions)")
-    public = False
     show_qrcode = False
     icon = "fa-calendar"
+    show_public = True
     cors = "*"
 
     def is_public(self, request, **kwargs):
@@ -339,16 +339,13 @@ class FavedICalExporter(BaseExporter):
             return None
 
         netloc = urlparse(settings.SITE_URL).netloc
-        submissions = request.event.submissions.filter(
-            favourites__user__in=[request.user]
-        ).prefetch_related("speakers", "slots", "slots__room")
+        slots = request.event.current_schedule.scheduled_talks.filter(
+            submission__favourites__user__in=[request.user]
+        )
 
         cal = vobject.iCalendar()
         cal.add("prodid").value = f"-//pretalx//{netloc}//{request.event.slug}//faved"
 
-        for submission in submissions:
-            for slot in submission.slots.filter(
-                schedule=request.event.current_schedule
-            ):
-                slot.build_ical(cal)
+        for slot in slots:
+            slot.build_ical(cal)
         return f"{self.event.slug}-favs.ics", "text/calendar", cal.serialize()

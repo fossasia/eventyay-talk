@@ -167,7 +167,7 @@ class ScheduleView(PermissionRequired, ScheduleMixin, TemplateView):
     def exporters(self):
         return [
             exporter
-            for exporter in get_schedule_exporters(self.request)
+            for exporter in get_schedule_exporters(self.request, public=True)
             if exporter.show_public
         ]
 
