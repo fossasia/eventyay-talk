@@ -19,7 +19,7 @@ Release Notes
 - :feature:`orga:submission` On proposal, speaker and review pages, where possible, a speaker’s other proposals are linked to provide organisers and reviewers with further context.
 - :feature:`orga:submission` If you have pending state changes in your sessions, pretalx will show you the total number on the event dashboard.
 - :feature:`orga:submission` You can now apply a proposal’s pending state change from the detail view.
-- :feature:`orga` We started writing the pretalx user guide. Currently, the section :ref:`user-guide-proposals` is finished and further sections are in the works. We also expaned the :ref:`user-faq`.
+- :feature:`orga` We started writing the pretalx user guide. Currently, the section :ref:`user-guide-proposals` is finished and further sections are in the works. We also expanded the :ref:`user-faq`.
 - :feature:`orga:review` If you use both track-based reviewer teams and review assignments, pretalx will now only suggest (and allow) proposals to be assigned to a reviewer who has access to that proposal’s track.
 - :feature:`orga,mail` You can now use the new ``{session_duration_minutes}`` email placeholder.
 - :feature:`cfp` Due to the current limitations of the pretalx logging system, the log entries sidebar was removed from the speaker/submitter-facing session pages. Organisers still have access to the history view.

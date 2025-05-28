@@ -86,6 +86,7 @@ px
 pytest
 queryset
 redis
+referer
 ro
 scrollbar
 slugified
@@ -101,6 +102,7 @@ subtractive
 systemd
 templating
 textboxes
+tracebacks
 transactional
 txt
 typeahead

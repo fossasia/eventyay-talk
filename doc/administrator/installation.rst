@@ -26,7 +26,7 @@ and configuration here, but please have a look at the linked pages.
 
 * **Python 3.10 or newer**
 * An SMTP server to send out mails
-* An HTTP reverse proxy like `nginx`_ to allow HTTPS connections and serve
+* An HTTP reverse proxy like nginx to allow HTTPS connections and serve
   files from the filesystem
 * A database server: `PostgreSQL`_ 13+, or SQLite 3. Given the choice, we’d
   recommend to use PostgreSQL.
@@ -289,7 +289,6 @@ If you want to read about updates, backups, and monitoring, head over to our
 :ref:`maintenance` documentation!
 
 .. _Ansible role: https://github.com/pretalx/ansible-pretalx
-.. _nginx: https://botleg.com/stories/https-with-lets-encrypt-and-nginx/
 .. _Let’s Encrypt: https://letsencrypt.org/
 .. _PostgreSQL: https://www.postgresql.org/docs/
 .. _redis: https://redis.io/docs/latest/
