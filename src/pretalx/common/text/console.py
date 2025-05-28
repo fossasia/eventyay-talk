@@ -78,13 +78,13 @@ def log_initial():
         if os.geteuid() == 0:
             print_line("You are running pretalx as root, why?", bold=True)
 
-    db_settings = settings.DATABASES["default"]
-    db_backend = db_settings["ENGINE"].rsplit(".")[-1]
+    db_settings = settings.DATABASES.get("default") or {}
+    db_backend = db_settings.get("ENGINE", "").rsplit(".")[-1]
     # Lines is a list of (text, bold)
     lines = [
         (f"pretalx v{__version__}", True),
         (f'Settings:  {", ".join(settings.CONFIG_FILES)}', False),
-        (f"Database:  {db_settings['NAME']} ({db_backend})", False),
+        (f"Database:  {db_settings.get('NAME')} ({db_backend})", False),
         (f"Logging:   {settings.LOG_DIR}", False),
         (f"Python:    {executable}", False),
         (f"Source:    {Path(__file__).parent.parent.parent}", False),
