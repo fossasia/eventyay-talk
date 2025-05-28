@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-05-28 08:40+0000\n"
-"PO-Revision-Date: 2025-04-02 09:36+0000\n"
+"PO-Revision-Date: 2025-05-28 08:49+0000\n"
 "Last-Translator: Tobias Kunze <r@rixx.de>\n"
 "Language-Team: \n"
 "Language: de_Formal\n"
@@ -1148,6 +1148,8 @@ msgid ""
 "The file you uploaded has a very large number of pixels, please upload a "
 "picture with smaller dimensions."
 msgstr ""
+"Das hochgeladene Bild hat sehr viele Pixel, bitte laden Sie ein kleineres "
+"Bild hoch."
 
 #: pretalx/common/image.py:54
 msgid ""
@@ -1216,10 +1218,8 @@ msgid "The invitation to the review team was sent."
 msgstr "Eine Einladung zum Review-Team wurde verschickt."
 
 #: pretalx/common/log_display.py:67
-#, fuzzy
-#| msgid "The team was removed."
 msgid "A team member was removed"
-msgstr "Das Team wurde entfernt."
+msgstr "Das Teammitglied wurde entfernt"
 
 #: pretalx/common/log_display.py:68
 msgid "An email was created."
@@ -1294,16 +1294,12 @@ msgid "A new room was added."
 msgstr "Ein Raum wurde hinzugefügt."
 
 #: pretalx/common/log_display.py:86
-#, fuzzy
-#| msgid "A track was modified."
 msgid "A room was modified."
-msgstr "Ein Track wurde verändert."
+msgstr "Ein Raum wurde verändert."
 
 #: pretalx/common/log_display.py:87
-#, fuzzy
-#| msgid "A track was deleted."
 msgid "A room was deleted."
-msgstr "Ein Track wurde gelöscht."
+msgstr "Ein Raum wurde gelöscht."
 
 #: pretalx/common/log_display.py:88
 msgid "A new schedule version was released."
@@ -1346,22 +1342,16 @@ msgid "A proposal resource was modified."
 msgstr "Eine Ressource wurde verändert."
 
 #: pretalx/common/log_display.py:98
-#, fuzzy
-#| msgid "A track was deleted."
 msgid "A review was deleted."
-msgstr "Ein Track wurde gelöscht."
+msgstr "Eine Bewertung wurde gelöscht."
 
 #: pretalx/common/log_display.py:99
-#, fuzzy
-#| msgid "An email was modified."
 msgid "A review was modified."
-msgstr "Eine E-Mail wurde verändert."
+msgstr "Eine Bewertung wurde verändert."
 
 #: pretalx/common/log_display.py:100
-#, fuzzy
-#| msgid "A track was added."
 msgid "A review was added."
-msgstr "Ein Track wurde hinzugefügt."
+msgstr "Eine Bewertung wurde hinzugefügt."
 
 #: pretalx/common/log_display.py:101
 msgid "A speaker was added to the proposal."
@@ -1456,38 +1446,28 @@ msgid "A speaker has been marked as not arrived."
 msgstr "Diese(r) Vortragende ist als „nicht angekommen“ markiert."
 
 #: pretalx/common/log_display.py:124
-#, fuzzy
-#| msgid "Speaker information note"
 msgid "A speaker information note was added."
-msgstr "Information für Vortragende"
+msgstr "Eine Information für Vortragende wurde hinzugefügt."
 
 #: pretalx/common/log_display.py:125
-#, fuzzy
-#| msgid "Speaker information note"
 msgid "A speaker information note was modified."
-msgstr "Information für Vortragende"
+msgstr "Eine Information für Vortragende wurde verändert."
 
 #: pretalx/common/log_display.py:126
-#, fuzzy
-#| msgid "Speaker information note"
 msgid "A speaker information note was deleted."
-msgstr "Information für Vortragende"
+msgstr "Eine Information für Vortragende wurde gelöscht."
 
 #: pretalx/common/log_display.py:127
 msgid "The API token was reset."
 msgstr "Das API-Token wurde zurückgesetzt."
 
 #: pretalx/common/log_display.py:128 pretalx/orga/views/person.py:94
-#, fuzzy
-#| msgid "The API token was reset."
 msgid "The API token was revoked."
-msgstr "Das API-Token wurde zurückgesetzt."
+msgstr "Das API-Token wurde invalidiert."
 
 #: pretalx/common/log_display.py:130
-#, fuzzy
-#| msgid "The API token was reset."
 msgid "The API token was upgraded to the latest version."
-msgstr "Das API-Token wurde zurückgesetzt."
+msgstr "Das API-Token wurde auf die aktuelle Version aktualisiert."
 
 #: pretalx/common/log_display.py:133
 msgid "The password was modified."
@@ -1529,10 +1509,8 @@ msgid "Email"
 msgstr "E-Mail"
 
 #: pretalx/common/log_display.py:210
-#, fuzzy
-#| msgid "Speaker email"
 msgid "Speaker profile"
-msgstr "E-Mail der Vortragenden"
+msgstr "Vortragenden-Profil"
 
 #: pretalx/common/log_display.py:214 pretalx/event/stages.py:98
 #: pretalx/orga/templates/orga/admin/user_detail.html:135
@@ -1802,10 +1780,8 @@ msgid "Optional"
 msgstr "Optional"
 
 #: pretalx/common/templates/common/logs.html:15
-#, fuzzy
-#| msgid "This change was performed by a member of the event orga."
 msgid "This change was performed by an event organiser."
-msgstr "Diese Aktion wurde von einem Orga-Mitglied durchgeführt."
+msgstr "Diese Aktion wurde von einem Veranstalter durchgeführt."
 
 #: pretalx/common/templates/common/powered_by.html:36
 #, python-format
@@ -1934,10 +1910,8 @@ msgstr ""
 "nicht rückgängig gemacht werden!"
 
 #: pretalx/common/text/phrases.py:61
-#, fuzzy
-#| msgid "The tag has been deleted."
 msgid "The item has been deleted."
-msgstr "Der Tag wurde gelöscht."
+msgstr "Das Objekt wurde gelöscht."
 
 #: pretalx/common/text/phrases.py:63
 msgid "Your changes have been saved."
@@ -2757,10 +2731,8 @@ msgid "The track the proposal belongs to"
 msgstr "Der Track, zu dem die Einreichung gehört"
 
 #: pretalx/mail/context.py:225
-#, fuzzy
-#| msgid "The duration in minutes."
 msgid "The session’s duration in minutes"
-msgstr "Die Dauer in Minuten."
+msgstr "Die Dauer in Minuten"
 
 #: pretalx/mail/context.py:232
 msgid ""
@@ -3693,6 +3665,8 @@ msgid ""
 "The password contains unsupported letters. Please only use characters A-Z, a-"
 "z, 0-9, and common special characters ({characters})."
 msgstr ""
+"Dieses Passwort enthält unzulässige Zeichen. Bitte nutzen Sie nur die "
+"Buchstaben A-Z, a-z, 0-9, und übliche Sonderzeichen ({characters})."
 
 #: pretalx/orga/forms/event.py:434
 msgid "Use STARTTLS"
@@ -3862,16 +3836,13 @@ msgid "Data delimiter"
 msgstr "Trennzeichen"
 
 #: pretalx/orga/forms/export.py:31
-#, fuzzy
-#| msgid ""
-#| "How do you want to separate data within a single cell (for example, "
-#| "multiple speakers in one session)?"
 msgid ""
 "How do you want to separate data within a single cell (for example, multiple "
 "speakers in one session/multiple sessions for one speaker)?"
 msgstr ""
 "Wie sollen Daten innerhalb einer einzelnen Zelle getrennt werden (z.B. wenn "
-"es mehrere Vortragende gibt)?"
+"es mehrere Vortragende für eine Session oder mehrere Sessions für einen "
+"Vortragenden gibt)?"
 
 #: pretalx/orga/forms/export.py:34
 msgid "Newline"
@@ -4118,10 +4089,8 @@ msgstr ""
 "Ressourcen"
 
 #: pretalx/orga/forms/speaker.py:17
-#, fuzzy
-#| msgid "Reviewers can accept and reject proposals"
 msgid "Just speakers with accepted and confirmed proposals"
-msgstr "Reviewer können Einreichungen annehmen und ablehnen"
+msgstr "Nur Vortragende mit angenommenen oder bestätigten Einreichungen"
 
 #: pretalx/orga/forms/speaker.py:31
 msgid "Proposal IDs"
@@ -4575,10 +4544,8 @@ msgid "View event"
 msgstr "Veranstaltung ansehen"
 
 #: pretalx/orga/templates/orga/base.html:127
-#, fuzzy
-#| msgid "Log in"
 msgid "Log out"
-msgstr "Einloggen"
+msgstr "Ausloggen"
 
 #: pretalx/orga/templates/orga/base.html:136
 msgid "You’re using pretalx as a superuser. This is not recommended."
@@ -4876,8 +4843,6 @@ msgid "Responses"
 msgstr "Antworten"
 
 #: pretalx/orga/templates/orga/cfp/question/list.html:71
-#, fuzzy
-#| msgid "This field’s availability depends on a deadline."
 msgid "This field's availability depends on a deadline."
 msgstr "Die Verfügbarkeit dieses Felds hängt von einer Frist ab."
 
@@ -5476,21 +5441,16 @@ msgid "New custom template"
 msgstr "Neue eigene Vorlage"
 
 #: pretalx/orga/templates/orga/mails/mailtemplate/list.html:28
-#, fuzzy
-#| msgid ""
-#| "You can edit the default templates and your custom templates for emails "
-#| "here. If you want to send emails to some or all of your speakers, head "
-#| "over to the “Send Emails” tab. Mails queued for sending are in the "
-#| "“Outbox” tab."
 msgid ""
 "You can edit the default templates and your custom templates for emails "
 "here. If you want to send emails to some or all of your speakers, head over "
 "to the \"Send Emails\" tab. Mails queued for sending are in the \"Outbox\" "
 "tab."
 msgstr ""
-"Sie können die Standardvorlagen und eigene Vorlagen hier editieren. Wenn Sie "
-"Mails zu allen oder manchen der Vortragenden schicken möchtest, klicke auf "
-"„E-Mails verschicken“. Noch nicht verschickte Mails sind im „Postausgang“."
+"Sie können die Standardvorlagen und eigene Vorlagen hier editieren. Wenn SIe "
+"Mails zu allen oder manchen der Vortragenden schicken möchten, klicken Sie "
+"auf „E-Mails verschicken“. Noch nicht verschickte Mails sind im "
+"„Postausgang“."
 
 #: pretalx/orga/templates/orga/mails/mailtemplate/list.html:35
 msgid ""
@@ -5501,15 +5461,10 @@ msgstr ""
 "detailliert beschrieben, sobald eine Vorlage bearbeitet wird."
 
 #: pretalx/orga/templates/orga/mails/mailtemplate/list.html:49
-#, fuzzy
-#| msgid "Templates"
 msgid "Template"
-msgstr "Vorlagen"
+msgstr "Vorlage"
 
 #: pretalx/orga/templates/orga/mails/mailtemplate/list.html:50
-#, fuzzy
-#| msgctxt "email subject"
-#| msgid "Subject"
 msgid "Subject"
 msgstr "Betreff"
 
@@ -6579,16 +6534,12 @@ msgid "Not arrived"
 msgstr "Nicht angekommen"
 
 #: pretalx/orga/templates/orga/speaker/speakerinformation/list.html:6
-#, fuzzy
-#| msgid "Speaker information"
 msgid "New speaker information"
-msgstr "Informationen für Vortragende"
+msgstr "Neue Information für Vortragende"
 
 #: pretalx/orga/templates/orga/speaker/speakerinformation/list.html:23
-#, fuzzy
-#| msgid "Resources"
 msgid "Resource"
-msgstr "Ressourcen"
+msgstr "Ressource"
 
 #: pretalx/orga/templates/orga/speaker/speakerinformation/list.html:39
 msgid "All submitters"
@@ -6605,16 +6556,12 @@ msgid "Only confirmed speakers"
 msgstr "Nur zugesagte Vortragende"
 
 #: pretalx/orga/templates/orga/speaker/speakerinformation/list.html:53
-#, fuzzy
-#| msgid "Use tracks"
 msgid "All tracks"
-msgstr "Tracks verwenden"
+msgstr "Alle Tracks"
 
 #: pretalx/orga/templates/orga/speaker/speakerinformation/list.html:63
-#, fuzzy
-#| msgid "Session types"
 msgid "All session types"
-msgstr "Einreichungsarten"
+msgstr "Alle Einreichungsarten"
 
 #: pretalx/orga/templates/orga/submission/anonymise.html:9
 #: pretalx/orga/templates/orga/submission/base.html:70
@@ -6892,40 +6839,29 @@ msgid "API Access"
 msgstr "API-Zugang"
 
 #: pretalx/orga/templates/orga/user.html:36
-#, fuzzy, python-format
-#| msgid ""
-#| "This token can be used to access the <a %(apiurl)s>pretalx API</a>. You "
-#| "can generate a new token, which will invalidate the old one. To find out "
-#| "more, please have a look at the <a %(docurl)s> API documentation</a>."
+#, python-format
 msgid ""
 "API tokens can be used to access the <a %(apiurl)s>pretalx API</a>. To find "
 "out more, please have a look at the <a %(docurl)s> API documentation</a>."
 msgstr ""
-"Dieses Token können Sie zum Zugang zur <a %(apiurl)s>pretalx-API</a> nutzen. "
-"Sie können hier ein neues Token erstellen, wodurch das bisherige Token "
-"ungültig wird. Für Details sehen Sie sich bitte die <a %(docurl)s>API-"
-"Dokumentation</a> an."
+"API-Token können Sie zum Zugang zur <a %(apiurl)s>pretalx-API</a> nutzen. "
+"Für Details sehen Sie sich bitte die <a %(docurl)s>API-Dokumentation</a> an."
 
 #: pretalx/orga/templates/orga/user.html:43
-#, fuzzy
-#| msgid "API Token"
 msgid "Your API tokens"
-msgstr "API-Token"
+msgstr "Ihre API-Token"
 
 #: pretalx/orga/templates/orga/user.html:48
-#, fuzzy
-#| msgctxt "Version of the conference schedule"
-#| msgid "Version"
 msgid "Version"
 msgstr "Version"
 
 #: pretalx/orga/templates/orga/user.html:50
 msgid "Last used"
-msgstr ""
+msgstr "Zuletzt genutzt"
 
 #: pretalx/orga/templates/orga/user.html:51
 msgid "Created"
-msgstr ""
+msgstr "Erstellt"
 
 #: pretalx/orga/templates/orga/user.html:52
 #: pretalx/submission/models/access_code.py:49
@@ -6934,23 +6870,19 @@ msgstr "Gültig bis"
 
 #: pretalx/orga/templates/orga/user.html:68
 msgid "Updgrade"
-msgstr ""
+msgstr "Aktualisieren"
 
 #: pretalx/orga/templates/orga/user.html:87
 msgid "Revoke"
-msgstr ""
+msgstr "Invalidieren"
 
 #: pretalx/orga/templates/orga/user.html:97
-#, fuzzy
-#| msgid "You don’t have any proposals yet."
 msgid "You don't have any API tokens yet."
-msgstr "Sie haben noch keine Einreichungen."
+msgstr "Sie haben noch keine API-Token."
 
 #: pretalx/orga/templates/orga/user.html:102
-#, fuzzy
-#| msgid "Create a new event"
 msgid "Create new token"
-msgstr "Darf neue Veranstaltung erstellen"
+msgstr "Neues Token anlegen"
 
 #: pretalx/orga/templates/orga/widgets/multi_languages_widget.html:8
 #, python-format
@@ -7097,12 +7029,10 @@ msgid "unconfirmed"
 msgstr "nicht bestätigt"
 
 #: pretalx/orga/views/dashboard.py:357
-#, fuzzy
-#| msgid "Apply pending changes"
 msgid "submission with pending changes"
 msgid_plural "submissions with pending changes"
-msgstr[0] "Vorgemerkte Änderungen freischalten"
-msgstr[1] "Vorgemerkte Änderungen freischalten"
+msgstr[0] "Einreichung mit vorgemerkten Änderungen"
+msgstr[1] "Einreichungen mit vorgemerkten Änderungen"
 
 #: pretalx/orga/views/dashboard.py:380
 #: pretalx/submission/models/submission.py:77
@@ -7177,7 +7107,7 @@ msgstr "Nur die letzte Reviewphase darf ein offenes Ende haben."
 
 #: pretalx/orga/views/event.py:356
 msgid "All review phases except for the first one need a start date."
-msgstr ""
+msgstr "Alle Review-Phasen außer der ersten benötigen ein Startdatum."
 
 #: pretalx/orga/views/event.py:362
 #, python-brace-format
@@ -7340,16 +7270,14 @@ msgid ""
 "The template has been saved - note that already pending emails that are "
 "based on this template will not be changed!"
 msgstr ""
+"Die Vorlage wurde gespeichert – bitte beachten Sie, dass bereits mit diesem "
+"Template erstellte E-Mails nicht angepasst werden!"
 
 #: pretalx/orga/views/mails.py:516
-#, fuzzy
-#| msgid "Email template"
 msgid "New email template"
-msgstr "E-Mail-Vorlage"
+msgstr "Neue E-Mail-Vorlage"
 
 #: pretalx/orga/views/mails.py:517
-#, fuzzy
-#| msgid "Email template"
 msgid "Email templates"
 msgstr "E-Mail-Vorlage"
 
@@ -7407,27 +7335,21 @@ msgstr ""
 "wieder hergestellt werden."
 
 #: pretalx/orga/views/organiser.py:351
-#, fuzzy
 msgid "The organiser and all related data have been deleted."
-msgstr "Der Tag wurde gelöscht."
+msgstr ""
+"Der Veranstalter und alle mit ihm zusammenhängenden Daten wurde gelöscht."
 
 #: pretalx/orga/views/person.py:70
-#, fuzzy
-#| msgid ""
-#| "Your API token has been regenerated. The previous token will not be "
-#| "usable any longer."
 msgid ""
 "This is your new API token. Please make sure to save it, as it will not be "
 "shown again:"
 msgstr ""
-"Das API-Token wurde zurückgesetzt, das bisherige Token kann nicht mehr "
-"verwendet werden."
+"Das ist Ihr neues API-Token. Es wird Ihnen nur dieses eine Mal angezeigt, "
+"bitte speichern Sie es an einem sicheren Ort:"
 
 #: pretalx/orga/views/person.py:84
-#, fuzzy
-#| msgid "The order has been updated."
 msgid "The API token has been upgraded."
-msgstr "Die Reihenfolge wurde geändert."
+msgstr "Das API-Token wurde aktualisiert."
 
 #: pretalx/orga/views/person.py:113
 msgid "You are now an administrator instead of a superuser."
@@ -7565,11 +7487,8 @@ msgstr ""
 "gelöscht werden."
 
 #: pretalx/orga/views/speaker.py:286
-#, fuzzy
-#| msgid "Speaker Information Note"
-#| msgid_plural "Speaker Information Notes"
 msgid "Speaker Information Notes"
-msgstr "Information für Vortragende"
+msgstr "Informationen für Vortragende"
 
 #: pretalx/orga/views/submission.py:173
 msgid ""
@@ -7664,33 +7583,31 @@ msgid "Password (current)"
 msgstr "Aktuelles Passwort"
 
 #: pretalx/person/forms/auth_token.py:23
-#, fuzzy
-#| msgid "Send all"
 msgid "Read all endpoints"
-msgstr "Alle abschicken"
+msgstr "Alle Endpunkte lesen"
 
 #: pretalx/person/forms/auth_token.py:24
 msgid "Read and write all endpoints"
-msgstr ""
+msgstr "Alle Endpunkte lesen und schreiben"
 
 #: pretalx/person/forms/auth_token.py:25
-#, fuzzy
-#| msgid "Permissions"
 msgid "Customize permissions and endpoints"
-msgstr "Berechtigungen"
+msgstr "Berechtigungen und Endpunkte anpassen"
 
 #: pretalx/person/forms/auth_token.py:27
 msgid "Choose a preset or configure detailed permissions below."
 msgstr ""
+"Wählen Sie eine Voreinstellung oder konfigurieren Sie die Berechtigungen im "
+"Detail."
 
 #: pretalx/person/forms/auth_token.py:83
 #, python-brace-format
 msgid "Invalid permissions selected: {perms}"
-msgstr ""
+msgstr "Unzulässige Berechtigungen: {perms}"
 
 #: pretalx/person/forms/profile.py:39
 msgid "There already exists an account for this email address."
-msgstr ""
+msgstr "Es gibt bereits einen Account für diese E-Mail-Adresse."
 
 #: pretalx/person/forms/profile.py:132
 msgid ""
@@ -7705,20 +7622,16 @@ msgid "Non-accepted submitters"
 msgstr "Nicht angenommene Einreichende"
 
 #: pretalx/person/forms/profile.py:281
-#, fuzzy
-#| msgid "Mark speaker as arrived"
 msgid "Marked as arrived"
-msgstr "Vortragende ist angekommen"
+msgstr "Als angekommen markieren"
 
 #: pretalx/person/forms/profile.py:282
-#, fuzzy
-#| msgid "Not arrived"
 msgid "Not yet arrived"
-msgstr "Nicht angekommen"
+msgstr "Noch nicht angekommen"
 
 #: pretalx/person/forms/user.py:29
 msgid "display name"
-msgstr ""
+msgstr "Anzeigename"
 
 #: pretalx/person/forms/user.py:43
 msgid "Password (again)"
@@ -7752,13 +7665,11 @@ msgstr ""
 
 #: pretalx/person/models/auth_token.py:72
 msgid "Expiry date"
-msgstr ""
+msgstr "Ablaufdatum"
 
 #: pretalx/person/models/auth_token.py:75
-#, fuzzy
-#| msgid "version"
 msgid "API version"
-msgstr "Version"
+msgstr "API-Version"
 
 #: pretalx/person/models/information.py:41
 msgid "Leave empty to show this information to all tracks."
@@ -7783,7 +7694,7 @@ msgstr "Diese(r) Vortragende ist angekommen"
 
 #: pretalx/person/models/user.py:86
 msgid "Your username must not contain HTML or other markup."
-msgstr ""
+msgstr "Ihr Name darf kein HTML oder ähnliches Markup enthalten."
 
 #: pretalx/person/models/user.py:125
 msgid ""
@@ -8137,10 +8048,8 @@ msgid "Dutch"
 msgstr "Niederländisch"
 
 #: pretalx/settings.py:415
-#, fuzzy
-#| msgid "English"
 msgid "Polish"
-msgstr "Englisch"
+msgstr "Polnisch"
 
 #: pretalx/settings.py:421
 msgid "Brasilian Portuguese"
@@ -8152,7 +8061,7 @@ msgstr "Portugiesisch"
 
 #: pretalx/settings.py:435
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamesisch"
 
 #: pretalx/settings.py:441
 msgid "Traditional Chinese (Taiwan)"
@@ -8762,7 +8671,7 @@ msgid "not accepted"
 msgstr "abgelehnt"
 
 msgid "Availabilities"
-msgstr ""
+msgstr "Verfügbarkeiten"
 
 #~ msgid "Resend invitation"
 #~ msgstr "Einladung erneut versenden"
