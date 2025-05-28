@@ -322,14 +322,10 @@ def test_html_export_release_without_celery(event):
             "LOCATION": "lalala",
         }
     },
-    CELERY_ALWAYS_EAGER=False,
+    CELERY_TASK_ALWAYS_EAGER=False,
 )
 def test_html_export_release_with_celery(mocker, event):
-    mocker.patch("django.core.management.call_command")
-
-    from django.core.management import (  # Import here to avoid overriding mocks
-        call_command,
-    )
+    mocker.patch("pretalx.agenda.tasks.export_schedule_html.apply_async")
 
     with scope(event=event):
         event.cache.delete("rebuild_schedule_export")
@@ -338,7 +334,10 @@ def test_html_export_release_with_celery(mocker, event):
         event.wip_schedule.freeze(name="ohaio means hello")
         assert not event.cache.get("rebuild_schedule_export")
 
-    call_command.assert_called_with("export_schedule_html", event.slug, "--zip")
+    export_schedule_html.apply_async.assert_called_once_with(
+        kwargs={"event_id": event.id},
+        ignore_result=True,
+    )
 
 
 @pytest.mark.django_db
