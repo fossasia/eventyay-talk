@@ -16,7 +16,9 @@ app.autodiscover_tasks()
 
 
 @task_failure.connect()
-def send_exception_email(task_id, exception, args, kwargs, traceback, *_args, **_kwargs):
+def send_exception_email(
+    task_id, exception, args, kwargs, traceback, *_args, **_kwargs
+):
     if settings.DEBUG or not settings.ADMINS:
         return
     reporter = PretalxCeleryExceptionReporter(
