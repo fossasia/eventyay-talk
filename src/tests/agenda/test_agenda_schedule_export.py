@@ -429,7 +429,7 @@ def test_schedule_orga_trigger_export_without_celery(
 
 
 @pytest.mark.django_db
-@override_settings(HAS_CELERY=True)
+@override_settings(CELERY_TASK_ALWAYS_EAGER=False)
 def test_schedule_orga_trigger_export_with_celery(
     mocker, orga_client, django_assert_max_num_queries, event
 ):

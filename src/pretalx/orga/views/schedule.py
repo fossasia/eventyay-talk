@@ -108,7 +108,7 @@ class ScheduleExportTriggerView(EventPermissionRequired, View):
     permission_required = "event.update_event"
 
     def post(self, request, event):
-        if settings.HAS_CELERY:
+        if not settings.CELERY_TASK_ALWAYS_EAGER:
             export_schedule_html.apply_async(
                 kwargs={"event_id": self.request.event.id}, ignore_result=True
             )
