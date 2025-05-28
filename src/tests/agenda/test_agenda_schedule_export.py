@@ -322,7 +322,7 @@ def test_html_export_release_without_celery(event):
             "LOCATION": "lalala",
         }
     },
-    HAS_CELERY=True,
+    CELERY_ALWAYS_EAGER=False,
 )
 def test_html_export_release_with_celery(mocker, event):
     mocker.patch("django.core.management.call_command")
