@@ -20,9 +20,9 @@ class AuthTokenForm(forms.ModelForm):
         label=_("Permissions"),
         required=False,
         choices=(
-            ("read", _("Read all")),
-            ("write", _("Read and write all")),
-            ("custom", _("Custom permissions")),
+            ("read", _("Read all endpoints")),
+            ("write", _("Read and write all endpoints")),
+            ("custom", _("Customize permissions and endpoints")),
         ),
         help_text=_("Choose a preset or configure detailed permissions below."),
         widget=EnhancedSelect,

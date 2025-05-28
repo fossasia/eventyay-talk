@@ -67,7 +67,7 @@ class UserSettings(TemplateView):
                 messages.success(
                     request,
                     _(
-                        "Your API token has been regenerated. Please make sure to save it, as it will not be shown again:"
+                        "This is your new API token. Please make sure to save it, as it will not be shown again:"
                     )
                     + f" {token.token}",
                 )
@@ -91,7 +91,7 @@ class UserSettings(TemplateView):
                     request.user.log_action(
                         "pretalx.user.token.revoke", data=token.serialize()
                     )
-                    messages.success(request, _("The API token has been revoked."))
+                    messages.success(request, _("The API token was revoked."))
         else:
             messages.error(self.request, phrases.base.error_saving_changes)
             return self.get(request, *args, **kwargs)

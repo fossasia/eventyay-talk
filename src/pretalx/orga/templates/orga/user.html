@@ -35,9 +35,7 @@
             <p>
                 {% blocktranslate trimmed with apiurl='href="/api/events/" target="_blank" rel="noopener"' docurl='href="https://docs.pretalx.org/api/" target="_blank" rel="noopener"' %}
                     API tokens can be used to access the <a {{ apiurl }}>pretalx API</a>.
-                    You can generate a new token, which will invalidate the old one.
-                    To find out more, please have a look at the <a {{ docurl }}>
-                        API documentation</a>.
+                    To find out more, please have a look at the <a {{ docurl }}> API documentation</a>.
                 {% endblocktranslate %}
             </p>
             <div class="token-list mb-4">
@@ -51,7 +49,7 @@
                                 <th>{% translate "Events" %}</th>
                                 <th>{% translate "Last used" %}</th>
                                 <th>{% translate "Created" %}</th>
-                                <th>{% translate "Expires" %}</th>
+                                <th>{% translate "Valid until" %}</th>
                                 <th></th>
                             </tr>
                         </thead>
