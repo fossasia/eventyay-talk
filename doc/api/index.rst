@@ -15,3 +15,4 @@ over time.
 
    fundamentals
    resources
+   changelog
