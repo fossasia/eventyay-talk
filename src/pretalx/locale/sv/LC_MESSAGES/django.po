@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-28 08:30+0000\n"
+"POT-Creation-Date: 2025-05-28 08:33+0000\n"
 "PO-Revision-Date: 2024-04-20 13:14+0000\n"
 "Last-Translator: jving <j.vingback@gmail.com>\n"
 "Language-Team: none\n"
@@ -345,16 +345,10 @@ msgid "Awesome! You can now log in using your new password."
 msgstr "Fantastiskt! Du kan nu logga in med ditt nya lösenord."
 
 #: pretalx/cfp/phrases.py:19
-msgid ""
-"Your API token has been regenerated. The previous token will not be usable "
-"any longer."
-msgstr "Ditt API-token har skapats. Det förra går inte längre att använda."
-
-#: pretalx/cfp/phrases.py:23
 msgid "Your proposal has been withdrawn."
 msgstr "Ditt förslag har blivit tillbakadraget."
 
-#: pretalx/cfp/phrases.py:25
+#: pretalx/cfp/phrases.py:21
 msgid ""
 "Your proposal can’t be withdrawn at this time – please contact us if you "
 "need to withdraw your proposal!"
@@ -362,17 +356,17 @@ msgstr ""
 "Det går inte att dra tillbaka ditt förslag just nu - vänligen kontakta oss "
 "om du behöver dra tillbaka det!"
 
-#: pretalx/cfp/phrases.py:28
+#: pretalx/cfp/phrases.py:24
 msgid "Your session has been confirmed – we’re looking forward to seeing you!"
 msgstr "Din session har bekräftats - vi ser fram emot att träffa dig!"
 
-#: pretalx/cfp/phrases.py:31
+#: pretalx/cfp/phrases.py:27
 msgid ""
 "This proposal has already been confirmed – we’re looking forward to seeing "
 "you!"
 msgstr "Detta förslag har redan bekräftats - vi ser fram emot att träffa dig!"
 
-#: pretalx/cfp/phrases.py:34
+#: pretalx/cfp/phrases.py:30
 msgid ""
 "This proposal cannot be confirmed at this time – please contact us if you "
 "think this is an error."
@@ -380,20 +374,20 @@ msgstr ""
 "Detta förslag kan inte bekräftas just nu - kontakta oss om du tror att det "
 "kan vara fel."
 
-#: pretalx/cfp/phrases.py:36
+#: pretalx/cfp/phrases.py:32
 msgid "This proposal cannot be edited anymore."
 msgstr "Detta förslag går inte att redigera längre."
 
-#: pretalx/cfp/phrases.py:38
+#: pretalx/cfp/phrases.py:34
 msgid "Speaker email"
 msgstr "Föreläsarens epost"
 
-#: pretalx/cfp/phrases.py:39
+#: pretalx/cfp/phrases.py:35
 #, python-brace-format
 msgid "{speaker} invites you to join their session!"
 msgstr "{speaker} bjuder in dig till att delta på sin session!"
 
-#: pretalx/cfp/phrases.py:41
+#: pretalx/cfp/phrases.py:37
 #, python-brace-format
 msgid ""
 "Hi!\n"
@@ -422,25 +416,25 @@ msgstr ""
 "Jag ser fram emot att hålla detta med dig.\n"
 "{speaker}"
 
-#: pretalx/cfp/phrases.py:54
+#: pretalx/cfp/phrases.py:50
 msgid "Please provide a valid email address."
 msgstr "Vänligen fyll i en giltig epostadress."
 
-#: pretalx/cfp/phrases.py:55
+#: pretalx/cfp/phrases.py:51
 msgid "The invitation was sent!"
 msgstr "Inbjudan har skickats!"
 
-#: pretalx/cfp/phrases.py:57
+#: pretalx/cfp/phrases.py:53
 msgid "You are now part of this proposal! Please fill in your profile below."
 msgstr "Du är nu en del av detta förslag! Vänligen fyll i din profil nedan."
 
-#: pretalx/cfp/phrases.py:61
+#: pretalx/cfp/phrases.py:57
 msgid ""
 "We are experiencing difficulties when sending mails, but your session was "
 "submitted successfully!"
 msgstr "Vi har problem med att skicka epost, men din session har skickats in!"
 
-#: pretalx/cfp/phrases.py:64 pretalx/orga/views/cfp.py:132
+#: pretalx/cfp/phrases.py:60 pretalx/orga/views/cfp.py:132
 #, fuzzy
 #| msgid "Data fields"
 msgid "Custom fields"
@@ -8110,6 +8104,11 @@ msgstr ""
 
 msgid "Hidden rooms"
 msgstr ""
+
+#~ msgid ""
+#~ "Your API token has been regenerated. The previous token will not be "
+#~ "usable any longer."
+#~ msgstr "Ditt API-token har skapats. Det förra går inte längre att använda."
 
 #, fuzzy
 #~| msgid "Speaker email"

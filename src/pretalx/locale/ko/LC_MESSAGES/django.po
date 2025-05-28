@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-28 08:30+0000\n"
+"POT-Creation-Date: 2025-05-28 08:33+0000\n"
 "PO-Revision-Date: 2025-03-03 07:47+0000\n"
 "Last-Translator: Sungjoon Moon <sumoon@seoulsaram.org>\n"
 "Language-Team: none\n"
@@ -335,17 +335,10 @@ msgid "Awesome! You can now log in using your new password."
 msgstr "멋지네요! 이제 새 비밀번호를 사용하여 로그인할 수 있습니다."
 
 #: pretalx/cfp/phrases.py:19
-msgid ""
-"Your API token has been regenerated. The previous token will not be usable "
-"any longer."
-msgstr ""
-"API 토큰이 다시 생성되었습니다. 이전 토큰은 더 이상 사용할 수 없습니다."
-
-#: pretalx/cfp/phrases.py:23
 msgid "Your proposal has been withdrawn."
 msgstr "발표 제안이 철회되었습니다."
 
-#: pretalx/cfp/phrases.py:25
+#: pretalx/cfp/phrases.py:21
 msgid ""
 "Your proposal can’t be withdrawn at this time – please contact us if you "
 "need to withdraw your proposal!"
@@ -353,37 +346,37 @@ msgstr ""
 "지금은 발표 제안을 철회할 수 없습니다. 제안을 철회해야 하는 경우 문의해 주세"
 "요!"
 
-#: pretalx/cfp/phrases.py:28
+#: pretalx/cfp/phrases.py:24
 msgid "Your session has been confirmed – we’re looking forward to seeing you!"
 msgstr "세션이 확정되었습니다 - 여러분을 만나 뵙기를 고대하고 있습니다!"
 
-#: pretalx/cfp/phrases.py:31
+#: pretalx/cfp/phrases.py:27
 msgid ""
 "This proposal has already been confirmed – we’re looking forward to seeing "
 "you!"
 msgstr ""
 "이 발표 제안은 이미 확정되었습니다 - 여러분의 많은 참여를 기다리겠습니다!"
 
-#: pretalx/cfp/phrases.py:34
+#: pretalx/cfp/phrases.py:30
 msgid ""
 "This proposal cannot be confirmed at this time – please contact us if you "
 "think this is an error."
 msgstr "해당 제안이 거절되었습니다. 오류라고 생각된다면 문의 부탁드립니다."
 
-#: pretalx/cfp/phrases.py:36
+#: pretalx/cfp/phrases.py:32
 msgid "This proposal cannot be edited anymore."
 msgstr "이 발표 제안서는 더 이상 수정할 수 없습니다."
 
-#: pretalx/cfp/phrases.py:38
+#: pretalx/cfp/phrases.py:34
 msgid "Speaker email"
 msgstr "발표자 이메일"
 
-#: pretalx/cfp/phrases.py:39
+#: pretalx/cfp/phrases.py:35
 #, python-brace-format
 msgid "{speaker} invites you to join their session!"
 msgstr "{speaker} 가 세션에 여러분을 초대합니다!"
 
-#: pretalx/cfp/phrases.py:41
+#: pretalx/cfp/phrases.py:37
 #, python-brace-format
 msgid ""
 "Hi!\n"
@@ -412,26 +405,26 @@ msgstr ""
 "귀하를 만나 뵙기를 고대하고 있습니다!\n"
 "{speaker}"
 
-#: pretalx/cfp/phrases.py:54
+#: pretalx/cfp/phrases.py:50
 msgid "Please provide a valid email address."
 msgstr "유효한 이메일 주소를 입력하세요."
 
-#: pretalx/cfp/phrases.py:55
+#: pretalx/cfp/phrases.py:51
 msgid "The invitation was sent!"
 msgstr "초대장이 전송되었습니다!"
 
-#: pretalx/cfp/phrases.py:57
+#: pretalx/cfp/phrases.py:53
 msgid "You are now part of this proposal! Please fill in your profile below."
 msgstr ""
 "이제 이 발표 제안에 참여하실 수 있습니다! 아래에 프로필을 작성해 주세요."
 
-#: pretalx/cfp/phrases.py:61
+#: pretalx/cfp/phrases.py:57
 msgid ""
 "We are experiencing difficulties when sending mails, but your session was "
 "submitted successfully!"
 msgstr "메일을 보낼 때 문제가 발생했지만 세션이 성공적으로 제출되었습니다!"
 
-#: pretalx/cfp/phrases.py:64 pretalx/orga/views/cfp.py:132
+#: pretalx/cfp/phrases.py:60 pretalx/orga/views/cfp.py:132
 msgid "Custom fields"
 msgstr "커스텀 필드"
 
@@ -8106,6 +8099,12 @@ msgstr ""
 
 msgid "Hidden rooms"
 msgstr ""
+
+#~ msgid ""
+#~ "Your API token has been regenerated. The previous token will not be "
+#~ "usable any longer."
+#~ msgstr ""
+#~ "API 토큰이 다시 생성되었습니다. 이전 토큰은 더 이상 사용할 수 없습니다."
 
 #, fuzzy
 #~| msgid "Speaker email"
