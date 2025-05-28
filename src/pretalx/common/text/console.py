@@ -78,6 +78,10 @@ def log_initial():
         if os.geteuid() == 0:
             print_line("You are running pretalx as root, why?", bold=True)
 
+    if not getattr(settings, "CONFIG_FILES", None):
+        # We are running with weird/test settings, skip output
+        return
+
     db_settings = settings.DATABASES.get("default") or {}
     db_backend = db_settings.get("ENGINE", "").rsplit(".")[-1]
     # Lines is a list of (text, bold)
