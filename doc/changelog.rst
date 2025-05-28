@@ -8,7 +8,7 @@ Release Notes
 - :announcement:`api,1598` The pretalx API now supports write operations, and the format of nearly all endpoints has changed to a more consistent interface. However, all existing API tokens have been migrated and will continue to automatically use the legacy API (with some caveats), so for most API users, nothing should change immediately. You have time for one or two releases to migrate your API clients and scripts to the new API. Please refer to the :ref:`api-changelog` and the documentation on :ref:`api-endpoints` for further details. We thank the NLNet foundation and their NGI Zero Entrust grant for making the development work possible.
 - :announcement:`api,1598` The pretalx API has now stopped supporting session authentication, which was never officially supported. If you need to use the authenticated API, please use the documented token authentication process.
 - :bug:`orga,2022` The CfP editor in the organiser area only showed session questions, not speaker questions.
-- :feature:`orga,1892` Organisers can now mark speakers as "arrived" on the speakers detail page and on the speakers tab of accepted sessions.
+- :feature:`orga:speaker,1892` Organisers can now mark speakers as "arrived" on the speakers detail page and on the speakers tab of accepted sessions.
 - :feature:`dev,1931` Plugins can now add authentication providers, which is already in use in the `pretalx_social_auth <https://github.com/adamskrz/pretalx-social-auth?rgh-link-date=2025-01-05T12%3A14%3A03Z>`_ plugin.
 - :feature:`lang` pretalx now comes with new translations, Polish and Vietnamese!
 - :bug:`orga:review` Additional custom field columns were sometimes not visible for reviewers, or offset to the right by one column.
@@ -21,7 +21,7 @@ Release Notes
 - :feature:`orga:submission` You can now apply a proposal’s pending state change from the detail view.
 - :feature:`orga` We started writing the pretalx user guide. Currently, the section :ref:`user-guide-proposals` is finished and further sections are in the works. We also expanded the :ref:`user-faq`.
 - :feature:`orga:review` If you use both track-based reviewer teams and review assignments, pretalx will now only suggest (and allow) proposals to be assigned to a reviewer who has access to that proposal’s track.
-- :feature:`orga,mail` You can now use the new ``{session_duration_minutes}`` email placeholder.
+- :feature:`orga:mail` You can now use the new ``{session_duration_minutes}`` email placeholder.
 - :feature:`cfp` Due to the current limitations of the pretalx logging system, the log entries sidebar was removed from the speaker/submitter-facing session pages. Organisers still have access to the history view.
 - :bug:`orga` The organiser indicator in the various log entry views was accidentally invisible.
 - :feature:`cfp` As the availabilities feature was confusing or not required for many events, pretalx now defaults to not requesting a speaker’s availabilities.
@@ -38,22 +38,21 @@ Release Notes
 - :bug:`schedule` The QR code link of public schedule exporters was sometimes placed outside the visible screen.
 - :feature:`schedule` All outbound links are now passed via a redirect page in order to prevent URL leakage by referer headers.
 - :bug:`orga:submission` The numbers of proposals in the track overview were inflated because deleted and draft proposals were included in the count.
-- :feature:`orga,1302` Organisers can now customise the template used to inform speakers when they are added to a proposal by an organiser. There are two new templates – one for speakers with an existing account, and one for speakers without account who need to set their password.
-- :feature:`orga,1311` Organisers can now customise the “New proposal” notification email contents.
+- :feature:`orga:mail,1302` Organisers can now customise the template used to inform speakers when they are added to a proposal by an organiser. There are two new templates – one for speakers with an existing account, and one for speakers without account who need to set their password.
+- :feature:`orga:mail,1311` Organisers can now customise the “New proposal” notification email contents.
 - :bug:`orga:schedule,1900` The HTML export did not work and exported only 404 pages if the schedule was not public.
 - :feature:`schedule` When a room is empty during a day, pretalx will not show it anymore in the grid schedule (rather than only hiding rooms that are *never* used).
 - :bug:`cfp` The ampersand character appeared escaped when placed in a drop-down menu (e.g. in a track or session type name).
-- :feature:`orga` You can now send or discard only a filtered list of emails from the outbox.
+- :feature:`orga:mail` You can now send or discard only a filtered list of emails from the outbox.
 - :feature:`dev,1596` With the new ``queuedmail_pre_send`` signal, your plugin can modify a `QueuedMail` object before it is sent out. You can handle the sending entirely by setting the object’s `sent` attribute, or e.g. modify the email text before it is sent out by pretalx.
-- :feature:`orga` Outgoing mails now know which proposals or sessions they are about. This information can’t be added to existing mails, but will be included in all new mails, which will link to the proposals in question, and will help you find relevant emails by showing the linked proposals and their track colours (if any).
+- :feature:`orga:mail` Outgoing mails now know which proposals or sessions they are about. This information can’t be added to existing mails, but will be included in all new mails, which will link to the proposals in question, and will help you find relevant emails by showing the linked proposals and their track colours (if any).
 - :feature:`orga:schedule` When exporting your sessions or submissions as CSV or JSON, you can now choose to export start and end times as separate date/time values instead of a single combined value.
 - :announcement:`dev` The ``submission_state_change`` signal is now also sent when a proposal is created or submitted from a draft state in order to allow plugins to take action on initial submission.
-- :bug:`orga,1879` The template indicator (showing you which template an email was generated from) in the email lists were invisible.
+- :bug:`orga:mail,1879` The template indicator (showing you which template an email was generated from) in the email lists were invisible.
 - :feature:`schedule` The schedule widget can now be used for selected dates, e.g. when some of your rooms are not in use on some days (like switching to a workshop-heavy programme on some conference days). For conferences like this, you could embed the schedule widget twice: Once for one set of days and once for the other set.
 - :bug:`schedule,1874` The calendar parts of the public schedule (day of week, month) were always in English, even if another language was selected.
 - :bug:`orga:review` Fixed several smaller bugs regarding review phase ordering and updates, and made sure that review phases cannot overlap.
 - :bug:`orga` Dragging and dropping questions and other elements to change their order was broken in Google Chrome.
-- :bug:`orga:schedule` The HTML export did not work and exported only 404 pages.
 - :bug:`cfp` The upload of files with very long file names would fail instead of showing an error message. pretalx will now truncate the filename instead.
 - :bug:`orga:schedule` When exporting all your sessions as CSV or JSON export, only the end time would be in the local timezone, but the start time would be in UTC – both timestamps included the full timezone, so if you went on to parse them with a program, this likely would not matter, but it was confusing regardless. The export now uses the event timezone, as intended.
 - :bug:`orga` When entering a HTML colour manually instead of using the colour picker, pretalx would expand a three-letter colour to a six-letter colour (e.g. #123 to #112233), which is technically correct, but also not helpful when you’re in the process of typing out a six-letter colour, so pretalx will now not expand these colours anymore.
