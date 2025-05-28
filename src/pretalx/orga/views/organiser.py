@@ -199,7 +199,7 @@ class TeamUninvite(InviteMixin, ActionConfirmMixin, DetailView):
 
 
 class TeamResend(InviteMixin, ActionConfirmMixin, DetailView):
-    action_title = _("Resend invitation")
+    action_title = _("Resend invite")
     action_text = _("Are you sure you want to resend the invitation to this user?")
     action_confirm_color = "success"
     action_confirm_icon = "envelope"

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-28 08:33+0000\n"
+"POT-Creation-Date: 2025-05-28 08:40+0000\n"
 "PO-Revision-Date: 2025-03-21 21:22+0000\n"
 "Last-Translator: Lysandros Nikolaou <lisandrosnik@gmail.com>\n"
 "Language-Team: none\n"
@@ -5967,6 +5967,7 @@ msgid "pending Invitation"
 msgstr "σε εκκρεμότητα Πρόσκληση"
 
 #: pretalx/orga/templates/orga/organiser/team/update.html:52
+#: pretalx/orga/views/organiser.py:202
 msgid "Resend invite"
 msgstr "Εκ νέου αποστολή πρόσκλησης"
 
@@ -7730,10 +7731,6 @@ msgstr "Θέλετε πραγματικά να διαγράψετε αυτόν �
 msgid "The team invitation was retracted."
 msgstr "Η ομαδική πρόσκληση ανακλήθηκε."
 
-#: pretalx/orga/views/organiser.py:202
-msgid "Resend invitation"
-msgstr "Εκ νέου αποστολή πρόσκλησης"
-
 #: pretalx/orga/views/organiser.py:203
 #, fuzzy
 #| msgid "Do you really want to delete this organiser?"
@@ -9184,6 +9181,9 @@ msgstr ""
 
 msgid "Drag the box to the schedule to create a new break"
 msgstr ""
+
+#~ msgid "Resend invitation"
+#~ msgstr "Εκ νέου αποστολή πρόσκλησης"
 
 #~ msgid ""
 #~ "Your API token has been regenerated. The previous token will not be "

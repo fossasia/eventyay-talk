@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-28 08:33+0000\n"
+"POT-Creation-Date: 2025-05-28 08:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5020,6 +5020,7 @@ msgid "pending Invitation"
 msgstr ""
 
 #: pretalx/orga/templates/orga/organiser/team/update.html:52
+#: pretalx/orga/views/organiser.py:202
 msgid "Resend invite"
 msgstr ""
 
@@ -6499,10 +6500,6 @@ msgstr ""
 
 #: pretalx/orga/views/organiser.py:197
 msgid "The team invitation was retracted."
-msgstr ""
-
-#: pretalx/orga/views/organiser.py:202
-msgid "Resend invitation"
 msgstr ""
 
 #: pretalx/orga/views/organiser.py:203
