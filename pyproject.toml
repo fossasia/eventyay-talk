@@ -74,7 +74,7 @@ dependencies = [
 
 [project.optional-dependencies]
 postgres = ["psycopg2-binary~=2.9.0"]
-redis = ["redis~=5.2.0"]
+redis = ["redis>=5.2,<6.3"]
 memcached = ["pylibmc"]
 
 [project.urls]
