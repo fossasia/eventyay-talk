@@ -409,16 +409,15 @@ nav.navbar,
   align-items: center;
   flex-flow: row nowrap;
   justify-content: flex-start;
-
+  border: 1px solid #1a69a4;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 200;
   height: 50px;
-  color: var(--color-primary);
-  background-color: var(--color-offwhite);
-  border-bottom: 4px var(--color-primary-event, var(--color-primary)) solid;
+  color: var(--color-offwhite);
+  background-color: var(--color-primary);
   padding: 0.25rem;
   box-shadow:
     1px 1px 3px rgb(0 0 0 / 0.12),
@@ -427,14 +426,14 @@ nav.navbar,
 
   .navbar-brand {
     padding-top: 0.3125rem;
-    font-weight: 600;
+    font-weight: 500;
     padding-bottom: 0.3125rem;
     margin-right: 1rem;
     font-size: 1.25rem;
     line-height: inherit;
     white-space: nowrap;
     font-family: var(--font-family-title);
-
+    font-style: italic;
     img {
       display: inline-block;
       vertical-align: middle;
@@ -465,10 +464,10 @@ nav.navbar,
 
   a,
   button {
-    color: var(--color-primary);
+    color: var(--color-offwhite);
     &:hover {
       text-decoration: none;
-      color: var(--color-primary);
+      color: var(--color-white);
     }
   }
   button {
