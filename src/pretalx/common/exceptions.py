@@ -59,7 +59,7 @@ The error was {exception} at {location}.
             tldr += f", an event page of {event.name}."
         return tldr
 
-    def get_extra_info(self):
+    def get_extra_intro(self):
         intro = "\nIt occurred when {self.user} accessed {self.request.path}."
         event = getattr(self.request, "event", None)
         if event:
