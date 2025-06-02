@@ -101,6 +101,8 @@ class SpeakerOrgaSerializer(AvailabilitiesMixin, SpeakerSerializer):
         super().__init__(*args, **kwargs)
         if self.event:
             for field in ("avatar", "availabilities"):
+                if field not in self.fields:
+                    continue
                 if not getattr(self.event.cfp, f"request_{field}"):
                     self.fields.pop(field, None)
                 elif getattr(self.event.cfp, f"require_{field}"):
