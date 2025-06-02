@@ -19,8 +19,6 @@ class PretalxExceptionReporter(ExceptionReporter):
         # Don't try to send fancy emails in dev
         if settings.DEBUG or not self.is_email:
             return traceback_text
-        if not getattr(self, "request", None) and not self.is_celery:
-            return traceback_text
 
         exception = (
             self.exc_type.__name__ if getattr(self, "exc_type", None) else "Exception"
@@ -48,11 +46,16 @@ The error was {exception} at {location}.
 
     @cached_property
     def user(self):
+        user = getattr(self.request, "user", None)
+        if not user:
+            return ""
         if self.request.user.is_anonymous:
             return "an anonymous user"
         return f"{self.request.user.name} <{self.request.user.email}>"
 
     def get_tldr(self):
+        if not self.request:
+            return ""
         tldr = f"tl;dr: An exception occurred when {self.user} accessed {self.request.path}"
         event = getattr(self.request, "event", None)
         if event:
@@ -60,6 +63,8 @@ The error was {exception} at {location}.
         return tldr
 
     def get_extra_intro(self):
+        if not self.request:
+            return ""
         intro = "\nIt occurred when {self.user} accessed {self.request.path}."
         event = getattr(self.request, "event", None)
         if event:
