@@ -298,7 +298,6 @@ else:
 
 ## CACHE SETTINGS
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
-REAL_CACHE_USED = False
 SESSION_ENGINE = None
 
 HAS_REDIS = config.get("redis", "location") != "False"
@@ -317,7 +316,7 @@ if HAS_REDIS:
         SESSION_CACHE_ALIAS = "redis_sessions"
 
 if not SESSION_ENGINE:
-    if REAL_CACHE_USED:
+    if HAS_REDIS:
         SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
     else:
         SESSION_ENGINE = "django.contrib.sessions.backends.db"

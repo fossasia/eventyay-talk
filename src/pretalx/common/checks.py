@@ -113,7 +113,7 @@ def check_system_email(app_configs, **kwargs):
 def check_caches(app_configs, **kwargs):
     if app_configs:
         return []
-    if not settings.REAL_CACHE_USED:
+    if not settings.HAS_REDIS:
         return [
             CheckMessage(
                 level=INFO,
