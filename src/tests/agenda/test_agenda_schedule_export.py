@@ -35,8 +35,7 @@ def test_schedule_xsd_is_up_to_date():
         return
     assert response.status == 200
     path = Path(__file__).parent / "../fixtures/schedule.xsd"
-    with open(path) as schema:
-        schema_content = schema.read()
+    schema_content = path.read_text()
     assert response.data.decode() == schema_content
 
 
@@ -58,8 +57,7 @@ def test_schedule_json_schema_is_up_to_date():
         return
     assert response.status == 200
     path = Path(__file__).parent / "../fixtures/schedule.json"
-    with open(path) as schema:
-        schema_content = schema.read()
+    schema_content = path.read_text()
     assert response.data.decode() == schema_content
 
 
@@ -370,9 +368,8 @@ def test_html_export_language(event):
         call_command("rebuild")
         call_command("export_schedule_html", event.slug)
 
-    schedule_html = open(
-        settings.HTMLEXPORT_ROOT / "test" / "test/schedule/index.html"
-    ).read()
+    export_path = settings.HTMLEXPORT_ROOT / "test" / "test/schedule/index.html"
+    schedule_html = export_path.read_text()
     assert "Kontakt" in schedule_html
     assert "locale/set" not in schedule_html  # bug #494
 
@@ -524,21 +521,17 @@ def test_html_export_full(
         assert other_event.slug not in path
 
     # views and templates are the same for export and online viewing, so a naive test is enough here
-    talk_html = (
-        (
-            settings.HTMLEXPORT_ROOT
-            / "test"
-            / f"test/talk/{slot.submission.code}/index.html"
-        )
-        .open()
-        .read()
+    html_path = (
+        settings.HTMLEXPORT_ROOT
+        / "test"
+        / f"test/talk/{slot.submission.code}/index.html"
     )
+    talk_html = html_path.read_text()
     assert talk_html.count(slot.submission.title) >= 2
 
     speaker = slot.submission.speakers.all()[0]
-    schedule_html = (
-        (settings.HTMLEXPORT_ROOT / "test" / "test/schedule/index.html").open().read()
-    )
+    html_path = settings.HTMLEXPORT_ROOT / "test" / "test/schedule/index.html"
+    schedule_html = html_path.read_text()
     assert "Contact us" in schedule_html  # locale
     assert canceled_talk.submission.title not in schedule_html
 
@@ -547,29 +540,20 @@ def test_html_export_full(
     )
     assert schedule_json["schedule"]["conference"]["title"] == event.name
 
-    schedule_xcal = (
-        (settings.HTMLEXPORT_ROOT / "test/test/schedule/export/schedule.xcal")
-        .open()
-        .read()
-    )
+    xcal_path = settings.HTMLEXPORT_ROOT / "test/test/schedule/export/schedule.xcal"
+    schedule_xcal = xcal_path.read_text()
     assert event.slug in schedule_xcal
     assert speaker.name in schedule_xcal
 
-    schedule_xml = (
-        (settings.HTMLEXPORT_ROOT / "test/test/schedule/export/schedule.xml")
-        .open()
-        .read()
-    )
+    xml_path = settings.HTMLEXPORT_ROOT / "test/test/schedule/export/schedule.xml"
+    schedule_xml = xml_path.read_text()
     with scope(event=slot.submission.event):
         assert slot.submission.title in schedule_xml
         assert canceled_talk.frab_slug not in schedule_xml
         assert str(canceled_talk.uuid) not in schedule_xml
 
-    talk_ics = (
-        (settings.HTMLEXPORT_ROOT / f"test/test/talk/{slot.submission.code}.ics")
-        .open()
-        .read()
-    )
+    ics_path = settings.HTMLEXPORT_ROOT / f"test/test/talk/{slot.submission.code}.ics"
+    talk_ics = ics_path.read_text()
     assert slot.submission.title in talk_ics
     assert event.is_public is False
 

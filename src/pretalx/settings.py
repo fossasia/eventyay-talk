@@ -170,8 +170,7 @@ if config.has_option("site", "secret"):
 else:
     SECRET_FILE = DATA_DIR / ".secret"
     if SECRET_FILE.exists():
-        with SECRET_FILE.open() as f:
-            SECRET_KEY = f.read().strip()
+        SECRET_KEY = SECRET_FILE.read_text()
     else:
         chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)"
         SECRET_KEY = get_random_string(50, chars)
