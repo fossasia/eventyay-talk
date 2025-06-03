@@ -9,7 +9,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("submission", "0077_answeroption_position"),
+        ("submission", "0080_merge_20241022_1752"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
