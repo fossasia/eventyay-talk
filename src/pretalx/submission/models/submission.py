@@ -292,6 +292,7 @@ class Submission(GenerateCode, PretalxModel):
         feedback = "{base}feedback/"
         toggle_featured = "{base}toggle_featured"
         anonymise = "{base}anonymise/"
+        comments = "{base}comments/"
         quick_schedule = "{self.event.orga_urls.schedule}quick/{self.code}/"
 
     @property

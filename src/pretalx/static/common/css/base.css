@@ -468,6 +468,11 @@ small {
   color: var(--highlight-color-text, var(--color-text));
   background-color: var(--highlight-color, var(--color-bg));
 
+  &.card-highlight {
+    border-color: var(--color-primary-light);
+    box-shadow: var(--shadow-light);
+  }
+
   > hr {
     margin-right: 0;
     margin-left: 0;

@@ -530,6 +530,16 @@ urlpatterns = [
                                 submission.Anonymise.as_view(),
                                 name="submissions.anonymise",
                             ),
+                            path(
+                                "comments/",
+                                submission.CommentList.as_view(),
+                                name="submissions.comments.list",
+                            ),
+                            path(
+                                "comments/<int:pk>/delete",
+                                submission.CommentDelete.as_view(),
+                                name="submissions.comments.delete",
+                            ),
                         ]
                     ),
                 ),
