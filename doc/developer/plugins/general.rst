@@ -22,7 +22,7 @@ Core
    :members: schedule_release
 
 .. automodule:: pretalx.mail.signals
-   :members: register_mail_placeholders, queuedmail_post_send, queuedmail_pre_send
+   :members: register_mail_placeholders, queuedmail_post_send, queuedmail_pre_send, request_pre_send
 
 .. automodule:: pretalx.person.signals
    :members: delete_user

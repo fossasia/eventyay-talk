@@ -9,6 +9,7 @@ from django.utils.translation import ngettext_lazy
 from django.views.generic import FormView, ListView, TemplateView, View
 from django_context_decorator import context
 
+from pretalx.common.exceptions import SendMailException
 from pretalx.common.language import language
 from pretalx.common.mail import TolerantDict
 from pretalx.common.text.phrases import phrases
@@ -23,6 +24,7 @@ from pretalx.common.views.mixins import (
     Sortable,
 )
 from pretalx.mail.models import MailTemplate, QueuedMail, get_prefixed_subject
+from pretalx.mail.signals import request_pre_send
 from pretalx.orga.forms.mails import (
     DraftRemindersForm,
     MailDetailForm,
@@ -31,6 +33,20 @@ from pretalx.orga.forms.mails import (
     WriteSessionMailForm,
     WriteTeamsMailForm,
 )
+
+
+def get_send_mail_exceptions(request):
+    exceptions = [
+        result
+        for result in request_pre_send.send_robust(
+            sender=request.event, request=request
+        )
+        if isinstance(result, SendMailException)
+    ]
+    if exceptions:
+        errors = [str(e) for e in exceptions]
+        errors = errors or [_("You cannot send emails at this time.")]
+        return errors
 
 
 class OutboxList(
@@ -173,6 +189,11 @@ class OutboxSend(ActionConfirmMixin, OutboxList):
 
     def post(self, request, *args, **kwargs):
         mails = self.queryset
+        errors = get_send_mail_exceptions(request)
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+            return redirect(self.request.event.orga_urls.outbox)
         count = mails.count()
         for mail in mails:
             mail.send(requestor=self.request.user)
@@ -299,6 +320,11 @@ class MailDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
             form.instance.log_action(action, person=self.request.user, orga=True)
         action = form.data.get("form", "save")
         if action == "send":
+            errors = get_send_mail_exceptions(self.request)
+            if errors:
+                for error in errors:
+                    messages.error(self.request, error)
+                return redirect(self.get_success_url())
             form.instance.send()
             messages.success(self.request, _("The email has been sent."))
         else:  # action == 'save'
@@ -364,6 +390,9 @@ class ComposeMailBaseView(EventPermissionRequired, FormView):
             if key in self.request.GET:
                 initial[key] = self.request.GET.get(key)
         kwargs["initial"] = initial
+
+        errors = get_send_mail_exceptions(self.request)
+        kwargs["may_skip_queue"] = not bool(errors)
         return kwargs
 
     def get_success_url(self):
