@@ -17,6 +17,7 @@ Field                                 Type                       Description
 tag                                   string                     The actual tag name.
 description                           multi-lingual string       The description of the tag.
 ``color``                             string                     The tag’s colour as hex string.
+``is_public``                         boolean                    Flag, ``True`` if the tag is intended to be public once pretalx supports public tags.
 ===================================== ========================== =======================================================
 
 Endpoints
@@ -50,6 +51,7 @@ Endpoints
             "tag": "science",
             "description": {"en": "Scientific sessions"},
             "color": "#00ff00",
+            "is_public": true
           }
         ]
       }
@@ -80,6 +82,7 @@ Endpoints
          "tag": "science",
          "description": {"en": "Scientific sessions"},
          "color": "#00ff00",
+         "is_public": true
        }
 
    :param event: The ``slug`` field of the event to fetch

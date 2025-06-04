@@ -24,7 +24,7 @@ class Tag(PretalxModel):
             RegexValidator("#([0-9A-Fa-f]{3}){1,2}"),
         ],
     )
-    public = models.BooleanField(
+    is_public = models.BooleanField(
         default=False,
         verbose_name=_("Show tag publicly"),
         help_text=_(
