@@ -700,6 +700,7 @@ REST_FRAMEWORK = {
     "ORDERING_PARAM": "o",
     "VERSIONING_PARAM": "v",
     "DATETIME_FORMAT": "iso-8601",
+    "EXCEPTION_HANDLER": "pretalx.api.exceptions.api_exception_handler",
 }
 if DEBUG:
     REST_FRAMEWORK["COMPACT_JSON"] = False
