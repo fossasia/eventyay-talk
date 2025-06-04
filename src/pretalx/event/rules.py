@@ -65,7 +65,10 @@ def has_any_permission(user, obj):
 @rules.predicate
 def has_any_organiser_permissions(user, obj):
     organiser = getattr(obj, "organiser", None) or obj
-    return user.teams.filter(organiser=organiser).exists()
+    return (
+        user.is_administrator
+        or user.teams.filter(organiser=organiser).exists()
+    )
 
 
 @rules.predicate
