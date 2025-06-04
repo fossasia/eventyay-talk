@@ -302,8 +302,11 @@ class AddSpeakerForm(forms.Form):
 
     def __init__(self, *args, event=None, form_renderer=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["locale"].choices = event.named_locales
-        self.fields["locale"].initial = event.locale
+        if not event.named_locales or len(event.named_locales) < 2:
+            self.fields.pop("locale")
+        else:
+            self.fields["locale"].choices = event.named_locales
+            self.fields["locale"].initial = event.locale
 
     def clean(self):
         data = super().clean()

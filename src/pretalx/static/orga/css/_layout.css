@@ -450,6 +450,7 @@ nav.navbar,
     flex-direction: row;
     padding-left: 0;
     margin-bottom: 0;
+    margin-top: 0;
     list-style: none;
     align-items: center;
   }
@@ -558,6 +559,11 @@ footer {
     }
   }
 }
+.submit-group.search-submit-group {
+  form > .form-group {
+    padding-bottom: 8px;
+  }
+}
 .submit-group form {
   .form-group,
   button {
@@ -598,6 +604,16 @@ footer {
 td.reviewer {
   display: flex;
   flex-direction: row;
+}
+td.review-text,
+th.review-text {
+  min-width: 20em;
+}
+.markdown-mt-0 > p:first-child {
+  margin-top: 0;
+}
+#review-form .submission-state.badge {
+  padding: 0.2em 0.5em;
 }
 
 form #id_header_pattern,

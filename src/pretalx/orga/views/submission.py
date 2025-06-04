@@ -368,13 +368,13 @@ class SubmissionContent(
     def _questions_form(self):
         submission = self.get_object()
         form_kwargs = self.get_form_kwargs()
-        return QuestionsForm(
-            self.request.POST if self.request.method == "POST" else None,
-            files=self.request.FILES if self.request.method == "POST" else None,
-            target="submission",
-            submission=submission,
-            event=self.request.event,
-            for_reviewers=(
+        kwargs = {
+            "data": self.request.POST if self.request.method == "POST" else None,
+            "files": self.request.FILES if self.request.method == "POST" else None,
+            "target": "submission",
+            "submission": submission,
+            "event": self.request.event,
+            "for_reviewers": (
                 not self.request.user.has_perm(
                     "orga.change_submissions", self.request.event
                 )
@@ -382,8 +382,12 @@ class SubmissionContent(
                     "orga.view_review_dashboard", self.request.event
                 )
             ),
-            readonly=form_kwargs["read_only"],
-        )
+            "readonly": form_kwargs["read_only"],
+        }
+        # When creating a new submission, filter out track/type specific questions
+        if not submission:
+            kwargs["skip_limited_questions"] = True
+        return QuestionsForm(**kwargs)
 
     @context
     def questions_form(self):
@@ -455,6 +459,7 @@ class SubmissionContent(
         self.object = form.instance
         self._questions_form.submission = self.object
         if not self._questions_form.is_valid():
+            messages.error(self.request, phrases.base.error_saving_changes)
             return self.get(self.request, *self.args, **self.kwargs)
         form.instance.event = self.request.event
         form.save()
@@ -463,7 +468,10 @@ class SubmissionContent(
         if created:
             if not self.new_speaker_form.is_valid():
                 if self.new_speaker_form.errors:
-                    messages.error(self.request, self.new_speaker_form.errors[0])
+                    for field, errors in self.new_speaker_form.errors.items():
+                        for error in errors:
+                            messages.error(self.request, f"{field}: {error}")
+                        break  # Only show errors for the first field
                 return self.form_invalid(form)
             elif email := self.new_speaker_form.cleaned_data["email"]:
                 form.instance.add_speaker(
@@ -561,9 +569,7 @@ class SubmissionList(EventPermissionRequired, BaseSubmissionList):
     @context
     @cached_property
     def pending_changes(self):
-        return self.request.event.submissions.filter(
-            pending_state__isnull=False
-        ).count()
+        return self.get_queryset().filter(pending_state__isnull=False).count()
 
     @context
     def show_tracks(self):
@@ -608,6 +614,18 @@ class ToggleFeatured(SubmissionViewMixin, View):
         return HttpResponse()
 
 
+class ApplyPending(SubmissionViewMixin, View):
+    permission_required = "orga.change_submissions"
+
+    def post(self, request, *args, **kwargs):
+        submission = self.object
+        try:
+            submission.apply_pending_state(person=request.user)
+        except Exception:
+            submission.apply_pending_state(person=request.user, force=True)
+        return redirect(submission.orga_urls.base)
+
+
 class Anonymise(SubmissionViewMixin, UpdateView):
     permission_required = "orga.change_submissions"
     template_name = "orga/submission/anonymise.html"
@@ -633,6 +651,38 @@ class Anonymise(SubmissionViewMixin, UpdateView):
         if self.request.POST.get("action", "save") == "next" and self.next_unanonymised:
             return redirect(self.next_unanonymised.orga_urls.anonymise)
         return redirect(self.object.orga_urls.anonymise)
+
+
+class SubmissionHistory(SubmissionViewMixin, ListView):
+    template_name = "orga/submission/history.html"
+    permission_required = "person.is_administrator"
+    paginate_by = 200
+    context_object_name = "log_entries"
+
+    @context
+    @cached_property
+    def submission(self):
+        return get_object_or_404(
+            Submission.objects.filter(event=self.request.event),
+            code__iexact=self.kwargs.get("code"),
+        )
+
+    @context
+    @cached_property
+    def object(self):
+        return self.submission
+
+    def get_queryset(self):
+        # TODO: This does not include everything regarding this submission. Missing:
+        # - scheduling changes
+        # - new comments
+        # - new feedback
+        # - emails sent to speakers (important?)
+        # - reviews written and changes
+        return self.submission.logged_actions().all()
+
+    def get_permission_object(self):
+        return self.request.event
 
 
 class SubmissionFeed(PermissionRequired, Feed):
@@ -1033,13 +1083,13 @@ class TagDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
         return redirect(self.request.event.orga_urls.tags)
 
 
-class ApplyPending(EventPermissionRequired, TemplateView):
+class ApplyPendingBulk(EventPermissionRequired, BaseSubmissionList):
     permission_required = "orga.change_submissions"
     template_name = "orga/submission/apply_pending.html"
 
     @cached_property
     def submissions(self):
-        return self.request.event.submissions.filter(pending_state__isnull=False)
+        return self.get_queryset().filter(pending_state__isnull=False)
 
     @context
     @cached_property

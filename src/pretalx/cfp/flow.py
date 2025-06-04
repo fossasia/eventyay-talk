@@ -431,7 +431,11 @@ class QuestionsStep(GenericFlowStep, FormFlowStep):
         info_data = self.cfp_session.get("data", {}).get("info", {})
         result["target"] = ""
         result["track"] = info_data.get("track")
-        result["submission_type"] = info_data.get("submission_type")
+        access_code = getattr(self.request, "access_code", None)
+        if access_code and access_code.submission_type:
+            result["submission_type"] = access_code.submission_type
+        else:
+            result["submission_type"] = info_data.get("submission_type")
         if not self.request.user.is_anonymous:
             result["speaker"] = self.request.user
         return result
@@ -445,7 +449,7 @@ class QuestionsStep(GenericFlowStep, FormFlowStep):
 
     @property
     def label(self):
-        return phrases.cfp.questions
+        return _("Additional information")
 
     @property
     def _title(self):

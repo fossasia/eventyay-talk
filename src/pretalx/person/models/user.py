@@ -36,6 +36,23 @@ def avatar_path(instance, filename):
     return path_with_hash(filename, base_path="avatars")
 
 
+class UserQuerySet(models.QuerySet):
+    def with_profiles(self, event):
+        from django.db.models import Prefetch
+
+        from pretalx.person.models.profile import SpeakerProfile
+
+        return self.prefetch_related(
+            Prefetch(
+                "profiles",
+                queryset=SpeakerProfile.objects.filter(event=event).select_related(
+                    "event"
+                ),
+                to_attr="_event_profiles",
+            ),
+        ).distinct()
+
+
 class UserManager(BaseUserManager):
     """The user manager class."""
 
@@ -75,7 +92,7 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
 
-    objects = UserManager()
+    objects = UserManager().from_queryset(UserQuerySet)()
 
     code = models.CharField(max_length=16, unique=True, null=True)
     nick = models.CharField(max_length=60, null=True, blank=True)
@@ -207,8 +224,14 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
         :type event: :class:`pretalx.event.models.event.Event`
         :retval: :class:`pretalx.person.models.profile.EventProfile`
         """
-        if event.pk and (profile := self.event_profile_cache.get(event.pk)):
+        if profile := self.event_profile_cache.get(event.pk):
             return profile
+
+        if hasattr(self, "_event_profiles") and len(self._event_profiles) == 1:
+            profile = self._event_profiles[0]
+            if profile.event_id == event.pk:
+                self.event_profile_cache[event.pk] = profile
+                return profile
 
         try:
             profile = self.profiles.select_related("event").get(event=event)
@@ -219,8 +242,7 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
             if self.pk:
                 profile.save()
 
-        if event.pk:
-            self.event_profile_cache[event.pk] = profile
+        self.event_profile_cache[event.pk] = profile
         return profile
 
     def get_locale_for_event(self, event):

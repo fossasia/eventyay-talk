@@ -21,6 +21,8 @@ def get_prefixed_subject(event, subject):
         return subject
     if not (prefix.startswith("[") and prefix.endswith("]")):
         prefix = f"[{prefix}]"
+    if subject.startswith(prefix):
+        return subject
     return f"{prefix} {subject}"
 
 
@@ -37,7 +39,7 @@ class MailTemplateRoles(models.TextChoices):
     EXISTING_SPEAKER_INVITE = "speaker.invite.existing", _(
         "Add a speaker to a proposal (existing account)"
     )
-    QUESTION_REMINDER = "question.reminder", _("Unanswered questions reminder")
+    QUESTION_REMINDER = "question.reminder", _("Custom fields reminder")
     NEW_SCHEDULE = "schedule.new", _("New schedule published")
 
 

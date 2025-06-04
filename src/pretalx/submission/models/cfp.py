@@ -45,7 +45,7 @@ def default_fields():
         "avatar": {"visibility": "optional"},
         "avatar_source": {"visibility": "optional"},
         "avatar_license": {"visibility": "optional"},
-        "availabilities": {"visibility": "optional"},
+        "availabilities": {"visibility": "do_not_ask"},
         "notes": {"visibility": "optional"},
         "do_not_record": {"visibility": "optional"},
         "image": {"visibility": "optional"},

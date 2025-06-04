@@ -176,3 +176,215 @@ def test_reviewer_cannot_edit_question(event, review_client, question):
         question.refresh_from_db()
         assert question.target != "speaker"
         assert question.help_text != "hellllp"
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("is_detail, method", ((False, "post"), (True, "put")))
+def test_field_question_required(event, orga_client, question, is_detail, method):
+    url = event.api_urls.questions
+    if is_detail:
+        url += f"{question.pk}/"
+    response = getattr(orga_client, method)(url, {}, content_type="application/json")
+    assert response.data.get("question")[0] == "This field is required."
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_field_question_required_valid_choice(
+    event, orga_client, question, is_detail, method
+):
+    url = event.api_urls.questions
+    if is_detail:
+        url += f"{question.pk}/"
+    response = getattr(orga_client, method)(
+        url, {"question_required": "invalid_choice"}, content_type="application/json"
+    )
+    assert (
+        response.data.get("question_required")[0]
+        == '"invalid_choice" is not a valid choice.'
+    )
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_field_deadline_valid_date(event, orga_client, question, is_detail, method):
+    url = event.api_urls.questions
+    if is_detail:
+        url += f"{question.pk}/"
+    response = getattr(orga_client, method)(
+        url, {"deadline": "invalid_date"}, content_type="application/json"
+    )
+
+    # Using in check because response error is to long
+    assert "Datetime has wrong format" in response.data.get("deadline")[0]
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_field_freeze_after_valid_date(event, orga_client, question, is_detail, method):
+    url = event.api_urls.questions
+    if is_detail:
+        url += f"{question.pk}/"
+    response = getattr(orga_client, method)(
+        url, {"freeze_after": "invalid_date"}, content_type="application/json"
+    )
+
+    # Using in check because response error is to long
+    assert "Datetime has wrong format" in response.data.get("freeze_after")[0]
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_field_variant_valid_choice(event, orga_client, question, is_detail, method):
+    url = event.api_urls.questions
+    if is_detail:
+        url += f"{question.pk}/"
+    response = getattr(orga_client, method)(
+        url, {"variant": "invalid_choice"}, content_type="application/json"
+    )
+    assert response.data.get("variant")[0] == '"invalid_choice" is not a valid choice.'
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_field_max_length_valid_integer(
+    event, orga_client, question, is_detail, method
+):
+    url = event.api_urls.questions
+    if is_detail:
+        url += f"{question.pk}/"
+    response = getattr(orga_client, method)(
+        url, {"max_length": "not_an_integer"}, content_type="application/json"
+    )
+    assert response.data.get("max_length")[0] == "A valid integer is required."
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_field_min_length_valid_integer(
+    event, orga_client, question, is_detail, method
+):
+    url = event.api_urls.questions
+    if is_detail:
+        url += f"{question.pk}/"
+    response = getattr(orga_client, method)(
+        url, {"min_length": "not_an_integer"}, content_type="application/json"
+    )
+    assert response.data.get("min_length")[0] == "A valid integer is required."
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_field_is_public_valid_boolean(event, orga_client, question, is_detail, method):
+    url = event.api_urls.questions
+    if is_detail:
+        url += f"{question.pk}/"
+    response = getattr(orga_client, method)(
+        url, {"is_public": "not_an_boolean"}, content_type="application/json"
+    )
+    assert response.data.get("is_public")[0] == "Must be a valid boolean."
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_field_is_visible_to_reviewers_valid_boolean(
+    event, orga_client, question, is_detail, method
+):
+    url = event.api_urls.questions
+    if is_detail:
+        url += f"{question.pk}/"
+    response = getattr(orga_client, method)(
+        url,
+        {"is_visible_to_reviewers": "not_an_boolean"},
+        content_type="application/json",
+    )
+    assert response.data.get("is_visible_to_reviewers")[0] == "Must be a valid boolean."
+    assert response.status_code == 400, response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "is_detail, method",
+    (
+        (False, "post"),
+        (True, "put"),
+        (True, "patch"),
+    ),
+)
+def test_field_contains_personal_data_valid_boolean(
+    event, orga_client, question, is_detail, method
+):
+    url = event.api_urls.questions
+    if is_detail:
+        url += f"{question.pk}/"
+    response = getattr(orga_client, method)(
+        url,
+        {"contains_personal_data": "not_an_boolean"},
+        content_type="application/json",
+    )
+    assert response.data.get("contains_personal_data")[0] == "Must be a valid boolean."
+    assert response.status_code == 400, response.content.decode()

@@ -1,9 +1,7 @@
 from django import forms
-from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Q
-from django.utils import timezone, translation
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django_scopes.forms import SafeModelChoiceField, SafeModelMultipleChoiceField
@@ -22,7 +20,7 @@ from pretalx.common.forms.mixins import (
     ReadOnlyFlag,
     RequestRequire,
 )
-from pretalx.common.forms.renderers import InlineFormLabelRenderer, InlineFormRenderer
+from pretalx.common.forms.renderers import InlineFormRenderer
 from pretalx.common.forms.widgets import (
     EnhancedSelect,
     EnhancedSelectMultiple,
@@ -35,133 +33,13 @@ from pretalx.schedule.forms import AvailabilitiesFormMixin
 from pretalx.submission.models import Question
 from pretalx.submission.models.submission import SubmissionStates
 
-EMAIL_ADDRESS_ERROR = _("Please choose a different email address.")
 
-
-class UserForm(CfPFormMixin, forms.Form):
-    default_renderer = InlineFormLabelRenderer
-
-    login_email = forms.EmailField(
-        max_length=60,
-        label=phrases.base.enter_email,
-        required=False,
-        widget=forms.EmailInput(attrs={"autocomplete": "username"}),
+def get_email_address_error():
+    return (
+        _("There already exists an account for this email address.")
+        + " "
+        + _("Please choose a different email address.")
     )
-    login_password = forms.CharField(
-        label=_("Password"),
-        required=False,
-        widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
-    )
-    register_name = forms.CharField(
-        label=_("Name"),
-        required=False,
-        widget=forms.TextInput(attrs={"autocomplete": "name"}),
-    )
-    register_email = forms.EmailField(
-        label=phrases.base.enter_email,
-        required=False,
-        widget=forms.EmailInput(attrs={"autocomplete": "email"}),
-    )
-    register_password = NewPasswordField(
-        label=_("Password"),
-        required=False,
-    )
-    register_password_repeat = NewPasswordConfirmationField(
-        label=_("Password (again)"),
-        required=False,
-        confirm_with="register_password",
-        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
-    )
-
-    FIELDS_ERROR = _(
-        "Please fill all fields of either the login or the registration form."
-    )
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("event", None)
-        super().__init__(*args, **kwargs)
-        self.fields["register_email"].widget.attrs = {
-            "placeholder": phrases.base.enter_email
-        }
-
-    def _clean_login(self, data):
-        try:
-            uname = User.objects.get(email__iexact=data.get("login_email")).email
-        except User.DoesNotExist:  # We do this to avoid timing attacks
-            uname = "user@invalid"
-
-        user = authenticate(username=uname, password=data.get("login_password"))
-
-        if user is None:
-            raise ValidationError(
-                _(
-                    "No user account matches the entered credentials. "
-                    "Are you sure that you typed your password correctly?"
-                )
-            )
-
-        if not user.is_active:
-            raise ValidationError(_("Sorry, your account is currently disabled."))
-
-        data["user_id"] = user.pk
-
-    def _clean_register(self, data):
-        if data.get("register_password") != data.get("register_password_repeat"):
-            self.add_error(
-                "register_password_repeat",
-                ValidationError(phrases.base.passwords_differ),
-            )
-
-        if User.objects.filter(email__iexact=data.get("register_email")).exists():
-            self.add_error(
-                "register_email",
-                ValidationError(
-                    _(
-                        "We already have a user with that email address. Did you already register "
-                        "before and just need to log in?"
-                    )
-                ),
-            )
-
-    def clean(self):
-        data = super().clean()
-
-        if data.get("login_email") and data.get("login_password"):
-            self._clean_login(data)
-        elif (
-            data.get("register_email")
-            and data.get("register_password")
-            and data.get("register_name")
-        ):
-            self._clean_register(data)
-        else:
-            raise ValidationError(self.FIELDS_ERROR)
-
-        return data
-
-    def save(self):
-        data = self.cleaned_data
-        if data.get("login_email") and data.get("login_password"):
-            return data["user_id"]
-
-        # We already checked that all fields are filled, but sometimes
-        # they end up empty regardless. No idea why and how.
-        if not (
-            data.get("register_email")
-            and data.get("register_password")
-            and data.get("register_name")
-        ):
-            raise ValidationError(self.FIELDS_ERROR)
-
-        user = User.objects.create_user(
-            name=data.get("register_name").strip(),
-            email=data.get("register_email").lower().strip(),
-            password=data.get("register_password"),
-            locale=translation.get_language(),
-            timezone=timezone.get_current_timezone_name(),
-        )
-        data["user_id"] = user.pk
-        return user.pk
 
 
 class SpeakerProfileForm(
@@ -247,7 +125,7 @@ class SpeakerProfileForm(
         if self.user:
             qs = qs.exclude(pk=self.user.pk)
         if qs.filter(email__iexact=email):
-            raise ValidationError(EMAIL_ADDRESS_ERROR)
+            raise ValidationError(get_email_address_error())
         return email
 
     def clean(self):
@@ -338,7 +216,7 @@ class LoginInfoForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data.get("email")
         if User.objects.exclude(pk=self.user.pk).filter(email__iexact=email):
-            raise ValidationError(EMAIL_ADDRESS_ERROR)
+            raise ValidationError(get_email_address_error())
         return email
 
     def clean(self):
@@ -411,30 +289,44 @@ class SpeakerFilterForm(forms.Form):
             ("false", _("Non-accepted submitters")),
         ),
         required=False,
+        widget=EnhancedSelect,
+    )
+    arrived = forms.ChoiceField(
+        choices=(
+            ("", phrases.base.all_choices),
+            ("true", _("Marked as arrived")),
+            ("false", _("Not yet arrived")),
+        ),
+        required=False,
+        widget=EnhancedSelect,
     )
     question = SafeModelChoiceField(
         queryset=Question.objects.none(), required=False, widget=forms.HiddenInput()
     )
 
-    def __init__(self, *args, event=None, **kwargs):
+    def __init__(self, *args, event=None, filter_arrival=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.event = event
         self.fields["question"].queryset = event.questions.all()
+        if not filter_arrival:
+            self.fields.pop("arrived")
 
     def filter_queryset(self, queryset):
         data = self.cleaned_data
         if data.get("role") == "true":
-            queryset.filter(
+            queryset = queryset.filter(
                 user__submissions__in=self.event.submissions.filter(
                     state__in=SubmissionStates.accepted_states
                 )
             )
         elif data.get("role") == "false":
-            queryset.exclude(
+            queryset = queryset.exclude(
                 user__submissions__in=self.event.submissions.filter(
                     state__in=SubmissionStates.accepted_states
                 )
             )
+        if has_arrived := data.get("arrived"):
+            queryset = queryset.filter(has_arrived=(has_arrived == "true"))
         return queryset
 
 

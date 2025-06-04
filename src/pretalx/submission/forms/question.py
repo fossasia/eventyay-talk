@@ -8,7 +8,7 @@ from pretalx.submission.models import Question, QuestionTarget, QuestionVariant
 
 
 class QuestionsForm(CfPFormMixin, QuestionFieldsMixin, forms.Form):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, skip_limited_questions=False, **kwargs):
         self.event = kwargs.pop("event", None)
         self.submission = kwargs.pop("submission", None)
         self.speaker = kwargs.pop("speaker", None)
@@ -38,15 +38,21 @@ class QuestionsForm(CfPFormMixin, QuestionFieldsMixin, forms.Form):
             self.queryset = self.queryset.filter(target=self.target_type)
         else:
             self.queryset = self.queryset.exclude(target=QuestionTarget.REVIEWER)
-        if self.track:
+        if skip_limited_questions:
             self.queryset = self.queryset.filter(
-                Q(tracks__in=[self.track]) | Q(tracks__isnull=True)
+                tracks__isnull=True,
+                submission_types__isnull=True,
             )
-        if self.submission_type:
-            self.queryset = self.queryset.filter(
-                Q(submission_types__in=[self.submission_type])
-                | Q(submission_types__isnull=True)
-            )
+        else:
+            if self.track:
+                self.queryset = self.queryset.filter(
+                    Q(tracks__in=[self.track]) | Q(tracks__isnull=True)
+                )
+            if self.submission_type:
+                self.queryset = self.queryset.filter(
+                    Q(submission_types__in=[self.submission_type])
+                    | Q(submission_types__isnull=True)
+                )
         if self.for_reviewers:
             self.queryset = self.queryset.filter(is_visible_to_reviewers=True)
         for question in self.queryset.prefetch_related("options"):

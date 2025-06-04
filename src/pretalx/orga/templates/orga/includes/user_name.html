@@ -4,7 +4,7 @@
   {% if not request.event or request.event.cfp.request_avatar %}
     {% if user.has_avatar %}
       {% if lightbox %}<a href="{{ user.avatar.url }}" data-lightbox="{{ user.avatar.url }}">{% endif %}
-      <img loading="lazy" class="tiny-avatar" src="{{ user.avatar|thumbnail:'tiny' }}">
+      <img loading="lazy" src="{{ user.avatar|thumbnail:'tiny' }}">
       {% if lightbox %}</a>{% endif %}
     {% endif %}
   {% endif %}

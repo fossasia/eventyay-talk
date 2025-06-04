@@ -67,7 +67,19 @@ class SpeakerList(
     sortable_fields = ("user__email", "user__name")
     default_sort_field = "user__name"
     permission_required = "orga.view_speakers"
-    filter_form_class = SpeakerFilterForm
+
+    def get_filter_form(self):
+        any_arrived = SpeakerProfile.objects.filter(
+            event=self.request.event, has_arrived=True
+        ).exists()
+        return SpeakerFilterForm(
+            self.request.GET,
+            event=self.request.event,
+            filter_arrival=any_arrived
+            and self.request.user.has_perm(
+                "orga.see_speakers_arrival", self.request.event
+            ),
+        )
 
     def get_queryset(self):
         qs = (
@@ -328,7 +340,7 @@ class InformationDelete(PermissionRequired, ActionConfirmMixin, DetailView):
 
 
 class SpeakerExport(EventPermissionRequired, FormView):
-    permission_required = "orga.view_speakers"
+    permission_required = "orga.change_settings"
     template_name = "orga/speaker/export.html"
     form_class = SpeakerExportForm
 

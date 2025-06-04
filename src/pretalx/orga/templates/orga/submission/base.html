@@ -43,6 +43,14 @@
                     {% endif %}
                     {% if can_edit_submission %}
                         {% include "orga/submission/state_dropdown.html" with submission=submission %}
+                        {% if submission.pending_state and can_edit_submission %}
+                            <form action="{{ submission.orga_urls.apply_pending }}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-info" href="{{ request.event.orga_urls.apply_pending }}">
+                                    {% translate "Apply pending changes" %}
+                                </button>
+                            </form>
+                        {% endif %}
                     {% else %}
                         {% include "cfp/event/fragment_state.html" with state=submission.state as_badge=True %}
                     {% endif %}
@@ -75,14 +83,21 @@
                     {% translate "Reviews" %}
                 </a>
             {% endif %}
-            <a role="tab" href="{{ submission.orga_urls.comments }}" {% if "submissions.comments" in url_name %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>
-                {% translate "Comments" %}
-                {% with submission.comments.count as comment_count %}
-                    {% if comment_count %}
-                        <span class="submission-comment-count">{{ comment_count }}</span>
-                    {% endif %}
-                {% endwith %}
-            </a>
+            {% if request.event|get_feature_flag:"use_submission_comments" %}
+                <a role="tab" href="{{ submission.orga_urls.comments }}" {% if "submissions.comments" in url_name %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>
+                    {% translate "Comments" %}
+                    {% with submission.comments.count as comment_count %}
+                        {% if comment_count %}
+                            <span class="submission-comment-count">{{ comment_count }}</span>
+                        {% endif %}
+                    {% endwith %}
+                </a>
+            {% endif %}
+            {% if request.user.is_administrator %}
+                <a role="tab" href="{{ submission.orga_urls.history }}" {% if "submissions.history" in url_name %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>
+                    {% translate "History" %}
+                </a>
+            {% endif %}
             <div class="ml-auto flip d-flex">
                 {% if can_send_mails %}
                     <a class="btn btn-outline-info mr-2 mb-1" href="{{ request.event.orga_urls.compose_mails_sessions }}?submissions={{ submission.code }}">

@@ -105,6 +105,11 @@ def is_comment_author(user, obj):
 
 
 @rules.predicate
+def submission_comments_active(user, obj):
+    return obj.event.get_feature_flag("use_submission_comments")
+
+
+@rules.predicate
 def has_reviewer_access(user, obj):
     from pretalx.submission.models import Submission
 
@@ -127,7 +132,7 @@ def has_reviewer_access(user, obj):
 
 @rules.predicate
 def reviewer_can_change_submissions(user, obj):
-    return (
+    return bool(
         obj.event.active_review_phase
         and obj.event.active_review_phase.can_change_submission_state
     )
@@ -177,13 +182,15 @@ rules.add_perm(
 )
 rules.add_perm(
     "submission.view_submission_comments",
-    has_reviewer_access | can_change_submissions,
+    submission_comments_active & (has_reviewer_access | can_change_submissions),
 )
 rules.add_perm(
     "submission.add_submission_comments",
-    has_reviewer_access | can_change_submissions,
+    submission_comments_active & (has_reviewer_access | can_change_submissions),
 )
 rules.add_perm(
     "submission.delete_submission_comment",
-    (has_reviewer_access | can_change_submissions) & is_comment_author,
+    submission_comments_active
+    & (has_reviewer_access | can_change_submissions)
+    & is_comment_author,
 )

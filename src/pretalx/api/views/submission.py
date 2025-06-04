@@ -61,8 +61,10 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
     }
 
     def get_queryset(self):
-        base_qs = self.request.event.submissions.all().annotate(
-            favourite_count=Count("favourites")
+        base_qs = (
+            self.request.event.submissions.all()
+            .annotate(favourite_count=Count("favourites"))
+            .order_by("code")
         )
         if self.request._request.path.endswith(
             "/talks/"
