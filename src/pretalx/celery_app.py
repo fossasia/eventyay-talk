@@ -1,6 +1,7 @@
 import os
 
 from celery import Celery
+from celery.exceptions import WorkerLostError
 from celery.signals import task_failure
 from django.core.mail import mail_admins
 
@@ -21,6 +22,10 @@ def send_exception_email(
 ):
     if settings.DEBUG or not settings.ADMINS:
         return
+    if isinstance(exception, WorkerLostError):
+        # We’re assuming that WorkerLostErrors are from restarting pretalx
+        # which commonly sends SIGTERMs to celery workers
+        pass
     reporter = PretalxCeleryExceptionReporter(
         request=None,
         exc_type=type(exception),
