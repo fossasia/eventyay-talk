@@ -37,11 +37,11 @@ from pretalx.orga.forms.mails import (
 
 def get_send_mail_exceptions(request):
     exceptions = [
-        result
+        result[1]
         for result in request_pre_send.send_robust(
             sender=request.event, request=request
         )
-        if isinstance(result, SendMailException)
+        if len(result) == 2 and isinstance(result[1], SendMailException)
     ]
     if exceptions:
         errors = [str(e) for e in exceptions]
@@ -173,6 +173,11 @@ class OutboxSend(ActionConfirmMixin, OutboxList):
             if mail.sent:
                 messages.error(request, _("This mail had been sent already."))
             else:
+                errors = get_send_mail_exceptions(request)
+                if errors:
+                    for error in errors:
+                        messages.error(request, error)
+                    return redirect(self.request.event.orga_urls.outbox)
                 mail.send(requestor=self.request.user)
                 messages.success(request, _("The mail has been sent."))
             return redirect(self.request.event.orga_urls.outbox)
@@ -472,6 +477,15 @@ class ComposeTeamsMail(ComposeMailBaseView):
     form_class = WriteTeamsMailForm
     template_name = "orga/mails/compose_reviewer_mail_form.html"
     permission_required = "event.update_team"
+
+    def dispatch(self, request, *args, **kwargs):
+        # Gotta handle errors directly here, as these emails are always sent directly
+        errors = get_send_mail_exceptions(request)
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+            return redirect(self.request.event.orga_urls.outbox)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         return self.request.event.orga_urls.outbox
