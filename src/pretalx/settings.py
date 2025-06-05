@@ -532,12 +532,20 @@ DEFAULT_EVENT_PRIMARY_COLOR = "#2185d0"
 
 ## AUTHENTICATION SETTINGS
 AUTH_USER_MODEL = "person.User"
-AUTHENTICATION_BACKENDS = (
+DEFAULT_AUTHENTICATION_BACKENDS = [
     "rules.permissions.ObjectPermissionBackend",
     "django.contrib.auth.backends.ModelBackend",
     "pretalx.common.auth.AuthenticationTokenBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
-)
+]
+EXTRA_AUTH_BACKENDS = [
+    backend
+    for backend in config.get(
+        "authentication", "additional_auth_backends", fallback=""
+    ).split(",")
+    if backend
+]
+AUTHENTICATION_BACKENDS = DEFAULT_AUTHENTICATION_BACKENDS + EXTRA_AUTH_BACKENDS
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
@@ -681,10 +689,7 @@ COMPRESS_FILTERS = {
 }
 
 REST_FRAMEWORK = {
-    "DEFAULT_RENDERER_CLASSES": (
-        "i18nfield.rest_framework.I18nJSONRenderer",
-        "rest_framework.renderers.BrowsableAPIRenderer",
-    ),
+    "DEFAULT_RENDERER_CLASSES": ("i18nfield.rest_framework.I18nJSONRenderer",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",

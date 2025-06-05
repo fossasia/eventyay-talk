@@ -1,17 +1,18 @@
 from django.db import models
 from rest_framework import viewsets
 
+from pretalx.api.mixins import PretalxViewSetMixin
 from pretalx.api.serializers.review import AnonymousReviewSerializer, ReviewSerializer
 from pretalx.submission.models import Review
 from pretalx.submission.models.submission import SubmissionStates
 
 
-class ReviewViewSet(viewsets.ReadOnlyModelViewSet):
+class ReviewViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = ReviewSerializer
     queryset = Review.objects.none()
     filterset_fields = ("submission__code",)
 
-    def get_serializer_class(self):
+    def get_unversioned_serializer_class(self):
         if not self.request.user.has_perm(
             "orga.view_reviewer_names", self.request.event
         ):

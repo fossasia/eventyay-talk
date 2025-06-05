@@ -29,6 +29,19 @@ How do I designate sessions as fallback/alternates?
     :ref:`Session Lifecycle <user-guide-proposals-pending>` section in the
     :ref:`Sessions & Proposals <user-guide-proposals>` guide.
 
+
+Schedule
+--------
+
+How can I export my schedule to PDF / print my schedule?
+    pretalx does not currently offer a PDF export of the schedule, because of the level of complexity
+    that comes with printing a schedule with an arbitrary amount of rooms.
+    However, the schedule editor page has print support, hiding the usual pretalx UI elements like the
+    menu sidebar. Combined with the schedule editor’s support for hiding rooms, this is the best PDF
+    version of the schedule pretalx offers. To use it, navigate to your schedule editor, select your
+    browser’s print dialogue, and then select “Print to PDF”.
+
+
 Email
 -----
 
@@ -39,4 +52,20 @@ We run into issues when using Gmail.
     many emails in bulk (e.g. all rejections for a conference) even on GSuite,
     so using Gmail for transactional email is a bad idea.
 
+
+Integrations
+------------
+
+How do we create speaker tickets with pretix?
+    As there is no direct integration between pretix and pretalx yet (some details
+    here `on GitHub`_), the best way to send pretix vouchers to all your pretalx
+    speakers is to use the pretalx CSV export.
+    Select all accepted and confirmed speakers, and export the name and email
+    field. You can then use the bulk voucher form in pretix with the exported
+    CSV file directly – you can find more information on the bulk voucher
+    sending workflow in the `pretix documentation`_.
+
+
 .. _less secure app: https://support.google.com/accounts/answer/6010255
+.. _on GitHub: https://github.com/pretalx/pretalx/discussions/2027#discussioncomment-13145751
+.. _pretix documentation: https://docs.pretix.eu/guides/vouchers/#sending-out-vouchers-via-email

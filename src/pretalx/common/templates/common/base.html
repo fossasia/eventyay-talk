@@ -96,7 +96,7 @@
                         {% if request.event and request.event.locales|length > 1 and not is_html_export %}
                             <div class="locales">
                                 {% for l, name in request.event.named_locales %}
-                                    <a href="{% url "cfp:locale.set" event=request.event.slug %}?locale={{ l }}&next={{ request.path }}{% if request.META.QUERY_STRING %}{% querystring locale=None %}{% endif %}"
+                                    <a href="{% url "cfp:locale.set" event=request.event.slug %}?locale={{ l }}&next={{ request.path|urlencode }}{% if request.META.QUERY_STRING %}{% querystring locale=None %}{% endif %}"
                                        class="{% if l|lower == request.LANGUAGE_CODE|lower %}active{% endif %}">{{ name }}</a>
                                 {% endfor %}
                                 •&nbsp;

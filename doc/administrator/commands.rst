@@ -175,7 +175,7 @@ Development commands
 ~~~~~~~~~~~~~~~~
 
 This command regenerates translation files. It should only be used during
-pretalx development.
+pretalx development (:ref:`developer-translations`).
 
 ``makemigrations``
 ~~~~~~~~~~~~~~~~~~

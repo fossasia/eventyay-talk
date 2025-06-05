@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.urls import NoReverseMatch
+from django.utils.functional import cached_property
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.timezone import now
 from django.views.generic import FormView, View
@@ -66,6 +67,11 @@ class GenericLoginView(FormView):
         return self.get_next_url_or_fallback(
             self.request, self.success_url, ignore_next=ignore_next
         )
+
+    @context
+    @cached_property
+    def success_url(self):
+        return self.get_success_url()
 
     def get_redirect(self):
         try:

@@ -299,7 +299,7 @@ class QueuedMail(PretalxModel):
             "color": (event.primary_color if event else "")
             or settings.DEFAULT_EVENT_PRIMARY_COLOR,
             "locale": self.locale,
-            "rtl": self.locale in settings.LANGUAGES_RTL,
+            "rtl": self.locale in settings.LANGUAGES_BIDI,
             "subject": self.subject,
             "signature": sig,
         }

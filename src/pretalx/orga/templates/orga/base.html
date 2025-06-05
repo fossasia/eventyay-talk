@@ -423,10 +423,10 @@
                                 </a>
                             </div>
                         </div>
-                        {% for nav_element in nav_event %}
-                            {% include "orga/includes/sidebar_nav.html" %}
-                        {% endfor %}
                     {% endif %}
+                    {% for nav_element in nav_event %}
+                        {% include "orga/includes/sidebar_nav.html" %}
+                    {% endfor %}
                 {% elif request.organiser %}  {# if request.event #}
                     <a class="nav-link {% if url_name == "organiser.dashboard" %} active{% endif %}" href="{{ request.organiser.orga_urls.base }}">
                         <i class="fa fa-tachometer"></i>

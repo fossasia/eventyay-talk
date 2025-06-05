@@ -54,7 +54,7 @@ def locale_context(request):
         "quotation_open": phrases.base.quotation_open,
         "quotation_close": phrases.base.quotation_close,
         "DAY_MONTH_DATE_FORMAT": get_day_month_date_format(),
-        "rtl": getattr(request, "LANGUAGE_CODE", "en") in settings.LANGUAGES_RTL,
+        "rtl": getattr(request, "LANGUAGE_CODE", "en") in settings.LANGUAGES_BIDI,
         "AVAILABLE_CALENDAR_LOCALES": AVAILABLE_CALENDAR_LOCALES,
     }
 

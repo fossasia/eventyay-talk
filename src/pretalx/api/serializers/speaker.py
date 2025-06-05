@@ -2,10 +2,12 @@ from rest_framework.serializers import CharField, ModelSerializer, SerializerMet
 
 from pretalx.api.serializers.question import AnswerSerializer
 from pretalx.api.serializers.room import AvailabilitySerializer
+from pretalx.api.versions import register_serializer
 from pretalx.person.models import SpeakerProfile, User
 from pretalx.schedule.models import Availability
 
 
+@register_serializer()
 class SubmitterSerializer(ModelSerializer):
     biography = SerializerMethodField()
 
@@ -39,11 +41,13 @@ class SubmitterSerializer(ModelSerializer):
         return ""
 
 
+@register_serializer()
 class SubmitterOrgaSerializer(SubmitterSerializer):
     class Meta(SubmitterSerializer.Meta):
         fields = SubmitterSerializer.Meta.fields + ("email",)
 
 
+@register_serializer()
 class SpeakerSerializer(ModelSerializer):
     code = CharField(source="user.code")
     name = CharField(source="user.name")
@@ -113,6 +117,7 @@ class SpeakerSerializer(ModelSerializer):
         )
 
 
+@register_serializer()
 class SpeakerOrgaSerializer(SpeakerSerializer):
     email = CharField(source="user.email")
     availabilities = AvailabilitySerializer(
@@ -131,6 +136,7 @@ class SpeakerOrgaSerializer(SpeakerSerializer):
         fields = SpeakerSerializer.Meta.fields + ("email", "availabilities")
 
 
+@register_serializer()
 class SpeakerReviewerSerializer(SpeakerOrgaSerializer):
     def answers_queryset(self, obj):
         return obj.reviewer_answers.all()

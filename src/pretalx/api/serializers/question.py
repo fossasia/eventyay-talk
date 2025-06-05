@@ -1,15 +1,18 @@
 from rest_framework.serializers import ModelSerializer, SlugRelatedField
 
+from pretalx.api.versions import register_serializer
 from pretalx.person.models import User
 from pretalx.submission.models import Answer, AnswerOption, Question, Submission
 
 
+@register_serializer()
 class AnswerOptionSerializer(ModelSerializer):
     class Meta:
         model = AnswerOption
         fields = ("id", "answer")
 
 
+@register_serializer()
 class QuestionSerializer(ModelSerializer):
     options = AnswerOptionSerializer(many=True, required=False)
 
@@ -36,12 +39,14 @@ class QuestionSerializer(ModelSerializer):
         )
 
 
+@register_serializer()
 class MinimalQuestionSerializer(ModelSerializer):
     class Meta:
         model = Question
         fields = ("id", "question")
 
 
+@register_serializer()
 class AnswerWriteSerializer(ModelSerializer):
     submission = SlugRelatedField(
         queryset=Submission.objects.none(),
@@ -88,6 +93,7 @@ class AnswerWriteSerializer(ModelSerializer):
         )
 
 
+@register_serializer()
 class AnswerSerializer(AnswerWriteSerializer):
     question = MinimalQuestionSerializer(Question.objects.none())
 

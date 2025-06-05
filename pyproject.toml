@@ -20,6 +20,8 @@ classifiers = [
   "License :: OSI Approved :: Apache Software License",
   "License :: OSI Approved",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
 ]
 
@@ -52,7 +54,7 @@ dependencies = [
   "publicsuffixlist~=1.0.0",
   "python-dateutil~=2.9.0",
   "qrcode~=8.0",
-  "reportlab~=4.3.0",
+  "reportlab~=4.4.0",
   "requests~=2.32.0",
   "rules~=3.5.0",
   "setuptools",

@@ -9,10 +9,12 @@ from rest_framework.serializers import (
 
 from pretalx.api.serializers.question import AnswerSerializer
 from pretalx.api.serializers.speaker import SubmitterOrgaSerializer, SubmitterSerializer
+from pretalx.api.versions import register_serializer
 from pretalx.schedule.models import Schedule, TalkSlot
 from pretalx.submission.models import Resource, Submission, SubmissionStates, Tag
 
 
+@register_serializer()
 class ResourceSerializer(ModelSerializer):
     resource = SerializerMethodField()
 
@@ -25,6 +27,7 @@ class ResourceSerializer(ModelSerializer):
         fields = ("resource", "description")
 
 
+@register_serializer()
 class SlotSerializer(I18nAwareModelSerializer):
     room = SlugRelatedField(slug_field="name", read_only=True)
     end = SerializerMethodField()
@@ -38,12 +41,14 @@ class SlotSerializer(I18nAwareModelSerializer):
         fields = ("room_id", "room", "start", "end")
 
 
+@register_serializer()
 class BreakSerializer(SlotSerializer):
     class Meta:
         model = TalkSlot
         fields = ("room", "room_id", "start", "end", "description")
 
 
+@register_serializer()
 class SubmissionSerializer(I18nAwareModelSerializer):
     submission_type = SlugRelatedField(slug_field="name", read_only=True)
     track = SlugRelatedField(slug_field="name", read_only=True)
@@ -136,12 +141,14 @@ class SubmissionSerializer(I18nAwareModelSerializer):
         ]
 
 
+@register_serializer()
 class TagSerializer(I18nAwareModelSerializer):
     class Meta:
         model = Tag
         fields = ["id", "tag", "description", "color"]
 
 
+@register_serializer()
 class SubmissionOrgaSerializer(SubmissionSerializer):
     tags = SerializerMethodField()
     tag_ids = SerializerMethodField()
@@ -178,6 +185,7 @@ class SubmissionOrgaSerializer(SubmissionSerializer):
         ]
 
 
+@register_serializer()
 class SubmissionReviewerSerializer(SubmissionOrgaSerializer):
     def answers_queryset(self, obj):
         return obj.reviewer_answers.all()
@@ -186,6 +194,7 @@ class SubmissionReviewerSerializer(SubmissionOrgaSerializer):
         pass
 
 
+@register_serializer()
 class ScheduleListSerializer(ModelSerializer):
     version = SerializerMethodField()
 
@@ -198,6 +207,7 @@ class ScheduleListSerializer(ModelSerializer):
         fields = ("version", "published")
 
 
+@register_serializer()
 class ScheduleSerializer(ModelSerializer):
     slots = SubmissionSerializer(
         Submission.objects.none().filter(state=SubmissionStates.CONFIRMED), many=True
