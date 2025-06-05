@@ -16,8 +16,8 @@
 {% block content %}
     <h2>{% translate "Users" %}</h2>
 
-    <form>
-        <input name="q" type="text" {% if request.GET.q %} value="{{ request.GET.q }}" {% endif %}>
+    <form class="mb-3 mt-2">
+        <input name="q" type="text" {% if request.GET.q %} value="{{ request.GET.q }}" {% endif %} placeholder="{% translate "Search users by name or email address" %}">
     </form>
 
     <form method="post">
