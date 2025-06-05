@@ -130,11 +130,11 @@ class ScheduleView(PermissionRequired, ScheduleMixin, TemplateView):
         return super().dispatch(request, **kwargs)
 
     def get(self, request, **kwargs):
-        accept_header = request.headers.get("Accept", "")
-        if getattr(self, "is_html_export", False) or "text/html" in accept_header:
+        if getattr(self, "is_html_export", False) or request.accepts("text/html"):
             return super().get(request, **kwargs)
 
-        if not accept_header or accept_header in ("plain", "text/plain"):
+        accept_header = request.headers.get("Accept") or ""
+        if not accept_header or request.accepts("text/plain"):
             return self.get_text(request, **kwargs)
 
         export_headers = {
@@ -142,7 +142,7 @@ class ScheduleView(PermissionRequired, ScheduleMixin, TemplateView):
             "frab_json": ["application/json"],
         }
         for url_name, headers in export_headers.items():
-            if any(header in accept_header for header in headers):
+            if any(request.accepts(header) for header in headers):
                 target_url = getattr(self.request.event.urls, url_name).full()
                 response = HttpResponseRedirect(target_url)
                 response.status_code = 303
