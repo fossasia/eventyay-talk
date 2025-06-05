@@ -44,7 +44,7 @@ def test_orga_can_see_wip_schedule(orga_client, event, slot, version):
 @pytest.mark.django_db
 @pytest.mark.usefixtures("other_slot")
 def test_can_see_text_schedule(client, event, slot):
-    response = client.get(event.urls.schedule, follow=True, HTTP_ACCEPT="*/*")
+    response = client.get(event.urls.schedule, follow=True, HTTP_ACCEPT="text/plain")
     assert response.status_code == 200
     with scope(event=event):
         assert slot.submission.title[:10] in response.text

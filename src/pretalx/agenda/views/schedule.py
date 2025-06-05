@@ -130,10 +130,12 @@ class ScheduleView(PermissionRequired, ScheduleMixin, TemplateView):
         return super().dispatch(request, **kwargs)
 
     def get(self, request, **kwargs):
-        if getattr(self, "is_html_export", False) or request.accepts("text/html"):
+        accept_header = request.headers.get("Accept") or ""
+        if getattr(self, "is_html_export", False) or (
+            accept_header and request.accepts("text/html")
+        ):
             return super().get(request, **kwargs)
 
-        accept_header = request.headers.get("Accept") or ""
         if not accept_header or request.accepts("text/plain"):
             return self.get_text(request, **kwargs)
 
