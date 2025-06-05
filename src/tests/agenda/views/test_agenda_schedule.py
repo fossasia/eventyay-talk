@@ -23,7 +23,7 @@ def test_can_see_schedule(
     with scope(event=event):
         assert event.schedules.count() == 2
         test_string = "<pretalx-schedule" if version == "js" else slot.submission.title
-        assert test_string in response.content.decode()
+        assert test_string in response.text
 
 
 @pytest.mark.django_db
@@ -38,7 +38,7 @@ def test_orga_can_see_wip_schedule(orga_client, event, slot, version):
     assert response.status_code == 200
     with scope(event=event):
         test_string = "<pretalx-schedule" if version == "js" else slot.submission.title
-        assert test_string in response.content.decode()
+        assert test_string in response.text
 
 
 @pytest.mark.django_db
@@ -47,7 +47,7 @@ def test_can_see_text_schedule(client, event, slot):
     response = client.get(event.urls.schedule, follow=True, HTTP_ACCEPT="*/*")
     assert response.status_code == 200
     with scope(event=event):
-        assert slot.submission.title[:10] in response.content.decode()
+        assert slot.submission.title[:10] in response.text
 
 
 @pytest.mark.django_db
@@ -56,7 +56,7 @@ def test_can_see_schedule_with_broken_accept_header(client, event):
     response = client.get(event.urls.schedule, follow=True, HTTP_ACCEPT="foo/bar")
     assert response.status_code == 200
     with scope(event=event):
-        assert "<pretalx-schedule" in response.content.decode()
+        assert "<pretalx-schedule" in response.text
 
 
 @pytest.mark.django_db
@@ -103,7 +103,7 @@ def test_speaker_list(client, django_assert_num_queries, event, speaker):
     with django_assert_num_queries(9):
         response = client.get(url, follow=True)
     assert response.status_code == 200
-    assert speaker.name in response.content.decode()
+    assert speaker.name in response.text
 
 
 @pytest.mark.django_db
@@ -125,8 +125,8 @@ def test_speaker_page(
     assert len(response.context["talks"]) == 2, response.context["talks"]
     assert response.context["talks"].filter(submission=other_submission)
     with scope(event=event):
-        assert speaker.profiles.get(event=event).biography in response.content.decode()
-        assert slot.submission.title in response.content.decode()
+        assert speaker.profiles.get(event=event).biography in response.text
+        assert slot.submission.title in response.text
 
 
 @pytest.mark.django_db
@@ -195,7 +195,7 @@ def test_schedule_page_text_table(client, django_assert_num_queries, event, slot
         response = client.get(url, follow=True)
     assert response.status_code == 200
     title_lines = textwrap.wrap(slot.submission.title, width=16)
-    content = response.content.decode()
+    content = response.text
     for line in title_lines:
         assert line in content
 
@@ -210,7 +210,7 @@ def test_schedule_page_text_table_explicit_header(
         response = client.get(url, follow=True, HTTP_ACCEPT="text/plain")
     assert response.status_code == 200
     title_lines = textwrap.wrap(slot.submission.title, width=16)
-    content = response.content.decode()
+    content = response.text
     for line in title_lines:
         assert line in content
 
@@ -232,7 +232,7 @@ def test_schedule_page_redirects(
         response = client.get(url, HTTP_ACCEPT=header)
     assert response.status_code == 303
     assert response.headers["location"] == getattr(event.urls, target).full()
-    assert response.content.decode() == ""
+    assert response.text == ""
 
 
 @pytest.mark.django_db
@@ -242,7 +242,7 @@ def test_schedule_page_text_list(client, django_assert_num_queries, event, slot)
     with django_assert_num_queries(8):
         response = client.get(url, {"format": "list"}, follow=True)
     assert response.status_code == 200
-    assert slot.submission.title in response.content.decode()
+    assert slot.submission.title in response.text
 
 
 @pytest.mark.django_db
@@ -254,7 +254,7 @@ def test_schedule_page_text_wrong_format(
     with django_assert_num_queries(8):
         response = client.get(url, {"format": "wrong"}, follow=True)
     assert response.status_code == 200
-    assert slot.submission.title[:10] in response.content.decode()
+    assert slot.submission.title[:10] in response.text
 
 
 @pytest.mark.django_db
@@ -284,19 +284,17 @@ def test_versioned_schedule_page(
     with django_assert_num_queries(queries_main):
         response = client.get(url, follow=True, HTTP_ACCEPT="text/html")
     if version == "js":
-        assert (
-            test_string in response.content.decode()
-        )  # JS widget is displayed even on empty schedules
+        # JS widget is displayed even on empty schedules
+        assert test_string in response.text
     else:
-        assert (
-            test_string not in response.content.decode()
-        )  # But our talk has been made invisible
+        # But our talk has been made invisible
+        assert test_string not in response.text
 
     url = schedule.urls.public if version == "js" else schedule.urls.nojs
     with django_assert_max_num_queries(queries_versioned):
         response = client.get(url, follow=True, HTTP_ACCEPT="text/html")
     assert response.status_code == 200
-    assert test_string in response.content.decode()
+    assert test_string in response.text
 
     url = event.urls.schedule if version == "js" else event.urls.schedule_nojs
     url += f"?version={quote(schedule.version)}"

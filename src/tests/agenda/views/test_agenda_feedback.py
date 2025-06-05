@@ -70,7 +70,7 @@ def test_can_see_feedback(django_assert_num_queries, feedback, client):
     with django_assert_num_queries(17):
         response = client.get(feedback.talk.urls.feedback)
     assert response.status_code == 200
-    assert feedback.review in response.content.decode()
+    assert feedback.review in response.text
 
 
 @pytest.mark.django_db()

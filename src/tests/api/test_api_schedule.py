@@ -18,7 +18,7 @@ def test_user_can_see_schedule(client, slot, event):
     with scope(event=event):
         assert slot.submission.event.schedules.count() == 2
     response = client.get(slot.submission.event.api_urls.schedules, follow=True)
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 1
@@ -29,7 +29,7 @@ def test_user_cannot_see_wip_schedule_list(client, slot, event):
     with scope(event=event):
         assert slot.submission.event.schedules.count() == 2
     response = client.get(slot.submission.event.api_urls.schedules, follow=True)
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert response.status_code == 200
     assert content["count"] == 1
     for schedule_data in content["results"]:
@@ -55,7 +55,7 @@ def test_orga_can_see_schedule(client, orga_user_token, slot, event):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 2
@@ -74,7 +74,7 @@ def test_orga_cannot_see_schedule_even_if_not_public(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 2
@@ -92,7 +92,7 @@ def test_orga_can_access_wip_schedule_shortcut(client, orga_user_token, event, s
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["version"] == event.wip_schedule.version_with_fallback
 
 
@@ -115,7 +115,7 @@ def test_orga_can_access_latest_schedule_shortcut(
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["version"] == current_schedule_version
     assert len(content["slots"]) == 2
 
@@ -131,7 +131,7 @@ def test_user_can_access_latest_schedule_shortcut_if_public(client, event, slot)
 
     response = client.get(event.api_urls.schedules + "latest/")
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["version"] == current_schedule_version
 
 
@@ -231,8 +231,8 @@ def test_orga_can_release_schedule(client, orga_user_write_token, event, slot):
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 201, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 201, response.text
+    content = json.loads(response.text)
 
     with scope(event=event):
         assert content["version"] == release_data["version"]
@@ -263,7 +263,7 @@ def test_orga_cannot_release_schedule_with_existing_version(
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
     assert response.status_code == 400
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert "version" in content
 
 
@@ -279,7 +279,7 @@ def test_orga_cannot_release_schedule_without_version_name(
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
     assert response.status_code == 400
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert "version" in content
 
 
@@ -317,7 +317,7 @@ def test_user_can_download_slot_ical(client, slot, event):
         f'attachment; filename="{event.slug}-{slot.submission.code}.ics"'
     )
     assert response.headers["Content-Disposition"] == expected_filename
-    content = response.content.decode()
+    content = response.text
     assert "BEGIN:VCALENDAR" in content
     assert f"{slot.submission.code}" in content
 
@@ -388,7 +388,7 @@ def test_list_slots_anonymous_schedule_public_current_schedule_only(
     with scope(event=event):
         code = slot.submission.code
     response = client.get(event.api_urls.slots, follow=True)
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert response.status_code == 200
     assert content["count"] == 1
     assert content["results"][0]["id"] == slot.pk
@@ -403,7 +403,7 @@ def test_list_slots_anonymous_schedule_public_only_visible(
     with scope(event=event):
         slot_pk = event.current_schedule.talks.get(submission=slot.submission).pk
     response = client.get(event.api_urls.slots, follow=True)
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert response.status_code == 200
     assert content["count"] == 1
     assert content["results"][0]["id"] == slot_pk
@@ -424,7 +424,7 @@ def test_list_slots_orga_sees_slots_in_current_schedule_by_default(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert response.status_code == 200
 
     assert content["count"] == len(current_schedule_slot_ids)
@@ -449,7 +449,7 @@ def test_list_slots_orga_can_filter_by_schedule_pk(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert response.status_code == 200, content
     assert content["count"] >= 1
     assert slot.pk in [s["id"] for s in content["results"]]
@@ -459,7 +459,7 @@ def test_list_slots_orga_can_filter_by_schedule_pk(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert response.status_code == 200
     assert content["count"] == 3
 
@@ -476,7 +476,7 @@ def test_retrieve_slot_anonymous_visible_schedule_public(client, event, slot):
         code = slot.submission.code
     response = client.get(event.api_urls.slots + f"{slot.pk}/", follow=True)
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["id"] == slot.pk
     assert "is_visible" not in content
     assert content["submission"] == code
@@ -502,7 +502,7 @@ def test_retrieve_slot_orga_can_see_invisible_slot(
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["id"] == invisible_slot.pk
 
 
@@ -518,7 +518,7 @@ def test_retrieve_slot_without_submission_orga(
     )
 
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["id"] == break_slot.pk
     assert content["submission"] is None
     assert content["room"] == room.pk
@@ -533,7 +533,7 @@ def test_retrieve_slot_without_submission(client, event, room, break_slot):
     response = client.get(url, follow=True)
 
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["id"] == break_slot.pk
     assert content["submission"] is None
     assert content["room"] == room.pk
@@ -586,7 +586,7 @@ def test_update_slot_orga_write_token_cannot_change_visibility(
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["is_visible"] == initial_visibility
     with scope(event=event):
         wip_slot.refresh_from_db()
@@ -662,7 +662,7 @@ def test_update_slot_orga_write_submission_fields(
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     if has_submission:
         assert response.status_code == 400
         assert "end" in content
@@ -683,7 +683,7 @@ def test_talk_slot_expand_parameters(client, orga_user_token, event, slot):
 
     response = client.get(url, headers=base_headers)
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["submission"] == submission_code
     assert content["room"] == room_pk
     assert content["schedule"] == slot.schedule_id
@@ -693,7 +693,7 @@ def test_talk_slot_expand_parameters(client, orga_user_token, event, slot):
         headers=base_headers,
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert isinstance(content["room"], dict)
     assert content["room"]["id"] == room_pk
@@ -726,7 +726,7 @@ def test_schedule_expand_slots(client, event, slot, track):
         follow=True,
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert isinstance(content["slots"], list)
     assert len(content["slots"]) > 0
     assert all(isinstance(s, dict) for s in content["slots"])

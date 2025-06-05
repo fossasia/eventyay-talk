@@ -12,14 +12,14 @@ from pretalx.submission.models import SubmissionStates
 def test_can_see_submission_list(speaker_client, submission):
     response = speaker_client.get(submission.event.urls.user_submissions, follow=True)
     assert response.status_code == 200
-    assert submission.title in response.content.decode()
+    assert submission.title in response.text
 
 
 @pytest.mark.django_db
 def test_can_see_submission(speaker_client, submission):
     response = speaker_client.get(submission.urls.user_base, follow=True)
     assert response.status_code == 200
-    assert submission.title in response.content.decode()
+    assert submission.title in response.text
 
 
 @pytest.mark.django_db
@@ -172,7 +172,7 @@ def test_can_edit_submission(speaker_client, submission, resource, other_resourc
         submission.refresh_from_db()
         resource_one.refresh_from_db()
         new_resource = submission.resources.exclude(pk=resource_one.pk).first()
-        assert submission.title == "Ein ganz neuer Titel", response.content.decode()
+        assert submission.title == "Ein ganz neuer Titel", response.text
         assert submission.resources.count() == 2
         assert new_resource.description == "new resource"
         assert new_resource.resource.read() == b"file_content"
@@ -505,27 +505,27 @@ def test_can_delete_profile(speaker, event, speaker_client):
 @pytest.mark.django_db
 def test_can_change_locale(multilingual_event, client):
     first_response = client.get(multilingual_event.cfp.urls.public, follow=True)
-    assert "submission" in first_response.content.decode()
-    assert "Kontakt" not in first_response.content.decode()
+    assert "submission" in first_response.text
+    assert "Kontakt" not in first_response.text
     second_response = client.get(
         reverse("cfp:locale.set", kwargs={"event": multilingual_event.slug})
         + f"?locale=de&next=/{multilingual_event.slug}/",
         follow=True,
     )
-    assert "Kontakt" in second_response.content.decode()
+    assert "Kontakt" in second_response.text
 
 
 @pytest.mark.django_db
 def test_can_change_locale_with_queryparam(multilingual_event, client):
     first_response = client.get(multilingual_event.cfp.urls.public, follow=True)
-    assert "submission" in first_response.content.decode()
-    assert "Kontakt" not in first_response.content.decode()
+    assert "submission" in first_response.text
+    assert "Kontakt" not in first_response.text
     second_response = client.get(
         reverse("cfp:locale.set", kwargs={"event": multilingual_event.slug})
         + f"?locale=de&next=/{multilingual_event.slug}/?foo=bar",
         follow=True,
     )
-    assert "Kontakt" in second_response.content.decode()
+    assert "Kontakt" in second_response.text
 
 
 @pytest.mark.django_db

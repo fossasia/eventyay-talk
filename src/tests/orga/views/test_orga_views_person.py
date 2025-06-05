@@ -29,7 +29,7 @@ def test_user_typeahead(
         follow=True,
     )
     assert orga_response.status_code == 200
-    orga_content = json.loads(orga_response.content.decode())
+    orga_content = json.loads(orga_response.text)
     assert orga_content["count"] == orga_results
     if orga_results:
         assert "name" in orga_content["results"][0]
@@ -68,7 +68,7 @@ def test_orga_wrong_profile_page_update(orga_client, orga_user):
         reverse("orga:user.view"), {"form": "tokennnnnn"}, follow=True
     )
     assert response.status_code == 200
-    assert "trouble saving your input" in response.content.decode()
+    assert "trouble saving your input" in response.text
 
 
 @pytest.mark.django_db
@@ -95,6 +95,6 @@ def test_orga_update_profile_info(orga_client, orga_user):
         follow=True,
     )
     assert response.status_code == 200
-    assert "have been saved" in response.content.decode()
+    assert "have been saved" in response.text
     orga_user.refresh_from_db()
     assert orga_user.name == "New name"

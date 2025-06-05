@@ -42,7 +42,7 @@ def test_orga_redirect_login(client, orga_user, event):
         follow=True,
     )
     assert response.status_code == 200
-    assert event.name in response.content.decode()
+    assert event.name in response.text
     assert response.redirect_chain[-1][0] == request_url
 
 
@@ -213,7 +213,7 @@ def test_can_reset_password_by_email(orga_user, client, event):
         data={"login_email": orga_user.email, "login_password": "mynewpassword1!"},
         follow=True,
     )
-    assert orga_user.get_display_name() in response.content.decode()
+    assert orga_user.get_display_name() in response.text
 
 
 @pytest.mark.django_db
@@ -247,7 +247,7 @@ def test_cannot_reset_password_with_incorrect_input(orga_user, client, event):
         data={"login_email": orga_user.email, "login_password": "mynewpassword1!"},
         follow=True,
     )
-    assert orga_user.get_display_name() not in response.content.decode()
+    assert orga_user.get_display_name() not in response.text
 
 
 @pytest.mark.django_db
@@ -271,7 +271,7 @@ def test_cannot_reset_password_to_insecure_password(orga_user, client, event):
         data={"login_email": orga_user.email, "login_password": "password"},
         follow=True,
     )
-    assert orga_user.get_display_name() not in response.content.decode()
+    assert orga_user.get_display_name() not in response.text
 
 
 @pytest.mark.django_db

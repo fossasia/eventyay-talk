@@ -43,7 +43,7 @@ def test_organizer_can_see_answer(orga_user_token, client, answer):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert response.status_code == 200
     assert len(content["results"]) == 1
     assert content["results"][0]["id"] == answer.id
@@ -84,7 +84,7 @@ def test_organizer_can_create_answer(
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
     with scope(event=event):
         assert Answer.objects.filter(question__event=event).count() == count + 1
         answer = Answer.objects.filter(question__event=event).first()
@@ -114,7 +114,7 @@ def test_organizer_cannot_create_answer_superflous_fields(
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 400, response.content.decode()
+    assert response.status_code == 400, response.text
     with scope(event=event):
         assert Answer.objects.filter(question__event=event).count() == count
 
@@ -138,7 +138,7 @@ def test_duplicate_answer_updates_existing_answer(
             content_type="application/json",
             headers={"Authorization": f"Token {orga_user_write_token.token}"},
         )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
     with scope(event=event):
         assert Answer.objects.filter(question__event=event).count() == count
         answer = Answer.objects.filter(question__event=event).first()
@@ -153,7 +153,7 @@ def test_organizer_can_edit_answers(event, orga_user_write_token, client, answer
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
+    assert response.status_code == 200, response.text
     with scope(event=event):
         answer.refresh_from_db()
         assert answer.answer == "ohno.png"
@@ -175,7 +175,7 @@ def test_reviewer_cannot_create_answer(
         },
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 403, response.content.decode()
+    assert response.status_code == 403, response.text
     with scope(event=event):
         assert Answer.objects.filter(question__event=event).count() == count
 
@@ -188,7 +188,7 @@ def test_reviewer_cannot_edit_answer(event, client, review_user_token, answer):
         content_type="application/json",
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 403, response.content.decode()
+    assert response.status_code == 403, response.text
     with scope(event=event):
         answer.refresh_from_db()
         assert answer.answer != "ohno.png"
@@ -206,7 +206,7 @@ def test_fields_required_on_create(
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
     assert response.data.get(required_field)[0] == "This field is required."
-    assert response.status_code == 400, response.content.decode()
+    assert response.status_code == 400, response.text
 
 
 @pytest.mark.django_db
@@ -232,7 +232,7 @@ def test_field_answer_may_not_be_blank(
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
     assert response.data.get("answer")[0] == "This field may not be blank."
-    assert response.status_code == 400, response.content.decode()
+    assert response.status_code == 400, response.text
 
 
 @pytest.mark.django_db

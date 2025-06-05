@@ -12,7 +12,7 @@ def test_can_see_talk_list(client, django_assert_num_queries, event):
     with django_assert_num_queries(6):
         response = client.get(event.urls.talks, follow=True, HTTP_ACCEPT="text/html")
     assert response.status_code == 200
-    assert "<pretalx-schedule" in response.content.decode()
+    assert "<pretalx-schedule" in response.text
 
 
 @pytest.mark.django_db
@@ -21,7 +21,7 @@ def test_can_see_talk(client, django_assert_num_queries, event, slot):
     with django_assert_num_queries(21):
         response = client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
-    content = response.content.decode()
+    content = response.text
     with scope(event=event):
         assert content.count(slot.submission.title) >= 2  # meta+h1
         assert slot.submission.abstract in content
@@ -41,7 +41,7 @@ def test_can_see_talk_with_iframe(client, django_assert_num_queries, event, slot
     with django_assert_num_queries(21):
         response = client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
-    content = response.content.decode()
+    content = response.text
     assert "<iframe" in content
 
 
@@ -70,7 +70,7 @@ def test_orga_can_see_new_talk(
     with django_assert_num_queries(24):
         response = orga_client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
-    content = response.content.decode()
+    content = response.text
     with scope(event=event):
         assert event.schedules.count() == 1
         assert content.count(slot.submission.title) >= 2  # meta+h1
@@ -92,7 +92,7 @@ def test_can_see_talk_edit_btn(
     with django_assert_num_queries(25):
         response = orga_client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
-    content = response.content.decode()
+    content = response.text
     assert "fa-edit" in content  # edit btn
     assert "fa-video" not in content
 
@@ -105,7 +105,7 @@ def test_can_see_talk_do_not_record(client, event, django_assert_num_queries, sl
     with django_assert_num_queries(20):
         response = client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
-    content = response.content.decode()
+    content = response.text
     assert "fa-edit" not in content  # edit btn
     assert "fa-video" in content
 
@@ -121,7 +121,7 @@ def test_can_see_talk_does_accept_feedback(
     with django_assert_num_queries(21):
         response = client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
-    content = response.content.decode()
+    content = response.text
     assert "fa-edit" not in content  # edit btn
     assert "fa-comments" in content
     assert "fa-video" not in content
@@ -264,4 +264,4 @@ def test_talk_review_page(client, django_assert_num_queries, submission):
     with django_assert_num_queries(14):
         response = client.get(submission.urls.review, follow=True)
     assert response.status_code == 200
-    assert submission.title in response.content.decode()
+    assert submission.title in response.text

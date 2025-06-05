@@ -116,7 +116,7 @@ def test_dev_settings_warning(orga_client, event):
     response = orga_client.get(
         reverse("orga:event.dashboard", kwargs={"event": event.slug}), follow=True
     )
-    assert "running in development mode" in response.content.decode()
+    assert "running in development mode" in response.text
 
 
 @pytest.mark.django_db
@@ -131,7 +131,7 @@ def test_update_check_warning(orga_user, orga_client, event):
     response = orga_client.get(
         reverse("orga:event.dashboard", kwargs={"event": event.slug}), follow=True
     )
-    assert "fa-bell" in response.content.decode()
+    assert "fa-bell" in response.text
 
 
 @pytest.mark.django_db

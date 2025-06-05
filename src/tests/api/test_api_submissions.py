@@ -114,7 +114,7 @@ def test_can_only_see_public_submissions(
     client, slot, accepted_submission, rejected_submission, submission
 ):
     response = client.get(submission.event.api_urls.submissions, follow=True)
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 1
@@ -146,7 +146,7 @@ def test_orga_can_see_all_submissions(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200, content
     assert content["count"] == 4
@@ -193,7 +193,7 @@ def test_answer_is_visible_to_reviewers(
         follow=True,
         headers={"Authorization": f"Token {token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200, content
     assert content["count"] == 1
@@ -212,7 +212,7 @@ def test_orga_can_see_all_submissions_even_nonpublic(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 4
@@ -226,7 +226,7 @@ def test_can_only_see_public_talks(
     response = client.get(
         submission.event.api_urls.submissions + "?expand=speakers", follow=True
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 1
@@ -261,7 +261,7 @@ def test_orga_can_see_all_talks_even_nonpublic(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 1
@@ -287,7 +287,7 @@ def test_reviewer_cannot_see_submissions_in_anonymised_phase(
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     content = content["results"][0]
     assert len(content["speakers"]) == 1
     assert content["description"] != "CENSORED!"
@@ -298,7 +298,7 @@ def test_reviewer_cannot_see_submissions_in_anonymised_phase(
         follow=True,
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 403, response.content.decode()
+    assert response.status_code == 403, response.text
 
 
 @pytest.mark.django_db
@@ -314,7 +314,7 @@ def test_orga_can_see_tags(client, orga_user_token, tag):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 1
@@ -328,7 +328,7 @@ def test_orga_can_see_single_tag(client, orga_user_token, tag):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["tag"] == tag.tag
@@ -343,7 +343,7 @@ def test_orga_can_see_single_tag_locale_override(client, orga_user_token, tag):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["tag"] == tag.tag
@@ -363,9 +363,9 @@ def test_orga_can_see_single_legacy_tag(client, orga_user_token, tag):
             "Pretalx-Version": LEGACY,
         },
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
-    assert response.status_code == 200, response.content.decode()
+    assert response.status_code == 200, response.text
     assert content["tag"] == tag.tag
     assert "is_public" not in content
     orga_user_token.refresh_from_db()
@@ -378,8 +378,8 @@ def test_orga_can_see_single_legacy_tag(client, orga_user_token, tag):
             "Authorization": f"Token {orga_user_token.token}",
         },
     )
-    content = json.loads(response.content.decode())
-    assert response.status_code == 200, response.content.decode()
+    content = json.loads(response.text)
+    assert response.status_code == 200, response.text
     assert content["tag"] == tag.tag
     assert "is_public" not in content
 
@@ -516,7 +516,7 @@ def test_can_see_tracks_public_event(client, track, slot):
         track.event.is_public = True
         track.event.save()
     response = client.get(track.event.api_urls.tracks, follow=True)
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert response.status_code == 200
     assert content["count"] == 1
     assert content["results"][0]["name"]["en"] == track.name
@@ -529,7 +529,7 @@ def test_orga_can_see_tracks(client, orga_user_token, track):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 1
@@ -543,7 +543,7 @@ def test_orga_can_see_single_track(client, orga_user_token, track):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["name"]["en"] == track.name
@@ -557,7 +557,7 @@ def test_orga_can_see_single_track_locale_override(client, orga_user_token, trac
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert isinstance(content["name"], str)
@@ -575,8 +575,8 @@ def test_no_legacy_track_api(client, orga_user_token, track):
             "Pretalx-Version": LEGACY,
         },
     )
-    assert response.status_code == 400, response.content.decode()
-    assert "API version not supported." in response.content.decode()
+    assert response.status_code == 400, response.text
+    assert "API version not supported." in response.text
 
 
 @pytest.mark.django_db
@@ -718,7 +718,7 @@ def test_cannot_see_submission_types(client, submission_type):
 @pytest.mark.django_db
 def test_can_see_submission_types_public_event(client, submission_type, slot):
     response = client.get(submission_type.event.api_urls.submission_types, follow=True)
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 2
@@ -732,7 +732,7 @@ def test_orga_can_see_submission_types(client, orga_user_token, submission_type)
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 2
@@ -746,7 +746,7 @@ def test_orga_can_see_single_submission_type(client, orga_user_token, submission
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["name"]["en"] == submission_type.name
@@ -763,7 +763,7 @@ def test_orga_can_see_single_submission_type_locale_override(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert isinstance(content["name"], str)
@@ -781,8 +781,8 @@ def test_no_legacy_submission_type_api(client, orga_user_token, submission_type)
             "Pretalx-Version": LEGACY,
         },
     )
-    assert response.status_code == 400, response.content.decode()
-    assert "API version not supported." in response.content.decode()
+    assert response.status_code == 400, response.text
+    assert "API version not supported." in response.text
 
 
 @pytest.mark.django_db
@@ -919,8 +919,8 @@ def test_orga_can_create_submission(
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 201, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 201, response.text
+    content = json.loads(response.text)
     with scope(event=event):
         submission = event.submissions.get(code=content["code"])
         assert submission.title == "New Submission"
@@ -1035,7 +1035,7 @@ def test_orga_can_accept_submission(client, orga_user_write_token, submission):
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 200, response.content.decode()
+    assert response.status_code == 200, response.text
     with scope(event=submission.event):
         submission.refresh_from_db()
         assert submission.state == SubmissionStates.ACCEPTED
@@ -1266,7 +1266,7 @@ def test_orga_can_add_speaker_to_submission(
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 200, response.content.decode()
+    assert response.status_code == 200, response.text
     with scope(event=submission.event):
         submission.refresh_from_db()
         assert speaker in submission.speakers.all()
@@ -1320,7 +1320,7 @@ def test_orga_can_remove_speaker_from_submission(
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 200, response.content.decode()
+    assert response.status_code == 200, response.text
     with scope(event=submission.event):
         submission.refresh_from_db()
         assert speaker not in submission.speakers.all()
@@ -1394,7 +1394,7 @@ def test_public_submission_expandable_fields(
         slot.submission.event.api_urls.submissions + f"?expand={expand_query}",
         follow=True,
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 1
@@ -1435,7 +1435,7 @@ def test_list_favourites_schedule_not_public(event, speaker_client, slot, speake
     response = speaker_client.get(
         event.api_urls.submissions + "favourites/", follow=True
     )
-    assert response.status_code == 403, response.content.decode()
+    assert response.status_code == 403, response.text
 
 
 @pytest.mark.django_db
@@ -1444,7 +1444,7 @@ def test_list_favourites_empty(event, speaker_client, slot):
         event.api_urls.submissions + "favourites/", follow=True
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content == []
 
 
@@ -1457,7 +1457,7 @@ def test_list_favourites_with_data(event, speaker_client, slot, speaker):
         event.api_urls.submissions + "favourites/", follow=True
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content == [slot.submission.code]
 
 

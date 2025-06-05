@@ -41,7 +41,7 @@ def test_speaker_list_anonymous_public(
 
     response = client.get(event.api_urls.speakers, follow=True)
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert content["count"] == 1
     assert len(content["results"]) == 1
@@ -118,7 +118,7 @@ def test_speaker_list_reviewer_nopublic_names_visible(
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["count"] == 2
     assert {res["code"] for res in content["results"]} == speakers
 
@@ -143,7 +143,7 @@ def test_speaker_list_orga_nopublic(
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["count"] == 2
     assert {res["code"] for res in content["results"]} == {
         speaker.code,
@@ -166,7 +166,7 @@ def test_speaker_list_orga_pagination_limit_offset(
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["count"] == 2
     assert len(content["results"]) == 1
     assert "offset=1" in content["next"]
@@ -182,7 +182,7 @@ def test_speaker_list_orga_pagination_page_number(
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["count"] == 2
     assert len(content["results"]) == 1
     assert "page=2" in content["next"]
@@ -200,7 +200,7 @@ def test_speaker_list_search_by_name(
         follow=True,
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["count"] == 1
     assert any(res["name"] == name_to_find for res in content["results"])
 
@@ -217,7 +217,7 @@ def test_speaker_list_search_by_email_public(
         follow=True,
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["count"] == 0
 
 
@@ -234,7 +234,7 @@ def test_speaker_list_search_by_email_authenticated(
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["count"] == 1
     assert content["results"][0]["email"] == email_to_find
 
@@ -249,7 +249,7 @@ def test_speaker_list_expand_submissions(
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     result = next(res for res in content["results"] if res["code"] == speaker.code)
     assert isinstance(result["submissions"], list)
     assert len(result["submissions"]) > 0
@@ -277,8 +277,8 @@ def test_speaker_list_expand_answers(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
     result = next(res for res in content["results"] if res["code"] == speaker.code)
     assert isinstance(result["answers"], list)
     assert len(result["answers"]) == 1
@@ -323,7 +323,7 @@ def test_speaker_list_multiple_talks_not_duplicated(client, event, slot, other_s
 
     response = client.get(event.api_urls.speakers, follow=True)
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert content["count"] == 1
     assert content["results"][0]["code"] == speaker.code
@@ -352,7 +352,7 @@ def test_speaker_retrieve_anonymous_public(
 
     response = client.get(event.api_urls.speakers + f"{speaker.code}/", follow=True)
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["code"] == speaker.code
     assert content["name"] == speaker.name
     assert content["biography"] == profile.biography
@@ -371,7 +371,7 @@ def test_speaker_retrieve_orga(
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert content["code"] == speaker.code
     assert content["name"] == speaker.name
     assert "email" in content
@@ -387,7 +387,7 @@ def test_speaker_retrieve_expand_answers(
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert isinstance(content["answers"], list)
     assert len(content["answers"]) == 1
     assert "question" in content["answers"][0]
@@ -431,7 +431,7 @@ def test_speaker_answer_visibility(
         headers={"Authorization": f"Token {token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     if can_see:
         assert len(content["answers"]) == 1
@@ -455,8 +455,8 @@ def test_speaker_update_by_orga(
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
     assert content["biography"] == new_bio
 
     with scope(event=event):
@@ -523,8 +523,8 @@ def test_speaker_update_change_name_email(
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
     assert content["name"] == new_name
     assert content["email"] == new_email
 
@@ -597,7 +597,7 @@ def test_speaker_retrieve_answers_scoped_to_event(
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
     assert response1.status_code == 200
-    content1 = json.loads(response1.content.decode())
+    content1 = json.loads(response1.text)
     assert len(content1["answers"]) == 1
     assert content1["answers"][0]["id"] == speaker_answer.pk
 
@@ -607,7 +607,7 @@ def test_speaker_retrieve_answers_scoped_to_event(
         headers={"Authorization": f"Token {other_orga_user_token.token}"},
     )
     assert response2.status_code == 200
-    content2 = json.loads(response2.content.decode())
+    content2 = json.loads(response2.text)
     assert len(content2["answers"]) == 1
     assert content2["answers"][0]["id"] == answer2.pk
     assert content2["answers"][0]["answer"] == "Answer 2"

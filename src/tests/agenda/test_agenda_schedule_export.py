@@ -74,10 +74,10 @@ def test_schedule_frab_xml_export(
             ),
             follow=True,
         )
-    assert response.status_code == 200, str(response.content.decode())
+    assert response.status_code == 200, str(response.text)
     assert "ETag" in response
 
-    content = response.content.decode()
+    content = response.text
     assert slot.submission.title in content
     assert slot.submission.urls.public.full() in content
 
@@ -146,8 +146,8 @@ def test_schedule_frab_json_export(
     assert regular_response.status_code == 200
     assert orga_response.status_code == 200
 
-    regular_content = regular_response.content.decode()
-    orga_content = orga_response.content.decode()
+    regular_content = regular_response.text
+    orga_content = orga_response.text
 
     assert slot.submission.title in regular_content
     assert slot.submission.title in orga_content
@@ -178,7 +178,7 @@ def test_schedule_frab_xcal_export(slot, client, django_assert_max_num_queries):
         )
     assert response.status_code == 200
 
-    content = response.content.decode()
+    content = response.text
     assert slot.submission.title in content
 
 
@@ -194,7 +194,7 @@ def test_schedule_ical_export(slot, orga_client, django_assert_max_num_queries):
         )
         assert response.status_code == 200
 
-    content = response.content.decode()
+    content = response.text
     assert slot.submission.title in content
 
 
@@ -204,7 +204,7 @@ def test_schedule_single_ical_export(slot, client, django_assert_max_num_queries
         response = client.get(slot.submission.urls.ical, follow=True)
     assert response.status_code == 200
 
-    content = response.content.decode()
+    content = response.text
     assert slot.submission.title in content
 
 
@@ -255,7 +255,7 @@ def test_schedule_speaker_ical_export(
         response = client.get(profile.urls.talks_ical, follow=True)
     assert response.status_code == 200
 
-    content = response.content.decode()
+    content = response.text
     assert slot.submission.title in content
     assert other_slot.submission.title not in content
 
@@ -265,7 +265,7 @@ def test_feed_view(slot, client, django_assert_max_num_queries, schedule):
     with django_assert_max_num_queries(10):
         response = client.get(slot.submission.event.urls.feed)
     assert response.status_code == 200
-    assert schedule.version in response.content.decode()
+    assert schedule.version in response.text
 
 
 @pytest.mark.django_db
@@ -577,8 +577,8 @@ def test_speaker_csv_export(slot, orga_client, django_assert_max_num_queries):
             ),
             follow=True,
         )
-    assert response.status_code == 200, str(response.content.decode())
-    assert slot.submission.speakers.first().name in response.content.decode()
+    assert response.status_code == 200, str(response.text)
+    assert slot.submission.speakers.first().name in response.text
 
 
 @pytest.mark.django_db
@@ -591,8 +591,8 @@ def test_empty_speaker_csv_export(orga_client, django_assert_max_num_queries, ev
             ),
             follow=True,
         )
-    assert response.status_code == 200, str(response.content.decode())
-    assert len(response.content.decode()) < 100
+    assert response.status_code == 200, str(response.text)
+    assert len(response.text) < 100
 
 
 @pytest.mark.django_db
@@ -610,8 +610,8 @@ def test_submission_question_csv_export(slot, orga_client):
         ),
         follow=True,
     )
-    assert response.status_code == 200, str(response.content.decode())
-    assert slot.submission.title in response.content.decode()
+    assert response.status_code == 200, str(response.text)
+    assert slot.submission.title in response.text
 
 
 @pytest.mark.django_db
@@ -629,8 +629,8 @@ def test_speaker_question_csv_export(slot, orga_client):
         ),
         follow=True,
     )
-    assert response.status_code == 200, str(response.content.decode())
-    assert slot.submission.speakers.first().name in response.content.decode()
+    assert response.status_code == 200, str(response.text)
+    assert slot.submission.speakers.first().name in response.text
 
 
 @pytest.mark.django_db

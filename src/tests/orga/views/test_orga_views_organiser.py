@@ -21,10 +21,10 @@ def test_orga_create_organiser(administrator_client):
         },
         follow=True,
     )
-    assert response.status_code == 200, response.content.decode()
+    assert response.status_code == 200, response.text
     assert len(Organiser.objects.all()) == 1
     organiser = Organiser.objects.all().first()
-    assert str(organiser.name) == "The bestest organiser", response.content.decode()
+    assert str(organiser.name) == "The bestest organiser", response.text
     assert str(organiser) == str(organiser.name)
 
 
@@ -36,8 +36,8 @@ def test_orga_edit_organiser(orga_client, organiser):
         follow=True,
     )
     organiser.refresh_from_db()
-    assert response.status_code == 200, response.content.decode()
-    assert str(organiser.name) == "The bestest organiser", response.content.decode()
+    assert response.status_code == 200, response.text
+    assert str(organiser.name) == "The bestest organiser", response.text
     assert str(organiser) == str(organiser.name)
 
 
@@ -45,8 +45,8 @@ def test_orga_edit_organiser(orga_client, organiser):
 def test_orga_see_organiser(orga_client, organiser):
     response = orga_client.get(organiser.orga_urls.base)
     organiser.refresh_from_db()
-    assert response.status_code == 200, response.content.decode()
-    assert str(organiser.name) in response.content.decode()
+    assert response.status_code == 200, response.text
+    assert str(organiser.name) in response.text
     assert str(organiser) == str(organiser.name)
 
 
@@ -135,7 +135,7 @@ def test_orga_create_team(orga_client, organiser, event, is_administrator, orga_
         },
     )
     assert response.status_code == 200
-    assert organiser.teams.count() == count + 1, response.content.decode()
+    assert organiser.teams.count() == count + 1, response.text
 
 
 @pytest.mark.django_db

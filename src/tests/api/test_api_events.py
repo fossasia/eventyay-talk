@@ -47,7 +47,7 @@ def test_can_only_see_public_events(client, event, other_event):
     assert not other_event.is_public
 
     response = client.get("/api/events/")
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert len(content) == 1, content
@@ -58,7 +58,7 @@ def test_can_only_see_public_events(client, event, other_event):
 def test_can_only_see_public_events_in_detail(client, event):
     assert event.is_public
     response = client.get(event.api_urls.base, follow=True)
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["name"]["en"] == event.name
@@ -68,7 +68,7 @@ def test_can_only_see_public_events_in_detail(client, event):
 
     response = client.get(event.api_urls.base, follow=True)
     assert response.status_code == 404
-    assert event.name not in response.content.decode()
+    assert event.name not in response.text
 
 
 @pytest.mark.django_db
@@ -81,7 +81,7 @@ def test_orga_can_see_nonpublic_events(client, event, other_event, orga_user_tok
     response = client.get(
         "/api/events/", headers={"Authorization": f"Token {orga_user_token.token}"}
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert len(content) == 2, content

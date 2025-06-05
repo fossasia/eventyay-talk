@@ -50,7 +50,7 @@ def test_orga_can_see_teams(client, orga_user_token, organiser, team):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] > 0
@@ -64,7 +64,7 @@ def test_orga_can_see_single_team(client, orga_user_token, organiser, team):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["name"] == team.name
@@ -100,7 +100,7 @@ def test_orga_can_create_teams(client, orga_user_write_token, organiser):
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
     with scopes_disabled():
         assert organiser.teams.count() == team_count + 1
         new_team = organiser.teams.get(name="New API Team")
@@ -129,7 +129,7 @@ def test_orga_cannot_create_team_without_events(
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 400, response.content.decode()
+    assert response.status_code == 400, response.text
     with scopes_disabled():
         assert organiser.teams.count() == team_count
 
@@ -154,7 +154,7 @@ def test_orga_cannot_create_team_without_permissions(
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 400, response.content.decode()
+    assert response.status_code == 400, response.text
     with scopes_disabled():
         assert organiser.teams.count() == team_count
 
@@ -257,7 +257,7 @@ def test_orga_can_delete_teams(
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 204, response.content.decode()
+    assert response.status_code == 204, response.text
     assert organiser.teams.count() == team_count - 1
     assert not organiser.teams.filter(pk=team_pk).exists()
 
@@ -272,7 +272,7 @@ def test_orga_cannot_delete_last_team(client, orga_user_write_token, organiser, 
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 400, response.content.decode()
+    assert response.status_code == 400, response.text
     assert organiser.teams.count() == team_count
     assert organiser.teams.filter(pk=team.pk).exists()
 
@@ -305,7 +305,7 @@ def test_orga_can_expand_related_fields(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["name"] == team.name
@@ -331,8 +331,8 @@ def test_orga_can_invite_member(client, orga_user_write_token, organiser, team):
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 201, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 201, response.text
+    content = json.loads(response.text)
     assert content["email"] == invite_email
     assert team.invites.count() == invite_count + 1
     assert team.members.count() == member_count
@@ -353,8 +353,8 @@ def test_orga_cannot_invite_existing_member(
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 400, response.content.decode()
-    assert "already a member" in response.content.decode()
+    assert response.status_code == 400, response.text
+    assert "already a member" in response.text
     assert team.invites.count() == invite_count
 
 
@@ -372,8 +372,8 @@ def test_orga_cannot_invite_already_invited(
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 400, response.content.decode()
-    assert "already been invited" in response.content.decode()
+    assert response.status_code == 400, response.text
+    assert "already been invited" in response.text
     assert team.invites.count() == invite_count
 
 
@@ -449,7 +449,7 @@ def test_orga_can_remove_member(
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 204, response.content.decode()
+    assert response.status_code == 204, response.text
     with scopes_disabled():
         team.refresh_from_db()
         assert team.members.count() == member_count - 1
@@ -496,8 +496,8 @@ def test_orga_cannot_remove_non_member(
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 400, response.content.decode()
-    assert "not a member" in response.content.decode()
+    assert response.status_code == 400, response.text
+    assert "not a member" in response.text
     assert team.members.count() == member_count
 
 
@@ -515,6 +515,6 @@ def test_orga_cannot_remove_nonexistent_user(
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 400, response.content.decode()
-    assert "not found" in response.content.decode()
+    assert response.status_code == 400, response.text
+    assert "not found" in response.text
     assert team.members.count() == member_count
