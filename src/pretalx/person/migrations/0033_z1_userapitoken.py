@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("event", "0038_eventextralink"),
-        ("person", "0029_alter_user_avatar_thumbnail_and_more"),
+        ("person", "0033_merge_20241022_1752"),
     ]
 
     operations = [
