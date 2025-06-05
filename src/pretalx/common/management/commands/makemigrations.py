@@ -10,6 +10,10 @@ certain that many changes will never impact our databases. Fewer migrations mean
 less update headaches and a more readable git history, so that's what we are going
 for, even though the code is somewhat hacky. Props for this improved version
 to the pretix project.
+
+With modern Django, we could also subclass django.db.migrations.autodetector,
+but the level of its complexity is super high, and we would still do the below,
+essentially, so we’re leaving that can of worms alone.
 """
 
 from django.core.management.commands.makemigrations import Command as Parent

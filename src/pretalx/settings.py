@@ -2,13 +2,13 @@ import logging
 import os
 import sys
 from contextlib import suppress
+from importlib.metadata import entry_points
 from pathlib import Path
 from urllib.parse import urlparse
 
 from django.contrib.messages import constants as messages
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
-from importlib.metadata import entry_points
 
 from pretalx import __version__
 from pretalx.common.settings.config import build_config
@@ -551,7 +551,6 @@ TEMPLATES = [
         "OPTIONS": {
             "context_processors": [
                 "django.contrib.auth.context_processors.auth",
-                "django.template.context_processors.debug",
                 "django.template.context_processors.i18n",
                 "django.template.context_processors.media",
                 "django.template.context_processors.request",

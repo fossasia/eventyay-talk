@@ -25,7 +25,11 @@ def send_exception_email(
     if isinstance(exception, WorkerLostError):
         # We’re assuming that WorkerLostErrors are from restarting pretalx
         # which commonly sends SIGTERMs to celery workers
-        pass
+        return
+    if settings.EMAIL_BACKEND == "django.core.mail.backends.locmem.EmailBackend":
+        # Emails are going nowhere
+        return
+
     reporter = PretalxCeleryExceptionReporter(
         request=None,
         exc_type=type(exception),
