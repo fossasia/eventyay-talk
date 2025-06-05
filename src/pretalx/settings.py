@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 from django.contrib.messages import constants as messages
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
-from pkg_resources import iter_entry_points
+from importlib.metadata import entry_points
 
 from pretalx import __version__
 from pretalx.common.settings.config import build_config
@@ -96,9 +96,9 @@ FALLBACK_APPS = [
 INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + LOCAL_APPS + FALLBACK_APPS
 
 PLUGINS = []
-for entry_point in iter_entry_points(group="pretalx.plugin", name=None):
-    PLUGINS.append(entry_point.module_name)
-    INSTALLED_APPS.append(entry_point.module_name)
+for entry_point in entry_points(group="pretalx.plugin"):
+    PLUGINS.append(entry_point.module)
+    INSTALLED_APPS.append(entry_point.module)
 
 CORE_MODULES = LOCAL_APPS + [
     module for module in config.get("site", "core_modules").split(",") if module
