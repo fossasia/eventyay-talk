@@ -50,22 +50,24 @@ reasonable size.
 Debug commands
 --------------
 
-``shell_scoped``
-~~~~~~~~~~~~~~~~
+``shell``
+~~~~~~~~~
 
-The ``shell_scoped`` command opens a Python shell with the pretalx
-configuration and environment. You can use it to import pretalx modules and
-execute methods. For a better environment, install ``django_extensions`` and
-``ipython``.
+The ``shell`` command opens a Python shell with the pretalx configuration and
+environment. If you have ``ipython`` installed, an IPython shell will open,
+though you can change to plain Python with ``-i python``.
+pretalx models will be imported automatically.
 
-You’ll have to provide the event you want to interact with to provide proper
-database isolation::
+If you only want to access data within a single event, run the command within
+an event scope to prevent accidentally accessing other event data (a reassuring
+level of protection if you have to use the shell to write to the database!)::
 
-    $ python -m pretalx shell_scoped --event__slug=myevent
+    $ python -m pretalx shell --event myevent
 
-Alternatively, you can specify that you want to be able to access all events::
+If you are absolutely sure that you want to access all events, disable the
+scoping protection::
 
-    $ python -m pretalx shell_scoped --override
+    $ python -m pretalx shell --unsafe-disable-scopes
 
 ``print_settings``
 ~~~~~~~~~~~~~~~~~~
