@@ -55,6 +55,7 @@ iframes
 informations
 installable
 integrations
+IPython
 iterable
 Jorian
 jQuery
