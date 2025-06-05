@@ -19,6 +19,7 @@ class ApiPermission(BasePermission):
         if not event:  # Only true for root API view
             return True
 
+        # TODO endpoint permission checks: token <-> endpoint, if a token is used
         permission_object = self.get_permission_object(
             view, obj, request, detail=view.detail
         )

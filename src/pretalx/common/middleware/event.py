@@ -156,7 +156,7 @@ class EventPermissionMiddleware:
                     request.event = get_object_or_404(
                         Event.objects.prefetch_related(
                             "schedules", "submissions", "extra_links"
-                        ),
+                        ).select_related("organiser"),
                         slug__iexact=event_slug,
                     )
                 except ValueError:
