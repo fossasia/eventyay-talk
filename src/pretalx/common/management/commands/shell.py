@@ -26,6 +26,12 @@ class Command(shell.Command):  # pragma: no cover
         )
         parser.add_argument("--event", help="Event (slug) to scope all queries to.")
 
+    def get_auto_imports(self):
+        return super().get_auto_imports() + [
+            "django.conf.settings",
+            "django.utils.timezone.now",
+        ]
+
     def handle(self, *args, **options):
         if options.pop("print_sql", None):
             connection.force_debug_cursor = True
