@@ -21,52 +21,60 @@ from django.db import models
 from django.db.migrations.operations import models as modelops
 from django_countries.fields import CountryField
 
-modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("verbose_name")
-modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("verbose_name_plural")
-modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("ordering")
-modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("get_latest_by")
-modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("default_manager_name")
-modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("permissions")
-modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("default_permissions")
-IGNORED_ATTRS = [
-    # (field type, attribute name, blacklist of field sub-types)
-    (models.Field, "verbose_name", []),
-    (models.Field, "help_text", []),
-    (models.Field, "validators", []),
-    (
-        models.Field,
-        "editable",
-        [models.DateField, models.DateTimeField, models.DateField, models.BinaryField],
-    ),
-    (
-        models.Field,
-        "blank",
-        [
-            models.DateField,
-            models.DateTimeField,
-            models.AutoField,
-            models.NullBooleanField,
-            models.TimeField,
-        ],
-    ),
-    (models.CharField, "choices", [CountryField]),
-]
 
-original_deconstruct = models.Field.deconstruct
+def hack_model_fields():
+    modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("verbose_name")
+    modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("verbose_name_plural")
+    modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("ordering")
+    modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("get_latest_by")
+    modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("default_manager_name")
+    modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("permissions")
+    modelops.AlterModelOptions.ALTER_OPTION_KEYS.remove("default_permissions")
+    IGNORED_ATTRS = [
+        # (field type, attribute name, blacklist of field sub-types)
+        (models.Field, "verbose_name", []),
+        (models.Field, "help_text", []),
+        (models.Field, "validators", []),
+        (
+            models.Field,
+            "editable",
+            [
+                models.DateField,
+                models.DateTimeField,
+                models.DateField,
+                models.BinaryField,
+            ],
+        ),
+        (
+            models.Field,
+            "blank",
+            [
+                models.DateField,
+                models.DateTimeField,
+                models.AutoField,
+                models.NullBooleanField,
+                models.TimeField,
+            ],
+        ),
+        (models.CharField, "choices", [CountryField]),
+    ]
 
+    original_deconstruct = models.Field.deconstruct
 
-def new_deconstruct(self):
-    name, path, args, kwargs = original_deconstruct(self)
-    for ftype, attr, blacklist in IGNORED_ATTRS:
-        if isinstance(self, ftype) and not any(
-            isinstance(self, ft) for ft in blacklist
-        ):
-            kwargs.pop(attr, None)
-    return name, path, args, kwargs
+    def new_deconstruct(self):
+        name, path, args, kwargs = original_deconstruct(self)
+        for ftype, attr, blacklist in IGNORED_ATTRS:
+            if isinstance(self, ftype) and not any(
+                isinstance(self, ft) for ft in blacklist
+            ):
+                kwargs.pop(attr, None)
+        return name, path, args, kwargs
 
-
-models.Field.deconstruct = new_deconstruct
+    models.Field.deconstruct = new_deconstruct
 
 
 class Command(Parent):
-    pass
+
+    def handle(self, *args, **kwargs):
+        hack_model_fields()
+        return super().handle(*args, **kwargs)
