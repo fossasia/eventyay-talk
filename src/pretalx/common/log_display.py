@@ -10,12 +10,14 @@ from pretalx.common.signals import activitylog_display, activitylog_object_link
 from pretalx.common.text.phrases import phrases
 from pretalx.event.models.event import Event
 from pretalx.mail.models import MailTemplate, QueuedMail
+from pretalx.person.models import SpeakerProfile
 from pretalx.submission.models import (
     Answer,
     AnswerOption,
     CfP,
     Question,
     Submission,
+    SubmissionComment,
     SubmissionStates,
 )
 
@@ -69,12 +71,12 @@ LOG_NAMES = {
     "pretalx.mail_template.create": _("A mail template was added."),
     "pretalx.mail_template.delete": _("A mail template was deleted."),
     "pretalx.mail_template.update": _("A mail template was modified."),
-    "pretalx.question.create": _("A question was added."),
-    "pretalx.question.delete": _("A question was deleted."),
-    "pretalx.question.update": _("A question was modified."),
-    "pretalx.question.option.create": _("A question option was added."),
-    "pretalx.question.option.delete": _("A question option was deleted."),
-    "pretalx.question.option.update": _("A question option was modified."),
+    "pretalx.question.create": _("A custom field was added."),
+    "pretalx.question.delete": _("A custom field was deleted."),
+    "pretalx.question.update": _("A custom field was modified."),
+    "pretalx.question.option.create": _("A custom field option was added."),
+    "pretalx.question.option.delete": _("A custom field option was deleted."),
+    "pretalx.question.option.update": _("A custom field option was modified."),
     "pretalx.tag.create": _("A tag was added."),
     "pretalx.tag.delete": _("A tag was deleted."),
     "pretalx.tag.update": _("A tag was modified."),
@@ -95,8 +97,10 @@ LOG_NAMES = {
     "pretalx.submission.unconfirm": _("The proposal was unconfirmed."),
     "pretalx.submission.update": _("The proposal was modified."),
     "pretalx.submission.withdraw": _("The proposal was withdrawn."),
-    "pretalx.submission.answer.update": _("A proposal answer was modified."),
-    "pretalx.submission.answer.create": _("A proposal answer was added."),
+    "pretalx.submission.answer.update": _("A custom field response was modified."),
+    "pretalx.submission.answer.create": _("A custom field response was added."),
+    "pretalx.submission.comment.create": _("A proposal comment was added."),
+    "pretalx.submission.comment.delete": _("A proposal comment was deleted."),
     "pretalx.submission_type.create": _("A session type was added."),
     "pretalx.submission_type.delete": _("A session type was deleted."),
     "pretalx.submission_type.make_default": _("The session type was made default."),
@@ -129,6 +133,16 @@ def default_activitylog_display(sender: Event, activitylog: ActivityLog, **kwarg
     return LOG_NAMES.get(action_type)
 
 
+def _submission_label_text(submission: Submission) -> str:
+    if submission.state in (
+        SubmissionStates.ACCEPTED,
+        SubmissionStates.CONFIRMED,
+    ):
+        return _n("Session", "Sessions", 1)
+    else:
+        return _n("Proposal", "Proposals", 1)
+
+
 @receiver(activitylog_object_link)
 def default_activitylog_object_link(sender: Event, activitylog: ActivityLog, **kwargs):
     if not activitylog.content_object:
@@ -139,39 +153,48 @@ def default_activitylog_object_link(sender: Event, activitylog: ActivityLog, **k
     if isinstance(activitylog.content_object, Submission):
         url = activitylog.content_object.orga_urls.base
         link_text = escape(activitylog.content_object.title)
-        if activitylog.content_object.state in (
-            SubmissionStates.ACCEPTED,
-            SubmissionStates.CONFIRMED,
-        ):
-            text = _n("Session", "Sessions", 1)
-        else:
-            text = _n("Proposal", "Proposals", 1)
-    if isinstance(activitylog.content_object, Question):
+        text = _submission_label_text(activitylog.content_object)
+    elif isinstance(activitylog.content_object, SubmissionComment):
+        url = (
+            activitylog.content_object.submission.orga_urls.comments
+            + f"#comment-{activitylog.content_object.pk}"
+        )
+        link_text = escape(activitylog.content_object.submission.title)
+        text = _submission_label_text(activitylog.content_object.submission)
+    elif isinstance(activitylog.content_object, Question):
         url = activitylog.content_object.urls.base
         link_text = escape(activitylog.content_object.question)
-        text = _("Question")
-    if isinstance(activitylog.content_object, AnswerOption):
+        text = _("Custom field")
+    elif isinstance(activitylog.content_object, AnswerOption):
         url = activitylog.content_object.question.urls.base
         link_text = escape(activitylog.content_object.question.question)
-        text = _("Question")
-    if isinstance(activitylog.content_object, Answer):
+        text = _("Custom field")
+    elif isinstance(activitylog.content_object, Answer):
         if activitylog.content_object.submission:
             url = activitylog.content_object.submission.orga_urls.base
         else:
             url = activitylog.content_object.question.urls.base
         link_text = escape(activitylog.content_object.question.question)
-        text = _("Answer to question")
-    if isinstance(activitylog.content_object, CfP):
+        text = _("Response to custom field")
+    elif isinstance(activitylog.content_object, CfP):
         url = activitylog.content_object.urls.text
         link_text = _("Call for Proposals")
-    if isinstance(activitylog.content_object, MailTemplate):
+    elif isinstance(activitylog.content_object, MailTemplate):
         url = activitylog.content_object.urls.base
         text = _("Mail template")
         link_text = escape(activitylog.content_object.subject)
-    if isinstance(activitylog.content_object, QueuedMail):
+    elif isinstance(activitylog.content_object, QueuedMail):
         url = activitylog.content_object.urls.base
         text = _("Email")
         link_text = escape(activitylog.content_object.subject)
+    elif isinstance(activitylog.content_object, SpeakerProfile):
+        url = activitylog.content_object.orga_urls.base
+        text = _("Speaker profile")
+        link_text = escape(activitylog.content_object.user.get_display_name())
+    elif isinstance(activitylog.content_object, Event):
+        url = activitylog.content_object.orga_urls.base
+        text = _("Event")
+        link_text = escape(activitylog.content_object.name)
     if url:
         if not link_text:
             link_text = url

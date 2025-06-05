@@ -41,7 +41,7 @@ def test_can_see_social_card(client, event, slot, other_slot):
 @pytest.mark.django_db
 def test_cannot_see_new_talk(client, django_assert_num_queries, event, unreleased_slot):
     slot = unreleased_slot
-    with django_assert_num_queries(14):
+    with django_assert_num_queries(11):
         response = client.get(slot.submission.urls.public)
     assert response.status_code == 404
     with scope(event=event):
@@ -53,7 +53,7 @@ def test_orga_can_see_new_talk(
     orga_client, django_assert_num_queries, event, unreleased_slot
 ):
     slot = unreleased_slot
-    with django_assert_num_queries(27):
+    with django_assert_num_queries(28):
         response = orga_client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 200
     content = response.content.decode()
@@ -111,7 +111,7 @@ def test_can_see_talk_does_accept_feedback(
 def test_cannot_see_nonpublic_talk(client, django_assert_num_queries, event, slot):
     event.is_public = False
     event.save()
-    with django_assert_num_queries(13):
+    with django_assert_num_queries(10):
         response = client.get(slot.submission.urls.public, follow=True)
     assert response.status_code == 404
 
@@ -132,7 +132,7 @@ def test_cannot_see_other_events_talk(
 def test_event_talk_visiblity_submitted(
     client, django_assert_num_queries, event, submission
 ):
-    with django_assert_num_queries(11):
+    with django_assert_num_queries(9):
         response = client.get(submission.urls.public, follow=True)
     assert response.status_code == 404
 
@@ -141,7 +141,7 @@ def test_event_talk_visiblity_submitted(
 def test_event_talk_visiblity_accepted(
     client, django_assert_num_queries, event, slot, accepted_submission
 ):
-    with django_assert_num_queries(12):
+    with django_assert_num_queries(10):
         response = client.get(accepted_submission.urls.public, follow=True)
     assert response.status_code == 404
 
@@ -159,7 +159,7 @@ def test_event_talk_visiblity_confirmed(
 def test_event_talk_visiblity_canceled(
     client, django_assert_num_queries, event, slot, canceled_submission
 ):
-    with django_assert_num_queries(12):
+    with django_assert_num_queries(10):
         response = client.get(canceled_submission.urls.public, follow=True)
     assert response.status_code == 404
 
@@ -168,7 +168,7 @@ def test_event_talk_visiblity_canceled(
 def test_event_talk_visiblity_withdrawn(
     client, django_assert_num_queries, event, slot, withdrawn_submission
 ):
-    with django_assert_num_queries(12):
+    with django_assert_num_queries(10):
         response = client.get(withdrawn_submission.urls.public, follow=True)
     assert response.status_code == 404
 
@@ -246,7 +246,7 @@ def test_talk_speaker_other_submissions_only_if_visible(
 def test_talk_review_page(
     client, django_assert_num_queries, event, submission, other_submission
 ):
-    with django_assert_num_queries(14):
+    with django_assert_num_queries(15):
         response = client.get(submission.urls.review, follow=True)
     assert response.status_code == 200
     assert submission.title in response.content.decode()

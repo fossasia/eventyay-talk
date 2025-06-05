@@ -2,6 +2,7 @@ from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.permissions import SAFE_METHODS
 
+from pretalx.api.mixins import PretalxViewSetMixin
 from pretalx.api.serializers.question import (
     AnswerSerializer,
     AnswerWriteSerializer,
@@ -31,7 +32,7 @@ def get_questions_for_user(event, user, include_inactive=False):
     return event.questions.none()
 
 
-class QuestionViewSet(viewsets.ModelViewSet):
+class QuestionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     queryset = Question.objects.none()
     serializer_class = QuestionSerializer
     write_permission_required = "orga.edit_question"
@@ -71,7 +72,7 @@ class AnswerFilterSet(filters.FilterSet):
         fields = ("question", "submission", "person", "review")
 
 
-class AnswerViewSet(viewsets.ModelViewSet):
+class AnswerViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     queryset = Answer.objects.none()
     serializer_class = AnswerSerializer
     write_permission_required = "orga.change_submissions"
@@ -89,7 +90,7 @@ class AnswerViewSet(viewsets.ModelViewSet):
             .select_related("question", "person", "review", "submission")
         )
 
-    def get_serializer_class(self):
+    def get_unversioned_serializer_class(self):
         if self.request.method in SAFE_METHODS:
             return self.serializer_class
         return AnswerWriteSerializer

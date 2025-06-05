@@ -15,6 +15,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from pretalx.api.mixins import PretalxViewSetMixin
 from pretalx.api.serializers.event import EventSerializer
 from pretalx.common import exceptions
 from pretalx.common.exceptions import VideoIntegrationError
@@ -23,7 +24,7 @@ from pretalx.event.models import Event
 logger = logging.getLogger(__name__)
 
 
-class EventViewSet(viewsets.ReadOnlyModelViewSet):
+class EventViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = EventSerializer
     queryset = Event.objects.none()
     lookup_field = "slug"

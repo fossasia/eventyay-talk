@@ -43,7 +43,7 @@
   white-space: nowrap;
 }
 
-.logentry {
+.list-group .logentry.list-group-item {
   display: flex;
   flex-direction: column;
   .time {
@@ -68,7 +68,8 @@
   --submission-color-secondary: var(--color-grey);
 }
 
-.submission-state-submitted {
+.submission-state-submitted,
+.submission-state-review {
   --submission-color-primary: var(--color-info);
   --submission-color-secondary: var(--color-info);
   --highlight-color: var(--color-info);

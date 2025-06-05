@@ -3,6 +3,7 @@
 {% load compress %}
 {% load i18n %}
 {% load static %}
+{% load html_signal %}
 
 {% block scripts %}
     {% compress js %}
@@ -14,15 +15,16 @@
 {% block extra_title %}{% translate "User settings" %} :: {% endblock extra_title %}
 {% block content %}
     <fieldset class="m-2">
-        <legend>{% translate "User settings" %}</legend>
+        <legend id="user">{% translate "User settings" %}</legend>
         {% include "orga/includes/base_form.html" with form=profile_form submit_name="form" submit_value="profile" %}
     </fieldset>
 
     <fieldset class="m-2 password-input-form">
-        <legend>{% translate "Login settings" %}</legend>
+        <legend id="login">{% translate "Login settings" %}</legend>
         {% include "orga/includes/base_form.html" with form=login_form submit_name="form" submit_value="login" %}
     </fieldset>
 
     {% include "common/user_api_token.html" with orga="true" %}
 
+    {% html_signal "pretalx.common.signals.profile_bottom_html" sender=request.event user=user orga="true" %}
 {% endblock content %}

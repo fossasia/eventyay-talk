@@ -59,6 +59,7 @@ iterable
 Jorian
 jQuery
 libffi
+lifecycle
 lightbox
 linters
 localhost
@@ -74,6 +75,7 @@ nginx
 nodejs
 noopener
 npm
+OAuth
 plugin
 plugins
 prepend

@@ -4,7 +4,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block extra_title %}{% translate "Questions" %} :: {% endblock extra_title %}
+{% block extra_title %}{{ phrases.cfp.custom_fields }} :: {% endblock extra_title %}
 
 
 {% block stylesheets %}
@@ -24,7 +24,7 @@
 {% block content %}
     <div id="main-title" class="d-md-flex justify-content-between">
         <h2>
-            {% translate "Questions" %}
+            {{ phrases.cfp.custom_fields }}
             <span class="dialog-anchor" data-target="#info-dialog" data-toggle="dialog">
                 <i class="fa fa-question-circle-o text-info"></i>
             </span>
@@ -34,9 +34,9 @@
     <dialog id="info-dialog">
         <div class="alert alert-info">
             {% blocktranslate trimmed %}
-                Questions can help you sort out additional details with speakers, such as
+                Custom fields can help you sort out additional details with speakers, such as
                 clothing sizes, special requirements such as dietary needs, or accommodation.
-                Questions can be asked either on a per-proposal level, or per speaker, as
+                Custom fields can be configured either on a per-proposal level, or per speaker, as
                 you see fit.
             {% endblocktranslate %}
         </div>
@@ -45,24 +45,24 @@
         <span></span>
         <span>
             {% if questions %}
-                <a href="{{ request.event.cfp.urls.remind_questions }}" class="btn btn-info">{% translate "Send out reminders for unanswered questions" %}</a>
+                <a href="{{ request.event.cfp.urls.remind_questions }}" class="btn btn-info">{% translate "Send out reminders for custom fields without responses" %}</a>
             {% endif %}
             <a href="{{ request.event.cfp.urls.new_question }}" class="btn btn-success">
                 <i class="fa fa-plus"></i>
-                {% translate "Add a new question" %}
+                {% translate "New custom field" %}
             </a>
         </span>
     </div>
 
     <div class="table-responsive-sm">
-        <table class="table table-hover table-sm table-flip-sticky">
+        <table class="table table-sm table-flip-sticky">
             <thead>
                 <tr>
-                    <th>{% translate "Question" %}</th>
+                    <th>{% translate "Custom field" %}</th>
                     <th>{% translate "Target" %}</th>
                     <th class="text-center">{% translate "required" %}</th>
                     <th class="text-center">{% translate "active" %}</th>
-                    <th class="numeric">{% translate "Answers" %}</th>
+                    <th class="numeric">{% translate "Responses" %}</th>
                     <th></th>
                 </tr>
             </thead>
@@ -77,7 +77,7 @@
                             <i class="fa fa-{{ question.required|yesno:"check-circle text-success,times-circle text-danger" }}">
                             </i>
                             {% if question.question_required == "require after" or question.freeze_after %}
-                                <i class="fa fa-clock-o" title="{% translate "This question’s availability depends on a deadline." %}"> </i>
+                                <i class="fa fa-clock-o" title="{% translate "This field’s availability depends on a deadline." %}"> </i>
                             {% endif %}
                         </td>
                         <td class="text-center">
@@ -100,7 +100,7 @@
 
                 {% empty %}
                     <tr>
-                        <td colspan=4 class="w-75">{% translate "You have configured no questions yet." %}</td>
+                        <td colspan=4 class="w-75">{% translate "You have configured no custom fields yet." %}</td>
                     </tr>
                 {% endfor %}
             </tbody>

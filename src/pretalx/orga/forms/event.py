@@ -169,6 +169,9 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
         ).format(site_url=site_url)
         self.initial["locales"] = self.instance.locale_array.split(",")
         self.initial["content_locales"] = self.instance.content_locale_array.split(",")
+        self.initial["custom_css_text"] = (
+            self.instance.custom_css.read().decode() if self.instance.custom_css else ""
+        )
         self.fields["show_featured"].help_text = (
             str(self.fields["show_featured"].help_text)
             + " "
@@ -268,7 +271,7 @@ class EventForm(ReadOnlyFlag, I18nHelpText, JsonSubfieldMixin, I18nModelForm):
         for image_field in ("logo", "header_image"):
             if image_field in self.changed_data:
                 self.instance.process_image(image_field)
-        if css_text:
+        if css_text and "custom_css_text" in self.changed_data:
             self.instance.custom_css.save(
                 self.instance.slug + ".css", ContentFile(css_text)
             )
@@ -523,6 +526,13 @@ class ReviewSettingsForm(
     JsonSubfieldMixin,
     forms.Form,
 ):
+    use_submission_comments = forms.BooleanField(
+        label=_("Enable submission comments"),
+        help_text=_(
+            "Allow organisers and reviewers to comment on submissions, separate from reviews."
+        ),
+        required=False,
+    )
     score_mandatory = forms.BooleanField(
         label=_("Require a review score"), required=False
     )
@@ -567,6 +577,7 @@ class ReviewSettingsForm(
             "text_mandatory": "review_settings",
             "aggregate_method": "review_settings",
             "score_format": "review_settings",
+            "use_submission_comments": "feature_flags",
         }
         hierarkey_fields = ("review_help_text",)
 

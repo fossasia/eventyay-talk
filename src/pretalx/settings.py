@@ -390,19 +390,19 @@ LANGUAGES_INFORMATION = {
         "name": _("Czech"),
         "natural_name": "Čeština",
         "official": False,
-        "percentage": 97,
+        "percentage": 91,
     },
     "el": {
         "name": _("Greek"),
         "natural_name": "Ελληνικά",
         "official": False,
-        "percentage": 90,
+        "percentage": 84,
     },
     "es": {
         "name": _("Spanish"),
         "natural_name": "Español",
         "official": False,
-        "percentage": 80,
+        "percentage": 74,
     },
     "fa-ir": {
         "name": _("Persian"),
@@ -416,40 +416,46 @@ LANGUAGES_INFORMATION = {
         "name": _("French"),
         "natural_name": "Français",
         "official": False,
-        "percentage": 98,
+        "percentage": 91,
         "path": "fr_FR",
     },
     "it": {
         "name": _("Italian"),
         "natural_name": "Italiano",
         "official": False,
-        "percentage": 95,
+        "percentage": 100,
     },
     "ja-jp": {
         "name": _("Japanese"),
         "natural_name": "日本語",
         "official": False,
-        "percentage": 69,
+        "percentage": 64,
         "public_code": "jp",
     },
     "nl": {
         "name": _("Dutch"),
         "natural_name": "Nederlands",
         "official": False,
-        "percentage": 88,
+        "percentage": 92,
+    },
+    "pl": {
+        "name": _("Polish"),
+        "natural_name": "Polski",
+        "official": False,
+        "percentage": 100,
     },
     "pt-br": {
         "name": _("Brasilian Portuguese"),
         "natural_name": "Português brasileiro",
         "official": False,
-        "percentage": 89,
+        "percentage": 100,
         "public_code": "pt",
     },
     "pt-pt": {
         "name": _("Portuguese"),
         "natural_name": "Português",
         "official": False,
-        "percentage": 89,
+        "percentage": 83,
         "public_code": "pt",
     },
     "ru": {
@@ -470,18 +476,24 @@ LANGUAGES_INFORMATION = {
         "official": True,
         "percentage": 0,
     },
+    "vi": {
+        "name": _("Vietnamese"),
+        "natural_name": "Tiếng Việt",
+        "official": False,
+        "percentage": 72,
+    },
     "zh-hant": {
         "name": _("Traditional Chinese (Taiwan)"),
         "natural_name": "漢語",
         "official": False,
-        "percentage": 66,
+        "percentage": 62,
         "public_code": "zh",
     },
     "zh-hans": {
         "name": _("Simplified Chinese"),
         "natural_name": "简体中文",
         "official": False,
-        "percentage": 86,
+        "percentage": 80,
         "public_code": "zh",
     },
 }
@@ -520,12 +532,20 @@ DEFAULT_EVENT_PRIMARY_COLOR = "#2185d0"
 
 ## AUTHENTICATION SETTINGS
 AUTH_USER_MODEL = "person.User"
-AUTHENTICATION_BACKENDS = (
+DEFAULT_AUTHENTICATION_BACKENDS = [
     "rules.permissions.ObjectPermissionBackend",
     "django.contrib.auth.backends.ModelBackend",
     "pretalx.common.auth.AuthenticationTokenBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
-)
+]
+EXTRA_AUTH_BACKENDS = [
+    backend
+    for backend in config.get(
+        "authentication", "additional_auth_backends", fallback=""
+    ).split(",")
+    if backend
+]
+AUTHENTICATION_BACKENDS = DEFAULT_AUTHENTICATION_BACKENDS + EXTRA_AUTH_BACKENDS
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
@@ -669,10 +689,7 @@ COMPRESS_FILTERS = {
 }
 
 REST_FRAMEWORK = {
-    "DEFAULT_RENDERER_CLASSES": (
-        "i18nfield.rest_framework.I18nJSONRenderer",
-        "rest_framework.renderers.BrowsableAPIRenderer",
-    ),
+    "DEFAULT_RENDERER_CLASSES": ("i18nfield.rest_framework.I18nJSONRenderer",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
@@ -688,6 +705,7 @@ REST_FRAMEWORK = {
     "ORDERING_PARAM": "o",
     "VERSIONING_PARAM": "v",
     "DATETIME_FORMAT": "iso-8601",
+    "EXCEPTION_HANDLER": "pretalx.api.exceptions.api_exception_handler",
 }
 if DEBUG:
     REST_FRAMEWORK["COMPACT_JSON"] = False

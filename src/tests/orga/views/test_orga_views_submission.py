@@ -773,6 +773,23 @@ def test_submission_apply_pending(submission, orga_client):
 
 
 @pytest.mark.django_db
+def test_submission_apply_pending_single(submission, orga_client):
+    with scope(event=submission.event):
+        submission.state = "submitted"
+        submission.pending_state = "accepted"
+        submission.save()
+        assert submission.event.queued_mails.count() == 0
+
+    response = orga_client.post(submission.orga_urls.apply_pending)
+    assert response.status_code == 302
+    with scope(event=submission.event):
+        submission.refresh_from_db()
+        assert submission.state == "accepted"
+        assert submission.pending_state is None
+        assert submission.event.queued_mails.count() == 1
+
+
+@pytest.mark.django_db
 def test_can_see_tags(orga_client, tag):
     response = orga_client.get(tag.event.orga_urls.tags)
     assert response.status_code == 200
@@ -871,3 +888,38 @@ def test_can_delete_used_tag(orga_client, tag, event, submission):
         assert event.tags.count() == 0
         submission.refresh_from_db()
         assert submission.tags.count() == 0
+
+
+@pytest.mark.django_db
+def test_orga_can_see_submission_comments(orga_client, submission, submission_comment):
+    response = orga_client.get(submission.orga_urls.comments, follow=True)
+    assert response.status_code == 200
+    assert submission_comment.text in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_orga_can_post_submission_comment(orga_client, submission):
+    response = orga_client.post(
+        submission.orga_urls.comments,
+        data={"text": "Here is a new comment!"},
+        follow=True,
+    )
+    assert response.status_code == 200
+    with scope(event=submission.event):
+        submission.refresh_from_db()
+        assert submission.comments.count() == 1
+        comment = submission.comments.first()
+        assert comment.text == "Here is a new comment!"
+
+
+@pytest.mark.django_db
+def test_orga_cannot_post_empty_submission_comment(orga_client, submission):
+    response = orga_client.post(
+        submission.orga_urls.comments,
+        data={"text": ""},
+        follow=True,
+    )
+    assert response.status_code == 200
+    with scope(event=submission.event):
+        submission.refresh_from_db()
+        assert submission.comments.count() == 0

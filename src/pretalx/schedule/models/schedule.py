@@ -592,7 +592,7 @@ class Schedule(PretalxModel):
         for speaker, data in self.speakers_concerned.items():
             locale = speaker.get_locale_for_event(self.event)
             notifications = render_notifications(
-                data, event=self.event, speaker=speaker
+                data, event=self.event, speaker=speaker, locale=locale
             )
             slots = list(data.get("create") or []) + [
                 talk["new_slot"] for talk in (data.get("update") or [])

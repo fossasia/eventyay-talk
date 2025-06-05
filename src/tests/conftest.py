@@ -1030,6 +1030,14 @@ def feedback(past_slot):
 
 
 @pytest.fixture
+def submission_comment(submission):
+    with scope(event=submission.event):
+        return submission.comments.create(
+            text="This is a comment", user=submission.speakers.first()
+        )
+
+
+@pytest.fixture
 def other_slot(other_confirmed_submission, room, schedule):
     with scope(event=room.event):
         return TalkSlot.objects.create(

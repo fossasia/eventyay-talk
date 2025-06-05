@@ -197,6 +197,13 @@ def base_placeholders(sender, **kwargs):
             _("The track the proposal belongs to"),
         ),
         SimpleFunctionalMailTextPlaceholder(
+            "session_duration_minutes",
+            ["submission"],
+            lambda submission: submission.get_duration(),
+            "30",
+            _("The session’s duration in minutes"),
+        ),
+        SimpleFunctionalMailTextPlaceholder(
             "all_reviews",
             ["submission"],
             get_all_reviews,

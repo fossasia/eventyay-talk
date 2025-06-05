@@ -310,7 +310,7 @@ class CfPQuestionDetail(PermissionRequired, ActionFromUrl, CreateOrUpdateView):
                 messages.error(
                     self.request,
                     _(
-                        "You cannot change the question options and upload a question option file at the same time."
+                        "You cannot change the options and upload an option file at the same time."
                     ),
                 )
                 return self.form_invalid(form)
@@ -354,7 +354,7 @@ class CfPQuestionDelete(PermissionRequired, ActionConfirmMixin, DetailView):
         )
 
     def action_object_name(self):
-        return _("Question") + f": {self.get_object().question}"
+        return _("Custom field") + f": {self.get_object().question}"
 
     @property
     def action_back_url(self):
@@ -371,14 +371,14 @@ class CfPQuestionDelete(PermissionRequired, ActionConfirmMixin, DetailView):
                 request.event.log_action(
                     "pretalx.question.delete", person=self.request.user, orga=True
                 )
-                messages.success(request, _("The question has been deleted."))
+                messages.success(request, _("The custom field has been deleted."))
         except ProtectedError:
             question.active = False
             question.save()
             messages.error(
                 request,
                 _(
-                    "You cannot delete a question that has already been answered. We have deactivated the question instead."
+                    "You cannot delete a custom field that has any responses. We have deactivated the field instead."
                 ),
             )
         return redirect(self.request.event.cfp.urls.questions)

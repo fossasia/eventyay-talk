@@ -76,4 +76,4 @@ at {event}. Please follow this link to join:
 I’m looking forward to it!
 {speaker}"""
     )
-    questions = _("Questions")
+    custom_fields = _("Custom fields")

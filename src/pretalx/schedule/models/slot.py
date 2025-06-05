@@ -1,6 +1,7 @@
 import datetime as dt
 import re
 import string
+import unicodedata
 import uuid
 from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
@@ -168,12 +169,15 @@ class TalkSlot(PretalxModel):
     @cached_property
     def frab_slug(self):
         title = re.sub(r"\W+", "-", self.submission.title)
+        title = title.lower()
+        title = unicodedata.normalize("NFD", title).encode("ASCII", "ignore").decode()
         legal_chars = string.ascii_letters + string.digits + "-"
         pattern = f"[^{legal_chars}]+"
         title = re.sub(pattern, "", title)
-        title = title.lower()
-        title = title.strip("_")
-        return f"{self.event.slug}-{self.submission.pk}{self.id_suffix}-{title}"
+        title = title.strip("-")
+        if title:
+            return f"{self.event.slug}-{self.submission.pk}{self.id_suffix}-{title}"
+        return f"{self.event.slug}-{self.submission.pk}{self.id_suffix}"
 
     @cached_property
     def uuid(self):

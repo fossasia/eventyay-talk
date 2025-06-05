@@ -237,7 +237,7 @@ def widget_script(request, event):
 
 
 @condition(etag_func=color_etag)
-@cache_page(60 * 60)
+@cache_page(5 * 60)
 @csp_exempt
 def event_css(request, event):
     # If this event has custom colours, we send back a simple CSS file that sets the

@@ -119,18 +119,6 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
                     for category in self.independent_categories:
                         result.append(mapping.get(category.pk))
                     submission.independent_scores = result
-                if self.short_questions:
-                    answers = {
-                        answer.question_id: answer
-                        for answer in submission.answers.all()
-                    }
-                    submission.short_answers = [
-                        answers.get(
-                            question.id,
-                            {"question_id": question.id, "answer_string": ""},
-                        )
-                        for question in self.short_questions
-                    ]
             else:
                 reviews = [
                     review
@@ -154,6 +142,17 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
                     submission.independent_scores = [
                         None for _ in range(len(self.independent_categories))
                     ]
+            if self.short_questions:
+                answers = {
+                    answer.question_id: answer for answer in submission.answers.all()
+                }
+                submission.short_answers = [
+                    answers.get(
+                        question.id,
+                        {"question_id": question.id, "answer_string": ""},
+                    )
+                    for question in self.short_questions
+                ]
 
         return self.sort_queryset(queryset)
 
@@ -186,6 +185,11 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
             key=get_order_tuple,
             reverse=reverse,
         )
+
+    @context
+    @cached_property
+    def can_change_submissions(self):
+        return self.request.user.has_perm("orga.change_submissions", self.request.event)
 
     @context
     @cached_property
@@ -228,7 +232,7 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
     def short_questions(self):
         from pretalx.submission.models import QuestionVariant
 
-        return self.request.event.questions.filter(
+        queryset = self.request.event.questions.filter(
             target="submission",
             variant__in=[
                 QuestionVariant.BOOLEAN,
@@ -240,6 +244,9 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
                 QuestionVariant.NUMBER,
             ],
         )
+        if not self.can_change_submissions:
+            queryset = queryset.filter(is_visible_to_reviewers=True)
+        return queryset
 
     @context
     @cached_property
@@ -505,15 +512,11 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
     @context
     @cached_property
     def has_anonymised_review(self):
-        return self.request.event.review_phases.filter(
-            can_see_speaker_names=False
-        ).exists()
-
-    @context
-    @cached_property
-    def anonymise_review(self):
-        return not getattr(
-            self.request.event.active_review_phase, "can_see_speaker_names", True
+        return (
+            self.request.event.review_phases.filter(
+                can_see_speaker_names=False
+            ).exists()
+            or self.request.event.teams.filter(force_hide_speaker_names=True).exists()
         )
 
     @context

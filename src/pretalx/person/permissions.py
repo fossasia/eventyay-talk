@@ -13,10 +13,7 @@ def can_change_submissions(user, obj):
     team_permissions = user.team_permissions.get(event.slug)
     if team_permissions is not None:
         return "can_change_submissions" in team_permissions
-    return (
-        user.is_administrator
-        or event.teams.filter(members__in=[user], can_change_submissions=True).exists()
-    )
+    return event.teams.filter(members__in=[user], can_change_submissions=True).exists()
 
 
 def has_reviewer_teams(user, event):

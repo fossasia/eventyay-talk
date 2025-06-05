@@ -83,6 +83,7 @@ def default_feature_flags():
         "export_html_on_release": False,
         "use_tracks": True,
         "use_feedback": True,
+        "use_submission_comments": True,
         "present_multiple_times": False,
         "submission_public_review": True,
     }

@@ -140,10 +140,6 @@ html.rtl {
   .form-group .col-md-9 {
     text-align: right;
   }
-  .user-logs {
-    right: 100%;
-    left: 0;
-  }
   .stages {
     .step {
       &::before {
