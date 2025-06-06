@@ -1,6 +1,5 @@
 import sys
 
-from csp.decorators import csp_update
 from django.conf import settings
 from django.contrib import messages
 from django.db.models import Count, Q
@@ -12,6 +11,7 @@ from django_context_decorator import context
 from django_scopes import scopes_disabled
 
 from pretalx.celery_app import app
+from pretalx.common.image import gravatar_csp
 from pretalx.common.models.settings import GlobalSettings
 from pretalx.common.text.phrases import phrases
 from pretalx.common.update_check import check_result_table, update_check
@@ -123,7 +123,7 @@ class AdminUserDetail(PermissionRequired, DetailView):
     slug_url_kwarg = "code"
     slug_field = "code"
 
-    @csp_update(IMG_SRC="https://www.gravatar.com")
+    @gravatar_csp()
     def dispatch(self, *args, **kwargs):
         with scopes_disabled():
             return super().dispatch(*args, **kwargs)

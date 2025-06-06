@@ -1,4 +1,3 @@
-from csp.decorators import csp_update
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Count, Exists, OuterRef, Q
@@ -12,6 +11,7 @@ from django_context_decorator import context
 
 from pretalx.agenda.views.utils import get_schedule_exporters
 from pretalx.common.exceptions import SendMailException
+from pretalx.common.image import gravatar_csp
 from pretalx.common.text.phrases import phrases
 from pretalx.common.views.generic import CreateOrUpdateView, OrgaCRUDView
 from pretalx.common.views.mixins import (
@@ -133,7 +133,7 @@ class SpeakerViewMixin(PermissionRequired):
         return self.get_permission_object()
 
 
-@method_decorator(csp_update(IMG_SRC="https://www.gravatar.com"), name="dispatch")
+@method_decorator(gravatar_csp(), name="dispatch")
 class SpeakerDetail(SpeakerViewMixin, ActionFromUrl, CreateOrUpdateView):
     template_name = "orga/speaker/form.html"
     form_class = SpeakerProfileForm
