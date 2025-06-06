@@ -365,7 +365,7 @@ class User(
 
     @cached_property
     def has_avatar(self) -> bool:
-        return self.avatar and self.avatar != "False"
+        return bool(self.avatar) and self.avatar != "False"
 
     @cached_property
     def avatar_url(self) -> str:

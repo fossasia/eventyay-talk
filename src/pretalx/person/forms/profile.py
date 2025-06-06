@@ -123,7 +123,6 @@ class SpeakerProfileForm(
             self.event.cfp.require_avatar
             and not data.get("avatar")
             and not data.get("get_gravatar")
-            and not (self.user and self.user.has_avatar)
         ):
             self.add_error(
                 "avatar",

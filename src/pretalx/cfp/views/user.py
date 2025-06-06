@@ -97,7 +97,6 @@ class ProfileView(LoggedInEventPageMixin, TemplateView):
             if self.questions_form.has_changed():
                 self.request.event.cache.set("rebuild_schedule_export", True, None)
         else:
-            messages.error(self.request, phrases.base.error_saving_changes)
             return super().get(request, *args, **kwargs)
 
         messages.success(self.request, phrases.base.saved)
