@@ -41,7 +41,9 @@
                     {% for user in users %}
                         <tr>
                             <td>
-                                <a href="{% url "orga:admin.user.view" code=user.code %}">{{ user.name }}</a>
+                                <a href="{% url "orga:admin.user.view" code=user.code %}">
+                                    {% include "orga/includes/user_name.html" %}
+                                </a>
                             </td>
                             <td>{{ user.email|copyable }}</td>
                             <td>{{ user.locale }}</td>
