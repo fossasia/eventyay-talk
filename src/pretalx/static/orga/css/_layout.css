@@ -192,7 +192,6 @@ aside.sidebar {
 
   a {
     color: var(--color-text-lighter);
-    font-weight: bold;
     &:hover {
       text-decoration: none;
     }
