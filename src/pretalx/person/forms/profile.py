@@ -22,6 +22,7 @@ from pretalx.common.forms.mixins import (
 )
 from pretalx.common.forms.renderers import InlineFormRenderer
 from pretalx.common.forms.widgets import (
+    ClearableBasenameFileInput,
     EnhancedSelect,
     EnhancedSelectMultiple,
     MarkdownWidget,
@@ -162,6 +163,7 @@ class SpeakerProfileForm(
         public_fields = ["name", "biography", "avatar"]
         widgets = {
             "biography": MarkdownWidget,
+            "avatar": ClearableBasenameFileInput,
         }
         field_classes = {
             "avatar": ImageField,
