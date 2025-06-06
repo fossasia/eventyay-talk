@@ -3,19 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Joel (Jiawei) Wang <joel.bradley.w@gmail.com>, 2023.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-05-28 08:40+0000\n"
-"PO-Revision-Date: 2023-05-27 12:16+0000\n"
-"Last-Translator: Joel (Jiawei) Wang <joel.bradley.w@gmail.com>\n"
+"PO-Revision-Date: 2025-06-01 00:55+0000\n"
+"Last-Translator: Yi Zhu <yi.zhu@zyyln.com>\n"
 "Language-Team: none\n"
-"Language: zh_CN\n"
+"Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.9.2\n"
 
 #: pretalx/agenda/phrases.py:8
 msgid "Thank you for your feedback!"
@@ -47,7 +48,7 @@ msgstr "此日程相关页面为非公开页面。只有组织者可以看到它
 
 #: pretalx/agenda/templates/agenda/changelog_block.html:14
 msgid "We have new sessions!"
-msgstr "我们有新的会议环节"
+msgstr "我们有新的会议环节！"
 
 #: pretalx/agenda/templates/agenda/changelog_block.html:24
 msgid "We have a new session: "
@@ -491,8 +492,7 @@ msgstr ""
 msgid ""
 "You, %(name)s, have been invited to be a speaker for the session “%(talk)s”. "
 "Do you accept the invitation?"
-msgstr ""
-"%(name)s 您好，您已被邀请成为“%(talk)s”议程的演讲人。请问您是否接受邀请？"
+msgstr "%(name)s 您好，您已被邀请成为“%(talk)s”议程的演讲者。请问您是否接受邀请？"
 
 #: pretalx/cfp/templates/cfp/event/invitation.html:34
 msgid "Abstract:"
@@ -724,16 +724,12 @@ msgstr "参加者可以在您的会议结束后在此处留下反馈。"
 #: pretalx/orga/templates/orga/submission/content.html:46
 msgid "Speaker"
 msgid_plural "Speakers"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "演讲者"
 
 #: pretalx/cfp/templates/cfp/event/user_submission_edit.html:49
-#, fuzzy
-#| msgid "submitted"
 msgid "Submitter"
 msgid_plural "Submitters"
-msgstr[0] "已提交"
-msgstr[1] "已提交"
+msgstr[0] "提交者"
 
 #: pretalx/cfp/templates/cfp/event/user_submission_edit.html:80
 msgid "Save draft"
@@ -1441,32 +1437,24 @@ msgid "A speaker information note was added."
 msgstr "演讲者信息"
 
 #: pretalx/common/log_display.py:125
-#, fuzzy
-#| msgid "Speaker information note"
 msgid "A speaker information note was modified."
-msgstr "演讲者信息"
+msgstr "一条发言人信息备注已被修改"
 
 #: pretalx/common/log_display.py:126
-#, fuzzy
-#| msgid "Speaker information note"
 msgid "A speaker information note was deleted."
-msgstr "演讲者信息"
+msgstr "一条发言人信息备注已被删除"
 
 #: pretalx/common/log_display.py:127
 msgid "The API token was reset."
 msgstr "API令牌已重置。"
 
 #: pretalx/common/log_display.py:128 pretalx/orga/views/person.py:94
-#, fuzzy
-#| msgid "The API token was reset."
 msgid "The API token was revoked."
-msgstr "API令牌已重置。"
+msgstr "API令牌已被撤销。"
 
 #: pretalx/common/log_display.py:130
-#, fuzzy
-#| msgid "The API token was reset."
 msgid "The API token was upgraded to the latest version."
-msgstr "API令牌已重置。"
+msgstr "API令牌已被升级到最新版本。"
 
 #: pretalx/common/log_display.py:133
 msgid "The password was modified."
@@ -1480,28 +1468,22 @@ msgstr "个人资料已修改。"
 #: pretalx/orga/templates/orga/cfp/question/list.html:52
 #: pretalx/orga/templates/orga/review/dashboard.html:84
 #: pretalx/orga/views/cfp.py:127
-#, fuzzy
-#| msgid "Custom Mail"
 msgid "Custom field"
-msgstr "定制邮件"
+msgstr "自定义字段"
 
 #: pretalx/common/log_display.py:196
 msgid "Response to custom field"
-msgstr ""
+msgstr "对自定义字段的响应"
 
 #: pretalx/common/log_display.py:199 pretalx/orga/templates/orga/base.html:246
 #: pretalx/orga/templates/orga/cfp/text.html:20
 #: pretalx/orga/templates/orga/cfp/text.html:24
-#, fuzzy
-#| msgid "All proposals"
 msgid "Call for Proposals"
-msgstr "所有提议"
+msgstr "征集提案"
 
 #: pretalx/common/log_display.py:202
-#, fuzzy
-#| msgid "Edit template"
 msgid "Mail template"
-msgstr "编辑模板"
+msgstr "邮件模板"
 
 #: pretalx/common/log_display.py:206 pretalx/event/models/organiser.py:290
 #: pretalx/orga/templates/orga/admin/user_detail.html:49
@@ -1514,10 +1496,8 @@ msgid "Email"
 msgstr "电子邮件"
 
 #: pretalx/common/log_display.py:210
-#, fuzzy
-#| msgid "Speaker email"
 msgid "Speaker profile"
-msgstr "演讲者邮件"
+msgstr "演讲者资料"
 
 #: pretalx/common/log_display.py:214 pretalx/event/stages.py:98
 #: pretalx/orga/templates/orga/admin/user_detail.html:135
@@ -6441,7 +6421,7 @@ msgstr "如果您选择网格格式，这大致就是您的小部件的外观：
 #: pretalx/orga/templates/orga/speaker/export.html:6
 #: pretalx/orga/templates/orga/speaker/export.html:9
 msgid "Export speaker data"
-msgstr "导出扬声器数据"
+msgstr "导出演讲者数据"
 
 #: pretalx/orga/templates/orga/speaker/export.html:64
 msgid "Schedule exports"
@@ -6746,8 +6726,9 @@ msgid "Delete review"
 msgstr "删除事件"
 
 #: pretalx/orga/templates/orga/submission/speakers.html:25
+#, fuzzy
 msgid "Add speaker"
-msgstr "添加扬声器"
+msgstr "添加演讲者"
 
 #: pretalx/orga/templates/orga/submission/speakers.html:52
 msgid "Other proposals by this speaker:"
@@ -7796,7 +7777,7 @@ msgstr ""
 
 #: pretalx/schedule/ascii.py:24
 msgid "No speakers"
-msgstr "没有扬声器"
+msgstr "没有演讲者"
 
 #: pretalx/schedule/exporters.py:293
 msgid "iCal (full event)"
@@ -8085,7 +8066,7 @@ msgstr "请提供一个链接或上传一个文件！"
 
 #: pretalx/submission/forms/submission.py:31
 msgid "Additional Speaker"
-msgstr "附加扬声器"
+msgstr "添加演讲者"
 
 #: pretalx/submission/forms/submission.py:33
 msgid ""
@@ -8221,7 +8202,7 @@ msgstr "根据提议"
 
 #: pretalx/submission/models/question.py:72
 msgid "per speaker"
-msgstr "每个扬声器"
+msgstr "每个演讲者"
 
 #: pretalx/submission/models/question.py:73
 msgid "for reviewers"
@@ -8491,7 +8472,7 @@ msgstr "添加、删除和创建标签"
 
 #: pretalx/submission/models/review.py:283
 msgid "Speakers can modify their proposals before acceptance"
-msgstr "演讲人可以在接受之前修改他们的建议。"
+msgstr "演讲者可以在接受之前修改他们的建议。"
 
 #: pretalx/submission/models/review.py:285
 msgid ""

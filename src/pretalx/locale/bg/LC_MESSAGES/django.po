@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-05-28 08:40+0000\n"
-"PO-Revision-Date: 2025-05-16 12:47+0000\n"
-"Last-Translator: Neter <neter@moyat.net>\n"
+"PO-Revision-Date: 2025-06-03 17:35+0000\n"
+"Last-Translator: Vasil Kolew <vasil@ludost.net>\n"
 "Language-Team: none\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
@@ -1120,12 +1120,16 @@ msgid ""
 "The file you uploaded has a very large number of pixels, please upload a "
 "picture with smaller dimensions."
 msgstr ""
+"Изпратеният файл съдържа твърде много пиксели, моля изпратете снимка с по-"
+"малки размери."
 
 #: pretalx/common/image.py:54
 msgid ""
 "Upload a valid image. The file you uploaded was either not an image or a "
 "corrupted image."
 msgstr ""
+"Изпратете валидно изображение. Изпратеният файл или не е изображение, или е "
+"повреден."
 
 #: pretalx/common/log_display.py:31
 #, python-brace-format
@@ -3621,6 +3625,8 @@ msgid ""
 "The password contains unsupported letters. Please only use characters A-Z, a-"
 "z, 0-9, and common special characters ({characters})."
 msgstr ""
+"Паролата съдържа неподдържани символи. Моля използвайте само A-Z, a-z, 0-9 и "
+"стандартните специални символи ({characters})."
 
 #: pretalx/orga/forms/event.py:434
 msgid "Use STARTTLS"
@@ -6814,11 +6820,11 @@ msgstr "Версия"
 
 #: pretalx/orga/templates/orga/user.html:50
 msgid "Last used"
-msgstr ""
+msgstr "Последно използван"
 
 #: pretalx/orga/templates/orga/user.html:51
 msgid "Created"
-msgstr ""
+msgstr "Създаден"
 
 #: pretalx/orga/templates/orga/user.html:52
 #: pretalx/submission/models/access_code.py:49
@@ -6827,11 +6833,11 @@ msgstr "Валидно до"
 
 #: pretalx/orga/templates/orga/user.html:68
 msgid "Updgrade"
-msgstr ""
+msgstr "Ъпгрейд"
 
 #: pretalx/orga/templates/orga/user.html:87
 msgid "Revoke"
-msgstr ""
+msgstr "Прекратяване"
 
 #: pretalx/orga/templates/orga/user.html:97
 #, fuzzy
@@ -7219,6 +7225,8 @@ msgid ""
 "The template has been saved - note that already pending emails that are "
 "based on this template will not be changed!"
 msgstr ""
+"Шаблонът беше записан - забележете, че подготвените писма, базирани на него "
+"няма да бъдат променени!"
 
 #: pretalx/orga/views/mails.py:516
 #, fuzzy
@@ -7550,7 +7558,7 @@ msgstr "Пращане на всичко"
 
 #: pretalx/person/forms/auth_token.py:24
 msgid "Read and write all endpoints"
-msgstr ""
+msgstr "Четене и запис по всички входни точки"
 
 #: pretalx/person/forms/auth_token.py:25
 #, fuzzy
@@ -7560,12 +7568,12 @@ msgstr "Права̀"
 
 #: pretalx/person/forms/auth_token.py:27
 msgid "Choose a preset or configure detailed permissions below."
-msgstr ""
+msgstr "Изберете шаблон или настройте детайлните достъпи по-долу."
 
 #: pretalx/person/forms/auth_token.py:83
 #, python-brace-format
 msgid "Invalid permissions selected: {perms}"
-msgstr ""
+msgstr "Избрани са невалидни достъпи: {perms}"
 
 #: pretalx/person/forms/profile.py:39
 msgid "There already exists an account for this email address."
@@ -7592,7 +7600,7 @@ msgstr "Не е пристигнал още"
 
 #: pretalx/person/forms/user.py:29
 msgid "display name"
-msgstr ""
+msgstr "име за показване"
 
 #: pretalx/person/forms/user.py:43
 msgid "Password (again)"
@@ -7625,7 +7633,7 @@ msgstr ""
 
 #: pretalx/person/models/auth_token.py:72
 msgid "Expiry date"
-msgstr ""
+msgstr "Дата на изтичане"
 
 #: pretalx/person/models/auth_token.py:75
 #, fuzzy
