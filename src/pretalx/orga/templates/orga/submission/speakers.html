@@ -35,7 +35,7 @@
                 </a>
                 {% if speaker.user.avatar and request.event.cfp.request_avatar %}
                     <div class="speaker-avatar">
-                        <a href="{{ speaker.user.avatar.url }}" data-lightbox="{{ speaker.user.avatar.url }}">
+                        <a href="{{ speaker.user.avatar.url }}" data-lightbox>
                             <img loading="lazy" width="100%" src="{{ speaker.user.avatar|thumbnail:"default" }}" alt="{% translate "The speaker’s profile picture" %}">
                         </a>
                     </div>
