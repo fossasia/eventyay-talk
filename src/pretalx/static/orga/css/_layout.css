@@ -154,7 +154,7 @@ details.card {
   }
 }
 aside.sidebar {
-  background-color: var(--color-grey-lightest);
+  background-color: var(--color-grey-ultralight);
   box-shadow: var(--shadow-lighter);
   width: 45px;
   height: 100vh;
@@ -191,7 +191,7 @@ aside.sidebar {
   }
 
   a {
-    color: var(--color-text-lighter);
+    color: var(--color-primary);
     &:hover {
       text-decoration: none;
     }
@@ -201,7 +201,7 @@ aside.sidebar {
   #nav-search-wrapper {
     .arrow {
       flex-grow: 0;
-      color: var(--color-text-lighter);
+      color: var(--color-primary);
       width: 40px;
       border: none;
       display: flex;
@@ -235,7 +235,7 @@ aside.sidebar {
   .nav-link,
   .nav-fold {
     display: block;
-    border-top: 1px solid var(--color-grey-light);
+    border-top: 1px solid #e7e7e7;
     div > a {
       display: none;
     }
@@ -245,7 +245,7 @@ aside.sidebar {
     padding: 10px 15px;
 
     &:last-child {
-      border-bottom: 1px solid var(--color-grey-light);
+      border-bottom: 1px solid #e7e7e7;
     }
   }
 
@@ -270,14 +270,18 @@ aside.sidebar {
   }
 
   .nav-link.active,
+  .nav-link.nav-link-second-level.active {
+    background-color: var(--color-grey-pale);
+  }
   .nav-link.active:hover,
-  .nav-link.nav-link-second-level.active,
   .nav-link.nav-link-second-level.active:hover {
-    background-color: var(--color-primary-lighter);
+    background-color: var(--color-grey-pale);
+    color: var(--color-primary-text-dark);
   }
   .nav-link:hover,
   .nav-link.nav-link-second-level:hover {
-    background-color: var(--color-grey-lighter);
+    color: var(--color-primary-text-dark);
+    background-color: var(--color-grey-pale);
   }
   #nav-search {
     display: flex;
@@ -416,8 +420,9 @@ nav.navbar,
   z-index: 200;
   height: 50px;
   color: var(--color-primary);
-  background-color: var(--color-offwhite);
-  border-bottom: 4px var(--color-primary-event, var(--color-primary)) solid;
+  background-color: var(--color-primary);
+  border: 1px solid transparent;
+  border-color: var(--color-border-navbar);
   padding: 0.25rem;
   box-shadow:
     1px 1px 3px rgb(0 0 0 / 0.12),
@@ -464,10 +469,10 @@ nav.navbar,
 
   a,
   button {
-    color: var(--color-primary);
+    color: var(--color-offwhite);
     &:hover {
       text-decoration: none;
-      color: var(--color-primary);
+      color: var(--color-white);
     }
   }
   button {
@@ -976,6 +981,9 @@ table .color-square {
   }
 }
 .review-table.table {
+  thead td {
+    text-align: left;
+  }
   tbody tr,
   thead tr {
     .unmark-radio {
@@ -1261,6 +1269,9 @@ div.mail-preview {
     box-shadow: var(--shadow-lightest);
     display: inline;
     vertical-align: middle;
+  }
+  a:hover {
+    text-decoration: none;
   }
 }
 .col-form-label .user-name-display {

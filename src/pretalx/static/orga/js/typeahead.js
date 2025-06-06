@@ -1,6 +1,6 @@
 const initNavSearch = () => {
     const wrapper = document.querySelector("#nav-search-wrapper")
-    const summary = wrapper.querySelector("summary")
+    const summary = wrapper.querySelector(".summary-div")
     const searchInput = wrapper.querySelector("input")
     const searchWrapper = wrapper.querySelector("#nav-search-input-wrapper")
     const apiURL = searchWrapper.getAttribute("data-source")
@@ -37,6 +37,9 @@ const initNavSearch = () => {
                     if (res.type === "organiser" || res.type === "user") {
                         const icon = res.type === "organiser" ? "fa-users" : "fa-user"
                         content = `<span class="search-title"><i class="fa fa-fw ${icon}"></i> ${res.name}</span>`
+                    } else if (res.type === "user.admin") {
+                        content += `<span class="search-title"><span>${res.name}</span></span>
+                            <span class="search-detail"><span class="fa fa-envelope-o fa-fw"></span> ${res.email}</span>`
                     } else if (res.type === "submission" || res.type === "speaker") {
                         content = `<span class="search-title"><span>${res.name}</span></span>
                             <span class="search-detail"><span class="fa fa-calendar fa-fw"></span> ${res.event}</span>`

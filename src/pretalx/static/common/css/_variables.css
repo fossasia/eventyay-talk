@@ -47,6 +47,8 @@
 
   --color-white: #fff;
   --color-offwhite: #f8f9fa;
+  --color-grey-ultralight: #f8f8f8;
+  --color-grey-pale: #eeeeee;
   --color-grey-lightest: color-mix(in srgb, #f8f9fa 95%, var(--color-primary));
   --color-grey-lighter: color-mix(in srgb, #e9ecef 95%, var(--color-primary));
   --color-grey-light: color-mix(in srgb, #dae0e4 90%, var(--color-primary));
@@ -59,6 +61,7 @@
   --color-card-border: rgb(0 0 0 / 0.125);
   --color-card-header: rgb(0 0 0 / 0.03);
   --color-border: #ced4da;
+  --color-border-navbar: #1a69a4;
 
   --size-border-radius: 0.25rem;
   --size-spacer: 1rem;

@@ -26,6 +26,7 @@ from pretalx.common.text.daterange import daterange
 from pretalx.common.text.path import path_with_hash
 from pretalx.common.text.phrases import phrases
 from pretalx.common.urls import EventUrls
+from urllib.parse import urlparse
 
 # Slugs need to start and end with an alphanumeric character,
 # but may contain dashes and dots in between.
@@ -229,7 +230,7 @@ class Event(PretalxModel):
         verbose_name=_("Logo"),
         help_text=_(
             "If you provide a logo image, your event’s name will not be shown in the event header. "
-            "The logo will be scaled down to a height of 150px."
+            "The logo will be scaled down to a height of 140px."
         ),
     )
     header_image = models.ImageField(
@@ -316,7 +317,6 @@ class Event(PretalxModel):
 
     class orga_urls(EventUrls):
         base_path = settings.BASE_PATH
-        create = "{base_path}/orga/event/new"
         base = "{base_path}/orga/event/{self.slug}/"
         login = "{base}login/"
         live = "{base}live"
@@ -380,6 +380,14 @@ class Event(PretalxModel):
         questions = "{base}questions/"
         answers = "{base}answers/"
         tags = "{base}tags/"
+    
+    class tickets_urls(EventUrls):
+        _full_base_path = settings.EVENTYAY_TICKET_BASE_PATH
+        base_path = urlparse(_full_base_path).path.rstrip('/')
+        base = "{base_path}/control/"
+        common = "{base_path}/common/"
+        tickets_home_common = "{common}event/{self.organiser.slug}/{self.slug}/"
+        tickets_dashboard_url = "{base}event/{self.organiser.slug}/{self.slug}/"
 
     class Meta:
         ordering = ("date_from",)
