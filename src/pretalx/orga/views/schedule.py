@@ -2,7 +2,6 @@ import collections
 import datetime as dt
 import json
 import logging
-from contextlib import suppress
 
 import dateutil.parser
 from celery.exceptions import TaskError
@@ -11,9 +10,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.db.models.deletion import ProtectedError
 from django.http import FileResponse, JsonResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
-from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
@@ -28,10 +26,10 @@ from pretalx.agenda.views.utils import get_schedule_exporters
 from pretalx.common.language import get_current_language_information
 from pretalx.common.text.path import safe_filename
 from pretalx.common.text.phrases import phrases
-from pretalx.common.views import CreateOrUpdateView
+from pretalx.common.views.generic import OrgaCRUDView
 from pretalx.common.views.mixins import (
-    ActionFromUrl,
     EventPermissionRequired,
+    OrderActionMixin,
     PermissionRequired,
 )
 from pretalx.orga.forms.schedule import ScheduleExportForm, ScheduleReleaseForm
@@ -556,34 +554,32 @@ class QuickScheduleView(PermissionRequired, UpdateView):
         return self.request.path
 
 
-class RoomList(EventPermissionRequired, TemplateView):
-    template_name = "orga/schedule/room_list.html"
-    permission_required = "orga.change_settings"
+class RoomView(OrderActionMixin, OrgaCRUDView):
+    model = Room
+    form_class = RoomForm
+    template_namespace = "orga/schedule"
 
-    def post(self, request, *args, **kwargs):
-        order = request.POST.get("order")
-        if order:
-            order = order.split(",")
-        for index, pk in enumerate(order):
-            room = get_object_or_404(Room.objects, event=request.event, pk=pk)
-            room.position = index
-            room.save(update_fields=["position"])
-        return self.get(request, *args, **kwargs)
+    def get_queryset(self):
+        return self.request.event.rooms.all()
 
+    def get_permission_required(self):
+        permission_map = {"list": "orga_list", "detail": "orga_detail"}
+        permission = permission_map.get(self.action, self.action)
+        return self.model.get_perm(permission)
 
-class RoomDelete(EventPermissionRequired, View):
-    permission_required = "orga.change_settings"
-
-    def get_object(self):
-        return self.request.event.rooms.filter(pk=self.kwargs["pk"]).first()
-
-    def dispatch(self, request, event, pk):
-        super().dispatch(request, event, pk)
-        try:
-            self.get_object().delete()
-            messages.success(
-                self.request, _("Room deleted. Hopefully nobody was still in there …")
+    def get_generic_title(self, instance=None):
+        if instance:
+            return (
+                _("Room")
+                + f" {phrases.base.quotation_open}{instance.name}{phrases.base.quotation_close}"
             )
+        if self.action == "create":
+            return _("New room")
+        return _("Rooms")
+
+    def delete_handler(self, request, *args, **kwargs):
+        try:
+            return super().delete_handler(request, *args, **kwargs)
         except ProtectedError:
             messages.error(
                 request,
@@ -591,50 +587,4 @@ class RoomDelete(EventPermissionRequired, View):
                     "There is or was a session scheduled in this room. It cannot be deleted."
                 ),
             )
-
-        return redirect(request.event.orga_urls.room_settings)
-
-
-@method_decorator(csp_update(SCRIPT_SRC="'self' 'unsafe-eval'"), name="dispatch")
-class RoomDetail(EventPermissionRequired, ActionFromUrl, CreateOrUpdateView):
-    model = Room
-    form_class = RoomForm
-    template_name = "orga/schedule/room_form.html"
-    permission_required = "orga.view_room"
-
-    @cached_property
-    def write_permission_required(self):
-        if "pk" not in self.kwargs:
-            return "orga.change_settings"
-        return "orga.edit_room"
-
-    def get_object(self):
-        with suppress(Room.DoesNotExist, KeyError):
-            return self.request.event.rooms.get(pk=self.kwargs["pk"])
-
-    @property
-    def permission_object(self):
-        return self.get_object() or self.request.event
-
-    def get_success_url(self) -> str:
-        return self.request.event.orga_urls.room_settings
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["event"] = self.request.event
-        return kwargs
-
-    def form_valid(self, form):
-        form.instance.event = self.request.event
-        created = not bool(form.instance.pk)
-        result = super().form_valid(form)
-        messages.success(self.request, _("Saved!"))
-        if created:
-            form.instance.log_action(
-                "pretalx.room.create", person=self.request.user, orga=True
-            )
-        else:
-            form.instance.log_action(
-                "pretalx.event.update", person=self.request.user, orga=True
-            )
-        return result
+            return self.delete_view(request, *args, **kwargs)

@@ -344,6 +344,9 @@ def test_orga_cannot_add_wrong_placeholder_in_template(orga_client, event):
 def test_orga_can_delete_template(orga_client, event, mail_template):
     with scope(event=event):
         assert MailTemplate.objects.count() == len(MailTemplateRoles.choices) + 1
+    response = orga_client.get(mail_template.urls.delete, follow=True)
+    with scope(event=event):
+        assert MailTemplate.objects.count() == len(MailTemplateRoles.choices) + 1
     response = orga_client.post(mail_template.urls.delete, follow=True)
     assert response.status_code == 200
     with scope(event=event):

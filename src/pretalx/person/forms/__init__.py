@@ -1,4 +1,5 @@
 from .auth import LoginInfoForm
+from .auth_token import AuthTokenForm
 from .information import SpeakerInformationForm
 from .profile import (
     OrgaProfileForm,
@@ -9,6 +10,7 @@ from .profile import (
 from .user import UserForm
 
 __all__ = [
+    "AuthTokenForm",
     "SpeakerInformationForm",
     "SpeakerProfileForm",
     "OrgaProfileForm",

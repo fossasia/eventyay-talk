@@ -16,9 +16,11 @@ from django_filters import rest_framework as filters
 from django_scopes import scopes_disabled
 from rest_framework import status, viewsets
 from rest_framework.authentication import get_authorization_header
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from pretalx.api.documentation import build_search_docs
 from pretalx.api.mixins import PretalxViewSetMixin
 from pretalx.api.serializers.submission import (
     ScheduleListSerializer,
@@ -26,12 +28,20 @@ from pretalx.api.serializers.submission import (
     SubmissionOrgaSerializer,
     SubmissionReviewerSerializer,
     SubmissionSerializer,
+    SubmissionTypeSerializer,
     TagSerializer,
+    TrackSerializer,
 )
 from pretalx.common import exceptions
 from pretalx.person.models import User
 from pretalx.schedule.models import Schedule
-from pretalx.submission.models import Submission, SubmissionStates, Tag
+from pretalx.submission.models import (
+    Submission,
+    SubmissionStates,
+    SubmissionType,
+    Tag,
+    Track,
+)
 from pretalx.submission.models.submission import (
     SubmissionFavouriteDeprecated,
     SubmissionFavouriteDeprecatedSerializer,
@@ -57,9 +67,10 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     search_fields = ("title", "speakers__name")
     filterset_class = SubmissionFilter
     permission_map = {
-        "favourite": "agenda.view_schedule",
-        "favourite_object": "agenda.view_submission",
+        "favourites": "agenda.view_schedule",
+        "favourite": "agenda.view_submission",
     }
+    endpoint = "submissions"
 
     def get_queryset(self):
         base_qs = (
@@ -143,6 +154,7 @@ class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = ScheduleSerializer
     queryset = Schedule.objects.none()
     lookup_value_regex = "[^/]+"
+    endpoint = "schedules"
 
     def get_unversioned_serializer_class(self):
         if self.action == "list":
@@ -180,15 +192,22 @@ class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
         return qs
 
 
-class TagViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
+@extend_schema_view(
+    list=extend_schema(summary="List tags", parameters=[build_search_docs("tag")]),
+    retrieve=extend_schema(summary="Show Tags"),
+    create=extend_schema(summary="Create Tags"),
+    update=extend_schema(summary="Update Tags"),
+    partial_update=extend_schema(summary="Update Tags (Partial Update)"),
+    destroy=extend_schema(summary="Delete Tags"),
+)
+class TagViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.none()
-    lookup_field = "tag__iexact"
+    endpoint = "tags"
+    search_fields = ("tag",)
 
     def get_queryset(self):
-        if self.request.user.has_perm("orga.view_submissions", self.request.event):
-            return self.request.event.tags.all()
-        return Tag.objects.none()
+        return self.request.event.tags.all()
 
 
 class SubmissionFavouriteDeprecatedView(View):
@@ -324,3 +343,41 @@ class SubmissionFavouriteDeprecatedView(View):
         )
         user_code = token_decode.get("uid")
         return get_object_or_404(User, code=user_code).id
+
+
+@extend_schema_view(
+    list=extend_schema(
+        summary="List Submission Types", parameters=[build_search_docs("name")]
+    ),
+    retrieve=extend_schema(summary="Show Submission Types"),
+    create=extend_schema(summary="Create Submission Types"),
+    update=extend_schema(summary="Update Submission Types"),
+    partial_update=extend_schema(summary="Update Submission Types (Partial Update)"),
+    destroy=extend_schema(summary="Delete Submission Types"),
+)
+class SubmissionTypeViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
+    serializer_class = SubmissionTypeSerializer
+    queryset = SubmissionType.objects.none()
+    endpoint = "submission-types"
+    search_fields = ("name",)
+
+    def get_queryset(self):
+        return self.request.event.submission_types.all()
+
+
+@extend_schema_view(
+    list=extend_schema(summary="List Tracks", parameters=[build_search_docs("name")]),
+    retrieve=extend_schema(summary="Show Tracks"),
+    create=extend_schema(summary="Create Tracks"),
+    update=extend_schema(summary="Update Tracks"),
+    partial_update=extend_schema(summary="Update Tracks (Partial Update)"),
+    destroy=extend_schema(summary="Delete Tracks"),
+)
+class TrackViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
+    serializer_class = TrackSerializer
+    queryset = Track.objects.none()
+    endpoint = "tracks"
+    search_fields = ("name",)
+
+    def get_queryset(self):
+        return self.request.event.tracks.all()

@@ -7,11 +7,19 @@ from rest_framework.serializers import (
     SlugRelatedField,
 )
 
+from pretalx.api.mixins import PretalxSerializer, ReadOnlySerializerMixin
 from pretalx.api.serializers.question import AnswerSerializer
 from pretalx.api.serializers.speaker import SubmitterOrgaSerializer, SubmitterSerializer
-from pretalx.api.versions import register_serializer
+from pretalx.api.versions import CURRENT_VERSION, register_serializer
 from pretalx.schedule.models import Schedule, TalkSlot
-from pretalx.submission.models import Resource, Submission, SubmissionStates, Tag
+from pretalx.submission.models import (
+    Resource,
+    Submission,
+    SubmissionStates,
+    SubmissionType,
+    Tag,
+    Track,
+)
 
 
 @register_serializer()
@@ -76,7 +84,9 @@ class SubmissionSerializer(I18nAwareModelSerializer):
         )
         super().__init__(*args, **kwargs)
         for field in ("title", "abstract", "description"):
-            setattr(self, f"get_{field}", partial(self.get_attribute, attribute=field))
+            partial_name = f"get_{field}"
+            setattr(self, partial_name, partial(self.get_attribute, attribute=field))
+            getattr(self, partial_name).__name__ = partial_name
 
     @staticmethod
     def get_duration(obj):
@@ -141,11 +151,93 @@ class SubmissionSerializer(I18nAwareModelSerializer):
         ]
 
 
-@register_serializer()
-class TagSerializer(I18nAwareModelSerializer):
+@register_serializer(versions="LEGACY", class_name="TagSerializer")
+class LegacyTagSerializer(ReadOnlySerializerMixin, PretalxSerializer):
     class Meta:
         model = Tag
         fields = ["id", "tag", "description", "color"]
+
+
+@register_serializer(versions=[CURRENT_VERSION])
+class TagSerializer(PretalxSerializer):
+    class Meta:
+        model = Tag
+        fields = ("id", "tag", "description", "color", "is_public")
+
+    def create(self, validated_data):
+        validated_data["event"] = getattr(self.context.get("request"), "event", None)
+        return super().create(validated_data)
+
+
+@register_serializer(versions=[CURRENT_VERSION])
+class SubmissionTypeSerializer(PretalxSerializer):
+    class Meta:
+        model = SubmissionType
+        fields = (
+            "id",
+            "name",
+            "default_duration",
+            "deadline",
+            "requires_access_code",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.event = getattr(self.context.get("request"), "event", None)
+
+    def create(self, validated_data):
+        validated_data["event"] = self.event
+        return super().create(validated_data)
+
+    def validate_name(self, value):
+        existing_types = self.event.submission_types.all()
+        if self.instance and self.instance.pk:
+            existing_types.exclude(pk=self.instance.pk)
+        if any(str(stype.name) == str(value) for stype in existing_types):
+            raise exceptions.ValidationError(
+                "Submission type name already exists in event."
+            )
+        return value
+
+    def update(self, instance, validated_data):
+        duration_changed = (
+            "duration" in validated_data
+            and validated_data["duration"] != instance.duration
+        )
+        result = super().update(instance, validated_data)
+        if duration_changed:
+            instance.update_duration()
+        return result
+
+
+@register_serializer(versions=[CURRENT_VERSION])
+class TrackSerializer(PretalxSerializer):
+    class Meta:
+        model = Track
+        fields = (
+            "id",
+            "name",
+            "description",
+            "color",
+            "position",
+            "requires_access_code",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.event = getattr(self.context.get("request"), "event", None)
+
+    def create(self, validated_data):
+        validated_data["event"] = self.event
+        return super().create(validated_data)
+
+    def validate_name(self, value):
+        existing_types = self.event.submission_types.all()
+        if self.instance and self.instance.pk:
+            existing_types.exclude(pk=self.instance.pk)
+        if any(str(stype.name) == str(value) for stype in existing_types):
+            raise exceptions.ValidationError("Track name already exists in event.")
+        return value
 
 
 @register_serializer()

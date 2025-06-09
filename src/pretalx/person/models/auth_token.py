@@ -1,7 +1,9 @@
 import string
 
 from django.db import models
+from django.db.models import Q
 from django.utils.crypto import get_random_string
+from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
 from pretalx.common.models.mixins import PretalxModel
@@ -14,28 +16,45 @@ def generate_api_token():
 
 
 READ_PERMISSIONS = ("list", "retrieve")
-WRITE_PERMISSIONS = READ_PERMISSIONS + ("create", "update", "delete", "actions")
+WRITE_PERMISSIONS = READ_PERMISSIONS + ("create", "update", "destroy", "actions")
 PERMISSION_CHOICES = (
-    ("list", _("List all resources")),
-    ("retrieve", _("Retrieve a single resource")),
-    ("create", _("Create a new resource")),
-    ("update", _("Update an existing resource")),
-    ("delete", _("Delete a resource")),
-    ("actions", _("Perform actions on a resource")),
+    ("list", _("Read list")),
+    ("retrieve", _("Read details")),
+    ("create", _("Create")),
+    ("update", _("Update")),
+    ("destroy", _("Delete")),
+    ("actions", _("Additional actions")),
 )
 ENDPOINTS = (
+    "teams",
     "events",
     "submissions",
     "speakers",
     "reviews",
     "rooms",
     "questions",
+    "question-options",
     "answers",
+    "tags",
+    "tracks",
+    "schedules",
+    "submission-types",
+    "mail-templates",
+    "access-codes",
+    "speaker-information",
 )
 
 
 def default_endpoint_permissions():
     return {endpoint: READ_PERMISSIONS for endpoint in ENDPOINTS}
+
+
+class UserApiTokenManager(models.Manager):
+
+    def active(self):
+        return self.get_queryset().filter(
+            Q(expires__isnull=True) | Q(expires__gt=now())
+        )
 
 
 class UserApiToken(PretalxModel):
@@ -63,8 +82,27 @@ class UserApiToken(PretalxModel):
     )
     last_used = models.DateTimeField(null=True, blank=True)
 
+    objects = UserApiTokenManager()
+
     def has_endpoint_permission(self, endpoint, method):
+        if method == "partial_update":
+            # We don't track separate permissions for partial updates
+            method = "update"
         perms = self.endpoints.get(
             endpoint, default_endpoint_permissions().get(endpoint, [])
         )
         return method in perms
+
+    @property
+    def is_active(self):
+        return not self.expires or self.expires > now()
+
+    def serialize(self):
+        return {
+            "name": self.name,
+            "token": self.token,
+            "team": self.team_id,
+            "expires": self.expires.isoformat() if self.expires else None,
+            "endpoints": self.endpoints,
+            "version": self.version,
+        }

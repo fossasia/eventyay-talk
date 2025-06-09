@@ -19,12 +19,18 @@ table {
   thead th {
     border-bottom: 2px solid var(--color-grey-light);
   }
-  tr:hover {
-    background-color: var(--color-grey-lightest);
+  th {
+    font-weight: bold;
+  }
+  tr {
+    vertical-align: middle;
   }
   a:hover {
     text-decoration: none;
   }
+}
+table:not(.no-hover) tr:hover {
+  background-color: var(--color-grey-lightest);
 }
 
 legend {
@@ -931,6 +937,9 @@ pl-0 {
 }
 .bg-danger {
   background-color: var(--color-danger) !important;
+}
+.bg-muted {
+  background-color: var(--color-grey-lightest) !important;
 }
 
 .sr-only {

@@ -1,8 +1,9 @@
 import rules
 
-from pretalx.person.permissions import can_change_submissions, is_reviewer
+from pretalx.person.rules import is_reviewer
 from pretalx.submission.models import SubmissionStates
 from pretalx.submission.permissions import can_be_edited
+from pretalx.submission.rules import orga_can_change_submissions
 
 
 @rules.predicate
@@ -20,6 +21,6 @@ def can_request_speakers(user, submission):
 
 
 rules.add_perm(
-    "cfp.view_event", is_event_visible | (can_change_submissions | is_reviewer)
+    "cfp.view_event", is_event_visible | (orga_can_change_submissions | is_reviewer)
 )
 rules.add_perm("cfp.add_speakers", can_be_edited & can_request_speakers)

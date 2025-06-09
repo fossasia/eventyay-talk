@@ -1,0 +1,46 @@
+from rest_framework import exceptions
+
+from pretalx.api.mixins import PretalxSerializer
+from pretalx.api.versions import CURRENT_VERSION, register_serializer
+from pretalx.mail.context import get_invalid_placeholders
+from pretalx.mail.models import MailTemplate
+
+
+@register_serializer(versions=[CURRENT_VERSION])
+class MailTemplateSerializer(PretalxSerializer):
+    class Meta:
+        model = MailTemplate
+        fields = (
+            "id",
+            "role",
+            "subject",
+            "text",
+            "reply_to",
+            "bcc",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.event = getattr(self.context.get("request"), "event", None)
+
+    def create(self, validated_data):
+        validated_data["event"] = self.event
+        return super().create(validated_data)
+
+    def validate_subject(self, value):
+        if not self.instance:
+            valid_placeholders = MailTemplate(event=self.event).valid_placeholders
+        else:
+            valid_placeholders = self.instance.valid_placeholders
+        try:
+            fields = get_invalid_placeholders(value, valid_placeholders)
+        except Exception:
+            raise exceptions.ValidationError(
+                "Invalid email template! "
+                "Please check that you don’t have stray { or } somewhere, "
+                "and that there are no spaces inside the {} blocks."
+            )
+        if fields:
+            fields = ", ".join("{" + field + "}" for field in fields)
+            raise exceptions.ValidationError(f"Unknown placeholder! {fields}")
+        return value

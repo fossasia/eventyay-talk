@@ -11,7 +11,7 @@ from lxml import etree
 
 from pretalx.event.models import Event, Organiser, Team, TeamInvite
 from pretalx.mail.models import MailTemplate
-from pretalx.person.models import SpeakerInformation, SpeakerProfile, User
+from pretalx.person.models import SpeakerInformation, SpeakerProfile, User, UserApiToken
 from pretalx.schedule.models import Availability, Room, TalkSlot
 from pretalx.submission.models import (
     Answer,
@@ -601,6 +601,40 @@ def orga_user(event):
 
 
 @pytest.fixture
+def orga_user_token(orga_user):
+    return UserApiToken.objects.create(
+        name="testtoken", user=orga_user, team=orga_user.teams.first()
+    )
+
+
+@pytest.fixture
+def review_user_token(review_user):
+    token = UserApiToken.objects.create(
+        name="testtoken", user=review_user, team=review_user.teams.first()
+    )
+    token.endpoints = {
+        key: ["list", "retrieve", "create", "update", "destroy", "actions"]
+        for key in token.endpoints.keys()
+    }
+    token.save()
+    return token
+
+
+@pytest.fixture
+def orga_user_write_token(orga_user_token):
+    orga_user_token.pk = None
+    orga_user_token.endpoints = {
+        key: ["list", "retrieve", "create", "update", "destroy", "actions"]
+        for key in orga_user_token.endpoints.keys()
+    }
+    from pretalx.person.models.auth_token import generate_api_token
+
+    orga_user_token.token = generate_api_token()
+    orga_user_token.save()
+    return orga_user_token
+
+
+@pytest.fixture
 def other_orga_user(event):
     with scopes_disabled():
         user = User.objects.create_user(
@@ -855,7 +889,7 @@ def invitation(event):
             can_change_organiser_settings=True, is_reviewer=False
         ).first()
         return TeamInvite.objects.create(
-            team=team, token="testtoken", email="some@test.mail"
+            team=team, token="testtoken", email="some@example.com"
         )
 
 

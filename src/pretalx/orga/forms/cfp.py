@@ -378,6 +378,7 @@ class SubmissionTypeForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
         instance = super().save(*args, **kwargs)
         if instance.pk and "duration" in self.changed_data:
             instance.update_duration()
+        return instance
 
     class Meta:
         model = SubmissionType

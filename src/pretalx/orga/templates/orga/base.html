@@ -195,7 +195,7 @@
                 {% if request.event %}
                     {% has_perm "orga.view_orga_area" request.user request.event as can_see_orga_area %}
                     {% has_perm "orga.change_submissions" request.user request.event as can_see_orga_exclusive %}
-                    {% has_perm "orga.change_teams" request.user request.event as can_change_teams %}
+                    {% has_perm "event.update_team" request.user request.event as can_change_teams %}
                     {% has_perm "orga.change_settings" request.user request.event as can_change_settings %}
                     {% has_perm "orga.view_speakers" request.user request.event as can_view_speakers %}
                     {% if can_see_orga_area %}
@@ -436,10 +436,10 @@
                         <i class="fa fa-cog"></i>
                         <span>{% translate "Settings" %}</span>
                     </a>
-                    {% has_perm "orga.change_teams" request.user request.organiser as can_change_teams %}
+                    {% has_perm "event.update_team" request.user request.organiser as can_change_teams %}
                     {% has_perm "orga.view_organiser_speakers" request.user request.organiser as can_view_speakers %}
                     {% if can_change_teams %}
-                        <a class="nav-link {% if "/teams/" in request.path %} active{% endif %}" href="{% url "orga:organiser.teams" organiser=request.organiser.slug %}">
+                        <a class="nav-link {% if "/teams/" in request.path %} active{% endif %}" href="{% url "orga:organiser.teams.list" organiser=request.organiser.slug %}">
                             <i class="fa fa-users"></i>
                             <span>{% translate "Teams" %}</span>
                         </a>

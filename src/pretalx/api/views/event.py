@@ -31,6 +31,7 @@ class EventViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     lookup_url_kwarg = "event"
     pagination_class = None
     permission_required = "cfp.view_event"
+    endpoint = "events"
 
     def get_queryset(self):
         return [

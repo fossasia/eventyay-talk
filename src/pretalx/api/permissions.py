@@ -1,4 +1,20 @@
-from rest_framework.permissions import SAFE_METHODS, BasePermission
+from rest_framework.permissions import BasePermission
+
+MODEL_PERMISSION_MAP = {
+    "list": "list",
+    "retrieve": "view",
+    "update": "update",
+    "partial_update": "update",
+    "destroy": "delete",
+}
+
+MODEL_PERMISSION_MAP = {
+    "list": "list",
+    "retrieve": "view",
+    "update": "update",
+    "partial_update": "update",
+    "destroy": "delete",
+}
 
 
 class ApiPermission(BasePermission):
@@ -6,7 +22,7 @@ class ApiPermission(BasePermission):
     def get_permission_object(self, view, obj, request, detail=False):
         if func := getattr(view, "get_permission_object", None):
             return func()
-        return obj or request.event
+        return obj or getattr(request, "event", None) or request.organiser
 
     def has_permission(self, request, view):
         return self._has_permission(view, None, request)
@@ -15,28 +31,40 @@ class ApiPermission(BasePermission):
         return self._has_permission(view, obj, request)
 
     def _has_permission(self, view, obj, request):
+        """
+        We check multiple levels of permissions:
+        - Is the auth token active in the first place (not expired)
+        - Does the auth token have access to the event
+        - Does the auth token have access to the endpoint (with the method used)
+        - Does the user have the required additional object-level permissions
+        """
         event = getattr(request, "event", None)
-        if not event:  # Only true for root API view
+        if request.auth:
+            if event:
+                if event not in request.auth.team.events:
+                    return False
+            elif request.organiser != request.auth.team.organiser:
+                return False
+            if view.action and (endpoint := getattr(view, "endpoint", None)):
+                action = view.action_permission_map.get(view.action, view.action)
+                if not request.auth.has_endpoint_permission(endpoint, action):
+                    return False
+
+        if view.detail and not obj:
+            # Early out as DRF will check permissions on detail endpoints twice,
+            # once without an object passed and once with.
             return True
 
-        # TODO endpoint permission checks: token <-> endpoint, if a token is used
         permission_object = self.get_permission_object(
             view, obj, request, detail=view.detail
         )
-        if permission_map := getattr(view, "permission_map", None):
-            suffix = "_object" if obj else ""
-            if permission_required := permission_map.get(f"{view.action}{suffix}"):
-                return request.user.has_perm(permission_required, permission_object)
-
-        if request.method in SAFE_METHODS:
-            read_permission = getattr(view, "read_permission_required", None)
-            if read_permission:
-                return request.user.has_perm(read_permission, permission_object)
-            return True
-
-        write_permission = getattr(view, "write_permission_required", None)
-        if write_permission:
-            return request.user.has_perm(write_permission, permission_object)
+        model_action = MODEL_PERMISSION_MAP.get(view.action, view.action)
+        permission_map = getattr(view, "permission_map", None) or {}
+        permission_required = permission_map.get(
+            view.action
+        ) or view.queryset.model.get_perm(model_action)
+        if permission_required:
+            return request.user.has_perm(permission_required, permission_object)
         return False
 
 

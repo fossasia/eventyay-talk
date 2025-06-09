@@ -188,7 +188,6 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
         super().__init__(*args, **kwargs)
         self.permission_cache = {}
         self.event_profile_cache = {}
-        self.team_permissions = {}
 
     def has_perm(self, perm, obj, *args, **kwargs):
         cached_result = None

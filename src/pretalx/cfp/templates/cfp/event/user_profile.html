@@ -84,8 +84,6 @@
         </div>
     </form>
 
-    {% include "common/user_api_token.html" %}
-
     {% html_signal "pretalx.common.signals.profile_bottom_html" sender=request.event user=user %}
 
     <div>&nbsp;</div>

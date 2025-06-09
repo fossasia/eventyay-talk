@@ -331,14 +331,14 @@ class Event(PretalxModel):
         compose_mails_teams = "{compose_mails}/teams/"
         send_drafts_reminder = "{compose_mails}/reminders"
         mail_templates = "{mail}templates/"
-        new_template = "{mail_templates}new"
+        new_template = "{mail_templates}new/"
         outbox = "{mail}outbox/"
         sent_mails = "{mail}sent"
         send_outbox = "{outbox}send"
         purge_outbox = "{outbox}purge"
         submissions = "{base}submissions/"
         tags = "{submissions}tags/"
-        new_tag = "{tags}new"
+        new_tag = "{tags}new/"
         submission_cards = "{base}submissions/cards/"
         stats = "{base}submissions/statistics/"
         submission_feed = "{base}submissions/feed/"
@@ -353,7 +353,7 @@ class Event(PretalxModel):
         team_settings = "{settings}team/"
         new_team = "{settings}team/new"
         room_settings = "{schedule}rooms/"
-        new_room = "{room_settings}new"
+        new_room = "{room_settings}new/"
         schedule = "{base}schedule/"
         schedule_export = "{schedule}export/"
         schedule_export_trigger = "{schedule_export}trigger"
@@ -367,7 +367,7 @@ class Event(PretalxModel):
         talks_api = "{schedule_api}talks/"
         plugins = "{settings}plugins"
         information = "{base}info/"
-        new_information = "{base}info/new"
+        new_information = "{base}info/new/"
 
     class api_urls(EventUrls):
         base_path = settings.BASE_PATH
@@ -379,8 +379,14 @@ class Event(PretalxModel):
         reviews = "{base}reviews/"
         rooms = "{base}rooms/"
         questions = "{base}questions/"
+        question_options = "{base}question-options/"
         answers = "{base}answers/"
         tags = "{base}tags/"
+        tracks = "{base}tracks/"
+        submission_types = "{base}submission-types/"
+        mail_templates = "{base}mail-templates/"
+        access_codes = "{base}access-codes/"
+        speaker_information = "{base}speaker-information/"
     
     class tickets_urls(EventUrls):
         _full_base_path = settings.EVENTYAY_TICKET_BASE_PATH

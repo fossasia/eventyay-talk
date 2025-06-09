@@ -192,7 +192,7 @@ class AvailabilitiesFormMixin(forms.Form):
             Availability.objects.bulk_create(availabilities)
 
     def save(self, *args, **kwargs):
-        if hasattr(super(), "save"):
+        if return_instance := hasattr(super(), "save"):
             instance = super().save(*args, **kwargs)
         else:
             instance = self.instance
@@ -202,7 +202,7 @@ class AvailabilitiesFormMixin(forms.Form):
             self._set_foreignkeys(instance, availabilities)
             self._replace_availabilities(instance, availabilities)
 
-        return availabilities
+        return instance if return_instance else availabilities
 
 
 class RoomForm(AvailabilitiesFormMixin, ReadOnlyFlag, I18nModelForm):

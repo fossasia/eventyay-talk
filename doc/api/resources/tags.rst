@@ -23,69 +23,49 @@ description                           multi-lingual string       The description
 Endpoints
 ---------
 
-.. http:get:: /api/events/{event}/tags/
+.. raw:: html
 
-   Returns a list of all tags configured for this event.
-
-   **Example request**:
-
-   .. sourcecode:: http
-
-      GET /api/events/sampleconf/tags/ HTTP/1.1
-      Accept: application/json, text/javascript
-
-   **Example response**:
-
-   .. sourcecode:: http
-
-      HTTP/1.1 200 OK
-      Vary: Accept
-      Content-Type: application/json
-
-      {
-        "count": 1,
-        "next": null,
-        "previous": null,
-        "results": [
-          {
-            "tag": "science",
-            "description": {"en": "Scientific sessions"},
-            "color": "#00ff00",
-            "is_public": true
-          }
-        ]
-      }
-
-   :param event: The ``slug`` field of the event to fetch
-   :query page: The page number in case of a multi-page result set, default is 1
-
-.. http:get:: /api/events/(event)/tags/{tag}/
-
-   Returns information on one tag, identified by its tag string.
-
-   **Example request**:
-
-   .. sourcecode:: http
-
-      GET /api/events/sampleconf/tags/science HTTP/1.1
-      Accept: application/json, text/javascript
-
-   **Example response**:
-
-   .. sourcecode:: http
-
-      HTTP/1.1 200 OK
-      Vary: Accept
-      Content-Type: application/json
-
-       {
-         "tag": "science",
-         "description": {"en": "Scientific sessions"},
-         "color": "#00ff00",
-         "is_public": true
-       }
-
-   :param event: The ``slug`` field of the event to fetch
-   :param code: The ``tag`` field of the tag to fetch
-   :statuscode 200: no error
-   :statuscode 401: Authentication failure
+   <redoc hide-download-button disable-search hide-loading json-sample-expand-level="3" id=redoc></redoc>
+   <style>
+   redoc .menu-content, redoc .api-info, redoc #tag\/api, redoc .api-content + div { display: none }
+   redoc#redoc {
+        display: block;
+        max-width: calc(100% + 6em);
+        margin-left: -2.5em;
+   }
+   redoc .api-content {
+        margin-top: -80px;
+        width: 100%;
+   }
+   redoc#redoc .api-content > div[data-section-id] > div[data-section-id] > :nth-child(1) {
+        width: calc(50%);
+   }
+   redoc#redoc .api-content > div[data-section-id] > div[data-section-id] > :nth-child(2) {
+        width: calc(50%);
+        background: none;
+        h3 {
+            color: var(--text-color);
+        }
+   }
+   redoc#redoc table {
+    tr {
+        background-color: transparent;
+    }
+    td, th {
+        border-top: none;
+        border-right: none;
+        border-bottom: none;
+    }
+    tr > td:first-of-type {
+        padding-top: 1em;
+    }
+    tr > td:not(:first-of-type) {
+        border-left: none;
+    }
+   }
+   </style>
+   <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+   <script>
+        var spec = "../../_specs/schema-tags.yml";
+        Redoc.init(spec);
+    </script>
