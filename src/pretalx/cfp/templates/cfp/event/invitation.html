@@ -6,6 +6,8 @@
 {% block title %}{% translate "Accept invitation?" %}{% endblock title %}
 
 {% block content %}
+    {% include "common/includes/header.html" %}
+
     <h2>{% translate "Accept invitation?" %}</h2>
     {% if not can_accept_invite %}
 

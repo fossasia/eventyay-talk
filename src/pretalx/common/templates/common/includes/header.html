@@ -1,0 +1,7 @@
+<div id="top-bg" class="header {{ request.event.display_settings.header_pattern|default:"bg-primary" }}">
+    {% if request.event and request.event.header_image %}
+        <img src="{{ request.event.header_image.url }}" 
+             id="header-image" 
+             alt="{{ request.event.name }}">
+    {% endif %}
+</div>
