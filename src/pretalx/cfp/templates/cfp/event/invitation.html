@@ -6,6 +6,12 @@
 {% block title %}{% translate "Accept invitation?" %}{% endblock title %}
 
 {% block content %}
+    <div id="top-bg" class="header {{ request.event.display_settings.header_pattern|default:"bg-primary" }}">
+        {% if request.event and request.event.header_image %}
+            <img src="{{ request.event.header_image.url }}" id="header-image" alt="{{ request.event.name }}">
+        {% endif %}
+    </div>
+
     <h2>{% translate "Accept invitation?" %}</h2>
     {% if not can_accept_invite %}
 
