@@ -494,6 +494,22 @@ def test_orga_can_create_tags(client, orga_user_write_token, event):
 
 
 @pytest.mark.django_db
+def test_orga_cannot_create_duplicate_tags(client, orga_user_write_token, event, tag):
+    response = client.post(
+        event.api_urls.tags,
+        follow=True,
+        data={"tag": tag.tag, "color": "#00ff00"},
+        content_type="application/json",
+        headers={
+            "Authorization": f"Token {orga_user_write_token.token}",
+        },
+    )
+    assert response.status_code == 400
+    with scope(event=event):
+        assert event.tags.count() == 1
+
+
+@pytest.mark.django_db
 def test_orga_cannot_create_tags_readonly_token(client, orga_user_token, event):
     response = client.post(
         event.api_urls.tags,
