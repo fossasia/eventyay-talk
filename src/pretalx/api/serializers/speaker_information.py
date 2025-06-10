@@ -49,7 +49,8 @@ class SpeakerInformationSerializer(FlexFieldsSerializerMixin, PretalxSerializer)
         resource = validated_data.pop("resource", None)
         instance = super().create(validated_data)
         if resource:
-            instance.resource.save(Path(resource.name).name, resource)
+            instance.resource.save(Path(resource.name).name, resource, save=False)
+            instance.save(update_fields=("resource",))
         return instance
 
     def update(self, instance, validated_data):

@@ -310,7 +310,8 @@ class SubmissionOrgaSerializer(SubmissionSerializer):
         if tags_data:
             submission.tags.set(tags_data)
         if image:
-            submission.image.save(Path(image.name).name, image)
+            submission.image.save(Path(image.name).name, image, save=True)
+            submission.save(update_fields=("image",))
             submission.process_image("image", generate_thumbnail=True)
         return submission
 

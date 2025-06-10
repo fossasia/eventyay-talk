@@ -136,7 +136,8 @@ class SpeakerUpdateSerializer(SpeakerOrgaSerializer):
             setattr(instance.user, key, value)
             instance.user.save(update_fields=[key])
         if avatar:
-            instance.avatar.save(Path(avatar.name).name, avatar)
+            instance.avatar.save(Path(avatar.name).name, avatar, save=False)
+            instance.save(update_fields=("avatar",))
             instance.user.process_image("avatar", generate_thumbnail=True)
         return instance
 
