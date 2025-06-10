@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("submission", "0079_rename_public_tag_is_public"),
+        ("submission", "0080_z1_rename_public_tag_is_public"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
