@@ -198,9 +198,6 @@ Which you can use in your code like this::
    from django.conf import settings
    assert settings.PLUGIN_SETTINGS["pretalx_soap"]["endpoint"] == "https://example.com"
 
-.. versionadded:: 1.1
-   The ``PLUGIN_SETTINGS`` configuration was added in pretalx 1.1.
-
 .. _Django application: https://docs.djangoproject.com/en/stable/ref/applications/
 .. _signal dispatcher: https://docs.djangoproject.com/en/stable/topics/signals/
 .. _namespace packages: http://legacy.python.org/dev/peps/pep-0420/
