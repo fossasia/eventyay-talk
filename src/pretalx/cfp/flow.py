@@ -104,7 +104,7 @@ class BaseCfPStep:
     def is_applicable(self, request):
         return True
 
-    def is_completed(self, request, warn=False):
+    def is_completed(self, request):
         raise NotImplementedError()
 
     @cached_property
