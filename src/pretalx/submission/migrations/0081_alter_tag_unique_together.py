@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("event", "0039_alter_teaminvite_token"),
-        ("submission", "0080_speakerrole_alter_submission_speakers"),
+        ("submission", "0080_z2_speakerrole_alter_submission_speakers"),
     ]
 
     operations = [
