@@ -2,7 +2,7 @@ import json
 from contextlib import suppress
 
 from django.contrib.contenttypes.models import ContentType
-from django.db import models
+from django.db import IntegrityError, models
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from django_scopes import ScopedManager, scopes_disabled
@@ -195,9 +195,15 @@ class GenerateCode:
                     return
 
     def save(self, *args, **kwargs):
-        if not getattr(self, self._code_property, None):
-            self.assign_code()
-        return super().save(*args, **kwargs)
+        # It’s super duper unlikely for this to fail, but let’s add a short
+        # stupid retry loop regardless
+        for _ in range(3):
+            if not getattr(self, self._code_property, None):
+                self.assign_code()
+            try:
+                return super().save(*args, **kwargs)
+            except IntegrityError:
+                setattr(self, self._code_property, None)
 
 
 class OrderedModel:
