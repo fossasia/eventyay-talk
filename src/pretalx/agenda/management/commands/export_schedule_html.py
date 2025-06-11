@@ -49,11 +49,20 @@ def find_assets(html):
     """Find URLs of images, style sheets and scripts included in `html`."""
     soup = BeautifulSoup(html, "lxml")
 
-    for asset in soup.find_all(["script", "img"]):
-        yield asset.attrs["src"]
-    for asset in soup.find_all(["link"]):
+    for asset in soup.select("script, img"):
+        if "src" in asset.attrs:
+            yield asset.attrs["src"]
+    for asset in soup.select("link[rel=icon], link[rel=stylesheet]"):
         if asset.attrs["rel"][0] in ("icon", "stylesheet"):
             yield asset.attrs["href"]
+    for asset in soup.select("[data-lightbox]"):
+        url = (
+            asset.attrs.get("data-lightbox")
+            or asset.attrs.get("href")
+            or asset.attrs.get("src")
+        )
+        if url:
+            yield url
 
 
 def find_urls(css):
