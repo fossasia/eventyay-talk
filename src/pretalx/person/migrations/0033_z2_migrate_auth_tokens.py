@@ -87,7 +87,7 @@ def migrate_drf_tokens_to_userapitokens_reverse(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("person", "0030_userapitoken"),
+        ("person", "0033_z1_userapitoken"),
         ("authtoken", "0004_alter_tokenproxy_options"),
     ]
 
