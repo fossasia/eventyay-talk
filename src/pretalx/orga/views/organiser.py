@@ -2,13 +2,12 @@ import logging
 
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
-from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView, TemplateView
 from django_context_decorator import context
@@ -90,20 +89,7 @@ class TeamView(OrgaCRUDView):
         context = super().get_context_data(**kwargs)
         if self.action == "update":
             context["invite_form"] = self.invite_form
-            context["members"] = (
-                self.object.members.all()
-                .order_by("name")
-                .annotate(
-                    active_tokens=Count(
-                        "api_tokens",
-                        filter=Q(api_tokens__team=self.object)
-                        & Q(
-                            Q(api_tokens__expires__isnull=True)
-                            | Q(api_tokens__expires__gt=now())
-                        ),
-                    )
-                )
-            )
+            context["members"] = self.object.members.all().order_by("name")
             context["invites"] = self.object.invites.all()
         return context
 
@@ -338,7 +324,7 @@ class OrganiserDetail(PermissionRequired, CreateOrUpdateView):
 
 
 class OrganiserDelete(PermissionRequired, ActionConfirmMixin, DetailView):
-    permission_required = "person.is_administrator"
+    permission_required = "person.administrator_user"
     model = Organiser
     action_text = (
         _(
@@ -373,6 +359,7 @@ class OrganiserDelete(PermissionRequired, ActionConfirmMixin, DetailView):
 
 def get_speaker_access_events_for_user(*, user, organiser):
     events = set()
+    no_access_events = set()
     # Use prefetch_related for efficiency if called often
     teams = user.teams.filter(organiser=organiser).prefetch_related(
         "limit_events", "limit_tracks"
@@ -385,23 +372,23 @@ def get_speaker_access_events_for_user(*, user, organiser):
                 return organiser.events.all()
             else:
                 events.update(team.limit_events.values_list("pk", flat=True))
-        elif team.is_reviewer:
+        elif team.is_reviewer and not team.limit_tracks.exists():
             # Reviewers *can* have access to speakers, but they do not necessarily
-            # do, so we need to check permissions for each event.
-            if not team.limit_tracks.exists():
-                for (
-                    event
-                ) in (
-                    team.limit_events.all()
-                ):  # Check only events the team is limited to
+            # do, so we need to check permissions for each event. We do skip teams
+            # that are limited to specific tracks.
+            team_events = None
+            if team.all_events:
+                team_events = organiser.events.all()
+            else:
+                team_events = team.limit_events.all()
+            if team_events:
+                for event in team_events:
+                    if event.pk in events or event.pk in no_access_events:
+                        continue
                     if user.has_perm("orga.view_speakers", event):
                         events.add(event.pk)
-            # If team.all_events is True for a reviewer, check all organiser events
-            elif team.all_events:
-                for event in organiser.events.all():
-                    if user.has_perm("orga.view_speakers", event):
-                        events.add(event.pk)
-
+                    else:
+                        no_access_events.add(event.pk)
     return Event.objects.filter(pk__in=list(events))
 
 

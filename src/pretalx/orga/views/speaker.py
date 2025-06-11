@@ -30,32 +30,11 @@ from pretalx.person.forms import (
     SpeakerProfileForm,
 )
 from pretalx.person.models import SpeakerInformation, SpeakerProfile, User
+from pretalx.person.rules import is_only_reviewer
 from pretalx.submission.forms import QuestionsForm
 from pretalx.submission.models import Answer
 from pretalx.submission.models.submission import SubmissionStates
-
-
-def can_view_all_tracks(user, event):
-    if user.is_administrator:
-        return True
-    user_teams = event.teams.filter(members__in=[user])
-    return not all(team.limit_tracks.all().exists() for team in user_teams)
-
-
-def get_review_tracks(user, event):
-    tracks = []
-    user_teams = event.teams.filter(members__in=[user])
-    for team in user_teams:
-        tracks += list(team.limit_tracks.all())
-    return tracks
-
-
-def get_speaker_profiles_for_user(user, event):
-    users = event.submitters
-    if not can_view_all_tracks(user, event):
-        tracks = get_review_tracks(user, event)
-        users = users.filter(submissions__track__in=tracks)
-    return SpeakerProfile.objects.filter(event=event, user__in=users)
+from pretalx.submission.rules import limit_for_reviewers, speaker_profiles_for_user
 
 
 class SpeakerList(
@@ -83,7 +62,7 @@ class SpeakerList(
 
     def get_queryset(self):
         qs = (
-            get_speaker_profiles_for_user(self.request.user, self.request.event)
+            speaker_profiles_for_user(self.request.event, self.request.user)
             .select_related("event", "user")
             .annotate(
                 submission_count=Count(
@@ -133,8 +112,8 @@ class SpeakerViewMixin(PermissionRequired):
     def get_object(self):
         return get_object_or_404(
             User.objects.filter(
-                profiles__in=get_speaker_profiles_for_user(
-                    self.request.user, self.request.event
+                profiles__in=speaker_profiles_for_user(
+                    self.request.event, self.request.user
                 )
             )
             .order_by("id")
@@ -174,9 +153,8 @@ class SpeakerDetail(SpeakerViewMixin, ActionFromUrl, CreateOrUpdateView):
     @cached_property
     def submissions(self, **kwargs):
         qs = self.request.event.submissions.filter(speakers__in=[self.object])
-        if not can_view_all_tracks(self.request.user, self.request.event):
-            tracks = get_review_tracks(self.request.user, self.request.event)
-            qs = qs.filter(track__in=tracks)
+        if is_only_reviewer(self.request.user, self.request.event):
+            return limit_for_reviewers(qs, self.request.event, self.request.user)
         return qs
 
     @context

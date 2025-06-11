@@ -88,7 +88,7 @@ class QuestionRequired(Choices):
 # Question and question option permissions should be in sync
 QUESTION_PERMISSIONS = {
     "list": is_cfp_open | is_agenda_visible | orga_can_change_submissions | is_reviewer,
-    "orga_list": orga_can_change_submissions | is_reviewer,
+    "orga_list": orga_can_change_submissions,
     "view": is_cfp_open | is_agenda_visible | orga_can_change_submissions | is_reviewer,
     "orga_view": orga_can_change_submissions,
     "create": can_change_event_settings,
@@ -316,7 +316,7 @@ class Question(OrderedModel, PretalxModel):
         """Returns how many answers are still missing or this question.
 
         This method only supports submission questions and speaker questions.
-        For missing reviews, please use the Review.find_missing_reviews method.
+        For missing reviews, please use the get_missing_reviews method.
 
         :param filter_speakers: Apply only to these speakers.
         :param filter_talks: Apply only to these talks.

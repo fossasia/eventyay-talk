@@ -92,7 +92,7 @@ def test_orga_can_see_single_room(client, orga_user_token, room):
 @pytest.mark.django_db
 def test_orga_can_see_single_room_locale_override(client, orga_user_token, room):
     response = client.get(
-        room.event.api_urls.rooms + f"{room.pk}/?locale=en",
+        room.event.api_urls.rooms + f"{room.pk}/?lang=en",
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
@@ -121,6 +121,24 @@ def test_legacy_room_api(client, orga_user_token, room):
     assert "uuid" not in content
     orga_user_token.refresh_from_db()
     assert orga_user_token.version == "LEGACY"
+
+
+@pytest.mark.django_db
+def test_invalid_api_version(client, orga_user_token, room):
+
+    response = client.get(
+        room.event.api_urls.rooms + f"{room.pk}/",
+        follow=True,
+        headers={
+            "Authorization": f"Token {orga_user_token.token}",
+            "Pretalx-Version": "YOLO",
+        },
+    )
+    assert response.status_code == 400
+    content = json.loads(response.content.decode())
+    assert "id" not in content
+    orga_user_token.refresh_from_db()
+    assert not orga_user_token.version
 
 
 @pytest.mark.django_db

@@ -37,25 +37,24 @@ class SpeakerInformationSerializer(FlexFieldsSerializerMixin, PretalxSerializer)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        request = kwargs.get("context", {}).get("request")
-        if request and hasattr(request, "event"):
-            self.fields["limit_tracks"].queryset = request.event.tracks.all()
-            self.fields["limit_types"].queryset = request.event.submission_types.all()
+        if self.event:
+            self.fields["limit_tracks"].queryset = self.event.tracks.all()
+            self.fields["limit_types"].queryset = self.event.submission_types.all()
         else:
             self.fields["limit_tracks"].queryset = Track.objects.none()
             self.fields["limit_types"].queryset = SubmissionType.objects.none()
 
     def create(self, validated_data):
-        validated_data["event"] = getattr(self.context.get("request"), "event", None)
-        resource = validated_data.pop("resource")
+        validated_data["event"] = self.event
+        resource = validated_data.pop("resource", None)
         instance = super().create(validated_data)
         if resource:
             instance.resource.save(Path(resource.name).name, resource)
         return instance
 
-    def update(self, validated_data):
-        resource = validated_data.pop("resource")
-        instance = super().create(validated_data)
+    def update(self, instance, validated_data):
+        resource = validated_data.pop("resource", None)
+        instance = super().update(instance, validated_data)
         if resource:
             instance.resource.update(Path(resource.name).name, resource)
         return instance

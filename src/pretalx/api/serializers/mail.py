@@ -19,15 +19,11 @@ class MailTemplateSerializer(PretalxSerializer):
             "bcc",
         )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.event = getattr(self.context.get("request"), "event", None)
-
     def create(self, validated_data):
         validated_data["event"] = self.event
         return super().create(validated_data)
 
-    def validate_subject(self, value):
+    def _validate_text(self, value):
         if not self.instance:
             valid_placeholders = MailTemplate(event=self.event).valid_placeholders
         else:
@@ -44,3 +40,9 @@ class MailTemplateSerializer(PretalxSerializer):
             fields = ", ".join("{" + field + "}" for field in fields)
             raise exceptions.ValidationError(f"Unknown placeholder! {fields}")
         return value
+
+    def validate_subject(self, value):
+        return self._validate_text(value)
+
+    def validate_text(self, value):
+        return self._validate_text(value)

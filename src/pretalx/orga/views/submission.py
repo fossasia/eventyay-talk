@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.syndication.views import Feed
 from django.db import transaction
-from django.db.models import Exists, OuterRef, Q, Subquery
+from django.db.models import Q
 from django.forms.models import BaseModelFormSet, inlineformset_factory
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -18,7 +18,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView, ListView, TemplateView, UpdateView, View
 from django_context_decorator import context
 
-from pretalx.agenda.permissions import is_submission_visible
+from pretalx.agenda.rules import is_agenda_submission_visible
 from pretalx.common.exceptions import SubmissionError
 from pretalx.common.forms.fields import SizeFileInput
 from pretalx.common.models import ActivityLog
@@ -42,6 +42,7 @@ from pretalx.orga.forms.submission import (
     SubmissionStateChangeForm,
 )
 from pretalx.person.models import User
+from pretalx.person.rules import is_only_reviewer
 from pretalx.submission.forms import (
     QuestionsForm,
     ResourceForm,
@@ -56,6 +57,11 @@ from pretalx.submission.models import (
     SubmissionComment,
     SubmissionStates,
     Tag,
+)
+from pretalx.submission.rules import (
+    annotate_assigned,
+    get_reviewer_tracks,
+    limit_for_reviewers,
 )
 
 
@@ -90,40 +96,19 @@ class SubmissionViewMixin(PermissionRequired):
     @context
     @cached_property
     def is_publicly_visible(self):
-        # check if the anonymous user could see this submission's page
-        return is_submission_visible(None, self.object)
+        # Check if an anonymous user could see this submission's page
+        return is_agenda_submission_visible(None, self.object)
 
 
 class ReviewerSubmissionFilter:
     @cached_property
-    def limit_tracks(self):
-        if self.user_permissions == {"is_reviewer"}:
-            teams = self.request.user.teams.filter(
-                Q(all_events=True)
-                | Q(Q(all_events=False) & Q(limit_events__in=[self.request.event])),
-                limit_tracks__isnull=False,
-                organiser=self.request.event.organiser,
-            ).prefetch_related("limit_tracks", "limit_tracks__event")
-            tracks = set()
-            for team in teams:
-                tracks.update(team.limit_tracks.filter(event=self.request.event))
-            return tracks
-
-    def limit_for_reviewers(self, queryset):
-        phase = self.request.event.active_review_phase
-        if not phase:
-            return queryset
-
-        if phase.proposal_visibility == "assigned":
-            return queryset.filter(is_assigned__gte=1)
-
-        if self.limit_tracks:
-            return queryset.filter(track__in=self.limit_tracks)
-        return queryset
+    def is_only_reviewer(self):
+        return is_only_reviewer(self.request.user, self.request.event)
 
     @cached_property
-    def user_permissions(self):
-        return self.request.user.get_permissions_for_event(self.request.event)
+    def limit_tracks(self):
+        if self.is_only_reviewer:
+            return get_reviewer_tracks(self.request.event, self.request.user)
 
     def get_queryset(self, for_review=False):
         queryset = (
@@ -131,13 +116,16 @@ class ReviewerSubmissionFilter:
             .select_related("submission_type", "event", "track")
             .prefetch_related("speakers")
         )
-        if "is_reviewer" in self.user_permissions or for_review:
-            assigned = self.request.user.assigned_reviews.filter(
-                event=self.request.event, pk=OuterRef("pk")
+        if self.is_only_reviewer:
+            queryset = limit_for_reviewers(
+                queryset, self.request.event, self.request.user, self.limit_tracks
             )
-            queryset = queryset.annotate(is_assigned=Exists(Subquery(assigned)))
-        if self.user_permissions == {"is_reviewer"}:
-            queryset = self.limit_for_reviewers(queryset)
+        if for_review or "is_reviewer" in self.request.user.get_permissions_for_event(
+            self.request.event
+        ):
+            queryset = annotate_assigned(
+                queryset, self.request.event, self.request.user
+            )
         return queryset
 
 
@@ -250,10 +238,7 @@ class SubmissionSpeakersDelete(SubmissionViewMixin, View):
         speaker = get_object_or_404(User, pk=request.GET.get("id"))
 
         if submission in speaker.submissions.all():
-            speaker.submissions.remove(submission)
-            submission.log_action(
-                "pretalx.submission.speakers.remove", person=request.user, orga=True
-            )
+            submission.remove_speaker(speaker, user=self.request.user)
             messages.success(
                 request, _("The speaker has been removed from the proposal.")
             )
@@ -324,7 +309,7 @@ class SubmissionContent(
     @cached_property
     def write_permission_required(self):
         if self.kwargs.get("code"):
-            return "submission.edit_submission"
+            return "submission.update_submission"
         return "orga.create_submission"
 
     @context
@@ -417,7 +402,9 @@ class SubmissionContent(
                 }
                 change_data["id"] = form.instance.pk
                 obj.log_action(
-                    "pretalx.submission.resource.update", person=self.request.user
+                    "pretalx.submission.resource.update",
+                    person=self.request.user,
+                    orga=True,
                 )
 
         extra_forms = [
@@ -656,7 +643,7 @@ class Anonymise(SubmissionViewMixin, UpdateView):
 
 class SubmissionHistory(SubmissionViewMixin, ListView):
     template_name = "orga/submission/history.html"
-    permission_required = "person.is_administrator"
+    permission_required = "person.administrator_user"
     paginate_by = 200
     context_object_name = "log_entries"
 

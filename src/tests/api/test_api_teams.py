@@ -110,6 +110,56 @@ def test_orga_can_create_teams(client, orga_user_write_token, organiser):
 
 
 @pytest.mark.django_db
+def test_orga_cannot_create_team_without_events(
+    client, orga_user_write_token, organiser
+):
+    team_count = organiser.teams.count()
+    response = client.post(
+        f"/api/organisers/{organiser.slug}/teams/",
+        follow=True,
+        data={
+            "name": "New API Team",
+            "can_change_submissions": True,
+            "is_reviewer": False,
+            "limit_events": [],
+            "all_events": False,
+        },
+        content_type="application/json",
+        headers={
+            "Authorization": f"Token {orga_user_write_token.token}",
+        },
+    )
+    assert response.status_code == 400, response.content.decode()
+    with scopes_disabled():
+        assert organiser.teams.count() == team_count
+
+
+@pytest.mark.django_db
+def test_orga_cannot_create_team_without_permissions(
+    client, orga_user_write_token, organiser
+):
+    team_count = organiser.teams.count()
+    response = client.post(
+        f"/api/organisers/{organiser.slug}/teams/",
+        follow=True,
+        data={
+            "name": "New API Team",
+            "can_change_submissions": False,
+            "is_reviewer": False,
+            "limit_events": [],
+            "all_events": True,
+        },
+        content_type="application/json",
+        headers={
+            "Authorization": f"Token {orga_user_write_token.token}",
+        },
+    )
+    assert response.status_code == 400, response.content.decode()
+    with scopes_disabled():
+        assert organiser.teams.count() == team_count
+
+
+@pytest.mark.django_db
 def test_orga_cannot_create_teams_readonly_token(client, orga_user_token, organiser):
     team_count = organiser.teams.count()
     response = client.post(
@@ -140,6 +190,33 @@ def test_orga_can_update_teams(client, orga_user_write_token, organiser, team):
     team.refresh_from_db()
     assert team.name == "Updated Team Name"
     assert team.is_reviewer is True
+
+
+@pytest.mark.django_db
+def test_orga_cannot_update_teams_remove_last_permission(
+    client, orga_user_write_token, organiser, team
+):
+    response = client.patch(
+        f"/api/organisers/{organiser.slug}/teams/{team.pk}/",
+        follow=True,
+        data=json.dumps(
+            {
+                "is_reviewer": False,
+                "can_create_events": False,
+                "can_change_teams": False,
+                "can_change_organiser_settings": False,
+                "can_change_event_settings": False,
+                "can_change_submissions": False,
+            }
+        ),
+        headers={
+            "Authorization": f"Token {orga_user_write_token.token}",
+            "Content-Type": "application/json",
+        },
+    )
+    assert response.status_code == 400
+    team.refresh_from_db()
+    assert team.can_change_submissions
 
 
 @pytest.mark.django_db

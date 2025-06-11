@@ -2,11 +2,21 @@ import rules
 
 
 @rules.predicate
+def is_administrator(user, obj):
+    return getattr(user, "is_administrator", False)
+
+
+@rules.predicate
 def is_reviewer(user, obj):
     event = getattr(obj, "event", None)
     if not user or user.is_anonymous or not obj or not event:
         return False
     return user in event.reviewers
+
+
+@rules.predicate
+def is_only_reviewer(user, obj):
+    return user.get_permissions_for_event(obj.event) == {"is_reviewer"}
 
 
 @rules.predicate

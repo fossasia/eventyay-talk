@@ -67,7 +67,7 @@ def test_orga_can_see_single_mail_template_locale_override(
     client, orga_user_token, mail_template
 ):
     response = client.get(
-        mail_template.event.api_urls.mail_templates + f"{mail_template.pk}/?locale=en",
+        mail_template.event.api_urls.mail_templates + f"{mail_template.pk}/?lang=en",
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
@@ -162,6 +162,35 @@ def test_orga_can_update_mail_templates(
         mail_template.refresh_from_db()
         assert mail_template.subject == "newtesttemplate"
         assert (
+            mail_template.logged_actions()
+            .filter(action_type="pretalx.mail_template.update")
+            .exists()
+        )
+
+
+@pytest.mark.parametrize("field", ("text", "subject"))
+@pytest.mark.parametrize(
+    "value", ("test {invalidplaceholder}", "{invalid placeholder}")
+)
+@pytest.mark.django_db
+def test_orga_update_mail_template_invalid_placeholder(
+    client, orga_user_write_token, event, mail_template, field, value
+):
+    assert mail_template.subject != "newtesttemplate"
+    response = client.patch(
+        event.api_urls.mail_templates + f"{mail_template.pk}/",
+        follow=True,
+        data=json.dumps({field: value}),
+        headers={
+            "Authorization": f"Token {orga_user_write_token.token}",
+            "Content-Type": "application/json",
+        },
+    )
+    assert response.status_code == 400
+    with scope(event=mail_template.event):
+        mail_template.refresh_from_db()
+        assert getattr(mail_template, field) != value
+        assert not (
             mail_template.logged_actions()
             .filter(action_type="pretalx.mail_template.update")
             .exists()

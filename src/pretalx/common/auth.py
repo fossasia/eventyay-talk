@@ -10,8 +10,11 @@ class UserTokenAuthentication(TokenAuthentication):
     def authenticate_credentials(self, key):
         model = self.get_model()
         try:
-            token = model.objects.select_related("team", "team__organiser", "user").get(
-                token=key
+            token = (
+                model.objects.active()
+                .select_related("user")
+                .prefetch_related("events")
+                .get(token=key)
             )
         except model.DoesNotExist:
             raise exceptions.AuthenticationFailed("Invalid token.")

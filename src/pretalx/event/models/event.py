@@ -373,6 +373,7 @@ class Event(PretalxModel):
         base_path = settings.BASE_PATH
         base = "{base_path}/api/events/{self.slug}/"
         submissions = "{base}submissions/"
+        slots = "{base}slots/"
         talks = "{base}talks/"
         schedules = "{base}schedules/"
         speakers = "{base}speakers/"
@@ -403,12 +404,12 @@ class Event(PretalxModel):
         return str(self.name)
 
     @cached_property
-    def locales(self) -> list:
+    def locales(self) -> list[str]:
         """Is a list of active event locales."""
         return self.locale_array.split(",")
 
     @cached_property
-    def content_locales(self) -> list:
+    def content_locales(self) -> list[str]:
         """Is a list of active content locales."""
         return self.content_locale_array.split(",")
 
@@ -790,11 +791,9 @@ class Event(PretalxModel):
 
     @cached_property
     def current_schedule(self):
-        """Returns the latest released.
-
-        :class:`~pretalx.schedule.models.schedule.Schedule`, or ``None`` before
-        the first release.
-        """
+        if pk := getattr(self, "_current_schedule_pk", None):
+            # The event middleware prefetches the current schedule
+            return self.schedules.get(pk=pk)
         return (
             self.schedules.order_by("-published")
             .filter(published__isnull=False)
@@ -828,11 +827,10 @@ class Event(PretalxModel):
     def teams(self):
         """Returns all :class:`~pretalx.event.models.organiser.Team` objects
         that concern this event."""
-        from pretalx.event.models.organiser import Team
 
-        return Team.objects.filter(
-            models.Q(limit_events__in=[self]) | models.Q(all_events=True),
-            organiser=self.organiser,
+        return self.organiser.teams.all().filter(
+            models.Q(all_events=True)
+            | models.Q(models.Q(all_events=False) & models.Q(limit_events__in=[self]))
         )
 
     @cached_property
@@ -937,9 +935,7 @@ class Event(PretalxModel):
 
         if self.current_schedule:
             return (
-                self.submissions.filter(
-                    slots__in=self.current_schedule.talks.filter(is_visible=True)
-                )
+                self.submissions.filter(slots__in=self.current_schedule.scheduled_talks)
                 .select_related("submission_type")
                 .prefetch_related("speakers")
             )

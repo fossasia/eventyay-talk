@@ -55,7 +55,7 @@ class ScheduleData(BaseExporter):
                 "submission__track",
                 "room",
             )
-            .prefetch_related("submission__speakers", "submission__resources")
+            .prefetch_related("submission__speakers")
             .order_by("start")
             .exclude(submission__state="deleted")
         )

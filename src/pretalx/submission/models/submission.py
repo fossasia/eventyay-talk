@@ -19,6 +19,7 @@ from django.utils.translation import override, pgettext_lazy
 from django_scopes import ScopedManager, scopes_disabled
 from rest_framework import serializers
 
+from pretalx.agenda.rules import is_agenda_submission_visible, is_agenda_visible
 from pretalx.common.exceptions import SubmissionError
 from pretalx.common.models.choices import Choices
 from pretalx.common.models.mixins import GenerateCode, PretalxModel
@@ -27,6 +28,21 @@ from pretalx.common.text.phrases import phrases
 from pretalx.common.text.serialize import serialize_duration
 from pretalx.common.urls import EventUrls
 from pretalx.person.models import User
+from pretalx.person.rules import is_reviewer
+from pretalx.submission.rules import (
+    can_be_accepted,
+    can_be_canceled,
+    can_be_confirmed,
+    can_be_edited,
+    can_be_rejected,
+    can_be_removed,
+    can_be_reviewed,
+    can_be_withdrawn,
+    has_reviewer_access,
+    is_speaker,
+    orga_can_change_submissions,
+    orga_or_reviewer_can_change_submission,
+)
 from pretalx.submission.signals import submission_state_change
 
 
@@ -284,6 +300,31 @@ class Submission(GenerateCode, PretalxModel):
     )
     all_objects = ScopedManager(event="event", _manager_class=AllSubmissionManager)
 
+    log_prefix = "pretalx.submission"
+
+    class Meta:
+        rules_permissions = {
+            "list": is_agenda_visible | orga_can_change_submissions | is_reviewer,
+            "view": is_agenda_submission_visible
+            | is_speaker
+            | orga_can_change_submissions
+            | has_reviewer_access,
+            "orga_list": orga_can_change_submissions | is_reviewer,
+            "orga_view": orga_can_change_submissions,
+            "review": has_reviewer_access & can_be_reviewed,
+            "create": orga_can_change_submissions,
+            "update": (can_be_edited & is_speaker) | orga_can_change_submissions,
+            "delete": orga_can_change_submissions,
+            "state_change": orga_or_reviewer_can_change_submission,
+            "accept_or_reject": orga_or_reviewer_can_change_submission,
+            "withdraw": can_be_withdrawn & is_speaker,
+            "reject": can_be_rejected & orga_or_reviewer_can_change_submission,
+            "accept": can_be_accepted & orga_or_reviewer_can_change_submission,
+            "confirm": can_be_confirmed & (is_speaker | orga_can_change_submissions),
+            "cancel": can_be_canceled & orga_can_change_submissions,
+            "remove": can_be_removed & orga_can_change_submissions,
+        }
+
     class urls(EventUrls):
         user_base = "{self.event.urls.user_submissions}{self.code}/"
         withdraw = "{user_base}withdraw"
@@ -352,9 +393,9 @@ class Submission(GenerateCode, PretalxModel):
         return result
 
     @property
-    def is_anonymised(self):
+    def is_anonymised(self) -> bool:
         if self.anonymised:
-            return self.anonymised.get("_anonymised", False)
+            return bool(self.anonymised.get("_anonymised", False))
         return False
 
     @property
@@ -882,14 +923,14 @@ class Submission(GenerateCode, PretalxModel):
         return False
 
     @cached_property
-    def median_score(self):
+    def median_score(self) -> float | None:
         scores = [
             review.score for review in self.reviews.all() if review.score is not None
         ]
         return statistics.median(scores) if scores else None
 
     @cached_property
-    def mean_score(self):
+    def mean_score(self) -> float | None:
         scores = [
             review.score for review in self.reviews.all() if review.score is not None
         ]
@@ -1038,6 +1079,20 @@ class Submission(GenerateCode, PretalxModel):
             locale=locale or self.event.locale,
         )
         return speaker
+
+    def remove_speaker(self, speaker, orga=True, user=None):
+        if self.speakers.filter(code=speaker.code).exists():
+            self.speakers.remove(speaker)
+            self.log_action(
+                "pretalx.submission.speakers.remove",
+                person=user or speaker,
+                orga=orga,
+                data={
+                    "code": speaker.code,
+                    "email": speaker.email,
+                    "name": speaker.name,
+                },
+            )
 
     def send_invite(self, to, _from=None, subject=None, text=None):
         from pretalx.mail.models import QueuedMail

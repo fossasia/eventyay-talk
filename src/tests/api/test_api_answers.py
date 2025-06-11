@@ -23,12 +23,7 @@ def test_answer_serializer(answer):
         }
         assert data["id"] == answer.id
         assert data["question"] == answer.question_id
-        if answer.submission:
-            assert data["submission"] == answer.submission.code
-        if answer.person:
-            assert data["person"] == answer.person.code
-        if answer.review:
-            assert data["review"] == answer.review_id
+        assert data["submission"] == answer.submission.code
 
 
 @pytest.mark.django_db
@@ -94,6 +89,34 @@ def test_organizer_can_create_answer(
         assert Answer.objects.filter(question__event=event).count() == count + 1
         answer = Answer.objects.filter(question__event=event).first()
         assert answer.answer == "Tralalalala"
+
+
+@pytest.mark.parametrize("target", ("submission", "reviewer", "speaker"))
+@pytest.mark.django_db
+def test_organizer_cannot_create_answer_superflous_fields(
+    event, orga_user_write_token, client, question, submission, speaker, review, target
+):
+    with scope(event=event):
+        count = Answer.objects.filter(question__event=event).count()
+        question.target = target
+        question.save()
+    response = client.post(
+        event.api_urls.answers,
+        data=json.dumps(
+            {
+                "question": question.id,
+                "submission": submission.code,
+                "person": speaker.code,
+                "review": review.pk,
+                "answer": "Tralalalala",
+            }
+        ),
+        content_type="application/json",
+        headers={"Authorization": f"Token {orga_user_write_token.token}"},
+    )
+    assert response.status_code == 400, response.content.decode()
+    with scope(event=event):
+        assert Answer.objects.filter(question__event=event).count() == count
 
 
 @pytest.mark.django_db

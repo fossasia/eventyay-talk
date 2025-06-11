@@ -9,9 +9,11 @@ from django.utils.timezone import now
 from django_scopes import scope, scopes_disabled
 from lxml import etree
 
+from pretalx.common.models.settings import GlobalSettings
 from pretalx.event.models import Event, Organiser, Team, TeamInvite
 from pretalx.mail.models import MailTemplate
 from pretalx.person.models import SpeakerInformation, SpeakerProfile, User, UserApiToken
+from pretalx.person.models.auth_token import ENDPOINTS, generate_api_token
 from pretalx.schedule.models import Availability, Room, TalkSlot
 from pretalx.submission.models import (
     Answer,
@@ -36,6 +38,11 @@ def collect_static(request):
 
 
 @pytest.fixture
+def instance_identifier():
+    return GlobalSettings().get_instance_identifier()
+
+
+@pytest.fixture
 def template_patch(monkeypatch):
     # Patch out template rendering for performance improvements
     monkeypatch.setattr(
@@ -45,7 +52,7 @@ def template_patch(monkeypatch):
 
 
 @pytest.fixture
-def organiser():
+def organiser(instance_identifier):
     with scopes_disabled():
         o = Organiser.objects.create(name="Super Organiser", slug="superorganiser")
         Team.objects.create(
@@ -77,14 +84,7 @@ def team(organiser):
 
 
 @pytest.fixture
-def reviewer_team(organiser):
-    return organiser.teams.filter(
-        is_reviewer=True, can_change_event_settings=False
-    ).first()
-
-
-@pytest.fixture
-def other_organiser():
+def other_organiser(instance_identifier):
     with scopes_disabled():
         o = Organiser.objects.create(name="Different Organiser", slug="diffo")
         Team.objects.create(
@@ -602,19 +602,20 @@ def orga_user(event):
 
 @pytest.fixture
 def orga_user_token(orga_user):
-    return UserApiToken.objects.create(
-        name="testtoken", user=orga_user, team=orga_user.teams.first()
-    )
+    token = UserApiToken.objects.create(name="testtoken", user=orga_user)
+    token.events.set(orga_user.get_events_with_any_permission())
+    token.endpoints = {key: ["list", "retrieve"] for key in ENDPOINTS}
+    token.save()
+    return token
 
 
 @pytest.fixture
 def review_user_token(review_user):
-    token = UserApiToken.objects.create(
-        name="testtoken", user=review_user, team=review_user.teams.first()
-    )
+    token = UserApiToken.objects.create(name="testtoken", user=review_user)
+    token.events.set(review_user.teams.first().events.all())
     token.endpoints = {
         key: ["list", "retrieve", "create", "update", "destroy", "actions"]
-        for key in token.endpoints.keys()
+        for key in ENDPOINTS
     }
     token.save()
     return token
@@ -622,15 +623,15 @@ def review_user_token(review_user):
 
 @pytest.fixture
 def orga_user_write_token(orga_user_token):
+    events = list(orga_user_token.events.all())
     orga_user_token.pk = None
     orga_user_token.endpoints = {
         key: ["list", "retrieve", "create", "update", "destroy", "actions"]
-        for key in orga_user_token.endpoints.keys()
+        for key in ENDPOINTS
     }
-    from pretalx.person.models.auth_token import generate_api_token
-
     orga_user_token.token = generate_api_token()
     orga_user_token.save()
+    orga_user_token.events.set(events)
     return orga_user_token
 
 

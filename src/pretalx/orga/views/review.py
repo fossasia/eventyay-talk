@@ -29,10 +29,14 @@ from pretalx.orga.forms.review import (
     TagsForm,
 )
 from pretalx.orga.forms.submission import SubmissionStateChangeForm
-from pretalx.orga.permissions import reviews_are_open
 from pretalx.orga.views.submission import BaseSubmissionList
 from pretalx.submission.forms import QuestionsForm, SubmissionFilterForm
 from pretalx.submission.models import Review, Submission, SubmissionStates
+from pretalx.submission.rules import (
+    get_missing_reviews,
+    get_reviewable_submissions,
+    reviews_are_open,
+)
 
 
 class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
@@ -197,7 +201,7 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
         return self.request.event.submissions.filter(
             state=SubmissionStates.SUBMITTED
         ).exists() and self.request.user.has_perm(
-            "submission.accept_or_reject_submissions", self.request.event
+            "submission.accept_or_reject_submission", self.request.event
         )
 
     @context
@@ -270,9 +274,7 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
 
     def get_context_data(self, **kwargs):
         result = super().get_context_data(**kwargs)
-        missing_reviews = Review.find_missing_reviews(
-            self.request.event, self.request.user
-        )
+        missing_reviews = get_missing_reviews(self.request.event, self.request.user)
         # Do NOT use len() here! It yields a different result.
         result["missing_reviews"] = missing_reviews.count()
         result["next_submission"] = missing_reviews[0] if missing_reviews else None
@@ -352,7 +354,7 @@ class BulkReview(EventPermissionRequired, TemplateView):
     @context
     @cached_property
     def submissions(self):
-        submissions = Review.find_reviewable_submissions(
+        submissions = get_reviewable_submissions(
             event=self.request.event, user=self.request.user
         ).prefetch_related("speakers")
         if self.filter_form.is_valid():
@@ -369,9 +371,7 @@ class BulkReview(EventPermissionRequired, TemplateView):
 
     def get_context_data(self, **kwargs):
         result = super().get_context_data(**kwargs)
-        missing_reviews = Review.find_missing_reviews(
-            self.request.event, self.request.user
-        )
+        missing_reviews = get_missing_reviews(self.request.event, self.request.user)
         # Do NOT use len() here! It yields a different result.
         result["missing_reviews"] = missing_reviews.count()
         result["next_submission"] = missing_reviews[0] if missing_reviews else None
@@ -594,7 +594,7 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
             submission__event=self.request.event
         ).count()
         result["total_reviews"] = (
-            Review.find_missing_reviews(self.request.event, self.request.user).count()
+            get_missing_reviews(self.request.event, self.request.user).count()
             + result["done"]
         )
         if result["total_reviews"]:
@@ -617,7 +617,9 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
         if self.tags_form and not self.tags_form.is_valid():
             messages.error(self.request, phrases.base.error_saving_changes)
             return super().form_invalid(form)
+        action = ".create" if not form.instance else ".update"
         form.save()
+        form.instance.log_action(action, person=self.request.user, orga=True)
         self.qform.review = form.instance
         self.qform.save()
         if self.tags_form:
@@ -647,7 +649,7 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
 
         key = f"{self.request.event.slug}_ignored_reviews"
         ignored_submissions = self.request.session.get(key) or []
-        next_submission = Review.find_missing_reviews(
+        next_submission = get_missing_reviews(
             self.request.event,
             self.request.user,
             ignore=ignored_submissions,
@@ -656,7 +658,7 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
             ignored_submissions = (
                 [self.submission.pk] if action == "skip_for_now" else []
             )
-            next_submission = Review.find_missing_reviews(
+            next_submission = get_missing_reviews(
                 self.request.event,
                 self.request.user,
                 ignore=ignored_submissions,
@@ -686,7 +688,7 @@ class ReviewSubmissionDelete(
 
     def post(self, request, *args, **kwargs):
         self.object.answers.all().delete()
-        self.object.delete()
+        self.object.delete(log_kwargs={"person": self.request.user, "orga": True})
         messages.success(request, _("The review has been deleted."))
         return redirect(self.submission.orga_urls.reviews)
 

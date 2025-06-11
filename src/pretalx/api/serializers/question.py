@@ -1,13 +1,9 @@
 from django.db import transaction
 from rest_flex_fields.serializers import FlexFieldsSerializerMixin
 from rest_framework import exceptions
-from rest_framework.serializers import (
-    ModelSerializer,
-    PrimaryKeyRelatedField,
-    SlugRelatedField,
-)
+from rest_framework.serializers import PrimaryKeyRelatedField, SlugRelatedField
 
-from pretalx.api.mixins import PretalxSerializer, ReadOnlySerializerMixin
+from pretalx.api.mixins import PretalxSerializer
 from pretalx.api.serializers.fields import UploadedFileField
 from pretalx.api.versions import CURRENT_VERSION, register_serializer
 from pretalx.person.models import User
@@ -53,18 +49,17 @@ class AnswerOptionCreateSerializer(AnswerOptionSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         request = kwargs.get("context", {}).get("request")
-        if "question" in self.fields:
-            if request and hasattr(request, "event"):
-                self.fields["question"].queryset = request.event.questions(
-                    manager="all_objects"
-                ).filter(
-                    variant__in=[
-                        QuestionVariant.CHOICES,
-                        QuestionVariant.MULTIPLE,
-                    ]
-                )
-            else:
-                self.fields["question"].queryset = Question.objects.none()
+        if request and hasattr(request, "event"):
+            self.fields["question"].queryset = request.event.questions(
+                manager="all_objects"
+            ).filter(
+                variant__in=[
+                    QuestionVariant.CHOICES,
+                    QuestionVariant.MULTIPLE,
+                ]
+            )
+        else:
+            self.fields["question"].queryset = Question.objects.none()
 
     class Meta(AnswerOptionSerializer.Meta):
         expandable_fields = None
@@ -172,40 +167,6 @@ class QuestionOrgaSerializer(QuestionSerializer):
                 AnswerOption.objects.create(question=question, **option_data)
 
 
-@register_serializer(versions=["LEGACY"])
-class LegacyAnswerOptionSerializer(ModelSerializer):
-    class Meta:
-        model = AnswerOption
-        fields = ("id", "answer")
-
-
-@register_serializer(versions=["LEGACY"], class_name="QuestionSerializer")
-class LegacyQuestionSerializer(ReadOnlySerializerMixin, PretalxSerializer):
-    options = LegacyAnswerOptionSerializer(many=True, required=False)
-
-    class Meta:
-        model = Question
-        fields = (
-            "id",
-            "variant",
-            "question",
-            "question_required",
-            "deadline",
-            "required",
-            "read_only",
-            "freeze_after",
-            "target",
-            "options",
-            "help_text",
-            "default_answer",
-            "contains_personal_data",
-            "min_length",
-            "max_length",
-            "is_public",
-            "is_visible_to_reviewers",
-        )
-
-
 @register_serializer(versions=[CURRENT_VERSION])
 class AnswerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     question = PrimaryKeyRelatedField(read_only=True)
@@ -243,8 +204,11 @@ class AnswerSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
                 "pretalx.api.serializers.question.AnswerOptionSerializer",
                 {"many": True, "read_only": True, "omit": ("question",)},
             ),
-            # TODO: make reviews, questions and speakers expandable once we have the new
-            # API
+            "person": (
+                "pretalx.api.serializers.speaker.SpeakerSerializer",
+                {"read_only": True, "omit": ("answers",)},
+            ),
+            # TODO: make reviews and submissions expandable once we have the new API
         }
 
 
@@ -342,41 +306,3 @@ class AnswerCreateSerializer(AnswerSerializer):
 
     class Meta(AnswerSerializer.Meta):
         expandable_fields = None
-
-
-@register_serializer(versions=["LEGACY"])
-class LegacyAnswerSerializer(ModelSerializer):
-    submission = SlugRelatedField(
-        queryset=Submission.objects.none(),
-        slug_field="code",
-        required=False,
-    )
-    person = SlugRelatedField(
-        queryset=User.objects.all(),
-        slug_field="code",
-        required=False,
-    )
-    options = LegacyAnswerOptionSerializer(many=True, required=False)
-    question = QuestionSerializer(Question.objects.none(), fields=("id", "question"))
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        request = self.context.get("request")
-        if not request:
-            return
-        self.fields["question"].queryset = request.event.questions.all()
-        self.fields["submission"].queryset = request.event.submissions.all()
-        self.fields["review"].queryset = request.event.reviews.all()
-
-    class Meta:
-        model = Answer
-        fields = (
-            "id",
-            "question",
-            "answer",
-            "answer_file",
-            "submission",
-            "review",
-            "person",
-            "options",
-        )

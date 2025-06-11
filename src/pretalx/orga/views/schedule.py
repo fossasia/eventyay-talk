@@ -411,13 +411,7 @@ class ScheduleAvailabilities(EventPermissionRequired, View):
         # Serializing by hand because it's faster and we don't need
         # IDs or allDay
         return {
-            room.pk: [
-                {
-                    "start": av.start.isoformat(),
-                    "end": av.end.isoformat(),
-                }
-                for av in room.availabilities.all()
-            ]
+            room.pk: [av.serialize(full=False) for av in room.availabilities.all()]
             for room in self.request.event.rooms.all().prefetch_related(
                 "availabilities"
             )
@@ -441,10 +435,7 @@ class ScheduleAvailabilities(EventPermissionRequired, View):
         ):
             if talk.submission.speakers.count() == 1:
                 result[talk.id] = [
-                    {
-                        "start": av.start.isoformat(),
-                        "end": av.end.isoformat(),
-                    }
+                    av.serialize(full=False)
                     for av in speaker_avails[talk.submission.speakers.first().pk]
                 ]
             else:
@@ -457,10 +448,7 @@ class ScheduleAvailabilities(EventPermissionRequired, View):
                     result[talk.id] = []
                 else:
                     result[talk.id] = [
-                        {
-                            "start": av.start.isoformat(),
-                            "end": av.end.isoformat(),
-                        }
+                        av.serialize(full=False)
                         for av in Availability.intersection(*all_speaker_avails)
                     ]
         return result

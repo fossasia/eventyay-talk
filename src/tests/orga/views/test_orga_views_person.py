@@ -63,23 +63,6 @@ def test_remove_superuser_if_no_superuser(orga_client, orga_user):
 
 
 @pytest.mark.django_db
-def test_orga_reset_auth_token(orga_client, orga_user):
-    assert not getattr(orga_user, "auth_token", None)
-    response = orga_client.get(reverse("orga:user.view"), follow=True)
-    assert response.status_code == 200
-    orga_user.refresh_from_db()
-    assert orga_user.auth_token
-    old_token = orga_user.auth_token.key
-    response = orga_client.post(
-        reverse("orga:user.view"), {"form": "token"}, follow=True
-    )
-    assert response.status_code == 200
-    orga_user.refresh_from_db()
-    assert orga_user.auth_token
-    assert orga_user.auth_token.key != old_token
-
-
-@pytest.mark.django_db
 def test_orga_wrong_profile_page_update(orga_client, orga_user):
     response = orga_client.post(
         reverse("orga:user.view"), {"form": "tokennnnnn"}, follow=True

@@ -38,15 +38,12 @@ ENDPOINTS = (
     "tags",
     "tracks",
     "schedules",
+    "slots",
     "submission-types",
     "mail-templates",
     "access-codes",
     "speaker-information",
 )
-
-
-def default_endpoint_permissions():
-    return {endpoint: READ_PERMISSIONS for endpoint in ENDPOINTS}
 
 
 class UserApiTokenManager(models.Manager):
@@ -59,24 +56,20 @@ class UserApiTokenManager(models.Manager):
 
 class UserApiToken(PretalxModel):
     name = models.CharField(max_length=190, verbose_name=_("Name"))
-    token = models.CharField(default=generate_api_token, max_length=64)
+    token = models.CharField(default=generate_api_token, max_length=64, unique=True)
     user = models.ForeignKey(
         to="person.User",
         related_name="api_tokens",
         on_delete=models.CASCADE,
     )
-    # TODO: make sure the token is deactivated if the user is removed from the team
-    # TODO: show that users have active tokens in team list
-    team = models.ForeignKey(
-        to="event.Team",
-        related_name="api_tokens",
-        on_delete=models.CASCADE,
-        verbose_name=_("Team"),
+    events = models.ManyToManyField(
+        to="event.Event",
+        related_name="+",
+        verbose_name=_("Events"),
     )
-    # TODO: make sure we check token.expires before allowing access
     expires = models.DateTimeField(null=True, blank=True, verbose_name=_("Expiry date"))
     # TODO document field structure
-    endpoints = models.JSONField(default=default_endpoint_permissions, blank=True)
+    endpoints = models.JSONField(default=dict, blank=True)
     version = models.CharField(
         max_length=12, null=True, blank=True, verbose_name=_("API version")
     )
@@ -88,10 +81,9 @@ class UserApiToken(PretalxModel):
         if method == "partial_update":
             # We don't track separate permissions for partial updates
             method = "update"
-        perms = self.endpoints.get(
-            endpoint, default_endpoint_permissions().get(endpoint, [])
-        )
-        return method in perms
+        elif method not in dict(PERMISSION_CHOICES):
+            method = "actions"
+        return method in self.endpoints.get(endpoint, [])
 
     @property
     def is_active(self):
@@ -101,8 +93,22 @@ class UserApiToken(PretalxModel):
         return {
             "name": self.name,
             "token": self.token,
-            "team": self.team_id,
+            "events": [e.slug for e in self.events.all()],
             "expires": self.expires.isoformat() if self.expires else None,
             "endpoints": self.endpoints,
             "version": self.version,
         }
+
+    def update_events(self):
+        """Called when a user loses access to a team. Should remove any events the user
+        does not have access anymore from this token’s events."""
+        user_permitted_events = set(self.user.get_events_with_any_permission())
+        token_current_events = set(self.events.all())
+
+        events_to_remove = token_current_events - user_permitted_events
+        if events_to_remove:
+            for event in events_to_remove:
+                self.events.remove(event)
+            if not self.events.all():
+                self.expires = now()
+                self.save()

@@ -16,6 +16,7 @@ from pretalx.submission.models import (
     AnswerOption,
     CfP,
     Question,
+    Review,
     Submission,
     SubmissionComment,
     SubmissionStates,
@@ -94,6 +95,9 @@ LOG_NAMES = {
     "pretalx.submission.resource.create": _("A proposal resource was added."),
     "pretalx.submission.resource.delete": _("A proposal resource was deleted."),
     "pretalx.submission.resource.update": _("A proposal resource was modified."),
+    "pretalx.submission.review.delete": _("A review was deleted."),
+    "pretalx.submission.review.update": _("A review was modified."),
+    "pretalx.submission.review.create": _("A review was added."),
     "pretalx.submission.speakers.add": _("A speaker was added to the proposal."),
     "pretalx.submission.speakers.invite": _("A speaker was invited to the proposal."),
     "pretalx.submission.speakers.remove": _("A speaker was removed from the proposal."),
@@ -165,6 +169,10 @@ def default_activitylog_object_link(sender: Event, activitylog: ActivityLog, **k
             activitylog.content_object.submission.orga_urls.comments
             + f"#comment-{activitylog.content_object.pk}"
         )
+        link_text = escape(activitylog.content_object.submission.title)
+        text = _submission_label_text(activitylog.content_object.submission)
+    elif isinstance(activitylog.content_object, Review):
+        url = activitylog.content_object.submission.orga_urls.reviews
         link_text = escape(activitylog.content_object.submission.title)
         text = _submission_label_text(activitylog.content_object.submission)
     elif isinstance(activitylog.content_object, Question):

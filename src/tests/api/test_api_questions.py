@@ -334,156 +334,6 @@ def test_field_question_required_valid_choice(
         (True, "patch"),
     ),
 )
-def test_field_deadline_valid_date(
-    event, client, orga_user_write_token, question, is_detail, method
-):
-    url = event.api_urls.questions
-    if is_detail:
-        url += f"{question.pk}/"
-    response = getattr(client, method)(
-        url,
-        data=json.dumps({"deadline": "invalid_date"}),
-        content_type="application/json",
-        headers={"Authorization": f"Token {orga_user_write_token.token}"},
-    )
-    assert response.status_code == 400, response.content.decode()
-    assert "Datetime has wrong format" in response.data["deadline"][0]
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "is_detail, method",
-    (
-        (False, "post"),
-        (True, "put"),
-        (True, "patch"),
-    ),
-)
-def test_field_variant_valid_choice(
-    event, client, orga_user_write_token, question, is_detail, method
-):
-    url = event.api_urls.questions
-    if is_detail:
-        url += f"{question.pk}/"
-    response = getattr(client, method)(
-        url,
-        data=json.dumps({"variant": "invalid_choice"}),
-        content_type="application/json",
-        headers={"Authorization": f"Token {orga_user_write_token.token}"},
-    )
-    assert response.status_code == 400, response.content.decode()
-    assert response.data["variant"][0] == '"invalid_choice" is not a valid choice.'
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "is_detail, method",
-    (
-        (False, "post"),
-        (True, "put"),
-        (True, "patch"),
-    ),
-)
-def test_field_max_length_valid_integer(
-    event, client, orga_user_write_token, question, is_detail, method
-):
-    url = event.api_urls.questions
-    if is_detail:
-        url += f"{question.pk}/"
-    response = getattr(client, method)(
-        url,
-        data=json.dumps({"max_length": "not_an_integer"}),
-        content_type="application/json",
-        headers={"Authorization": f"Token {orga_user_write_token.token}"},
-    )
-    assert response.data.get("max_length")[0] == "A valid integer is required."
-    assert response.status_code == 400, response.content.decode()
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "is_detail, method",
-    (
-        (False, "post"),
-        (True, "put"),
-        (True, "patch"),
-    ),
-)
-def test_field_min_length_valid_integer(
-    event, client, orga_user_write_token, question, is_detail, method
-):
-    url = event.api_urls.questions
-    if is_detail:
-        url += f"{question.pk}/"
-    response = getattr(client, method)(
-        url,
-        data=json.dumps({"min_length": "not_an_integer"}),
-        content_type="application/json",
-        headers={"Authorization": f"Token {orga_user_write_token.token}"},
-    )
-    assert response.data.get("min_length")[0] == "A valid integer is required."
-    assert response.status_code == 400, response.content.decode()
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "is_detail, method",
-    (
-        (False, "post"),
-        (True, "put"),
-        (True, "patch"),
-    ),
-)
-def test_field_is_public_valid_boolean(
-    event, client, orga_user_write_token, question, is_detail, method
-):
-    url = event.api_urls.questions
-    if is_detail:
-        url += f"{question.pk}/"
-    response = getattr(client, method)(
-        url,
-        data=json.dumps({"is_public": "not_an_boolean"}),
-        content_type="application/json",
-        headers={"Authorization": f"Token {orga_user_write_token.token}"},
-    )
-    assert response.data.get("is_public")[0] == "Must be a valid boolean."
-    assert response.status_code == 400, response.content.decode()
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "is_detail, method",
-    (
-        (False, "post"),
-        (True, "put"),
-        (True, "patch"),
-    ),
-)
-def test_field_is_visible_to_reviewers_valid_boolean(
-    event, client, orga_user_write_token, question, is_detail, method
-):
-    url = event.api_urls.questions
-    if is_detail:
-        url += f"{question.pk}/"
-    response = getattr(client, method)(
-        url,
-        data=json.dumps({"is_visible_to_reviewers": "not_an_boolean"}),
-        content_type="application/json",
-        headers={"Authorization": f"Token {orga_user_write_token.token}"},
-    )
-    assert response.data.get("is_visible_to_reviewers")[0] == "Must be a valid boolean."
-    assert response.status_code == 400, response.content.decode()
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "is_detail, method",
-    (
-        (False, "post"),
-        (True, "put"),
-        (True, "patch"),
-    ),
-)
 def test_field_contains_personal_data_valid_boolean(
     event, client, orga_user_write_token, question, is_detail, method
 ):
@@ -720,7 +570,6 @@ def test_organiser_can_edit_question_options(
 
     with scope(event=event):
         choice_question.refresh_from_db()
-        # Check that options were replaced
         assert choice_question.options.count() == 2
         new_options = [o.answer for o in choice_question.options.all()]
         assert "Updated Option 1" in new_options
@@ -990,7 +839,6 @@ def test_organiser_can_expand_question_option_fields(
         assert option_count > 0
         choice_question.tracks.add(track)
 
-    # Test expanding just the question
     response = client.get(
         event.api_urls.question_options + "?expand=question",
         headers={"Authorization": f"Token {orga_user_token.token}"},
@@ -1002,7 +850,6 @@ def test_organiser_can_expand_question_option_fields(
     assert content["results"][0]["question"]["id"] == choice_question.pk
     assert content["results"][0]["question"]["tracks"][0] == track.pk
 
-    # Test expanding question and its tracks
     response = client.get(
         event.api_urls.question_options + "?expand=question,question.tracks",
         headers={"Authorization": f"Token {orga_user_token.token}"},

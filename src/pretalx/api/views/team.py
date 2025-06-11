@@ -54,11 +54,6 @@ class TeamViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     queryset = Team.objects.none()
     endpoint = "teams"
     search_fields = ("name",)
-    action_permission_map = {
-        "invite": "update",
-        "delete_invite": "update",
-        "remove_member": "update",
-    }
 
     def get_queryset(self):
         queryset = self.request.organiser.teams.all().select_related("organiser")

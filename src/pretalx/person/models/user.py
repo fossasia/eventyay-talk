@@ -21,12 +21,14 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
 from django_scopes import scopes_disabled
 from rest_framework.authtoken.models import Token
+from rules.contrib.models import RulesModelBase, RulesModelMixin
 
 from pretalx.common.image import create_thumbnail
 from pretalx.common.models import TIMEZONE_CHOICES
 from pretalx.common.models.mixins import FileCleanupMixin, GenerateCode
 from pretalx.common.text.path import path_with_hash
 from pretalx.common.urls import EventUrls, build_absolute_uri
+from pretalx.person.rules import is_administrator
 
 from ..signals import delete_user as delete_user_signal
 
@@ -73,7 +75,14 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
+class User(
+    PermissionsMixin,
+    RulesModelMixin,
+    GenerateCode,
+    FileCleanupMixin,
+    AbstractBaseUser,
+    metaclass=RulesModelBase,
+):
     """The pretalx user model.
 
     Users describe all kinds of persons who interact with pretalx: Organisers, reviewers, submitters, speakers.
@@ -178,6 +187,11 @@ class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
         null=True, max_length=160, verbose_name="Password reset token"
     )
     pw_reset_time = models.DateTimeField(null=True, verbose_name="Password reset time")
+
+    class Meta:
+        rules_permissions = {
+            "administrator": is_administrator,
+        }
 
     def __str__(self) -> str:
         """For public consumption as it is used for Select widgets, e.g. on the

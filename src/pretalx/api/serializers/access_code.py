@@ -33,12 +33,10 @@ class SubmitterAccessCodeSerializer(FlexFieldsSerializerMixin, PretalxSerializer
         super().__init__(*args, **kwargs)
         request = kwargs.get("context", {}).get("request")
         if request and hasattr(request, "event"):
-            if "track" in self.fields:
-                self.fields["track"].queryset = request.event.tracks.all()
-            if "submission_type" in self.fields:
-                self.fields["submission_type"].queryset = (
-                    request.event.submission_types.all()
-                )
+            self.fields["track"].queryset = request.event.tracks.all()
+            self.fields["submission_type"].queryset = (
+                request.event.submission_types.all()
+            )
 
     def create(self, validated_data):
         validated_data["event"] = getattr(self.context.get("request"), "event", None)

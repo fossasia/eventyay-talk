@@ -16,9 +16,11 @@ def build_expand_docs(*params):
     )
 
 
-def build_search_docs(*params):
+def build_search_docs(*params, extra_description=None):
     fields = ",".join([f'`"{param}"`' for param in params])
     description = f"A search term, searching in {fields}."
+    if extra_description:
+        description = f"{description} {extra_description}"
     return OpenApiParameter(
         name="q",
         type=OpenApiTypes.STR,
@@ -84,6 +86,35 @@ def postprocess_schema(result, generator, request, public):
         {
             "name": "access-codes",
             "description": "Access codes can be used to grant access to restricted tracks, or to allow for proposals to be submitted past the public deadline.",
+        },
+        {
+            "name": "speakers",
+            "description": "Speakers can currently only updated, not created or deleted, as a speaker refers to a user object, and users can only be deleted by administrators. Organisers will see additional fields in the API, in line with the response to the update actions.",
+        },
+        {
+            "name": "submissions",
+            "description": "Submissions are the central component of pretalx. Note that changing the speakers and state of a submission requires you to use the individual action endpoints rather than a plain update.",
+            "externalDocs": {
+                "url": "https://docs.pretalx.org/user/sessions/",
+                "description": "User documentation",
+            },
+        },
+        {
+            "name": "slots",
+            "description": (
+                "Every block in a published pretalx schedule is a talk slot. Note that there are talk slots without associalted submission (e.g. breaks). "
+                "Each slot belongs to a schedule version – refer to the schedule endpoint for further documentation. "
+                "Note that slots cannot be created or deleted via the API – this happens automatically when a submission’s state changes."
+            ),
+        },
+        {
+            "name": "reviews",
+            "description": (
+                "Reviews can be created, updated and deleted in the API depending on permissions (user, token and team), "
+                "the current review phase, and so on. "
+                "As with the other endpoints, this endpoint is not available to users/tokens with only reviewer permissions "
+                "while an anonymised review phase is active."
+            ),
         },
     ]
     return result
