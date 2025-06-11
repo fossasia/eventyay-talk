@@ -222,7 +222,7 @@ class Team(PretalxModel):
         verbose_name=_("Always hide speaker names"),
         help_text=_(
             "Normally, anonymisation is configured in the event review settings. "
-            "This setting will <b>override the event settings</b> and always hide speaker names for this team."
+            "This setting will <strong>override the event settings</strong> and always hide speaker names for this team."
         ),
         default=False,
     )

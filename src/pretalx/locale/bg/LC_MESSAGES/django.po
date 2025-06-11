@@ -90,8 +90,8 @@ msgstr ""
 
 #: pretalx/agenda/templates/agenda/featured.html:23
 msgid ""
-"In the near future you will see a curated list of sessions we’d like to show "
-"off here. Right now we are busy reviewing proposals.<br> Check back later!"
+"In the near future you will see a curated list of sessions we’d like to show"
+" off here. Right now we are busy reviewing proposals.<br> Check back later!"
 msgstr ""
 "Скоро ще видите тук списък с подбраните сесии, които бихме искали да "
 "покажем. В момента сме заети с прегледа на предложенията. <br> Проверете "
@@ -209,8 +209,8 @@ msgstr "Програмата ни още не е публикувана."
 
 #: pretalx/agenda/views/schedule.py:187
 msgid ""
-"You're currently not logged in, so your favourited talks will only be stored "
-"locally in your browser."
+"You're currently not logged in, so your favourited talks will only be stored"
+" locally in your browser."
 msgstr ""
 "В момента не сте влезли в профила си, затова любимите Ви лекции ще се "
 "съхранят само във Вашия браузър."
@@ -232,17 +232,18 @@ msgstr "Логото на pretalx"
 
 #: pretalx/cfp/flow.py:354
 msgid ""
-"Your draft was saved. You can continue to edit it as long as the CfP is open."
+"Your draft was saved. You can continue to edit it as long as the CfP is "
+"open."
 msgstr "Черновата е записана. Може да я редактирате, докато CfP е отворено."
 
 #: pretalx/cfp/flow.py:362
 msgid ""
 "Congratulations, you’ve submitted your proposal! You can continue to make "
-"changes to it up to the submission deadline, and you will be notified of any "
-"changes or questions."
+"changes to it up to the submission deadline, and you will be notified of any"
+" changes or questions."
 msgstr ""
-"Поздравения, предложението е изпратено! Може да го променяте до крайния срок "
-"за подаване на предложения и ще бъдете известявани за всякакви промени или "
+"Поздравения, предложението е изпратено! Може да го променяте до крайния срок"
+" за подаване на предложения и ще бъдете известявани за всякакви промени или "
 "въпроси."
 
 #: pretalx/cfp/flow.py:392
@@ -271,8 +272,8 @@ msgstr "Преди да запазим предложението Ви, имам
 
 #: pretalx/cfp/flow.py:497
 msgid ""
-"There was an error when logging in. Please contact the organiser for further "
-"help."
+"There was an error when logging in. Please contact the organiser for further"
+" help."
 msgstr ""
 "Имаше грешка при влизането в профила. Моля, свържете се с организаторите за "
 "допълнителна помощ."
@@ -322,8 +323,8 @@ msgstr "Отидете в CfP"
 msgid ""
 "If we know a user by this email address (who has not requested a password "
 "reset in the last 24 hours), we will send you an email containing further "
-"instructions. If you don’t see the email within the next minutes, check your "
-"spam inbox!"
+"instructions. If you don’t see the email within the next minutes, check your"
+" spam inbox!"
 msgstr ""
 "Ако съществува потребител с този e-mail адрес (който не е заявявал смянa на "
 "паролата през последните 24 часа), ще изпратим писмо с допълнителни "
@@ -424,7 +425,8 @@ msgstr "Поканата е изпратена!"
 
 #: pretalx/cfp/phrases.py:53
 msgid "You are now part of this proposal! Please fill in your profile below."
-msgstr "Вече сте част от това предложение! Моля, попълнете профила си по-долу."
+msgstr ""
+"Вече сте част от това предложение! Моля, попълнете профила си по-долу."
 
 #: pretalx/cfp/phrases.py:57
 msgid ""
@@ -493,8 +495,8 @@ msgstr "Приемане на поканата?"
 #: pretalx/cfp/templates/cfp/event/invitation.html:13
 msgid ""
 "Unfortunately, you cannot accept this invitation at the moment. This may be "
-"because the invitation has expired, or because the proposal cannot be edited "
-"any more."
+"because the invitation has expired, or because the proposal cannot be edited"
+" any more."
 msgstr ""
 "За съжаление, не може да приемете тази покана в момента. Това може да се "
 "дължи на изтичането на валидността на поканата или защото това предложение "
@@ -507,8 +509,8 @@ msgstr "Моля, свържете се с организаторите на с�
 #: pretalx/cfp/templates/cfp/event/invitation.html:26
 #, python-format
 msgid ""
-"You, %(name)s, have been invited to be a speaker for the session “%(talk)s”. "
-"Do you accept the invitation?"
+"You, %(name)s, have been invited to be a speaker for the session “%(talk)s”."
+" Do you accept the invitation?"
 msgstr ""
 "%(name)s, поканени сте като лектор в сесията „%(talk)s“. Приемате ли "
 "поканата?"
@@ -537,8 +539,8 @@ msgstr "Добре дошли!"
 
 #: pretalx/cfp/templates/cfp/event/login.html:10
 msgid ""
-"You do not need an account to view the event, or submit feedback, or receive "
-"schedule updates. You’ll only need an account if you participate in the "
+"You do not need an account to view the event, or submit feedback, or receive"
+" schedule updates. You’ll only need an account if you participate in the "
 "event as speaker or as an organiser."
 msgstr ""
 "Не е необходим акаунт, за да видите събитието, да изпратите отзив или да "
@@ -620,8 +622,8 @@ msgstr "Вашите писма"
 
 #: pretalx/cfp/templates/cfp/event/user_mails.html:9
 msgid ""
-"These are emails the organisers sent you, so you should be able to find them "
-"in your email inbox, but this page serves as a helper in case your email "
+"These are emails the organisers sent you, so you should be able to find them"
+" in your email inbox, but this page serves as a helper in case your email "
 "address was unavailable or the emails got lost in some way."
 msgstr ""
 "Това са писмата, които организаторите са Ви изпращали и трябва да може да "
@@ -638,8 +640,8 @@ msgid ""
 "This data will be displayed publicly if your proposal is accepted. It is "
 "also visible to reviewers."
 msgstr ""
-"Тези данни ще бъдат публични, ако предложението Ви бъде прието. Също така са "
-"видими за преглеждащите."
+"Тези данни ще бъдат публични, ако предложението Ви бъде прието. Също така са"
+" видими за преглеждащите."
 
 #: pretalx/cfp/templates/cfp/event/user_profile.html:51
 msgid "We have some questions"
@@ -660,8 +662,8 @@ msgstr "Изтриване на акаунт"
 #: pretalx/cfp/templates/cfp/event/user_profile.html:93
 msgid ""
 "You can delete your account here – all names, emails, and other personal "
-"information will be overwritten. <strong>This action is irreversible.</"
-"strong>"
+"information will be overwritten. <strong>This action is "
+"irreversible.</strong>"
 msgstr ""
 "Можете да изтриете акаунта си тук – всички имена, писма и друга лична "
 "информация ще бъдат премахнати. <strong>Това действие е необратимо.</strong>"
@@ -684,8 +686,8 @@ msgstr "Поздравления за полученото одобрение!"
 
 #: pretalx/cfp/templates/cfp/event/user_submission_confirm.html:23
 msgid ""
-"Please provide us with your available hours during the event, so that we can "
-"schedule your event accordingly:"
+"Please provide us with your available hours during the event, so that we can"
+" schedule your event accordingly:"
 msgstr ""
 "Моля, укажете часовете, в които сте свободни по време на събитието, за да "
 "можем да Ви поставим на подходящо място в програмата:"
@@ -697,8 +699,8 @@ msgid ""
 "proposal data, such as title, abstract, description, and any uploads you "
 "provided, can be made publicly available once the proposal is confirmed."
 msgstr ""
-"Потвърждавайки предложението си, Вие се съгласявате да участвате в събитието "
-"и да представите предложението си. Данните за предложението – заглавие, "
+"Потвърждавайки предложението си, Вие се съгласявате да участвате в събитието"
+" и да представите предложението си. Данните за предложението – заглавие, "
 "описание, резюме, както и всички файлове, предоставени от Вас, ще са "
 "публично достъпни, след като предложението бъде потвърдено."
 
@@ -721,8 +723,8 @@ msgstr "Предложението не е намерено"
 #: pretalx/cfp/templates/cfp/event/user_submission_confirm_error.html:13
 msgid ""
 "The proposal you’re trying to confirm either does not exist or does not "
-"belong to the account you’re currently logged in with. Try logging in with a "
-"different account, or contact the event organisers for further information."
+"belong to the account you’re currently logged in with. Try logging in with a"
+" different account, or contact the event organisers for further information."
 msgstr ""
 "Предложението, което се опитвате да потвърдите, не съществува или не "
 "принадлежи на Вас. Опитайте се да влезете с друг акаунт или се свържете с "
@@ -774,11 +776,11 @@ msgstr "Споделете предложение"
 
 #: pretalx/cfp/templates/cfp/event/user_submission_edit.html:101
 msgid ""
-"If you need a review from a colleague or a friend here’s a link that you can "
-"send out for viewing your proposal:"
+"If you need a review from a colleague or a friend here’s a link that you can"
+" send out for viewing your proposal:"
 msgstr ""
-"Ако искате преглед от приятел или колега, може да им дадете този линк, за да "
-"разгледат предложението:"
+"Ако искате преглед от приятел или колега, може да им дадете този линк, за да"
+" разгледат предложението:"
 
 #: pretalx/cfp/templates/cfp/event/user_submission_edit.html:109
 #: pretalx/cfp/templates/cfp/event/user_submission_withdraw.html:13
@@ -802,8 +804,8 @@ msgstr "Изтрийте предложението-чернова"
 #: pretalx/cfp/templates/cfp/event/user_submission_edit.html:127
 msgid ""
 "You can discard your draft proposal here. You cannot undo this - if you are "
-"just uncertain if you can or should submit your proposal, please contact the "
-"organiser instead."
+"just uncertain if you can or should submit your proposal, please contact the"
+" organiser instead."
 msgstr ""
 "Тук може да изтриете черновата на предложението си. Действието е необратимо "
 "– ако не сте сигурни дали искате или можете да изпратите предложението си, "
@@ -959,8 +961,8 @@ msgid ""
 "This is a draft proposal. It will never be visible to anybody else, unless "
 "you submit it or explicitly share it."
 msgstr ""
-"Това е предложение-чернова. Няма да бъде видимо за никого, докато изрично не "
-"го изпратите или споделите."
+"Това е предложение-чернова. Няма да бъде видимо за никого, докато изрично не"
+" го изпратите или споделите."
 
 #: pretalx/cfp/templates/cfp/includes/user_submission_header.html:46
 #: pretalx/orga/templates/orga/cfp/submissiontype/list.html:42
@@ -1044,7 +1046,8 @@ msgid ""
 "This filetype ({extension}) is not allowed, it has to be one of the "
 "following: "
 msgstr ""
-"Файлове от тип ({extension}) не са позволени, трябва да е някой от следните: "
+"Файлове от тип ({extension}) не са позволени, трябва да е някой от следните:"
+" "
 
 #: pretalx/common/forms/forms.py:12 pretalx/common/forms/widgets.py:208
 #: pretalx/common/templates/common/includes/search_form.html:7
@@ -1102,7 +1105,8 @@ msgstr "Написахте {count} думи."
 
 #: pretalx/common/forms/widgets.py:48
 msgid ""
-"This password would take <em class=\"password_strength_time\"></em> to crack."
+"This password would take <em class=\"password_strength_time\"></em> to "
+"crack."
 msgstr ""
 "Ще отнеме <em class=\"password_strength_time\"></em>, за да се разбие тази "
 "парола."
@@ -1684,8 +1688,8 @@ msgstr "Попаднахме на грешка."
 #: pretalx/common/templates/500.html:18
 #, python-format
 msgid ""
-"Please help us to fix this by submitting <a href=\"%(link)s\" rel=noopener>a "
-"bug report</a>!"
+"Please help us to fix this by submitting <a href=\"%(link)s\" rel=noopener>a"
+" bug report</a>!"
 msgstr ""
 "Помогнете ни да я поправим, като ни изпратите <a href=\"%(link)s\" "
 "rel=noopener>доклад за грешка</a>!"
@@ -1720,7 +1724,8 @@ msgstr "Вашият аватар"
 #: pretalx/common/templates/common/base.html:73
 msgid "This event is currently non-public. Only organisers can see it."
 msgstr ""
-"Това събитие в момента не е публично. Само организаторите могат да го виждат."
+"Това събитие в момента не е публично. Само организаторите могат да го "
+"виждат."
 
 #: pretalx/common/templates/common/base.html:83
 #: pretalx/orga/templates/orga/auth/base.html:31
@@ -1807,7 +1812,8 @@ msgid "Proceed to %(host)s"
 msgstr "Продължете към %(host)s"
 
 #. Translators: Text is used to describe the main text body of an email, or of
-#. similar options like the main text of the CfP or a review. It's separate from
+#. similar options like the main text of the CfP or a review. It's separate
+#. from
 #. the "text" input type used in questions.
 #: pretalx/common/templates/common/widgets/markdown.html:4
 #: pretalx/common/text/phrases.py:124 pretalx/mail/models.py:89
@@ -1851,7 +1857,8 @@ msgstr "Не може да използвате ключове „{key}“ в CS
 msgid "{date_from} – {date_to}"
 msgstr "{date_from} – {date_to}"
 
-#. Translators: This is the label on buttons that trigger the sending of emails.
+#. Translators: This is the label on buttons that trigger the sending of
+#. emails.
 #: pretalx/common/text/phrases.py:45
 msgid "Send"
 msgstr "Изпращане"
@@ -1875,7 +1882,8 @@ msgstr "Редактиране"
 msgid "all"
 msgstr "всички"
 
-#. Translators: This is a label on navigation elements leading to the previous page.
+#. Translators: This is a label on navigation elements leading to the previous
+#. page.
 #: pretalx/common/text/phrases.py:53
 msgid "Back"
 msgstr "Назад"
@@ -1894,7 +1902,8 @@ msgid ""
 "Please make sure that this is the item you want to delete. This action "
 "cannot be undone!"
 msgstr ""
-"Моля, уверете се, че искате да изтриете точно това. Действието не е обратимо!"
+"Моля, уверете се, че искате да изтриете точно това. Действието не е "
+"обратимо!"
 
 #: pretalx/common/text/phrases.py:61
 #, fuzzy
@@ -1910,7 +1919,8 @@ msgstr "Промяната беше запазена."
 msgid "Please go back and try again."
 msgstr "Моля, върнете се и опитайте отново."
 
-#. Translators: This is an established term in the context of software development.
+#. Translators: This is an established term in the context of software
+#. development.
 #: pretalx/common/text/phrases.py:67
 msgid "Bad request."
 msgstr "Лоша заявка (Bad request)."
@@ -2018,7 +2028,8 @@ msgctxt "closing quotation mark"
 msgid "”"
 msgstr "“"
 
-#. Translators: Used both for language selection for users, and for the language
+#. Translators: Used both for language selection for users, and for the
+#. language
 #. attribute of events and sessions.
 #: pretalx/common/text/phrases.py:115
 #: pretalx/submission/models/submission.py:266
@@ -2045,8 +2056,7 @@ msgstr "Има нова версия на pretalx"
 msgid ""
 "Hi!\n"
 "\n"
-"An update is available for pretalx or for one of the plugins you installed "
-"in your pretalx installation at {base_url}.\n"
+"An update is available for pretalx or for one of the plugins you installed in your pretalx installation at {base_url}.\n"
 "Please follow this link for more information:\n"
 "\n"
 " {url} \n"
@@ -2055,8 +2065,7 @@ msgid ""
 "\n"
 "  https://docs.pretalx.org/changelog.html\n"
 "\n"
-"Larger updates are also announced with upgrade notes on the pretalx.com "
-"blog:\n"
+"Larger updates are also announced with upgrade notes on the pretalx.com blog:\n"
 "\n"
 "  https://pretalx.com/p/news\n"
 "\n"
@@ -2065,8 +2074,7 @@ msgid ""
 msgstr ""
 "Здравейте!\n"
 "\n"
-"Има нова версия на pretalx или някоя от приставките, ползвани от "
-"инсталацията на {base_url}.\n"
+"Има нова версия на pretalx или някоя от приставките, ползвани от инсталацията на {base_url}.\n"
 "Повече информация има на следната страница:\n"
 "\n"
 " {url}\n"
@@ -2075,8 +2083,7 @@ msgstr ""
 "\n"
 "  https://docs.pretalx.org/changelog.html\n"
 "\n"
-"По-значимите нови версии се обявяват с бележки по обновлението и на блога на "
-"pretalx.com:\n"
+"По-значимите нови версии се обявяват с бележки по обновлението и на блога на pretalx.com:\n"
 "\n"
 "  https://pretalx.com/p/news\n"
 "\n"
@@ -2146,8 +2153,8 @@ msgstr ""
 #: pretalx/event/forms.py:208
 msgid ""
 "This is the address your event will be available at. Should be short, only "
-"contain lowercase letters and numbers, and must be unique. We recommend some "
-"kind of abbreviation with less than 30 characters that can be easily "
+"contain lowercase letters and numbers, and must be unique. We recommend some"
+" kind of abbreviation with less than 30 characters that can be easily "
 "remembered."
 msgstr ""
 "Вашето събитие ще е достъпно на този адрес. Трябва да е кратък, да съдържа "
@@ -2299,14 +2306,14 @@ msgstr "Заглавна картинка"
 #: pretalx/event/models/event.py:248
 msgid ""
 "If you provide a header image, it will be displayed instead of your event’s "
-"color and/or header pattern at the top of all event pages. It will be center-"
-"aligned, so when the window shrinks, the center parts will continue to be "
-"displayed, and not stretched."
+"color and/or header pattern at the top of all event pages. It will be "
+"center-aligned, so when the window shrinks, the center parts will continue "
+"to be displayed, and not stretched."
 msgstr ""
 "Ако зададете заглавна картинка, тя ще бъде показвана вместо цвета на "
 "събитието и/или шаблона за заглавка отгоре на всички страници на събитието. "
-"Ще бъде центрирана, така че, когато прозорецът се намалява, централната част "
-"ще продължава да се вижда и няма да се разтегля."
+"Ще бъде центрирана, така че, когато прозорецът се намалява, централната част"
+" ще продължава да се вижда и няма да се разтегля."
 
 #: pretalx/event/models/event.py:259
 msgid "Default language"
@@ -2318,8 +2325,8 @@ msgstr "Текст на началната страница"
 
 #: pretalx/event/models/event.py:264
 msgid ""
-"This text will be shown on the landing page, alongside with links to the CfP "
-"and schedule, if appropriate."
+"This text will be shown on the landing page, alongside with links to the CfP"
+" and schedule, if appropriate."
 msgstr ""
 "Този текст ще бъде показван на началната страница заедно с връзки до CfP и "
 "програмата, ако е подходящо."
@@ -2412,7 +2419,8 @@ msgstr "URL на връзката"
 #: pretalx/event/models/organiser.py:41
 msgid ""
 "There must be at least one team with the permission to change teams, as "
-"otherwise nobody can create new teams or grant permissions to existing teams."
+"otherwise nobody can create new teams or grant permissions to existing "
+"teams."
 msgstr ""
 "Трябва да има поне един екип с права да променя екипи, иначе никой няма да "
 "може да създава нови екипи или да дава права на съществуващи екипи."
@@ -2510,12 +2518,12 @@ msgstr "Винаги да се скриват имената на лектори
 #: pretalx/event/models/organiser.py:224
 msgid ""
 "Normally, anonymisation is configured in the event review settings. This "
-"setting will <b>override the event settings</b> and always hide speaker "
-"names for this team."
+"setting will <strong>override the event settings</strong> and always hide "
+"speaker names for this team."
 msgstr ""
 "Обикновено анонимизирането се конфигурира в настройките за преглед на "
-"събития. Тази настройка <b>ще замени настройките на събитието</b> и винаги "
-"ще скрие имената на лекторите за този екип."
+"събития. Тази настройка <strong>ще замени настройките на събитието</strong> "
+"и винаги ще скрие имената на лекторите за този екип."
 
 #: pretalx/event/models/organiser.py:237
 #, python-brace-format
@@ -2531,8 +2539,7 @@ msgstr "Покана в екип {team} за {email}"
 #, python-brace-format
 msgid ""
 "Hi!\n"
-"You have been invited to the {name} event organiser team - Please click here "
-"to accept:\n"
+"You have been invited to the {name} event organiser team - Please click here to accept:\n"
 "\n"
 "{invitation_link}\n"
 "\n"
@@ -2540,8 +2547,7 @@ msgid ""
 "The {organiser} team"
 msgstr ""
 "Здравейте!\n"
-"Поканени сте в екипа, организиращ {name} – Моля, последвайте тази връзка, за "
-"да приемете:\n"
+"Поканени сте в екипа, организиращ {name} – Моля, последвайте тази връзка, за да приемете:\n"
 "\n"
 "{invitation_link}\n"
 "\n"
@@ -2777,7 +2783,8 @@ msgstr ""
 
 #: pretalx/mail/context.py:298
 msgid ""
-"A list of all changes to the user’s schedule in the current schedule version."
+"A list of all changes to the user’s schedule in the current schedule "
+"version."
 msgstr ""
 "Списък с всички промени в графика на потребителя според текущата версия на "
 "програмата."
@@ -2835,10 +2842,8 @@ msgid ""
 "\n"
 "    {confirmation_link}\n"
 "\n"
-"We look forward to seeing you at {event_name} - Please contact us if you "
-"have any\n"
-"questions! We will reach out again before the conference to tell you "
-"details\n"
+"We look forward to seeing you at {event_name} - Please contact us if you have any\n"
+"questions! We will reach out again before the conference to tell you details\n"
 "about your slot in the schedule and technical details concerning the room\n"
 "and presentation tech.\n"
 "\n"
@@ -2847,17 +2852,13 @@ msgid ""
 msgstr ""
 "Здравейте!\n"
 "\n"
-"Щастливи сме да Ви съобщим, че приемаме Вашето предложение  "
-"„{submission_title}“\n"
-"за {event_name}. Моля, щракнете върху тази връзка, за да потвърдите "
-"присъствието си:\n"
+"Щастливи сме да Ви съобщим, че приемаме Вашето предложение  „{submission_title}“\n"
+"за {event_name}. Моля, щракнете върху тази връзка, за да потвърдите присъствието си:\n"
 "\n"
 "{confirmation_link}\n"
 "\n"
-"Очакваме с нетърпение да Ви видим на {event_name} – Моля, свържете се с нас, "
-"ако имате някакви\n"
-"въпроси! Ще се свържем с Вас отново преди конференцията, за да Ви дадем "
-"повече подробности\n"
+"Очакваме с нетърпение да Ви видим на {event_name} – Моля, свържете се с нас, ако имате някакви\n"
+"въпроси! Ще се свържем с Вас отново преди конференцията, за да Ви дадем повече подробности\n"
 "относно Вашето място в графика и технически подробности за залата\n"
 "и апаратурата за презентации.\n"
 "\n"
@@ -2878,8 +2879,7 @@ msgid ""
 msgstr ""
 "Здравейте!\n"
 "\n"
-"За съжаление трябва да Ви съобщим, че не можем да приемем Вашето "
-"предложение\n"
+"За съжаление трябва да Ви съобщим, че не можем да приемем Вашето предложение\n"
 "„{submission_title}“ за {event_name}. Имаше твърде много страхотни\n"
 "предложения – надяваме се вместо това да Ви видим на {event_name}\n"
 "като посетител.\n"
@@ -2899,8 +2899,7 @@ msgid ""
 "\n"
 "{speaker_schedule_new}\n"
 "\n"
-"We look forward to seeing you, and please contact us if there is any problem "
-"with your session or assigned slot.\n"
+"We look forward to seeing you, and please contact us if there is any problem with your session or assigned slot.\n"
 "\n"
 "The {event_name} organisers"
 msgstr ""
@@ -2910,8 +2909,7 @@ msgstr ""
 "\n"
 "{speaker_schedule_new}\n"
 "\n"
-"Очакваме Ви с нетърпение. Кажете ни, ако има проблем със сесията или времето "
-"ѝ в програмата.\n"
+"Очакваме Ви с нетърпение. Кажете ни, ако има проблем със сесията или времето ѝ в програмата.\n"
 "\n"
 "Организаторите на {event_name}"
 
@@ -2988,28 +2986,23 @@ msgstr "Добавени сте към предложение за {event_name}"
 msgid ""
 "Hi!\n"
 "\n"
-"You have been added to a proposal of {event_name}, titled "
-"“{proposal_title}”.\n"
-"An account has been created for you – please follow this link to set your "
-"account password.\n"
+"You have been added to a proposal of {event_name}, titled “{proposal_title}”.\n"
+"An account has been created for you – please follow this link to set your account password.\n"
 "\n"
 "{invitation_link}\n"
 "\n"
-"Afterwards, you can edit your user profile and see the state of your "
-"proposal.\n"
+"Afterwards, you can edit your user profile and see the state of your proposal.\n"
 "\n"
 "The {event} orga crew"
 msgstr ""
 "Здравейте!\n"
 "\n"
 "Добавени сте към предложение за {event_name}, с име „{proposal_title}“.\n"
-"Създадена Ви е регистрация – последвайте тази връзка, за да зададете "
-"паролата си.\n"
+"Създадена Ви е регистрация – последвайте тази връзка, за да зададете паролата си.\n"
 "\n"
 "{invitation_link}\n"
 "\n"
-"След това ще може да редактирате потребителския си профил и състоянието на "
-"предложението си.\n"
+"След това ще може да редактирате потребителския си профил и състоянието на предложението си.\n"
 "\n"
 "Организационният екип на {event}"
 
@@ -3018,10 +3011,8 @@ msgstr ""
 msgid ""
 "Hi!\n"
 "\n"
-"You have been added to a proposal of {event_name}, titled "
-"“{proposal_title}”.\n"
-"Please follow this link to edit your user profile and see the state of your "
-"proposal:\n"
+"You have been added to a proposal of {event_name}, titled “{proposal_title}”.\n"
+"Please follow this link to edit your user profile and see the state of your proposal:\n"
 "\n"
 "{proposal_url}\n"
 "\n"
@@ -3029,10 +3020,8 @@ msgid ""
 msgstr ""
 "Здравейте!\n"
 "\n"
-"Добавени сте към предложение за {event_name} със заглавие "
-"„{proposal_title}“.\n"
-"Моля, последвайте връзката, за да редактирате профила си и състоянието на "
-"предложението си:\n"
+"Добавени сте към предложение за {event_name} със заглавие „{proposal_title}“.\n"
+"Моля, последвайте връзката, за да редактирате профила си и състоянието на предложението си:\n"
 "\n"
 "{proposal_url}\n"
 "\n"
@@ -3109,8 +3098,8 @@ msgid ""
 "The list of custom fields that the user has not responded to, as bullet "
 "points"
 msgstr ""
-"Списъкът с допълнителните полета, на които потребителят не е отговорил, като "
-"подточки"
+"Списъкът с допълнителните полета, на които потребителят не е отговорил, като"
+" подточки"
 
 #: pretalx/mail/models.py:311 pretalx/orga/forms/cfp.py:443
 #: pretalx/orga/templates/orga/mails/outbox_list.html:54
@@ -3147,14 +3136,14 @@ msgstr "Проверка за нова версия"
 msgid ""
 "During the update check, pretalx will report an anonymous, unique "
 "installation ID, the current version of pretalx and your installed plugins "
-"and the number of active and inactive events in your installation to servers "
-"operated by the pretalx developers. We will only store anonymous data, never "
-"any IP addresses and we will not know who you are or where to find your "
-"instance. You can disable this behavior here at any time."
+"and the number of active and inactive events in your installation to servers"
+" operated by the pretalx developers. We will only store anonymous data, "
+"never any IP addresses and we will not know who you are or where to find "
+"your instance. You can disable this behavior here at any time."
 msgstr ""
 "По време на проверката за нова версия pretalx докладва уникален "
-"идентификатор, текущата си версия, инсталираните приставки и броя на активни "
-"и неактивни събития в инсталацията Ви към разработчиците. Ние съхраняваме "
+"идентификатор, текущата си версия, инсталираните приставки и броя на активни"
+" и неактивни събития в инсталацията Ви към разработчиците. Ние съхраняваме "
 "само анонимни данни, никога IP адреси, така че няма да знаем кои сте или "
 "къде е инсталацията. Може да изключите това поведение тук по всяко време."
 
@@ -3250,8 +3239,8 @@ msgstr "Качване на настройки"
 
 #: pretalx/orga/forms/cfp.py:173
 msgid ""
-"You can upload options here, one option per line. To use multiple languages, "
-"please upload a JSON file with a list of options:"
+"You can upload options here, one option per line. To use multiple languages,"
+" please upload a JSON file with a list of options:"
 msgstr ""
 "Може да качите настройките тук, една настройка на ред. За да ползвате "
 "множество езици, качете файл във формат JSON със списък от настройки:"
@@ -3285,7 +3274,8 @@ msgid "JSON file does not contain a list of objects."
 msgstr "Файлът с JSON не съдържа списък с обекти."
 
 #: pretalx/orga/forms/cfp.py:243
-msgid "Please select a deadline after which the field should become mandatory."
+msgid ""
+"Please select a deadline after which the field should become mandatory."
 msgstr "Задайте краен срок, след който полето става задължително."
 
 #: pretalx/orga/forms/cfp.py:255
@@ -3539,11 +3529,11 @@ msgstr "Не избирайте стандартния домейн като д�
 #: pretalx/orga/forms/event.py:202
 #, python-brace-format
 msgid ""
-"The domain “{domain}” does not have a name server entry at this time. Please "
-"make sure the domain is working before configuring it here."
+"The domain “{domain}” does not have a name server entry at this time. Please"
+" make sure the domain is working before configuring it here."
 msgstr ""
-"Няма запис за домейна „{domain}“ в сървъра за имена. Уверете се, че домейнът "
-"е настроен правилно, преди да го настроите тук."
+"Няма запис за домейна „{domain}“ в сървъра за имена. Уверете се, че домейнът"
+" е настроен правилно, преди да го настроите тук."
 
 #: pretalx/orga/forms/event.py:239
 msgid "Your default language needs to be one of your active languages."
@@ -3578,8 +3568,8 @@ msgstr "Подпис на писмата"
 #: pretalx/orga/forms/event.py:391
 msgid "The signature will be added to outgoing mails, preceded by “-- ”."
 msgstr ""
-"Завършващата част на писмата. Добавя се към пращаните писма, разделена с „-- "
-"“."
+"Завършващата част на писмата. Добавя се към пращаните писма, разделена с „--"
+" “."
 
 #: pretalx/orga/forms/event.py:399
 msgid "Use custom SMTP server"
@@ -3622,11 +3612,11 @@ msgstr "Парола"
 #: pretalx/orga/forms/event.py:425
 #, python-brace-format
 msgid ""
-"The password contains unsupported letters. Please only use characters A-Z, a-"
-"z, 0-9, and common special characters ({characters})."
+"The password contains unsupported letters. Please only use characters A-Z, "
+"a-z, 0-9, and common special characters ({characters})."
 msgstr ""
-"Паролата съдържа неподдържани символи. Моля използвайте само A-Z, a-z, 0-9 и "
-"стандартните специални символи ({characters})."
+"Паролата съдържа неподдържани символи. Моля използвайте само A-Z, a-z, 0-9 и"
+" стандартните специални символи ({characters})."
 
 #: pretalx/orga/forms/event.py:434
 msgid "Use STARTTLS"
@@ -3739,8 +3729,8 @@ msgid ""
 "This text will be shown at the top of every review, as long as reviews can "
 "be created or edited."
 msgstr ""
-"Текстът се извежда най-отгоре на всяка рецензия, стига да може да се подават "
-"или редактират рецензии."
+"Текстът се извежда най-отгоре на всяка рецензия, стига да може да се подават"
+" или редактират рецензии."
 
 #: pretalx/orga/forms/event.py:581
 msgid "Show the widget even if the schedule is not public"
@@ -3780,7 +3770,8 @@ msgstr "Формат за изнасяне"
 #: pretalx/orga/forms/export.py:19
 msgid "A CSV export can be opened directly in Excel and similar applications."
 msgstr ""
-"Изнесеното в CSV може да се отвори директно в Excel и други подобни програми."
+"Изнесеното в CSV може да се отвори директно в Excel и други подобни "
+"програми."
 
 #: pretalx/orga/forms/export.py:22
 msgid "CSV export"
@@ -3797,11 +3788,11 @@ msgstr "Разделител на данни"
 #: pretalx/orga/forms/export.py:31
 #, fuzzy
 #| msgid ""
-#| "How do you want to separate data within a single cell (for example, "
-#| "multiple speakers in one session)?"
+#| "How do you want to separate data within a single cell (for example, multiple"
+#| " speakers in one session)?"
 msgid ""
-"How do you want to separate data within a single cell (for example, multiple "
-"speakers in one session/multiple sessions for one speaker)?"
+"How do you want to separate data within a single cell (for example, multiple"
+" speakers in one session/multiple sessions for one speaker)?"
 msgstr ""
 "Как искате да разделяте отделните данни в една клетка (напр. множество "
 "лектори към една сесия)?"
@@ -3845,8 +3836,8 @@ msgstr "Незабавно изпращане"
 
 #: pretalx/orga/forms/mails.py:206
 msgid ""
-"If you check this, the emails will be sent immediately, instead of being put "
-"in the outbox."
+"If you check this, the emails will be sent immediately, instead of being put"
+" in the outbox."
 msgstr ""
 "Ако изберете това, писмата се пращат незабавно, вместо да се поставят в "
 "изходящата поща."
@@ -3888,12 +3879,13 @@ msgid ""
 "Select speakers that should receive the email regardless of the other "
 "filters."
 msgstr ""
-"Изберете лектори, които следва да получат писма независимо от другите филтри."
+"Изберете лектори, които следва да получат писма независимо от другите "
+"филтри."
 
 #: pretalx/orga/forms/mails.py:317
 msgid ""
-"If you provide only one language, that language will be used for all emails. "
-"If you provide multiple languages, the best fit for each speaker will be "
+"If you provide only one language, that language will be used for all emails."
+" If you provide multiple languages, the best fit for each speaker will be "
 "used."
 msgstr ""
 "Ако укажете само един език, той ще се ползва за всички писма. Ако укажете "
@@ -4040,7 +4032,8 @@ msgid "Average review score, if there have been reviews yet"
 msgstr "Осреднена оценка, ако вече има подадени рецензии"
 
 #: pretalx/orga/forms/schedule.py:162
-msgid "Resources provided by the speaker, either as links or as uploaded files"
+msgid ""
+"Resources provided by the speaker, either as links or as uploaded files"
 msgstr "Ресурси, подадени от лектора, били те връзки или качени файлове"
 
 #: pretalx/orga/forms/speaker.py:17
@@ -4099,8 +4092,8 @@ msgid ""
 "right away. You can always apply pending changes for some or all proposals "
 "in one go once you’re ready to make your decisions public."
 msgstr ""
-"Ако отбележите промените на състоянието като изчакващи, те няма да са видими "
-"веднага за лекторите. Винаги може да приложите изчакващи промени към някое "
+"Ако отбележите промените на състоянието като изчакващи, те няма да са видими"
+" веднага за лекторите. Винаги може да приложите изчакващи промени към някое "
 "или всички предложения, след като сте сигурни, че искате публично да "
 "известите за решението."
 
@@ -4163,7 +4156,8 @@ msgid ""
 "href=\"http://www.heropatterns.com/\">heropatterns.com</a>, CC BY 4.0."
 msgstr ""
 "Изберете как да изглежда заглавната част на началната страница. Шарката е "
-"от: <a href=\"http://www.heropatterns.com/\">heropatterns.com</a>, CC BY 4.0."
+"от: <a href=\"http://www.heropatterns.com/\">heropatterns.com</a>, CC BY "
+"4.0."
 
 #: pretalx/orga/phrases.py:13
 msgid "Schedule display format"
@@ -4207,8 +4201,8 @@ msgid ""
 "from the internet."
 msgstr ""
 "Pretalx работи в режим за разработчици. Ако има и най-малка вероятност тази "
-"страница да е достъпна от публичния Интернет <strong>НЕЗАБАВНО Я СПРЕТЕ</"
-"strong> и задайте стойността на променливата DEBUG да е False."
+"страница да е достъпна от публичния Интернет <strong>НЕЗАБАВНО Я "
+"СПРЕТЕ</strong> и задайте стойността на променливата DEBUG да е False."
 
 #: pretalx/orga/templates/orga/admin/admin.html:33
 msgid "Your pretalx version is:"
@@ -4513,17 +4507,18 @@ msgstr "Натиснете тук, за да преминете към адми�
 
 #: pretalx/orga/templates/orga/base.html:147
 msgid ""
-"Starting with version 1.1.0, pretalx automatically checks for updates in the "
-"background. During this check, anonymous data is transmitted to servers "
+"Starting with version 1.1.0, pretalx automatically checks for updates in the"
+" background. During this check, anonymous data is transmitted to servers "
 "operated by the pretalx developers. Click on this message to find out more, "
 "disable this feature or enter your email address to get notified via email "
 "if a new update arrives. This message will disappear once you clicked it."
 msgstr ""
-"От версия 1.1.0 pretalx автоматично проверява за обновления във фонов режим. "
-"По време на проверката се подават анонимни данни до сървърите на "
+"От версия 1.1.0 pretalx автоматично проверява за обновления във фонов режим."
+" По време на проверката се подават анонимни данни до сървърите на "
 "разработчиците на pretalx. Натиснете това съобщение, за да научите повече, "
 "да изключите проверката или да въведете e-mail адрес, където да получавате "
-"известията за нови версии. Това съобщение ще изчезне, след като го натиснете."
+"известията за нови версии. Това съобщение ще изчезне, след като го "
+"натиснете."
 
 #: pretalx/orga/templates/orga/base.html:171
 msgid "Organiser account"
@@ -4598,7 +4593,8 @@ msgstr "Изнасяне на рецензии"
 msgid "Speaker Information"
 msgstr "Информация за лектора"
 
-#: pretalx/orga/templates/orga/base.html:385 pretalx/orga/views/schedule.py:535
+#: pretalx/orga/templates/orga/base.html:385
+#: pretalx/orga/views/schedule.py:535
 msgid "Rooms"
 msgstr "Зали"
 
@@ -4618,8 +4614,10 @@ msgstr "Изпратени писма"
 msgid "Templates"
 msgstr "Шаблони"
 
-#. Translators: Ideally a term that is as broad as possible, to refer to anybody who
-#. presents/owns a session. This word is also used to differentiate accepted „speakers“
+#. Translators: Ideally a term that is as broad as possible, to refer to
+#. anybody who
+#. presents/owns a session. This word is also used to differentiate accepted
+#. „speakers“
 #. from not-yet-accepted „submitters“. Plural, used in headings.
 #: pretalx/orga/templates/orga/base.html:445
 #: pretalx/orga/templates/orga/submission/speakers.html:10
@@ -4662,8 +4660,8 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question/_form.html:36
 msgid ""
-"If you mark a Yes/No field as required, it means that the user has to select "
-"Yes and No is not accepted. If you want to allow both options, do not make "
+"If you mark a Yes/No field as required, it means that the user has to select"
+" Yes and No is not accepted. If you want to allow both options, do not make "
 "this field required."
 msgstr ""
 "Ако зададете поле с отговори „Да/Не“ като задължително, потребителите ще "
@@ -4728,11 +4726,13 @@ msgstr "До момента никой не е попълвал полето."
 #: pretalx/orga/templates/orga/cfp/question/detail.html:56
 #, python-format
 msgid ""
-"This field has <strong>%(count)s</strong> responses, <strong>%(missing)s</"
-"strong> <a href=\"%(base_search_url)sunanswered=1\">are still missing</a>."
+"This field has <strong>%(count)s</strong> responses, "
+"<strong>%(missing)s</strong> <a href=\"%(base_search_url)sunanswered=1\">are"
+" still missing</a>."
 msgstr ""
-"Има <strong>%(count)s</strong> отговора с това поле, в <strong>%(missing)s</"
-"strong> <a href='%(base_search_url)sunanswered=1'>то още липсва</a>."
+"Има <strong>%(count)s</strong> отговора с това поле, в "
+"<strong>%(missing)s</strong> <a href='%(base_search_url)sunanswered=1'>то "
+"още липсва</a>."
 
 #: pretalx/orga/templates/orga/cfp/question/detail.html:60
 #, python-format
@@ -4821,8 +4821,8 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/cfp/question/update.html:8
 msgid ""
-"This custom field already has responses from some speakers – please consider "
-"carefully if modifying it would render those answers obsolete. You could "
+"This custom field already has responses from some speakers – please consider"
+" carefully if modifying it would render those answers obsolete. You could "
 "also deactivate this field and create a new one instead."
 msgstr ""
 "Някои лектори вече са отговорили на това поле – проверете дали промяната "
@@ -4874,8 +4874,8 @@ msgid ""
 "be seen with a matching access code."
 msgstr ""
 "Кодовете за достъп позволяват да се допускат предложения дори след края на "
-"поканата за предложения. Може да ги ползвате още за скрити потоци или видове "
-"сесии, които се виждат само със съответния код за достъп."
+"поканата за предложения. Може да ги ползвате още за скрити потоци или видове"
+" сесии, които се виждат само със съответния код за достъп."
 
 #: pretalx/orga/templates/orga/cfp/submitteraccesscode/list.html:45
 msgid "Code"
@@ -5018,8 +5018,8 @@ msgid ""
 "schedule."
 msgstr ""
 "Потоците позволяват да разпределите сесии по категории. Може да ползвате "
-"настройките на поканата за предложения дали лекторите могат да избират поток "
-"на сесиите си. Цветовете за потоците помагат на посетителите да се "
+"настройките на поканата за предложения дали лекторите могат да избират поток"
+" на сесиите си. Цветовете за потоците помагат на посетителите да се "
 "ориентират в програмата."
 
 #: pretalx/orga/templates/orga/cfp/track/list.html:45
@@ -5035,8 +5035,8 @@ msgid ""
 "and you’re ready to go!"
 msgstr ""
 "Събитието е създадено и може да продължите! Проверете настройките на "
-"събитието, настройте поканата за предложения с видовете сесии и допълнителни "
-"полета и сте готови!"
+"събитието, настройте поканата за предложения с видовете сесии и допълнителни"
+" полета и сте готови!"
 
 #: pretalx/orga/templates/orga/event/dashboard.html:63
 msgid "Your event is currently"
@@ -5090,8 +5090,8 @@ msgstr ""
 
 #: pretalx/orga/templates/orga/event/live.html:22
 msgid ""
-"Your event is currently only visible to you and your team. By going live, it "
-"will be publicly visible."
+"Your event is currently only visible to you and your team. By going live, it"
+" will be publicly visible."
 msgstr ""
 "Събитието в момента се вижда само от екипа. Ако го публикувате, ще се вижда "
 "от всички."
@@ -5226,7 +5226,8 @@ msgstr "Брой рецензии"
 #: pretalx/orga/templates/orga/speaker/list.html:23
 #, python-format
 msgid "List filtered by responses to custom field “%(question)s”."
-msgstr "Списък, филтриран по отговорите на допълнителното поле „%(question)s“."
+msgstr ""
+"Списък, филтриран по отговорите на допълнителното поле „%(question)s“."
 
 #: pretalx/orga/templates/orga/includes/submission_filter_form.html:31
 #: pretalx/orga/templates/orga/mails/compose_session_mail_form.html:21
@@ -5253,8 +5254,8 @@ msgstr "Поканени сте да се присъедините към еки
 #: pretalx/orga/templates/orga/invitation.html:20
 #, python-format
 msgid ""
-"If you already have an account – either as a speaker or an organiser – at <a "
-"href=\"%(domain)s\">%(domain)s</a>, please log in now. Otherwise, create a "
+"If you already have an account – either as a speaker or an organiser – at <a"
+" href=\"%(domain)s\">%(domain)s</a>, please log in now. Otherwise, create a "
 "new account to join the team!"
 msgstr ""
 "Ако вече имате акаунт – като лектор или организатор – на <a "
@@ -5266,15 +5267,15 @@ msgstr ""
 msgid ""
 "To accept the invitation with the account you’re currently active, please "
 "use the button below. If you want to accept the invitation with a different "
-"account, you can <a href=\"/orga/logout/?next=%(link)s\">log out</a> and log "
-"in with the other account. </p><p> If you believe to have received this "
+"account, you can <a href=\"/orga/logout/?next=%(link)s\">log out</a> and log"
+" in with the other account. </p><p> If you believe to have received this "
 "invitation by mistake, please contact the organiser directly."
 msgstr ""
 "За да приемете поканата с текущия акаунт, натиснете бутона по-долу. Ако "
-"искате де приемете поканата с друг акаунт, може <a href=\"/orga/logout/?"
-"next=%(link)s\">да излезете</a> и да се впишете с другия акаунт. </p><p>Ако "
-"считате, че сте получили поканата по погрешка, свържете се направо с "
-"организатора."
+"искате де приемете поканата с друг акаунт, може <a "
+"href=\"/orga/logout/?next=%(link)s\">да излезете</a> и да се впишете с "
+"другия акаунт. </p><p>Ако считате, че сте получили поканата по погрешка, "
+"свържете се направо с организатора."
 
 #: pretalx/orga/templates/orga/invitation.html:45
 msgid "Join the team!"
@@ -5312,14 +5313,14 @@ msgstr ""
 #: pretalx/orga/templates/orga/mails/_mail_editor.html:85
 #, python-brace-format
 msgid ""
-"Emails where placeholders are invalid will <b>not</b> be created! For "
-"example, if you are using {session_room}, but some proposals don’t have a "
-"room yet, only emails for proposals with a scheduled room will be created."
+"Emails where placeholders are invalid will <strong>not</strong> be created! "
+"For example, if you are using {session_room}, but some proposals don’t have "
+"a room yet, only emails for proposals with a scheduled room will be created."
 msgstr ""
-"Писмата с неправилни заместители <b>НЯМА</b> да се създадат! Напр., ако "
-"ползвате заместител като „{session_room}“ за зала за сесията, но не всички "
-"предложения имат зададена зала, ще се съставят писма само за сесиите със "
-"зала."
+"Писмата с неправилни заместители <strong>НЯМА</strong> да се създадат! "
+"Напр., ако ползвате заместител като „{session_room}“ за зала за сесията, но "
+"не всички предложения имат зададена зала, ще се съставят писма само за "
+"сесиите със зала."
 
 #: pretalx/orga/templates/orga/mails/_mail_editor.html:118
 msgid "Preview email"
@@ -5367,12 +5368,12 @@ msgstr "Изпращане на писмо до рецензентите или 
 
 #: pretalx/orga/templates/orga/mails/compose_reviewer_mail_form.html:11
 msgid ""
-"Emails to reviewers and other team members are always sent out directly, and "
-"are not placed in the outbox first. They also do not show up in the list of "
-"sent mails."
+"Emails to reviewers and other team members are always sent out directly, and"
+" are not placed in the outbox first. They also do not show up in the list of"
+" sent mails."
 msgstr ""
-"Писмата до рецензентите и другите членове на екипа се пращат винаги директно "
-"и не се поставят първо в изходящата поща. Съответно те не се показват и в "
+"Писмата до рецензентите и другите членове на екипа се пращат винаги директно"
+" и не се поставят първо в изходящата поща. Съответно те не се показват и в "
 "списъка с пратени писма."
 
 #: pretalx/orga/templates/orga/mails/compose_session_mail_form.html:16
@@ -5394,9 +5395,8 @@ msgstr "Нов персонализиран шаблон"
 #, fuzzy
 #| msgid ""
 #| "You can edit the default templates and your custom templates for emails "
-#| "here. If you want to send emails to some or all of your speakers, head "
-#| "over to the “Send Emails” tab. Mails queued for sending are in the "
-#| "“Outbox” tab."
+#| "here. If you want to send emails to some or all of your speakers, head over "
+#| "to the “Send Emails” tab. Mails queued for sending are in the “Outbox” tab."
 msgid ""
 "You can edit the default templates and your custom templates for emails "
 "here. If you want to send emails to some or all of your speakers, head over "
@@ -5700,25 +5700,26 @@ msgstr "Ограничаване до определени потоци"
 #: pretalx/orga/templates/orga/review/assignment.html:108
 #, python-format
 msgid ""
-"Reviewers will be able to see and review <b>only their assigned</b> "
-"proposals. You can change this in your <a href=\"%(href)s\">review settings</"
-"a>."
+"Reviewers will be able to see and review <strong>only their "
+"assigned</strong> proposals. You can change this in your <a "
+"href=\"%(href)s\">review settings</a>."
 msgstr ""
-"Рецензентите може да виждат и рецензират <b>само разпределените им</b> "
-"предложения. Може да промените това в <a href='%(href)s'>настройките за "
-"рецензиране</a>."
+"Рецензентите може да виждат и рецензират <strong>само разпределените "
+"им</strong> предложения. Може да промените това в <a "
+"href='%(href)s'>настройките за рецензиране</a>."
 
 #: pretalx/orga/templates/orga/review/assignment.html:113
 #, python-format
 msgid ""
-"Reviewers will be able to see and review <b>all proposals</b>, but their "
-"assigned reviews will appear highlighted, and they will be directed to them "
-"first. You can change this in your <a href=\"%(href)s\">review settings</a>."
+"Reviewers will be able to see and review <strong>all proposals</strong>, but"
+" their assigned reviews will appear highlighted, and they will be directed "
+"to them first. You can change this in your <a href=\"%(href)s\">review "
+"settings</a>."
 msgstr ""
-"Рецензентите може да виждат и рецензират <b>всички предложения</b>, но "
-"предложенията, които са им разпределени, се изобразяват осветени, а "
-"рецензентите биват подканени да прегледат първо тях. Може да промените това "
-"в <a href='%(href)s'>настройките за рецензиране</a>."
+"Рецензентите може да виждат и рецензират <strong>всички "
+"предложения</strong>, но предложенията, които са им разпределени, се "
+"изобразяват осветени, а рецензентите биват подканени да прегледат първо тях."
+" Може да промените това в <a href='%(href)s'>настройките за рецензиране</a>."
 
 #: pretalx/orga/templates/orga/review/assignment.html:122
 msgid ""
@@ -5971,8 +5972,8 @@ msgid ""
 "please ask your administrator to install the plugin."
 msgstr ""
 "Pretalx предоставя много видове изнасяне на данни. Ако никой от тях не е "
-"това, което Ви трябва, може да използвате приставка за специално изнасяне на "
-"данни. Помолете администратора да инсталира приставката."
+"това, което Ви трябва, може да използвате приставка за специално изнасяне на"
+" данни. Помолете администратора да инсталира приставката."
 
 #: pretalx/orga/templates/orga/schedule/export.html:52
 #: pretalx/orga/templates/orga/speaker/export.html:60
@@ -5980,7 +5981,8 @@ msgid ""
 "If you are looking for exports of proposals, sessions or schedule data, "
 "please head here:"
 msgstr ""
-"Ако търсите изнасяне на предложенията, сесиите или програмата, проверете тук:"
+"Ако търсите изнасяне на предложенията, сесиите или програмата, проверете "
+"тук:"
 
 #: pretalx/orga/templates/orga/schedule/export.html:56
 msgid "Speaker exports"
@@ -5988,8 +5990,8 @@ msgstr "Изнасяне за лекторите"
 
 #: pretalx/orga/templates/orga/schedule/export.html:59
 msgid ""
-"You haven’t released a schedule yet – many of these data exporters only work "
-"on a released schedule."
+"You haven’t released a schedule yet – many of these data exporters only work"
+" on a released schedule."
 msgstr ""
 "Все още не е публикувана програма – много от видовете изнасяния се нуждаят "
 "от такава."
@@ -6058,8 +6060,8 @@ msgstr "Повторно изпращане на известията до ле�
 
 #: pretalx/orga/templates/orga/schedule/index.html:70
 msgid ""
-"You can start planning your schedule once you have configured some rooms for "
-"sessions to take place in."
+"You can start planning your schedule once you have configured some rooms for"
+" sessions to take place in."
 msgstr ""
 "Може да започнете с графика на сесиите, след като добавите зали за "
 "провеждането им."
@@ -6102,8 +6104,8 @@ msgid ""
 "can be generated and placed in the outbox, to tell speakers about their "
 "session slots."
 msgid_plural ""
-"When releasing this new schedule, <strong>%(count)s notifications emails </"
-"strong> can be generated and placed in the outbox, to tell speakers about "
+"When releasing this new schedule, <strong>%(count)s notifications emails "
+"</strong> can be generated and placed in the outbox, to tell speakers about "
 "their session slots."
 msgstr[0] ""
 "При публикуването на тази програма ще се генерира <strong>%(count)s едно "
@@ -6120,11 +6122,11 @@ msgstr "Нова версия на програмата"
 
 #: pretalx/orga/templates/orga/schedule/release.html:53
 msgid ""
-"This schedule release would result in <strong>no notification emails</"
-"strong> for speakers."
+"This schedule release would result in <strong>no notification "
+"emails</strong> for speakers."
 msgstr ""
-"Публикуваната програма <strong>няма до доведе до нови известия по е-поща</"
-"strong> до лекторите."
+"Публикуваната програма <strong>няма до доведе до нови известия по "
+"е-поща</strong> до лекторите."
 
 #: pretalx/orga/templates/orga/schedule/release.html:60
 #, python-format
@@ -6148,7 +6150,8 @@ msgstr "Всички непотвърдени сесии."
 #: pretalx/orga/templates/orga/schedule/release.html:69
 #, python-format
 msgid "One session has <strong>not yet been scheduled</strong>."
-msgid_plural "%(count)s sessions have <strong>not yet been scheduled</strong>."
+msgid_plural ""
+"%(count)s sessions have <strong>not yet been scheduled</strong>."
 msgstr[0] "Една сесия все още <strong>не е поместена в програмата</strong>."
 msgstr[1] ""
 "%(count)s сесии все още <strong>не са поместени в програмата</strong>."
@@ -6172,8 +6175,8 @@ msgstr "Публичен журнал с промени"
 
 #: pretalx/orga/templates/orga/schedule/release.html:110
 msgid ""
-"This is how the new schedule version will appear in the public changelog and "
-"in the RSS feed."
+"This is how the new schedule version will appear in the public changelog and"
+" in the RSS feed."
 msgstr ""
 "Новата версия на програмата ще изглежда по този начин в публичния журнал с "
 "промени и емисията по RSS."
@@ -6223,9 +6226,9 @@ msgid ""
 "example link to your home page, your registration page, or your livestream "
 "here."
 msgstr ""
-"Тези връзки ще се извеждат отгоре на всички страници свързани с програмата — "
-"самата тя, страниците на лекторите, страниците на сесиите и т.н. Напр. може "
-"да дадете връзка към началната страница, потока на живо, страницата за "
+"Тези връзки ще се извеждат отгоре на всички страници свързани с програмата —"
+" самата тя, страниците на лекторите, страниците на сесиите и т.н. Напр. може"
+" да дадете връзка към началната страница, потока на живо, страницата за "
 "регистрация и др."
 
 #: pretalx/orga/templates/orga/settings/form.html:108
@@ -6256,9 +6259,9 @@ msgid ""
 "this server will be used (ask your administrator for details).<br> We "
 "recommend that you add email settings here explicitly."
 msgstr ""
-"Ако не настроите е-пощата тук, ще се ползват глобалните настройки на сървъра "
-"(питайте за тях системния си администратор).<br> Препоръчваме ви изрично да "
-"зададете настройки тук."
+"Ако не настроите е-пощата тук, ще се ползват глобалните настройки на сървъра"
+" (питайте за тях системния си администратор).<br> Препоръчваме ви изрично да"
+" зададете настройки тук."
 
 #: pretalx/orga/templates/orga/settings/mail.html:46
 msgid "Save and test custom SMTP connection"
@@ -6308,14 +6311,14 @@ msgstr "Добавяне на нова категория оценки"
 #: pretalx/orga/templates/orga/settings/review.html:187
 msgid ""
 "Review phases allow you to structure your review process. By default, there "
-"are two review phases: The review itself, and the selection process once the "
-"review phase is over. But you could for example add another review and "
+"are two review phases: The review itself, and the selection process once the"
+" review phase is over. But you could for example add another review and "
 "selection phase after that, if you require additional review rounds."
 msgstr ""
 "Преглед на фазите — това позволява да структурирате процеса на рецензиите. "
-"Стандартно има две фази: подаване на рецензии и последващ изборна фаза, след "
-"като подаването на рецензиите приключи. Напр. може да добавите още един рунд "
-"от рецензии и подбор, ако това е необходимо."
+"Стандартно има две фази: подаване на рецензии и последващ изборна фаза, след"
+" като подаването на рецензиите приключи. Напр. може да добавите още един "
+"рунд от рецензии и подбор, ако това е необходимо."
 
 #: pretalx/orga/templates/orga/settings/review.html:203
 #: pretalx/orga/templates/orga/settings/review.html:251
@@ -6356,8 +6359,8 @@ msgstr ""
 #: pretalx/orga/templates/orga/settings/widget.html:44
 msgid ""
 "The pretalx schedule widget is a way to embed your schedule into your event "
-"website. This way, your attendees can see your schedule without leaving your "
-"website, and you can style the schedule to fit right in with your website."
+"website. This way, your attendees can see your schedule without leaving your"
+" website, and you can style the schedule to fit right in with your website."
 msgstr ""
 "Графичният обект с програмата от pretalx е начин да вградите програмата в "
 "произволна уеб страница. По този начин посетителите може да виждат "
@@ -6380,16 +6383,16 @@ msgid ""
 "To embed the widget into your website, copy the following code to the "
 "<code>&lt;head></code> section of your website:"
 msgstr ""
-"За да вградите графичния обект в уеб сайт, добавете следния код в заглавната "
-"част <code>&lt;head></code> на уеб страницата:"
+"За да вградите графичния обект в уеб сайт, добавете следния код в заглавната"
+" част <code>&lt;head></code> на уеб страницата:"
 
 #: pretalx/orga/templates/orga/settings/widget.html:72
 msgid ""
 "Then, copy the following code to the place of your website where you want "
 "the widget to show up:"
 msgstr ""
-"След това поставете следния код на мястото, в което да се изобрази графичния "
-"обект:"
+"След това поставете следния код на мястото, в което да се изобрази графичния"
+" обект:"
 
 #: pretalx/orga/templates/orga/settings/widget.html:90
 #, python-format
@@ -6425,8 +6428,8 @@ msgid ""
 "You can either create exactly the export you need in the “Custom” tab, or "
 "use these pre-built exports:"
 msgstr ""
-"Или персонализирайте изнасянето към каквото ви трябва, или използвайте някой "
-"от тези шаблони:"
+"Или персонализирайте изнасянето към каквото ви трябва, или използвайте някой"
+" от тези шаблони:"
 
 #: pretalx/orga/templates/orga/speaker/form.html:53
 #: pretalx/orga/templates/orga/submission/list.html:41
@@ -6454,8 +6457,8 @@ msgstr[1] "Бележи с информация за лектора"
 
 #: pretalx/orga/templates/orga/speaker/information_list.html:35
 msgid ""
-"Add important messages (e.g. “Please bring an HDMI adapter if required.”) or "
-"files (e.g. a conference styleguide). <br> They are shown to the selected "
+"Add important messages (e.g. “Please bring an HDMI adapter if required.”) or"
+" files (e.g. a conference styleguide). <br> They are shown to the selected "
 "speakers above the list of their submitted sessions."
 msgstr ""
 "Добавяне на важни съобщения (напр. „Ако ви трябва адаптер за HDMI, си "
@@ -6650,7 +6653,8 @@ msgstr "Представена"
 #: pretalx/orga/templates/orga/submission/list.html:92
 msgid ""
 "Show this session on the list of featured sessions, once it was accepted"
-msgstr "Показване на сесията в списъка с представените сесии след приемането ѝ"
+msgstr ""
+"Показване на сесията в списъка с представените сесии след приемането ѝ"
 
 #: pretalx/orga/templates/orga/submission/list.html:109
 #: pretalx/orga/templates/orga/submission/list.html:113
@@ -6794,9 +6798,9 @@ msgstr "API достъп"
 #: pretalx/orga/templates/orga/user.html:36
 #, fuzzy, python-format
 #| msgid ""
-#| "This token can be used to access the <a %(apiurl)s>pretalx API</a>. You "
-#| "can generate a new token, which will invalidate the old one. To find out "
-#| "more, please have a look at the <a %(docurl)s> API documentation</a>."
+#| "This token can be used to access the <a %(apiurl)s>pretalx API</a>. You can "
+#| "generate a new token, which will invalidate the old one. To find out more, "
+#| "please have a look at the <a %(docurl)s> API documentation</a>."
 msgid ""
 "API tokens can be used to access the <a %(apiurl)s>pretalx API</a>. To find "
 "out more, please have a look at the <a %(docurl)s> API documentation</a>."
@@ -6894,8 +6898,8 @@ msgstr ""
 
 #: pretalx/orga/views/cfp.py:298
 msgid ""
-"You cannot delete a custom field that has any responses. We have deactivated "
-"the field instead."
+"You cannot delete a custom field that has any responses. We have deactivated"
+" the field instead."
 msgstr ""
 "Не може да изтриете допълнително поле, което е получило вече отговори. "
 "Затова то се изключва."
@@ -6910,7 +6914,8 @@ msgstr "Нов вид сесия"
 
 #: pretalx/orga/views/cfp.py:412
 msgid "This Session Type is in use in a proposal and cannot be deleted."
-msgstr "Има предложение за този вид сесия и затова видът не може да се изтрие."
+msgstr ""
+"Има предложение за този вид сесия и затова видът не може да се изтрие."
 
 #: pretalx/orga/views/cfp.py:433
 msgid "The Session Type has been made default."
@@ -7029,11 +7034,11 @@ msgstr "Все още събитието е без текст за началн�
 
 #: pretalx/orga/views/event.py:175
 msgid ""
-"You want submitters to choose the tracks for their proposals, but you do not "
-"offer tracks for selection. Add at least one track!"
+"You want submitters to choose the tracks for their proposals, but you do not"
+" offer tracks for selection. Add at least one track!"
 msgstr ""
-"Искате от предлагащите да изберат потоци за предложенията, но в момента няма "
-"никакви потоци. Добавете поне един!"
+"Искате от предлагащите да изберат потоци за предложенията, но в момента няма"
+" никакви потоци. Добавете поне един!"
 
 #: pretalx/orga/views/event.py:183
 msgid "You have configured only one session type so far."
@@ -7094,8 +7099,8 @@ msgstr ""
 
 #: pretalx/orga/views/event.py:474
 msgid ""
-"We’ve been able to contact the SMTP server you configured. Remember to check "
-"the “use custom SMTP server” checkbox, otherwise your SMTP server will not "
+"We’ve been able to contact the SMTP server you configured. Remember to check"
+" the “use custom SMTP server” checkbox, otherwise your SMTP server will not "
 "be used."
 msgstr ""
 "Има връзка към настроения сървър за SMTP. Изберете отметката за ползване на "
@@ -7128,8 +7133,8 @@ msgstr "Наистина ли искате събитието да се случ
 
 #: pretalx/orga/views/event.py:681
 msgid ""
-"ALL related data, such as proposals, and speaker profiles, and uploads, will "
-"also be deleted and cannot be restored."
+"ALL related data, such as proposals, and speaker profiles, and uploads, will"
+" also be deleted and cannot be restored."
 msgstr ""
 "Всички свързани данни, като предложения, профили на лектори, качени файлове "
 "ще бъдат окончателно изтрити без възможност за възстановяване."
@@ -7143,7 +7148,8 @@ msgstr "Наистина ли искате да пратите {count} е-пис
 msgid ""
 "This mail either does not exist or cannot be sent because it was sent "
 "already."
-msgstr "Е-писмото или не съществува, или вече е пратено и не може да се прати."
+msgstr ""
+"Е-писмото или не съществува, или вече е пратено и не може да се прати."
 
 #: pretalx/orga/views/mails.py:158
 msgid "This mail had been sent already."
@@ -7279,8 +7285,8 @@ msgstr "Членът е изваден от екипа."
 
 #: pretalx/orga/views/organiser.py:283 pretalx/orga/views/speaker.py:217
 msgid ""
-"Do your really want to reset this user’s password? They won’t be able to log "
-"in until they set a new password."
+"Do your really want to reset this user’s password? They won’t be able to log"
+" in until they set a new password."
 msgstr ""
 "Наистина ли искате да занулите паролата на този потребител? Потребителят ще "
 "трябва да зададе нова парола, за да се впише."
@@ -7290,8 +7296,8 @@ msgid ""
 "ALL related data for ALL events, such as proposals, and speaker profiles, "
 "and uploads, will also be deleted and cannot be restored."
 msgstr ""
-"ВСИЧКИ данни свързани с ВСИЧКИ събития, като предложения, профили на лектори "
-"и качени файлове ще бъдат окончателно изтрити без възможност за "
+"ВСИЧКИ данни свързани с ВСИЧКИ събития, като предложения, профили на лектори"
+" и качени файлове ще бъдат окончателно изтрити без възможност за "
 "възстановяване."
 
 #: pretalx/orga/views/organiser.py:351
@@ -7303,8 +7309,8 @@ msgstr "Организаторът {name} беше изтрит."
 #: pretalx/orga/views/person.py:70
 #, fuzzy
 #| msgid ""
-#| "Your API token has been regenerated. The previous token will not be "
-#| "usable any longer."
+#| "Your API token has been regenerated. The previous token will not be usable "
+#| "any longer."
 msgid ""
 "This is your new API token. Please make sure to save it, as it will not be "
 "shown again:"
@@ -7360,8 +7366,8 @@ msgid ""
 "They will be placed in the outbox and not sent out directly."
 msgstr ""
 "Наистина ли искате да съставите наново %(count)s е-писма за приемане и "
-"отхвърляне на предложения? Те няма да се пратят директно, а ще се поместят в "
-"изходящата поща."
+"отхвърляне на предложения? Те няма да се пратят директно, а ще се поместят в"
+" изходящата поща."
 
 #: pretalx/orga/views/review.py:740
 #, python-brace-format
@@ -7403,14 +7409,15 @@ msgid ""
 "A new export will be generated on the next scheduled opportunity – please "
 "contact your administrator for details."
 msgstr ""
-"При следваща възможност ще се генерира ново изнасяне. За подробности питайте "
-"системния администратор."
+"При следваща възможност ще се генерира ново изнасяне. За подробности питайте"
+" системния администратор."
 
 #: pretalx/orga/views/schedule.py:142
 #, python-brace-format
 msgid ""
 "Could not find the current export, please try to regenerate it. ({error})"
-msgstr "Текущото изнесено липсва. Пробвайте да го генерирате наново. ({error})"
+msgstr ""
+"Текущото изнесено липсва. Пробвайте да го генерирате наново. ({error})"
 
 #: pretalx/orga/views/schedule.py:177
 msgid "You have to provide a new, unique schedule version!"
@@ -7448,7 +7455,8 @@ msgid "Room"
 msgstr "Зала"
 
 #: pretalx/orga/views/schedule.py:544
-msgid "There is or was a session scheduled in this room. It cannot be deleted."
+msgid ""
+"There is or was a session scheduled in this room. It cannot be deleted."
 msgstr "Сега или преди има сесия в тази стая. Тя не може да бъде изтрита."
 
 #: pretalx/orga/views/speaker.py:286
@@ -7609,12 +7617,13 @@ msgstr "Парола (повторно)"
 #: pretalx/person/forms/user.py:50
 msgid "Please fill all fields of either the login or the registration form."
 msgstr ""
-"Въведете всички полета или за формуляра за вписване, или този за регистрация."
+"Въведете всички полета или за формуляра за вписване, или този за "
+"регистрация."
 
 #: pretalx/person/forms/user.py:68
 msgid ""
-"No user account matches the entered credentials. Are you sure that you typed "
-"your password correctly?"
+"No user account matches the entered credentials. Are you sure that you typed"
+" your password correctly?"
 msgstr ""
 "Никой потребител не отговаря на въведеното. Сигурни ли сте, че паролата е "
 "правилна?"
@@ -7703,11 +7712,11 @@ msgstr "Получаване на профилна снимка чрез gravata
 
 #: pretalx/person/models/user.py:179
 msgid ""
-"If you have registered with an email address that has a gravatar account, we "
-"can retrieve your profile picture from there."
+"If you have registered with an email address that has a gravatar account, we"
+" can retrieve your profile picture from there."
 msgstr ""
-"Ако сте се регистрирали с адрес на е-поща, който е регистриран и в gravatar, "
-"можем да извлечем профилната снимка оттам."
+"Ако сте се регистрирали с адрес на е-поща, който е регистриран и в gravatar,"
+" можем да извлечем профилната снимка оттам."
 
 #: pretalx/person/models/user.py:195
 msgid "Unnamed user"
@@ -7751,8 +7760,7 @@ msgid ""
 "\n"
 "Your pretalx account password was just changed.\n"
 "\n"
-"If you did not change your password, please contact the site administration "
-"immediately.\n"
+"If you did not change your password, please contact the site administration immediately.\n"
 "\n"
 "All the best,\n"
 "the pretalx team"
@@ -7761,8 +7769,7 @@ msgstr ""
 "\n"
 "Паролата за регистрацията Ви в pretalx току що бе сменена.\n"
 "\n"
-"Ако не сте заявявали промяна, незабавно се свържете с администраторите на "
-"сайта.\n"
+"Ако не сте заявявали промяна, незабавно се свържете с администраторите на сайта.\n"
 "\n"
 "Всичко най-хубаво,\n"
 "Екипът на pretalx"
@@ -7790,8 +7797,8 @@ msgid ""
 "click a block twice to remove it."
 msgstr ""
 "Натиснете и провлачете, за да отбележите наличността си по време на "
-"конференцията чрез зелените блокчета. Ще се опитаме презентацията ви да е по "
-"това време. С двойно натискане изтривате наличността си за даден период."
+"конференцията чрез зелените блокчета. Ще се опитаме презентацията ви да е по"
+" това време. С двойно натискане изтривате наличността си за даден период."
 
 #: pretalx/schedule/forms.py:77
 #, python-brace-format
@@ -7803,8 +7810,8 @@ msgid ""
 "If you set room availabilities, speakers will only be able to set their "
 "availability for when any room is available."
 msgstr ""
-"Ако зададете наличие на стаите, лекторите ще може да задават своето наличие, "
-"само ако има поне една стая."
+"Ако зададете наличие на стаите, лекторите ще може да задават своето наличие,"
+" само ако има поне една стая."
 
 #: pretalx/schedule/forms.py:115
 msgid "The submitted availability does not comply with the required format."
@@ -7916,7 +7923,8 @@ msgctxt "Schedule/program of the conference"
 msgid "Schedule"
 msgstr "Програма"
 
-#. Translators: Ideally a neutral term that will work for workshop, talks and special
+#. Translators: Ideally a neutral term that will work for workshop, talks and
+#. special
 #. formats. Plural, used in headings.
 #: pretalx/schedule/phrases.py:13
 msgid "Sessions"
@@ -7928,8 +7936,8 @@ msgstr "Публикувахме първата програма!"
 
 #: pretalx/schedule/phrases.py:22
 msgid ""
-"You are currently viewing the editable schedule version, which is unreleased "
-"and may change at any time."
+"You are currently viewing the editable schedule version, which is unreleased"
+" and may change at any time."
 msgstr ""
 "В момента виждате редактируема, непубликувана версия, която може да се "
 "промени по всяко време."
@@ -7955,7 +7963,8 @@ msgstr "Все още няма отзиви за тази сесия."
 
 #: pretalx/schedule/templates/schedule/speaker_notification.txt:2
 #, python-format
-msgid "- Your session “%(title)s” will take place at %(start)s in %(location)s"
+msgid ""
+"- Your session “%(title)s” will take place at %(start)s in %(location)s"
 msgstr "— сесията ви „%(title)s“ ще се започне в %(start)s в %(location)s"
 
 #: pretalx/schedule/templates/schedule/speaker_notification.txt:3
@@ -8067,8 +8076,8 @@ msgid ""
 "can add more speakers after finishing the proposal process."
 msgstr ""
 "Ако се явявате с допълнителен лектор, въведете адреса на е-пощата му тук. "
-"Системата ще го покани да си създаде регистрация. Ако имате още допълнителни "
-"лектори, може да ги въведете след завършването на процеса по предложения."
+"Системата ще го покани да си създаде регистрация. Ако имате още допълнителни"
+" лектори, може да ги въведете след завършването на процеса по предложения."
 
 #: pretalx/submission/forms/submission.py:40
 #: pretalx/submission/models/submission.py:280
@@ -8104,11 +8113,11 @@ msgstr "Вече има етикет с това име!"
 
 #: pretalx/submission/models/access_code.py:31
 msgid ""
-"You can restrict the access code to a single track, or leave it open for all "
-"tracks."
+"You can restrict the access code to a single track, or leave it open for all"
+" tracks."
 msgstr ""
-"Може да ограничите кода за достъп до един поток или да го оставите така — за "
-"всички."
+"Може да ограничите кода за достъп до един поток или да го оставите така — за"
+" всички."
 
 #: pretalx/submission/models/access_code.py:40
 msgid "Session Type"
@@ -8264,8 +8273,8 @@ msgid ""
 "You can limit this field to some session types. Leave empty to apply to all "
 "session types."
 msgstr ""
-"Може да ограничите полето само за някои видове сесии. Оставете празно, за да "
-"е за всички."
+"Може да ограничите полето само за някои видове сесии. Оставете празно, за да"
+" е за всички."
 
 #: pretalx/submission/models/question.py:181
 msgid "Session Types"
@@ -8357,11 +8366,11 @@ msgstr "Показване на отговорите на рецензентит
 
 #: pretalx/submission/models/question.py:269
 msgid ""
-"Should responses to this field be shown to reviewers? This is helpful if you "
-"want to collect personal information, but use anonymous reviews."
+"Should responses to this field be shown to reviewers? This is helpful if you"
+" want to collect personal information, but use anonymous reviews."
 msgstr ""
-"Дали отговорите на това поле да се показват на рецензентите. Това е полезно, "
-"ако събирате лични данни, но рецензиите да са анонимни."
+"Дали отговорите на това поле да се показват на рецензентите. Това е полезно,"
+" ако събирате лични данни, но рецензиите да са анонимни."
 
 #: pretalx/submission/models/review.py:34
 msgid "Leave empty to use this category for all tracks."
@@ -8474,8 +8483,10 @@ msgctxt "proposal status"
 msgid "submitted"
 msgstr "подадено"
 
-#. Translators: This string is used to mark anything that has been formally deleted,
-#. and can only be shown to organisers with extended access. It's usually placed
+#. Translators: This string is used to mark anything that has been formally
+#. deleted,
+#. and can only be shown to organisers with extended access. It's usually
+#. placed
 #. after the title/object like [this].
 #: pretalx/submission/models/submission.py:80 pretalx/submission/phrases.py:11
 msgid "deleted"
@@ -8632,8 +8643,8 @@ msgstr "неприето"
 #~ msgstr "Пращане на поканата отново"
 
 #~ msgid ""
-#~ "Your API token has been regenerated. The previous token will not be "
-#~ "usable any longer."
+#~ "Your API token has been regenerated. The previous token will not be usable "
+#~ "any longer."
 #~ msgstr ""
 #~ "Вашият API токен беше регенериран. Предишният вече няма да може да се "
 #~ "използва."
@@ -8651,30 +8662,25 @@ msgstr "неприето"
 #~ msgstr "Информация за лектора"
 
 #, fuzzy
-#~| msgid "The API token was reset."
 #~ msgid "The API token has been revoked."
 #~ msgstr "API токенът е променен."
 
 #, fuzzy
-#~| msgid "Send emails"
 #~ msgid "Read details"
 #~ msgstr "Изпращане на писма"
 
 #, fuzzy
-#~| msgid "date"
 #~ msgid "Update"
 #~ msgstr "дата"
 
 #, fuzzy
-#~| msgid "Additional information"
 #~ msgid "Additional actions"
 #~ msgstr "Допълнителна информация"
 
 #~ msgid "Use for authentication when accessing the API."
 #~ msgstr "Използвайте за удостоверяване при достъп до API."
 
-#~ msgid ""
-#~ "Generate a new token. The current token will not be usable any longer."
+#~ msgid "Generate a new token. The current token will not be usable any longer."
 #~ msgstr ""
 #~ "Генерирайте нов токен. Текущият токен вече няма да може да се използва."
 
@@ -8688,8 +8694,8 @@ msgstr "неприето"
 #~ "This access code has already been used. You can’t delete it, but you can "
 #~ "disable it by setting an expiration date."
 #~ msgstr ""
-#~ "Този код за достъп вече е бил използван. Не може да го изтриете, но може "
-#~ "да го деактивирате, като зададете дата на изтичане."
+#~ "Този код за достъп вече е бил използван. Не може да го изтриете, но може да "
+#~ "го деактивирате, като зададете дата на изтичане."
 
 #~ msgid "Delete template"
 #~ msgstr "Изтриване на шаблон"
@@ -8711,8 +8717,7 @@ msgstr "неприето"
 #~ msgstr "Не може да изтриете единствения вид сесии. Първо създайте още един!"
 
 #~ msgid ""
-#~ "You cannot delete the default session type. Make another type default "
-#~ "first!"
+#~ "You cannot delete the default session type. Make another type default first!"
 #~ msgstr ""
 #~ "Не може да изтриете стандартния вид за сесиите. Първо направете друг вид "
 #~ "стандартен!"
