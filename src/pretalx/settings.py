@@ -739,14 +739,7 @@ if DEBUG:
 if "--no-pretalx-information" in sys.argv:
     sys.argv.remove("--no-pretalx-information")
 else:
-    log_initial(
-        debug=DEBUG,
-        config_files=CONFIG_FILES,
-        db_name=db_name,
-        db_backend=db_backend,
-        log_dir=LOG_DIR,
-        plugins=PLUGINS,
-    )
+    log_initial()
 
 EVENTYAY_TICKET_BASE_PATH = config.get(
     "urls", "eventyay-ticket", fallback="http://localhost/tickets/"

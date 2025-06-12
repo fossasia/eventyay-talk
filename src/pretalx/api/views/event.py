@@ -49,7 +49,7 @@ class EventViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
         return EventSerializer
 
     def get_queryset(self):
-        return get_events_for_user(self.request.user).order_by("-date_from"
+        return get_events_for_user(self.request.user).order_by("-date_from")
 
 
 class ConfigureVideoSettingsView(APIView):
