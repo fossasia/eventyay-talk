@@ -11,6 +11,7 @@ from pretalx.person.rules import is_administrator, is_reviewer
 from pretalx.submission.rules import (
     can_be_reviewed,
     can_view_all_reviews,
+    can_view_reviewer_names,
     has_reviewer_access,
     is_review_author,
     orga_can_change_submissions,
@@ -153,7 +154,11 @@ class Review(PretalxModel):
     class Meta:
         unique_together = (("user", "submission"),)
         rules_permissions = {
-            "list": orga_can_change_submissions | (is_reviewer & can_view_all_reviews),
+            "list": orga_can_change_submissions | is_reviewer,
+            "list_all": orga_can_change_submissions
+            | (is_reviewer & can_view_all_reviews),
+            "list_reviewers": orga_can_change_submissions
+            | (is_reviewer & can_view_reviewer_names),
             # Needs to be coupled with a check on has_reviewer_access & can_be_reviewed
             # on the proposal – but we don’t have that at create time yet.
             "create": is_reviewer & reviews_are_open,

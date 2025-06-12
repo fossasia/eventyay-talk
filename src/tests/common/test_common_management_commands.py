@@ -60,7 +60,7 @@ def test_common_uncallable(event):
     with pytest.raises(OSError):
         call_command("init")
     with pytest.raises(Exception):  # noqa
-        call_command("shell_scoped")
+        call_command("shell", "--unsafe-disable-scopes")
 
 
 @pytest.mark.django_db

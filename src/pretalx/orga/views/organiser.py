@@ -203,7 +203,7 @@ class TeamUninvite(InviteMixin, ActionConfirmMixin, DetailView):
 
 
 class TeamResend(InviteMixin, ActionConfirmMixin, DetailView):
-    action_title = _("Resend invitation")
+    action_title = _("Resend invite")
     action_text = _("Are you sure you want to resend the invitation to this user?")
     action_confirm_color = "success"
     action_confirm_icon = "envelope"
@@ -300,7 +300,7 @@ class TeamResetPassword(TeamMemberMixin, ActionConfirmMixin, TemplateView):
 class OrganiserDetail(PermissionRequired, CreateOrUpdateView):
     template_name = "orga/organiser/detail.html"
     model = Organiser
-    permission_required = "orga.change_organiser_settings"
+    permission_required = "event.update_organiser"
     form_class = OrganiserForm
 
     def get_object(self, queryset=None):
@@ -385,7 +385,7 @@ def get_speaker_access_events_for_user(*, user, organiser):
                 for event in team_events:
                     if event.pk in events or event.pk in no_access_events:
                         continue
-                    if user.has_perm("orga.view_speakers", event):
+                    if user.has_perm("person.orga_list_speakerprofile", event):
                         events.add(event.pk)
                     else:
                         no_access_events.add(event.pk)
@@ -397,7 +397,7 @@ class OrganiserSpeakerList(
     PermissionRequired, Sortable, Filterable, PaginationMixin, ListView
 ):
     template_name = "orga/organiser/speaker_list.html"
-    permission_required = "orga.view_organiser_speakers"
+    permission_required = "event.view_organiser"
     context_object_name = "speakers"
     default_filters = ("email__icontains", "name__icontains")
     sortable_fields = ("email", "name", "accepted_submission_count", "submission_count")

@@ -11,17 +11,12 @@ here = Path(__file__).parent
 doc_dir = here / "../../../doc"
 base_dir = here / "../../pretalx"
 
-with (doc_dir / "developer/plugins/general.rst").open() as doc_file:
-    plugin_docs = doc_file.read()
-
-
-with (doc_dir / "administrator/commands.rst").open() as doc_file:
-    command_docs = doc_file.read()
+plugin_docs = (doc_dir / "developer/plugins/general.rst").read_text()
+command_docs = (doc_dir / "administrator/commands.rst").read_text()
 
 
 def test_documentation_includes_config_options():
-    with (doc_dir / "administrator/configure.rst").open() as doc_file:
-        doc_text = doc_file.read()
+    doc_text = (doc_dir / "administrator/configure.rst").read_text()
     config = configparser.RawConfigParser()
     config = config.read(here / "../../pretalx.example.cfg")
 

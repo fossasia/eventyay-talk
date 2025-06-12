@@ -10,7 +10,7 @@ from pretalx.agenda.rules import is_agenda_visible
 from pretalx.common.models.mixins import OrderedModel, PretalxModel
 from pretalx.common.models.settings import GlobalSettings
 from pretalx.common.urls import EventUrls
-from pretalx.person.rules import can_change_event_settings
+from pretalx.event.rules import can_change_event_settings
 from pretalx.submission.rules import orga_can_change_submissions
 
 

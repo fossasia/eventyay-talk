@@ -2,6 +2,7 @@ import copy
 import datetime as dt
 import json
 import zoneinfo
+from urllib.parse import urlparse
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -26,7 +27,12 @@ from pretalx.common.text.daterange import daterange
 from pretalx.common.text.path import path_with_hash
 from pretalx.common.text.phrases import phrases
 from pretalx.common.urls import EventUrls
-from urllib.parse import urlparse
+from pretalx.event.rules import (
+    can_change_event_settings,
+    can_create_events,
+    has_any_permission,
+    is_event_visible,
+)
 
 # Slugs need to start and end with an alphanumeric character,
 # but may contain dashes and dots in between.
@@ -399,6 +405,12 @@ class Event(PretalxModel):
 
     class Meta:
         ordering = ("date_from",)
+        rules_permissions = {
+            "orga_access": has_any_permission,
+            "view": is_event_visible | has_any_permission,
+            "update": can_change_event_settings,
+            "create": can_create_events,
+        }
 
     def __str__(self) -> str:
         return str(self.name)

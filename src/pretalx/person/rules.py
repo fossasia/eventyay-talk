@@ -1,4 +1,7 @@
+import datetime as dt
+
 import rules
+from django.utils.timezone import now
 
 
 @rules.predicate
@@ -11,6 +14,9 @@ def is_reviewer(user, obj):
     event = getattr(obj, "event", None)
     if not user or user.is_anonymous or not obj or not event:
         return False
+    # We’re not using get_permissions_for_event here, as this will always return
+    # the full permission set for administrators, but we want to explicitly check
+    # for team membership
     return user in event.reviewers
 
 
@@ -20,15 +26,9 @@ def is_only_reviewer(user, obj):
 
 
 @rules.predicate
-def can_change_event_settings(user, obj):
-    event = getattr(obj, "event", None)
-    if not event or not obj or not user or user.is_anonymous:
-        return False
-    if user.is_administrator:
-        return True
-    return event.teams.filter(
-        members__in=[user], can_change_event_settings=True
-    ).exists()
+def can_mark_speakers_arrived(user, obj):
+    event = obj.event
+    return (event.date_from - dt.timedelta(days=3)) <= now().date() <= event.date_to
 
 
 @rules.predicate

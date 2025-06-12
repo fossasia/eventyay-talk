@@ -28,7 +28,7 @@ class ExportForm(forms.Form):
         required=False,
         label=_("Data delimiter"),
         help_text=_(
-            "How do you want to separate data within a single cell (for example, multiple speakers in one session)?"
+            "How do you want to separate data within a single cell (for example, multiple speakers in one session/multiple sessions for one speaker)?"
         ),
         choices=(
             ("newline", _("Newline")),
@@ -42,6 +42,8 @@ class ExportForm(forms.Form):
         super().__init__(*args, **kwargs)
         self._build_model_fields()
         self._build_question_fields()
+        if "data_delimiter" in self.fields:
+            self.fields["data_delimiter"].widget.attrs["class"] = "hide-optional"
 
     @property
     def questions(self):

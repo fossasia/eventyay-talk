@@ -2,13 +2,13 @@ import logging
 import os
 import sys
 from contextlib import suppress
+from importlib.metadata import entry_points
 from pathlib import Path
 from urllib.parse import urlparse, urljoin
 
 from django.contrib.messages import constants as messages
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
-from pkg_resources import iter_entry_points
 
 from pretalx import __version__
 from pretalx.common.settings.config import build_config
@@ -103,9 +103,9 @@ FALLBACK_APPS = [
 INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + LOCAL_APPS + FALLBACK_APPS
 
 PLUGINS = []
-for entry_point in iter_entry_points(group="pretalx.plugin", name=None):
-    PLUGINS.append(entry_point.module_name)
-    INSTALLED_APPS.append(entry_point.module_name)
+for entry_point in entry_points(group="pretalx.plugin"):
+    PLUGINS.append(entry_point.module)
+    INSTALLED_APPS.append(entry_point.module)
 
 CORE_MODULES = LOCAL_APPS + [
     module for module in config.get("site", "core_modules").split(",") if module
@@ -178,8 +178,7 @@ if config.has_option("site", "secret"):
 else:
     SECRET_FILE = DATA_DIR / ".secret"
     if SECRET_FILE.exists():
-        with SECRET_FILE.open() as f:
-            SECRET_KEY = f.read().strip()
+        SECRET_KEY = SECRET_FILE.read_text()
     else:
         chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)"
         SECRET_KEY = get_random_string(50, chars)
@@ -190,12 +189,12 @@ else:
             f.write(SECRET_KEY)
 
 ## TASK RUNNER SETTINGS
-HAS_CELERY = bool(config.get("celery", "broker", fallback=None))
-if HAS_CELERY:
+if bool(config.get("celery", "broker")):
     CELERY_BROKER_URL = config.get("celery", "broker")
     CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
     CELERY_RESULT_BACKEND = config.get("celery", "backend")
     CELERY_RESULT_BACKEND_THREAD_SAFE = True
+    CELERY_TASK_ALWAYS_EAGER = False
 else:
     CELERY_TASK_ALWAYS_EAGER = True
 
@@ -306,16 +305,7 @@ else:
 
 ## CACHE SETTINGS
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
-REAL_CACHE_USED = False
 SESSION_ENGINE = None
-
-HAS_MEMCACHED = bool(os.getenv("PRETALX_MEMCACHE", ""))
-if HAS_MEMCACHED:
-    REAL_CACHE_USED = True
-    CACHES["default"] = {
-        "BACKEND": "django.core.cache.backends.memcached.PyLibMCCache",
-        "LOCATION": os.getenv("PRETALX_MEMCACHE"),
-    }
 
 HAS_REDIS = config.get("redis", "location") != "False"
 if HAS_REDIS:
@@ -328,16 +318,12 @@ if HAS_REDIS:
         "LOCATION": config.get("redis", "location"),
         "TIMEOUT": 3600 * 24 * 30,
     }
-    if not HAS_MEMCACHED:
-        CACHES["default"] = CACHES["redis"]
-        REAL_CACHE_USED = True
-
     if config.getboolean("redis", "session"):
         SESSION_ENGINE = "django.contrib.sessions.backends.cache"
         SESSION_CACHE_ALIAS = "redis_sessions"
 
 if not SESSION_ENGINE:
-    if REAL_CACHE_USED:
+    if HAS_REDIS:
         SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
     else:
         SESSION_ENGINE = "django.contrib.sessions.backends.db"
@@ -385,25 +371,25 @@ LANGUAGES_INFORMATION = {
         "name": _("Arabic"),
         "natural_name": "اَلْعَرَبِيَّةُ",
         "official": False,
-        "percentage": 72,
+        "percentage": 65,
     },
     "cs": {
         "name": _("Czech"),
         "natural_name": "Čeština",
         "official": False,
-        "percentage": 91,
+        "percentage": 87,
     },
     "el": {
         "name": _("Greek"),
         "natural_name": "Ελληνικά",
         "official": False,
-        "percentage": 84,
+        "percentage": 80,
     },
     "es": {
         "name": _("Spanish"),
         "natural_name": "Español",
         "official": False,
-        "percentage": 74,
+        "percentage": 71,
     },
     "fa-ir": {
         "name": _("Persian"),
@@ -417,46 +403,46 @@ LANGUAGES_INFORMATION = {
         "name": _("French"),
         "natural_name": "Français",
         "official": False,
-        "percentage": 91,
+        "percentage": 87,
         "path": "fr_FR",
     },
     "it": {
         "name": _("Italian"),
         "natural_name": "Italiano",
         "official": False,
-        "percentage": 100,
+        "percentage": 96,
     },
     "ja-jp": {
         "name": _("Japanese"),
         "natural_name": "日本語",
         "official": False,
-        "percentage": 64,
+        "percentage": 62,
         "public_code": "jp",
     },
     "nl": {
         "name": _("Dutch"),
         "natural_name": "Nederlands",
         "official": False,
-        "percentage": 92,
+        "percentage": 89,
     },
     "pl": {
         "name": _("Polish"),
         "natural_name": "Polski",
         "official": False,
-        "percentage": 100,
+        "percentage": 95,
     },
     "pt-br": {
         "name": _("Brasilian Portuguese"),
         "natural_name": "Português brasileiro",
         "official": False,
-        "percentage": 100,
+        "percentage": 99,
         "public_code": "pt",
     },
     "pt-pt": {
         "name": _("Portuguese"),
         "natural_name": "Português",
         "official": False,
-        "percentage": 83,
+        "percentage": 80,
         "public_code": "pt",
     },
     "ru": {
@@ -481,20 +467,20 @@ LANGUAGES_INFORMATION = {
         "name": _("Vietnamese"),
         "natural_name": "Tiếng Việt",
         "official": False,
-        "percentage": 72,
+        "percentage": 75,
     },
     "zh-hant": {
         "name": _("Traditional Chinese (Taiwan)"),
         "natural_name": "漢語",
         "official": False,
-        "percentage": 62,
+        "percentage": 59,
         "public_code": "zh",
     },
     "zh-hans": {
         "name": _("Simplified Chinese"),
         "natural_name": "简体中文",
         "official": False,
-        "percentage": 80,
+        "percentage": 76,
         "public_code": "zh",
     },
 }
@@ -536,7 +522,7 @@ AUTH_USER_MODEL = "person.User"
 DEFAULT_AUTHENTICATION_BACKENDS = [
     "rules.permissions.ObjectPermissionBackend",
     "django.contrib.auth.backends.ModelBackend",
-    "pretalx.common.auth.AuthenticationTokenBackend",
+    "pretalx.common.auth.UserTokenAuthentication",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 EXTRA_AUTH_BACKENDS = [
@@ -550,7 +536,10 @@ AUTHENTICATION_BACKENDS = DEFAULT_AUTHENTICATION_BACKENDS + EXTRA_AUTH_BACKENDS
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "OPTIONS": {
+            "user_attributes": {"name", "email"},
+        },
     },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
@@ -602,7 +591,6 @@ TEMPLATES = [
         "OPTIONS": {
             "context_processors": [
                 "django.contrib.auth.context_processors.auth",
-                "django.template.context_processors.debug",
                 "django.template.context_processors.i18n",
                 "django.template.context_processors.media",
                 "django.template.context_processors.request",
@@ -699,8 +687,8 @@ REST_FRAMEWORK = {
         "django_filters.rest_framework.DjangoFilterBackend",
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-    "PAGE_SIZE": 25,
+    "DEFAULT_PAGINATION_CLASS": "pretalx.api.pagination.PageNumberPagination",
+    "PAGE_SIZE": 50,
     "SEARCH_PARAM": "q",
     "ORDERING_PARAM": "o",
     "DATETIME_FORMAT": "iso-8601",
@@ -714,7 +702,7 @@ SPECTACULAR_SETTINGS = {
     "SCHEMA_COERCE_PATH_PK_SUFFIX": True,
     "COMPONENT_SPLIT_PATCH": False,
     "COMPONENT_SPLIT_REQUEST": True,
-    "SORT_OPERATIONS": False,
+    "SORT_OPERATIONS": True,
     "AUTHENTICATION_WHITELIST": [],
     "ENABLE_DJANGO_DEPLOY_CHECK": False,
     "VERSION": None,
@@ -732,6 +720,7 @@ SPECTACULAR_SETTINGS = {
 REST_FLEX_FIELDS = {
     "WILDCARD_VALUES": [],
     "RECURSIVE_EXPANSION_PERMITTED": False,
+    "MAXIMUM_EXPANSION_DEPTH": 3,
 }
 
 WSGI_APPLICATION = "pretalx.wsgi.application"
@@ -746,9 +735,6 @@ if DEBUG:
             .decode()
             .strip()
         )
-
-with suppress(ImportError):
-    from .override_settings import *  # noqa
 
 if "--no-pretalx-information" in sys.argv:
     sys.argv.remove("--no-pretalx-information")
@@ -802,3 +788,14 @@ LOGOUT_REDIRECT_URL = "/"
 
 CORS_ORIGIN_WHITELIST = [EVENTYAY_TICKET_BASE_PATH]
 EVENTYAY_SSO_PROVIDER = "eventyay"
+
+SILENCED_SYSTEM_CHECKS = [
+    "security.W003",  # CsrfMiddleware modified but in use
+    "security.W004",  # HSTS belongs to the proxy, not Django
+    "security.W008",  # We have our own HTTPS check
+    "security.W010",  # We have our own HTTPS check
+    "security.W018",  # We have our own DEBUG check (to link our docs)
+]
+
+with suppress(ImportError):
+    from .override_settings import *  # noqa

@@ -14,7 +14,13 @@ from i18nfield.fields import I18nCharField
 from pretalx.common.models.mixins import PretalxModel
 from pretalx.common.urls import EventUrls, build_absolute_uri
 from pretalx.event.models.event import FULL_SLUG_REGEX
-from pretalx.event.rules import can_change_teams
+from pretalx.event.rules import (
+    can_change_any_organiser_settings,
+    can_change_organiser_settings,
+    can_change_teams,
+    has_any_organiser_permissions,
+    is_any_organiser,
+)
 from pretalx.person.models import User
 
 
@@ -105,6 +111,14 @@ class Organiser(PretalxModel):
     )
 
     objects = models.Manager()
+
+    class Meta:
+        rules_permissions = {
+            "view": has_any_organiser_permissions,
+            "update": can_change_organiser_settings,
+            "list": can_change_any_organiser_settings,
+            "view_any": is_any_organiser,
+        }
 
     def __str__(self) -> str:
         """Used in generated forms."""
@@ -210,7 +224,7 @@ class Team(PretalxModel):
         verbose_name=_("Always hide speaker names"),
         help_text=_(
             "Normally, anonymisation is configured in the event review settings. "
-            "This setting will <b>override the event settings</b> and always hide speaker names for this team."
+            "This setting will <strong>override the event settings</strong> and always hide speaker names for this team."
         ),
         default=False,
     )

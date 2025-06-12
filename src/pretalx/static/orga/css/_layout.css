@@ -1436,6 +1436,10 @@ h2 .user-name-display img {
   align-items: center;
 }
 
+[data-dialog-target] {
+  cursor: pointer;
+}
+
 .comments-list {
   margin-bottom: 2rem;
 }

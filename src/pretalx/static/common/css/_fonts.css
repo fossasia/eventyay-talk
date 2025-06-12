@@ -100,9 +100,13 @@ h4,
 legend,
 button,
 [role="button"],
-.button {
-  font-family: var(--font-family-title);
-  font-weight: 600;
+.button a.btn,
+::file-selector-button,
+summary.btn {
+  &:not(.font-text) {
+    font-family: var(--font-family-title);
+    font-weight: 600;
+  }
 }
 code,
 pre {

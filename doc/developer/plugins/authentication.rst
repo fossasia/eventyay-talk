@@ -72,11 +72,3 @@ remove any associated data for the `user` parameter.::
    @receiver(delete_user)
    def delete_user_data(sender, user, **kwargs):
       MyModel.objects.filter(user=user).delete()
-
-
-Login HTML signal
------------------
-
-.. automodule:: pretalx.common.signals
-   :no-index:
-   :members: auth_html

@@ -39,7 +39,7 @@ def test_orga_can_see_mail_templates(client, orga_user_token, mail_template):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] > 0
@@ -55,7 +55,7 @@ def test_orga_can_see_single_mail_template(client, orga_user_token, mail_templat
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["subject"]["en"] == mail_template.subject
@@ -71,7 +71,7 @@ def test_orga_can_see_single_mail_template_locale_override(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert isinstance(content["subject"], str)
@@ -89,8 +89,8 @@ def test_no_legacy_mail_template_api(client, orga_user_token, mail_template):
             "Pretalx-Version": LEGACY,
         },
     )
-    assert response.status_code == 400, response.content.decode()
-    assert response.content.decode() == '{"detail": "API version not supported."}'
+    assert response.status_code == 400, response.text
+    assert "API version not supported." in response.text
 
 
 @pytest.mark.django_db
@@ -109,7 +109,7 @@ def test_orga_can_create_mail_templates(client, orga_user_write_token, event):
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
     with scope(event=event):
         mail_template = event.mail_templates.get(subject="newtesttemplate")
         assert not mail_template.role

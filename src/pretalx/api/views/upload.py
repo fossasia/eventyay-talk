@@ -54,7 +54,7 @@ class UploadView(APIView):
             201: FileResponseSerializer,
             400: {"type": "object", "description": "Validation error"},
         },
-        tags=["api"],
+        tags=["file-uploads"],
     )
     def post(self, request):
         if "file" not in request.data:
@@ -83,6 +83,6 @@ class UploadView(APIView):
             content_type=content_type,
             session_key=f"api-upload-{request.auth.token}",
         )
-        cf.file.save(file_obj.name, file_obj)
-        cf.save()
+        cf.file.save(file_obj.name, file_obj, save=False)
+        cf.save(update_fields=("file",))
         return Response({"id": f"file:{cf.pk}"}, status=201)

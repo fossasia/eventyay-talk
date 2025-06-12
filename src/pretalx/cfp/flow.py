@@ -106,7 +106,7 @@ class BaseCfPStep:
     def is_applicable(self, request):
         return True
 
-    def is_completed(self, request, warn=False):
+    def is_completed(self, request):
         raise NotImplementedError()
 
     @cached_property
@@ -571,7 +571,10 @@ class ProfileStep(GenericFlowStep, FormFlowStep):
         )
 
     def get_csp_update(self, request):
-        return {"img-src": "https://www.gravatar.com"}
+        return {
+            "img-src": "https://www.gravatar.com",
+            "connect-src": "https://www.gravatar.com",
+        }
 
 
 DEFAULT_STEPS = (

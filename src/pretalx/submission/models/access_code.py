@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 
 from pretalx.common.models.mixins import GenerateCode, PretalxModel
 from pretalx.common.urls import EventUrls
-from pretalx.person.rules import can_change_event_settings
+from pretalx.event.rules import can_change_event_settings
 
 
 class SubmitterAccessCode(GenerateCode, PretalxModel):

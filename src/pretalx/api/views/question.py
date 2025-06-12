@@ -175,8 +175,14 @@ class AnswerFilterSet(filters.FilterSet):
         ],
     ),
     create=extend_schema(summary="Create Answer"),
-    update=extend_schema(summary="Update Answer"),
-    partial_update=extend_schema(summary="Update Answer (Partial Update)"),
+    update=extend_schema(
+        summary="Update Answer",
+        description="Please note that you cannot change an answer’s related objects (question, submission, review, person).",
+    ),
+    partial_update=extend_schema(
+        summary="Update Answer (Partial Update)",
+        description="Please note that you cannot change an answer’s related objects (question, submission, review, person).",
+    ),
     destroy=extend_schema(summary="Delete Answer"),
 )
 class AnswerViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
@@ -195,9 +201,13 @@ class AnswerViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
-        queryset = Answer.objects.filter(
-            question__in=questions_for_user(self.event, self.request.user)
-        ).select_related("question", "question__event")
+        queryset = (
+            Answer.objects.filter(
+                question__in=questions_for_user(self.event, self.request.user)
+            )
+            .select_related("question", "question__event")
+            .order_by("pk")
+        )
         question_fields = self.check_expanded_fields(
             "question.tracks", "question.submissions"
         )

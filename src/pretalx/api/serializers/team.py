@@ -2,13 +2,13 @@ from rest_flex_fields.serializers import FlexFieldsSerializerMixin
 from rest_framework import exceptions, serializers
 
 from pretalx.api.mixins import PretalxSerializer
-from pretalx.api.versions import CURRENT_VERSION, register_serializer
+from pretalx.api.versions import CURRENT_VERSIONS, register_serializer
 from pretalx.event.models import Event, Team, TeamInvite
 from pretalx.person.models import User
 from pretalx.submission.models import Track
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class TeamMemberSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     class Meta:
         model = User
@@ -19,7 +19,7 @@ class TeamMemberSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
         )
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class TeamInviteSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     class Meta:
         model = TeamInvite
@@ -30,7 +30,7 @@ class TeamInviteSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
         )
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class TeamSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     limit_events = serializers.SlugRelatedField(
         slug_field="slug", many=True, queryset=Event.objects.none(), required=False

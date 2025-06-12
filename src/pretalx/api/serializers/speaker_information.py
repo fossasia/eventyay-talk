@@ -4,12 +4,12 @@ from rest_flex_fields.serializers import FlexFieldsSerializerMixin
 
 from pretalx.api.mixins import PretalxSerializer
 from pretalx.api.serializers.fields import UploadedFileField
-from pretalx.api.versions import CURRENT_VERSION, register_serializer
+from pretalx.api.versions import CURRENT_VERSIONS, register_serializer
 from pretalx.person.models import SpeakerInformation
 from pretalx.submission.models import SubmissionType, Track
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class SpeakerInformationSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     resource = UploadedFileField(required=False)
 
@@ -49,7 +49,8 @@ class SpeakerInformationSerializer(FlexFieldsSerializerMixin, PretalxSerializer)
         resource = validated_data.pop("resource", None)
         instance = super().create(validated_data)
         if resource:
-            instance.resource.save(Path(resource.name).name, resource)
+            instance.resource.save(Path(resource.name).name, resource, save=False)
+            instance.save(update_fields=("resource",))
         return instance
 
     def update(self, instance, validated_data):

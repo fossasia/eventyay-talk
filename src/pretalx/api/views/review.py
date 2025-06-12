@@ -56,6 +56,10 @@ class ReviewViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     search_fields = ("submission__title", "user__name")
     filterset_class = ReviewFilter
     endpoint = "reviews"
+    # We only permit access to this endpoint if the user can see all reviews,
+    # as otherwise we would potentially have to filter for reviews to submissions
+    # that the user has reviewed already.
+    permission_map = {"list": "submission.list_all_review"}
 
     def get_unversioned_serializer_class(self):
         if self.request.method not in SAFE_METHODS:
@@ -85,6 +89,7 @@ class ReviewViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
                 "submission",
             )
             .prefetch_related("scores", "scores__category")
+            .order_by("pk")
         )
         if fields := self.check_expanded_fields(
             "submission.track", "submission.submission_type", "user"

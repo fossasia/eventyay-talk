@@ -5,7 +5,9 @@ from django.db.models import Q
 from django.utils.crypto import get_random_string
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy as _p
 
+from pretalx.api.versions import CURRENT_VERSIONS
 from pretalx.common.models.mixins import PretalxModel
 
 
@@ -18,12 +20,12 @@ def generate_api_token():
 READ_PERMISSIONS = ("list", "retrieve")
 WRITE_PERMISSIONS = READ_PERMISSIONS + ("create", "update", "destroy", "actions")
 PERMISSION_CHOICES = (
-    ("list", _("Read list")),
-    ("retrieve", _("Read details")),
-    ("create", _("Create")),
-    ("update", _("Update")),
-    ("destroy", _("Delete")),
-    ("actions", _("Additional actions")),
+    ("list", _p("Read list", "API endpoint permissions")),
+    ("retrieve", _p("Read details", "API endpoint permissions")),
+    ("create", _p("Create", "API endpoint permissions")),
+    ("update", _p("Update", "API endpoint permissions")),
+    ("destroy", _p("Delete", "API endpoint permissions")),
+    ("actions", _p("Additional actions", "API endpoint permissions")),
 )
 ENDPOINTS = (
     "teams",
@@ -68,7 +70,6 @@ class UserApiToken(PretalxModel):
         verbose_name=_("Events"),
     )
     expires = models.DateTimeField(null=True, blank=True, verbose_name=_("Expiry date"))
-    # TODO document field structure
     endpoints = models.JSONField(default=dict, blank=True)
     version = models.CharField(
         max_length=12, null=True, blank=True, verbose_name=_("API version")
@@ -88,6 +89,10 @@ class UserApiToken(PretalxModel):
     @property
     def is_active(self):
         return not self.expires or self.expires > now()
+
+    @property
+    def is_latest_version(self):
+        return not self.version or self.version in CURRENT_VERSIONS
 
     def serialize(self):
         return {

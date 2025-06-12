@@ -22,6 +22,7 @@ from pretalx.common.forms.mixins import (
 )
 from pretalx.common.forms.renderers import InlineFormRenderer
 from pretalx.common.forms.widgets import (
+    ClearableBasenameFileInput,
     EnhancedSelect,
     EnhancedSelectMultiple,
     MarkdownWidget,
@@ -134,7 +135,6 @@ class SpeakerProfileForm(
             self.event.cfp.require_avatar
             and not data.get("avatar")
             and not data.get("get_gravatar")
-            and not (self.user and self.user.has_avatar)
         ):
             self.add_error(
                 "avatar",
@@ -174,6 +174,7 @@ class SpeakerProfileForm(
         public_fields = ["name", "biography", "avatar"]
         widgets = {
             "biography": MarkdownWidget,
+            "avatar": ClearableBasenameFileInput,
             "avatar_source": MarkdownWidget,
             "avatar_license": MarkdownWidget,
         }

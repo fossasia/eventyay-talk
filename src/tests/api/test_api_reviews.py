@@ -58,7 +58,7 @@ def test_orga_can_see_reviews(client, orga_user_token, event, review):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert len(content["results"]) == 1
@@ -99,7 +99,7 @@ def test_orga_can_see_expanded_reviews(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert len(content["results"]) == 1
@@ -124,7 +124,7 @@ def test_orga_cannot_see_reviews_of_deleted_submission(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert len(content["results"]) == 0
@@ -142,7 +142,7 @@ def test_reviewer_can_see_reviews(
         follow=True,
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200, content
     assert len(content["results"]) == 2, content
@@ -174,7 +174,7 @@ def test_reviewer_can_see_reviews_by_track(
         follow=True,
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert len(content["results"]) == 1, content
@@ -192,7 +192,7 @@ def test_reviewer_can_filter_by_submission(
         follow=True,
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert len(content["results"]) == 1, content
@@ -211,7 +211,7 @@ def test_reviewer_cannot_see_review_to_own_talk(
         follow=True,
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert len(content["results"]) == 1, content
@@ -235,7 +235,7 @@ def test_reviewer_can_create_review(
         content_type="application/json",
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
 
     with scope(event=event):
         new_review = Review.objects.get(submission=submission, user=review_user)
@@ -268,7 +268,7 @@ def test_reviewer_can_create_review_with_scores(
         content_type="application/json",
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
 
     with scope(event=event):
         new_review = Review.objects.get(submission=submission, user=review_user)
@@ -295,8 +295,8 @@ def test_reviewer_cannot_create_duplicate_review(
         content_type="application/json",
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 400, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 400, response.text
+    content = json.loads(response.text)
     assert "You have already reviewed this submission." in content["submission"]
 
 
@@ -316,8 +316,8 @@ def test_reviewer_cannot_create_review_for_own_submission(
         content_type="application/json",
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 400, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 400, response.text
+    content = json.loads(response.text)
     assert content["submission"]
 
 
@@ -338,7 +338,7 @@ def test_reviewer_cannot_create_review_if_phase_disallows(
         content_type="application/json",
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 403, response.content.decode()
+    assert response.status_code == 403, response.text
 
 
 @pytest.mark.django_db
@@ -346,7 +346,7 @@ def test_anonymous_cannot_create_review(client, event, submission):
     url = event.api_urls.reviews
     data = {"submission": submission.code, "text": "Anonymous review."}
     response = client.post(url, data=json.dumps(data), content_type="application/json")
-    assert response.status_code == 401, response.content.decode()
+    assert response.status_code == 401, response.text
 
 
 @pytest.mark.django_db
@@ -363,7 +363,7 @@ def test_reviewer_can_update_own_review_text(client, review_user_token, event, r
         content_type="application/json",
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
+    assert response.status_code == 200, response.text
 
     with scope(event=event):
         review.refresh_from_db()
@@ -395,7 +395,7 @@ def test_reviewer_can_update_own_review_scores(
         content_type="application/json",
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
+    assert response.status_code == 200, response.text
 
     with scope(event=event):
         review.refresh_from_db()
@@ -435,7 +435,7 @@ def test_reviewer_cannot_add_multiple_scores_same_category(
         content_type="application/json",
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 400, response.content.decode()
+    assert response.status_code == 400, response.text
 
     with scope(event=event):
         review.refresh_from_db()
@@ -458,7 +458,7 @@ def test_reviewer_cannot_update_other_review(
         content_type="application/json",
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 403, response.content.decode()
+    assert response.status_code == 403, response.text
 
 
 @pytest.mark.django_db
@@ -478,7 +478,7 @@ def test_reviewer_cannot_update_review_if_phase_disallows(
         content_type="application/json",
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 403, response.content.decode()
+    assert response.status_code == 403, response.text
 
 
 @pytest.mark.django_db
@@ -486,7 +486,7 @@ def test_anonymous_cannot_update_review(client, event, review):
     url = event.api_urls.reviews + f"{review.pk}/"
     data = {"text": "Anonymous update."}
     response = client.patch(url, data=json.dumps(data), content_type="application/json")
-    assert response.status_code == 404, response.content.decode()
+    assert response.status_code == 404, response.text
 
 
 @pytest.mark.django_db
@@ -500,7 +500,7 @@ def test_reviewer_can_delete_own_review(client, review_user_token, event, review
     response = client.delete(
         url, headers={"Authorization": f"Token {review_user_token.token}"}
     )
-    assert response.status_code == 204, response.content.decode()
+    assert response.status_code == 204, response.text
 
     with scope(event=event):
         assert not Review.objects.filter(pk=review_pk).exists()
@@ -517,7 +517,7 @@ def test_reviewer_cannot_delete_other_review(
     response = client.delete(
         url, headers={"Authorization": f"Token {review_user_token.token}"}
     )
-    assert response.status_code == 403, response.content.decode()
+    assert response.status_code == 403, response.text
 
     with scope(event=event):
         assert Review.objects.filter(pk=other_review.pk).exists()
@@ -537,7 +537,7 @@ def test_reviewer_cannot_delete_review_if_phase_disallows(
     response = client.delete(
         url, headers={"Authorization": f"Token {review_user_token.token}"}
     )
-    assert response.status_code == 403, response.content.decode()
+    assert response.status_code == 403, response.text
 
     with scope(event=event):
         assert Review.objects.filter(pk=review.pk).exists()
@@ -547,4 +547,4 @@ def test_reviewer_cannot_delete_review_if_phase_disallows(
 def test_anonymous_cannot_delete_review(client, event, review):
     url = event.api_urls.reviews + f"{review.pk}/"
     response = client.delete(url)
-    assert response.status_code == 404, response.content.decode()
+    assert response.status_code == 404, response.text

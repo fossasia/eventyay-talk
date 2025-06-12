@@ -21,7 +21,7 @@ def test_upload_file(client, orga_user_token):
                 "Content-Type": "application/pdf",
             },
         )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
     assert response.data["id"].startswith("file:")
     assert CachedFile.objects.all().count() == 1
 

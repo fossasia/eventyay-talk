@@ -16,8 +16,8 @@ from pretalx.api.serializers.speaker import (
     SpeakerSerializer,
     SpeakerUpdateSerializer,
 )
+from pretalx.api.versions import LEGACY
 from pretalx.person.models import SpeakerProfile
-from pretalx.submission.models import QuestionTarget
 from pretalx.submission.rules import (
     questions_for_user,
     speaker_profiles_for_user,
@@ -75,14 +75,14 @@ class SpeakerViewSet(
     filter_backends = (SpeakerSearchFilter, DjangoFilterBackend)
 
     def get_legacy_serializer_class(self):  # pragma: no cover
-        if self.request.user.has_perm("orga.change_submissions", self.event):
+        if self.request.user.has_perm("submission.orga_update_submission", self.event):
             return LegacySpeakerOrgaSerializer
-        if self.request.user.has_perm("orga.view_speakers", self.event):
+        if self.request.user.has_perm("person.orga_list_speakerprofile", self.event):
             return LegacySpeakerReviewerSerializer
         return LegacySpeakerSerializer
 
     def get_legacy_queryset(self):  # pragma: no cover
-        if self.request.user.has_perm("orga.view_speakers", self.event):
+        if self.request.user.has_perm("person.orga_list_speakerprofile", self.event):
             return SpeakerProfile.objects.filter(event=self.event, user__isnull=False)
         if self.event.current_schedule and self.event.get_feature_flag("show_schedule"):
             return SpeakerProfile.objects.filter(
@@ -94,7 +94,7 @@ class SpeakerViewSet(
         return SpeakerProfile.objects.none()
 
     def get_serializer(self, *args, **kwargs):
-        if self.api_version == "LEGACY":  # pragma: no cover
+        if self.api_version == LEGACY:  # pragma: no cover
             kwargs["questions"] = (
                 self.request.query_params.get("questions") or ""
             ).split(",")
@@ -103,11 +103,11 @@ class SpeakerViewSet(
     @cached_property
     def is_orga(self):
         return self.event and self.request.user.has_perm(
-            "orga.view_submissions", self.event
+            "submission.orga_list_submission", self.event
         )
 
     def get_unversioned_serializer_class(self):
-        if self.api_version == "LEGACY":  # pragma: no cover
+        if self.api_version == LEGACY:  # pragma: no cover
             return self.get_legacy_serializer_class()
         if self.is_orga:
             if self.request.method not in SAFE_METHODS:
@@ -125,16 +125,14 @@ class SpeakerViewSet(
         context = super().get_serializer_context()
         if not self.event:
             return context
-        context["questions"] = questions_for_user(self.event, self.request.user).filter(
-            target=QuestionTarget.SPEAKER
-        )
+        context["questions"] = questions_for_user(self.event, self.request.user)
         # We don’t need to check for anonymisation here, because endpoint access implies
         # that the user isn’t restricted to anonymised content.
         context["submissions"] = self.submissions_for_user
         return context
 
     def get_queryset(self):
-        if self.api_version == "LEGACY":  # pragma: no cover
+        if self.api_version == LEGACY:  # pragma: no cover
             queryset = self.get_legacy_queryset() or self.queryset
             return queryset.select_related("user", "event", "event__cfp")
         if not self.event:
@@ -146,6 +144,7 @@ class SpeakerViewSet(
             )
             .select_related("user", "event")
             .prefetch_related("user__submissions", "user__answers")
+            .order_by("pk")
         )
         if fields := self.check_expanded_fields(
             "answers.question",

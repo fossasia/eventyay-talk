@@ -54,7 +54,7 @@ def test_can_see_rooms_public_event(client, room, slot):
         room.event.is_public = True
         room.event.save()
     response = client.get(room.event.api_urls.rooms, follow=True)
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 1
@@ -68,7 +68,7 @@ def test_orga_can_see_rooms(client, orga_user_token, room):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 1
@@ -82,7 +82,7 @@ def test_orga_can_see_single_room(client, orga_user_token, room):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["name"]["en"] == room.name
@@ -96,7 +96,7 @@ def test_orga_can_see_single_room_locale_override(client, orga_user_token, room)
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert isinstance(content["name"], str)
@@ -113,7 +113,7 @@ def test_legacy_room_api(client, orga_user_token, room):
             "Pretalx-Version": LEGACY,
         },
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["id"] == room.pk
@@ -135,7 +135,7 @@ def test_invalid_api_version(client, orga_user_token, room):
         },
     )
     assert response.status_code == 400
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert "id" not in content
     orga_user_token.refresh_from_db()
     assert not orga_user_token.version
@@ -152,7 +152,7 @@ def test_orga_can_create_rooms(client, orga_user_write_token, event):
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
     with scope(event=event):
         room = event.rooms.get(name="newtestroom")
         assert room.logged_actions().filter(action_type="pretalx.room.create").exists()
@@ -268,8 +268,8 @@ def test_orga_can_create_room_with_availabilities(client, orga_user_write_token,
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 201, response.content.decode()
-    data = json.loads(response.content.decode())
+    assert response.status_code == 201, response.text
+    data = json.loads(response.text)
     assert "availabilities" in data
     assert len(data["availabilities"]) == 1
     assert dateutil.parser.isoparse(data["availabilities"][0]["start"]) == start
@@ -318,7 +318,7 @@ def test_orga_can_update_room_availabilities(client, orga_user_write_token, room
         },
     )
     assert response.status_code == 200
-    data = json.loads(response.content.decode())
+    data = json.loads(response.text)
 
     assert len(data["availabilities"]) == 1
 
@@ -361,7 +361,7 @@ def test_orga_can_remove_room_availabilities(client, orga_user_write_token, room
         },
     )
     assert response.status_code == 200
-    data = json.loads(response.content.decode())
+    data = json.loads(response.text)
     assert data["availabilities"] == []
 
     with scope(event=event):
@@ -396,7 +396,7 @@ def test_room_availability_uses_event_timezone(client, orga_user_write_token, ev
     )
 
     assert response.status_code == 201
-    data = json.loads(response.content.decode())
+    data = json.loads(response.text)
 
     assert "Z" not in data["availabilities"][0]["start"]
     assert "+00:00" not in data["availabilities"][0]["end"]
@@ -432,7 +432,7 @@ def test_orga_can_create_overlapping_availabilities(
         },
     )
     assert response.status_code == 201
-    data = json.loads(response.content.decode())
+    data = json.loads(response.text)
 
     assert len(data["availabilities"]) == 1
 

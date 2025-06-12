@@ -44,7 +44,7 @@ def test_orga_can_see_access_codes(client, orga_user_token, event):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] > 0
@@ -60,7 +60,7 @@ def test_orga_can_see_single_access_code(client, orga_user_token, event):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["code"] == access_code.code
@@ -80,8 +80,8 @@ def test_no_legacy_access_code_api(client, orga_user_token, event):
             "Pretalx-Version": LEGACY,
         },
     )
-    assert response.status_code == 400, response.content.decode()
-    assert response.content.decode() == '{"detail": "API version not supported."}'
+    assert response.status_code == 400, response.text
+    assert "API version not supported." in response.text
 
 
 @pytest.mark.django_db
@@ -99,7 +99,7 @@ def test_orga_can_create_access_codes(client, orga_user_write_token, event):
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
     with scope(event=event):
         access_code = event.submitter_access_codes.get(code="newtestaccesscode")
         assert access_code.maximum_uses == 1
@@ -235,7 +235,7 @@ def test_orga_can_expand_related_fields(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["code"] == "expandcode"
@@ -263,8 +263,8 @@ def test_orga_cannot_assign_track_from_other_event(
         },
     )
 
-    assert response.status_code == 400, response.content.decode()
-    assert "track" in json.loads(response.content.decode())
+    assert response.status_code == 400, response.text
+    assert "track" in json.loads(response.text)
 
     with scope(event=event):
         assert not event.submitter_access_codes.filter(code="newtestcode").exists()

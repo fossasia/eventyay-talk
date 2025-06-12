@@ -22,7 +22,7 @@ Core
    :members: schedule_release, register_my_data_exporters
 
 .. automodule:: pretalx.mail.signals
-   :members: register_mail_placeholders, queuedmail_post_send, queuedmail_pre_send
+   :members: register_mail_placeholders, queuedmail_post_send, queuedmail_pre_send, request_pre_send
 
 .. automodule:: pretalx.person.signals
    :members: delete_user
@@ -52,7 +52,7 @@ Display
    :members: cfp_steps, footer_link, html_above_submission_list, html_above_profile_page, html_head
 
 .. automodule:: pretalx.agenda.signals
-   :members: register_recording_providers, html_above_session_pages, html_below_session_pages
+   :members: register_recording_provider, html_above_session_pages, html_below_session_pages
 
 .. automodule:: pretalx.common.signals
    :no-index:

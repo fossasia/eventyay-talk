@@ -104,7 +104,7 @@ class Command(BaseCommand):  # pragma: no cover
         team_url = urljoin(
             settings.SITE_URL,
             reverse(
-                "orga:organiser.teams.view",
+                "orga:organiser.teams.update",
                 kwargs={"organiser": organiser.slug, "pk": team.pk},
             ),
         )

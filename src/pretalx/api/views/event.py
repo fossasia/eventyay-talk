@@ -22,13 +22,16 @@ from pretalx.api.serializers.event import EventListSerializer, EventSerializer
 from pretalx.common import exceptions
 from pretalx.common.exceptions import VideoIntegrationError
 from pretalx.event.models import Event
+from pretalx.event.rules import get_events_for_user
 
 logger = logging.getLogger(__name__)
 
 
 @extend_schema_view(
-    list=extend_schema(summary="List Events", parameters=[build_search_docs("name")]),
-    retrieve=extend_schema(summary="Show Events"),
+    list=extend_schema(
+        summary="List Events", parameters=[build_search_docs("name")], tags=["events"]
+    ),
+    retrieve=extend_schema(summary="Show Events", tags=["events"]),
 )
 class EventViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = EventSerializer
@@ -46,12 +49,7 @@ class EventViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
         return EventSerializer
 
     def get_queryset(self):
-        queryset = Event.objects.filter(is_public=True)
-        if not self.request.user.is_anonymous:
-            queryset = queryset.union(
-                self.request.user.get_events_with_any_permission()
-            )
-        return queryset.order_by("-date_from")
+        return get_events_for_user(self.request.user).order_by("-date_from"
 
 
 class ConfigureVideoSettingsView(APIView):

@@ -41,12 +41,12 @@ from pretalx.api.serializers.submission import (
     TagSerializer,
     TrackSerializer,
 )
+from pretalx.api.versions import LEGACY
 from pretalx.common import exceptions
 from pretalx.person.models import User
 from pretalx.common.auth import TokenAuthentication
 from pretalx.common.exceptions import SubmissionError
 from pretalx.submission.models import (
-    QuestionTarget,
     Submission,
     SubmissionStates,
     SubmissionType,
@@ -172,9 +172,11 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
 
     def get_legacy_queryset(self):  # pragma: no cover
         base_qs = self.event.submissions.all().order_by("code")
-        if not self.request.user.has_perm("orga.view_submissions", self.event):
+        if not self.request.user.has_perm(
+            "submission.orga_list_submission", self.event
+        ):
             if (
-                not self.request.user.has_perm("agenda.view_schedule", self.event)
+                not self.request.user.has_perm("schedule.list_schedule", self.event)
                 or not self.event.current_schedule
             ):
                 return Submission.objects.none()
@@ -186,9 +188,9 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         return base_qs
 
     def get_legacy_serializer_class(self):  # pragma: no cover
-        if self.request.user.has_perm("orga.change_submissions", self.event):
+        if self.request.user.has_perm("submission.orga_update_submission", self.event):
             return LegacySubmissionOrgaSerializer
-        if self.request.user.has_perm("orga.view_submissions", self.event):
+        if self.request.user.has_perm("submission.orga_list_submission", self.event):
             return LegacySubmissionReviewerSerializer
         return LegacySubmissionSerializer
 
@@ -197,8 +199,8 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
             ","
         )
         can_view_speakers = self.request.user.has_perm(
-            "agenda.view_schedule", self.event
-        ) or self.request.user.has_perm("orga.view_speakers", self.event)
+            "schedule.list_schedule", self.event
+        ) or self.request.user.has_perm("person.orga_list_speakerprofile", self.event)
         if self.request.query_params.get("anon"):
             can_view_speakers = False
         return super().get_serializer(
@@ -210,7 +212,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         )
 
     def get_serializer_class(self):
-        if self.api_version == "LEGACY":  # pragma: no cover
+        if self.api_version == LEGACY:  # pragma: no cover
             return self.get_legacy_serializer_class()
         return super().get_serializer_class()
 
@@ -222,11 +224,11 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     @cached_property
     def is_orga(self):
         return self.event and self.request.user.has_perm(
-            "orga.view_submissions", self.event
+            "submission.orga_list_submission", self.event
         )
 
     def get_serializer(self, *args, **kwargs):
-        if self.api_version == "LEGACY":  # pragma: no cover
+        if self.api_version == LEGACY:  # pragma: no cover
             return self.get_legacy_serializer(*args, **kwargs)
         return super().get_serializer(*args, **kwargs)
 
@@ -240,16 +242,14 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
         context = super().get_serializer_context()
         if not self.event:
             return context
-        context["questions"] = questions_for_user(self.event, self.request.user).filter(
-            target=QuestionTarget.SUBMISSION
-        )
+        context["questions"] = questions_for_user(self.event, self.request.user)
         context["speakers"] = self.speaker_profiles_for_user
         context["schedule"] = self.event.current_schedule
         context["public_slots"] = not self.has_perm("delete")
         return context
 
     def get_queryset(self):
-        if self.api_version == "LEGACY":  # pragma: no cover
+        if self.api_version == LEGACY:  # pragma: no cover
             return self.get_legacy_queryset()
         if not self.event:
             # This is just during api doc creation
@@ -258,6 +258,7 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
             submissions_for_user(self.event, self.request.user)
             .select_related("event", "track", "submission_type")
             .prefetch_related("speakers", "answers", "slots")
+            .order_by("code")
         )
         if self.check_expanded_fields("speakers.user"):
             queryset = queryset.prefetch_related("speakers__profiles")
@@ -380,11 +381,8 @@ class SubmissionViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
 @permission_classes([IsAuthenticated])
 @authentication_classes((SessionAuthentication, TokenAuthentication))
 def favourites_view(request, event):
-    if not request.user.has_perm("agenda.view_schedule", request.event):
+    if not request.user.has_perm("schedule.list_schedule", request.event):
         raise PermissionDenied()
-    # Return ical file if accept header is set to text/calendar
-    # TODO implement ical retrieval
-    # if request.accepted_renderer.format == "ics":
     return Response(
         [
             sub.code
@@ -408,7 +406,7 @@ def favourites_view(request, event):
 @permission_classes([IsAuthenticated])
 @authentication_classes((SessionAuthentication, TokenAuthentication))
 def favourite_view(request, event, code):
-    if not request.user.has_perm("agenda.view_schedule", request.event):
+    if not request.user.has_perm("schedule.list_schedule", request.event):
         raise PermissionDenied()
     submission = (
         submissions_for_user(request.event, request.user)
@@ -440,7 +438,7 @@ class TagViewSet(PretalxViewSetMixin, viewsets.ModelViewSet):
     search_fields = ("tag",)
 
     def get_queryset(self):
-        return self.event.tags.all()
+        return self.event.tags.all().order_by("pk")
 
 
 class SubmissionFavouriteDeprecatedView(View):

@@ -10,7 +10,7 @@ from rest_framework.serializers import (
 )
 
 from pretalx.api.mixins import PretalxSerializer
-from pretalx.api.versions import CURRENT_VERSION, register_serializer
+from pretalx.api.versions import CURRENT_VERSIONS, register_serializer
 from pretalx.schedule.models import Schedule, TalkSlot
 
 
@@ -23,20 +23,19 @@ class ScheduleListSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
         fields = ["id", "version", "published"]
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class ScheduleSerializer(ScheduleListSerializer):
     slots = SerializerMethodField()
 
     @extend_schema_field(list[int])
     def get_slots(self, obj):
-        public_slots = self.context.get("public_slots", True)
-        if public_slots and not obj.version:
+        only_visible_slots = self.context.get("only_visible_slots", True)
+        if only_visible_slots and not obj.version:
             # This should never happen, but better safe than sorry.
             return []
-        if public_slots:
-            qs = obj.scheduled_talks
-        else:
-            qs = obj.talks.all()
+        qs = obj.talks.all()
+        if only_visible_slots:
+            qs = qs.filter(is_visible=True)
         if serializer := self.get_extra_flex_field("slots", qs):
             return serializer.data
         return qs.values_list("pk", flat=True)
@@ -51,7 +50,7 @@ class ScheduleSerializer(ScheduleListSerializer):
         }
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class ScheduleReleaseSerializer(PretalxSerializer):
     version = serializers.CharField(required=True)
     comment = serializers.CharField(required=False, allow_null=True, allow_blank=True)
@@ -69,7 +68,7 @@ class ScheduleReleaseSerializer(PretalxSerializer):
         return value
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class TalkSlotSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     submission = SlugRelatedField(slug_field="code", read_only=True)
     end = DateTimeField(source="local_end")
@@ -103,7 +102,7 @@ class TalkSlotSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
         }
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class TalkSlotOrgaSerializer(TalkSlotSerializer):
     class Meta(TalkSlotSerializer.Meta):
         fields = TalkSlotSerializer.Meta.fields + ["is_visible"]

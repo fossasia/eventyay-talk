@@ -35,9 +35,7 @@
             <p>
                 {% blocktranslate trimmed with apiurl='href="/api/events/" target="_blank" rel="noopener"' docurl='href="https://docs.pretalx.org/api/" target="_blank" rel="noopener"' %}
                     API tokens can be used to access the <a {{ apiurl }}>pretalx API</a>.
-                    You can generate a new token, which will invalidate the old one.
-                    To find out more, please have a look at the <a {{ docurl }}>
-                        API documentation</a>.
+                    To find out more, please have a look at the <a {{ docurl }}> API documentation</a>.
                 {% endblocktranslate %}
             </p>
             <div class="token-list mb-4">
@@ -47,11 +45,11 @@
                         <thead>
                             <tr>
                                 <th>{% translate "Name" %}</th>
-                                <th>{% translate "Version" %}</th>
-                                <th>{% translate "Team" %}</th>
+                                <th class="text-center">{% translate "Version" %}</th>
+                                <th>{% translate "Events" %}</th>
                                 <th>{% translate "Last used" %}</th>
                                 <th>{% translate "Created" %}</th>
-                                <th>{% translate "Expires" %}</th>
+                                <th>{% translate "Valid until" %}</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -59,11 +57,22 @@
                             {% for token in tokens %}
                                 <tr class="{% if not token.is_active %}bg-muted{% endif %}">
                                     <td>{{ token.name }}</td>
-                                    <td>{{ token.version|default:'-' }}</token>
-                                    <td>{{ token.team }}
-                                        <br>
+                                    <td class="text-center">
+                                        <span class="text-{% if not token.is_latest_version %}danger{% else %}success{% endif %}">
+                                            {{ token.version|default:'-' }}
+                                        </span>
+                                        {% if not token.is_latest_version and token.is_active %}
+                                            <form method="post">
+                                                {% csrf_token %}
+                                                <button name="tokenupgrade" value="{{ token.pk }}" class="btn btn-outline-info btn-sm">
+                                                    {% translate "Updgrade" %}&nbsp;({{ current_version }})
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </td>
+                                    <td>
                                         <ul>
-                                            {% for event in token.team.events %}
+                                            {% for event in token.events.all %}
                                                 <li><a href="{{ event.orga_urls.base }}">{{ event.name }}</a></li>
                                             {% endfor %}
                                         </td>
@@ -95,7 +104,7 @@
                     {% csrf_token %}
 
                     {{ token_form.name.as_field_group }}
-                    {{ token_form.team.as_field_group }}
+                    {{ token_form.events.as_field_group }}
                     {{ token_form.expires.as_field_group }}
                     {{ token_form.permission_preset.as_field_group }}
 

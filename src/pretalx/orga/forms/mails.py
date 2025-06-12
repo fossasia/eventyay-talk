@@ -207,6 +207,11 @@ class WriteMailBaseForm(MailTemplateForm):
         ),
     )
 
+    def __init__(self, *args, may_skip_queue=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not may_skip_queue:
+            self.fields.pop("skip_queue", None)
+
 
 class WriteTeamsMailForm(WriteMailBaseForm):
     recipients = forms.MultipleChoiceField(

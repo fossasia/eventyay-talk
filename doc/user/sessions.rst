@@ -25,7 +25,7 @@ to show up in the schedule at the right time. You can learn more about managing 
 schedule-only items in the :ref:`Scheduling Guide <user-guide-schedule>`.
 
 Session Lifecycle
----------------
+-----------------
 
 Sessions go through several states during their lifecycle, and these states and
 their transitions are a key part of pretalx.
@@ -104,7 +104,7 @@ can’t be removed from the event unilaterally.
 .. _`user-guide-proposals-pending`:
 
 Pending States
-^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
 
 When you change a proposal’s state, you can choose to set the new state as “pending”.
 If you do this, the proposal will keep its current state, while gaining a new pending
@@ -124,7 +124,7 @@ want to change, and then apply the pending states to only those sessions by clic
 button at the top of the list.
 
 Organisation Features
--------------------
+---------------------
 
 Sessions have several features that help organisers manage and categorise them:
 
@@ -182,7 +182,7 @@ The notification will be based on the email template „Add a speaker to a propo
 If the speaker does not have an account yet, their email will contain a link where they can set their account password.
 
 Interaction & Communication
--------------------------
+---------------------------
 
 There are two main ways to discuss sessions:
 

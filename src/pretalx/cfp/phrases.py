@@ -15,10 +15,6 @@ class CfPPhrases(Phrases, app="cfp"):
         "email and that the email is no more than 24 hours old."
     )
     auth_reset_success = _("Awesome! You can now log in using your new password.")
-    token_regenerated = _(
-        "Your API token has been regenerated. The previous token will not be usable "
-        "any longer."
-    )
 
     submission_withdrawn = _("Your proposal has been withdrawn.")
     submission_not_withdrawn = _(

@@ -18,6 +18,17 @@ class EventListSerializer(ModelSerializer):
             "timezone",
         ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get("request")
+        try:
+            if not request or not request.user or not request.user.is_authenticated:
+                # Keep API docs small; doesn’t matter for validation with unauthenticated
+                # users.
+                self.fields["timezone"].choices = []
+        except Exception as e:
+            print(e)
+
 
 @register_serializer()
 class EventSerializer(EventListSerializer):

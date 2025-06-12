@@ -219,8 +219,8 @@ class EventPermissionMiddleware:
         )
         language = (
             self._language_from_request(request, supported)
-            or self._language_from_cookie(request, supported)
             or self._language_from_user(request, supported)
+            or self._language_from_cookie(request, supported)
             or self._language_from_browser(request, supported)
             or self._language_from_event(request, supported)
             or settings.LANGUAGE_CODE

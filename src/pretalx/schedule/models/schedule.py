@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from i18nfield.fields import I18nTextField
 
-from pretalx.agenda.rules import is_agenda_visible
+from pretalx.agenda.rules import can_view_schedule, is_agenda_visible, is_widget_visible
 from pretalx.agenda.tasks import export_schedule_html
 from pretalx.common.models.mixins import PretalxModel
 from pretalx.common.text.phrases import phrases
@@ -56,11 +56,12 @@ class Schedule(PretalxModel):
         ordering = ("-published",)
         unique_together = (("event", "version"),)
         rules_permissions = {
-            "list": is_agenda_visible
-            | orga_can_change_submissions
-            | (is_reviewer & can_view_speaker_names),
+            "list": can_view_schedule,
+            "view_widget": is_widget_visible | orga_can_change_submissions,
             "view": (~is_wip & is_agenda_visible)
             | orga_can_change_submissions
+            | (is_reviewer & can_view_speaker_names),
+            "orga_view": orga_can_change_submissions
             | (is_reviewer & can_view_speaker_names),
             "release": orga_can_change_submissions,
         }
@@ -131,7 +132,7 @@ class Schedule(PretalxModel):
         schedule_release.send_robust(self.event, schedule=self, user=user)
 
         if self.event.get_feature_flag("export_html_on_release"):
-            if settings.HAS_CELERY:
+            if not settings.CELERY_TASK_ALWAYS_EAGER:
                 export_schedule_html.apply_async(
                     kwargs={"event_id": self.event.id}, ignore_result=True
                 )
@@ -188,6 +189,7 @@ class Schedule(PretalxModel):
                 "submission__event",
                 "room",
             )
+            .prefetch_related("submission__speakers")
             .filter(
                 room__isnull=False,
                 start__isnull=False,

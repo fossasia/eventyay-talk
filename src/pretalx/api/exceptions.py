@@ -11,6 +11,6 @@ def api_exception_handler(exc, context):
     response = exception_handler(exc, context)
 
     if isinstance(exc, exceptions.APIException):
-        logger.info(f"API Exception [{exc.status_code}]: {json.dumps(exc.detail)}")
+        logger.debug(f"API Exception [{exc.status_code}]: {json.dumps(exc.detail)}")
 
     return response

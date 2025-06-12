@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, FormView, TemplateView, UpdateView, View
+from django.views.generic import FormView, TemplateView, UpdateView, View
 from django_context_decorator import context
 
 from pretalx.cfp.flow import CfPFlow
@@ -22,7 +22,6 @@ from pretalx.common.text.phrases import phrases
 from pretalx.common.text.serialize import I18nStrJSONEncoder
 from pretalx.common.views.generic import OrgaCRUDView
 from pretalx.common.views.mixins import (
-    ActionConfirmMixin,
     ActionFromUrl,
     EventPermissionRequired,
     OrderActionMixin,
@@ -56,8 +55,8 @@ class CfPTextDetail(PermissionRequired, ActionFromUrl, UpdateView):
     form_class = CfPForm
     model = CfP
     template_name = "orga/cfp/text.html"
-    permission_required = "orga.edit_cfp"
-    write_permission_required = "orga.edit_cfp"
+    permission_required = "event.update_event"
+    write_permission_required = "event.update_event"
 
     @context
     def tablist(self):
@@ -305,7 +304,7 @@ class QuestionView(OrderActionMixin, OrgaCRUDView):
 
 
 class CfPQuestionToggle(PermissionRequired, View):
-    permission_required = "orga.edit_question"
+    permission_required = "submission.update_question"
 
     def get_object(self) -> Question:
         return Question.all_objects.filter(
@@ -323,7 +322,7 @@ class CfPQuestionToggle(PermissionRequired, View):
 
 class CfPQuestionRemind(EventPermissionRequired, FormView):
     template_name = "orga/cfp/question/remind.html"
-    permission_required = "orga.view_question"
+    permission_required = "submission.orga_view_question"
     form_class = ReminderFilterForm
 
     def get_form_kwargs(self):
@@ -419,7 +418,7 @@ class SubmissionTypeView(OrderActionMixin, OrgaCRUDView):
 
 
 class SubmissionTypeDefault(PermissionRequired, View):
-    permission_required = "orga.edit_submission_type"
+    permission_required = "submission.update_submissiontype"
 
     def get_object(self):
         return get_object_or_404(
@@ -435,57 +434,6 @@ class SubmissionTypeDefault(PermissionRequired, View):
             "pretalx.submission_type.make_default", person=self.request.user, orga=True
         )
         messages.success(request, _("The Session Type has been made default."))
-        return redirect(self.request.event.cfp.urls.types)
-
-
-class SubmissionTypeDelete(PermissionRequired, ActionConfirmMixin, DetailView):
-    permission_required = "orga.remove_submission_type"
-
-    def get_object(self, queryset=None):
-        return get_object_or_404(
-            self.request.event.submission_types, pk=self.kwargs.get("pk")
-        )
-
-    def action_object_name(self):
-        return _("Session type") + f": {self.get_object().name}"
-
-    @property
-    def action_back_url(self):
-        return self.request.event.cfp.urls.types
-
-    def post(self, request, *args, **kwargs):
-        submission_type = self.get_object()
-
-        if request.event.submission_types.count() == 1:
-            messages.error(
-                request,
-                _(
-                    "You cannot delete the only session type. Try creating another one first!"
-                ),
-            )
-        elif request.event.cfp.default_type == submission_type:
-            messages.error(
-                request,
-                _(
-                    "You cannot delete the default session type. Make another type default first!"
-                ),
-            )
-        else:
-            try:
-                submission_type.delete()
-                request.event.log_action(
-                    "pretalx.submission_type.delete",
-                    person=self.request.user,
-                    orga=True,
-                )
-                messages.success(request, _("The Session Type has been deleted."))
-            except ProtectedError:
-                messages.error(
-                    request,
-                    _(
-                        "This Session Type is in use in a proposal and cannot be deleted."
-                    ),
-                )
         return redirect(self.request.event.cfp.urls.types)
 
 
@@ -570,7 +518,7 @@ class AccessCodeSend(PermissionRequired, UpdateView):
     form_class = AccessCodeSendForm
     context_object_name = "access_code"
     template_name = "orga/cfp/submitteraccesscode/send.html"
-    permission_required = "orga.view_access_code"
+    permission_required = "submission.view_submitteraccesscode"
 
     def get_success_url(self) -> str:
         return self.request.event.cfp.urls.access_codes
@@ -604,7 +552,7 @@ class AccessCodeSend(PermissionRequired, UpdateView):
 @method_decorator(csp_update(SCRIPT_SRC="'self' 'unsafe-eval'"), name="dispatch")
 class CfPFlowEditor(EventPermissionRequired, TemplateView):
     template_name = "orga/cfp/flow.html"
-    permission_required = "orga.edit_cfp"
+    permission_required = "event.update_event"
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

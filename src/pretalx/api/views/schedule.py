@@ -12,6 +12,7 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from pretalx.agenda.views.utils import get_schedule_exporter_content
 from pretalx.api.documentation import build_expand_docs, build_search_docs
 from pretalx.api.filters.schedule import TalkSlotFilter
 from pretalx.api.mixins import PretalxViewSetMixin
@@ -44,8 +45,8 @@ from pretalx.schedule.models import Schedule, TalkSlot
         ),
         parameters=[
             build_expand_docs(
-                "room",
                 "slots",
+                "slots.room",
                 "slots.submission",
                 "slots.submission.speakers",
                 "slots.submission.track",
@@ -63,6 +64,7 @@ class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
     lookup_value_regex = "[^/]+"
     permission_map = {
         "redirect_version": "schedule.list_schedule",
+        "get_exporter": "schedule.list_schedule",
     }
 
     def get_unversioned_serializer_class(self):
@@ -74,9 +76,7 @@ class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context["public_slots"] = self.event and self.has_perm(
-            "orga.view_schedule", self.event
-        )
+        context["only_visible_slots"] = self.event and not self.has_perm("orga_view")
         return context
 
     def get_queryset(self):
@@ -173,6 +173,38 @@ class ScheduleViewSet(PretalxViewSetMixin, viewsets.ReadOnlyModelViewSet):
         )
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
+    @extend_schema(
+        summary="Get Exporter Content",
+        description="Retrieve the content of a specific schedule exporter by name.",
+        parameters=[
+            OpenApiParameter(
+                name="name",
+                type=str,
+                location=OpenApiParameter.PATH,
+                required=True,
+                description="The name of the exporter.",
+            ),
+            OpenApiParameter(
+                name="lang",
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Language code for the export content.",
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(description="Format depends on the chosen exporter."),
+            404: OpenApiResponse(description="Exporter or schedule not found."),
+        },
+    )
+    @action(detail=True, methods=["get"], url_path="exporters/(?P<name>[^/]+)")
+    def get_exporter(self, request, event, pk=None, name=None):
+        schedule = self.get_object()
+        response = get_schedule_exporter_content(request, name, schedule)
+        if not response:
+            raise Http404()
+        return response
+
 
 @extend_schema_view(
     list=extend_schema(
@@ -236,7 +268,7 @@ class TalkSlotViewSet(
     @cached_property
     def is_orga(self):
         return self.event and self.request.user.has_perm(
-            "orga.view_schedule", self.event
+            "schedule.orga_view_schedule", self.event
         )
 
     def get_unversioned_serializer_class(self):

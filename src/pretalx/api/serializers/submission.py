@@ -7,9 +7,16 @@ from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from pretalx.api.mixins import PretalxSerializer
 from pretalx.api.serializers.fields import UploadedFileField
-from pretalx.api.versions import CURRENT_VERSION, register_serializer
+from pretalx.api.versions import CURRENT_VERSIONS, register_serializer
 from pretalx.person.models import SpeakerProfile, User
-from pretalx.submission.models import Resource, Submission, SubmissionType, Tag, Track
+from pretalx.submission.models import (
+    QuestionTarget,
+    Resource,
+    Submission,
+    SubmissionType,
+    Tag,
+    Track,
+)
 
 
 @register_serializer()
@@ -25,7 +32,7 @@ class ResourceSerializer(ModelSerializer):
         fields = ("id", "resource", "description")
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class TagSerializer(PretalxSerializer):
     class Meta:
         model = Tag
@@ -44,7 +51,7 @@ class TagSerializer(PretalxSerializer):
         return value
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class SubmissionTypeSerializer(PretalxSerializer):
     class Meta:
         model = SubmissionType
@@ -81,7 +88,7 @@ class SubmissionTypeSerializer(PretalxSerializer):
         return result
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class TrackSerializer(PretalxSerializer):
     class Meta:
         model = Track
@@ -107,7 +114,7 @@ class TrackSerializer(PretalxSerializer):
         return value
 
 
-@register_serializer(versions=[CURRENT_VERSION])
+@register_serializer(versions=CURRENT_VERSIONS)
 class SubmissionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     submission_type = serializers.PrimaryKeyRelatedField(
         queryset=SubmissionType.objects.none(),
@@ -161,7 +168,10 @@ class SubmissionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
                 continue
             if not getattr(self.event.cfp, f"request_{field}"):
                 self.fields.pop(field, None)
-            self.fields[field].required = getattr(self.event.cfp, f"require_{field}")
+            else:
+                self.fields[field].required = getattr(
+                    self.event.cfp, f"require_{field}"
+                )
 
     @extend_schema_field(list[str])
     def get_speakers(self, obj):
@@ -177,7 +187,11 @@ class SubmissionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
     @extend_schema_field(list[int])
     def get_answers(self, obj):
         questions = self.context.get("questions", [])
-        qs = obj.answers.filter(question__in=questions, question__event=self.event)
+        qs = obj.answers.filter(
+            question__in=questions,
+            question__event=self.event,
+            question__target=QuestionTarget.SUBMISSION,
+        )
         if serializer := self.get_extra_flex_field("answers", qs):
             return serializer.data
         return qs.values_list("pk", flat=True)
@@ -232,7 +246,7 @@ class SubmissionSerializer(FlexFieldsSerializerMixin, PretalxSerializer):
             ),
             "resources": (
                 "pretalx.api.serializers.submission.ResourceSerializer",
-                {"source": "resources", "many": True, "read_only": True},
+                {"many": True, "read_only": True},
             ),
         }
         extra_expandable_fields = {
@@ -296,7 +310,8 @@ class SubmissionOrgaSerializer(SubmissionSerializer):
         if tags_data:
             submission.tags.set(tags_data)
         if image:
-            submission.image.save(Path(image.name).name, image)
+            submission.image.save(Path(image.name).name, image, save=True)
+            submission.save(update_fields=("image",))
             submission.process_image("image", generate_thumbnail=True)
         return submission
 
@@ -347,6 +362,6 @@ class SubmissionOrgaSerializer(SubmissionSerializer):
             "median_score",
             "mean_score",
         ]
-        # todo make access code expandable
-        # todo make assigned_reviewers expandable
-        # TODO: make reviews expandable
+        # Reviews and assigned reviewers are currently not expandable because
+        # reviewers are also receiving the ReviewerOrgaSerializer, but may
+        # not be cleared to see all reviews or who is assigned to which review.

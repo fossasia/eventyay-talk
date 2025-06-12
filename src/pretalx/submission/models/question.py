@@ -11,7 +11,8 @@ from pretalx.common.models.mixins import OrderedModel, PretalxModel
 from pretalx.common.text.path import path_with_hash
 from pretalx.common.text.phrases import phrases
 from pretalx.common.urls import EventUrls
-from pretalx.person.rules import can_change_event_settings, is_reviewer
+from pretalx.event.rules import can_change_event_settings
+from pretalx.person.rules import is_reviewer
 from pretalx.submission.rules import is_cfp_open, orga_can_change_submissions
 
 

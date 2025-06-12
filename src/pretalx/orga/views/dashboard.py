@@ -79,7 +79,10 @@ class DashboardEventListView(TemplateView):
 
 
 class DashboardOrganiserEventListView(PermissionRequired, DashboardEventListView):
-    permission_required = "orga.view_organisers"
+    permission_required = "event.view_organiser"
+
+    def get_permission_object(self):
+        return self.request.organiser
 
     @property
     def base_queryset(self):
@@ -92,7 +95,7 @@ class DashboardOrganiserEventListView(PermissionRequired, DashboardEventListView
 
 class DashboardOrganiserListView(PermissionRequired, TemplateView):
     template_name = "orga/organiser/list.html"
-    permission_required = "orga.view_organisers"
+    permission_required = "event.list_organiser"
 
     def filter_organiser(self, organiser, query):
         name = (
@@ -129,7 +132,7 @@ class DashboardOrganiserListView(PermissionRequired, TemplateView):
 
 class EventDashboardView(EventPermissionRequired, TemplateView):
     template_name = "orga/event/dashboard.html"
-    permission_required = "orga.view_orga_area"
+    permission_required = "event.orga_access_event"
 
     def get_cfp_tiles(self, _now, can_change_submissions=False):
         result = []
@@ -242,9 +245,11 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
         )
         _now = now()
         today = _now.date()
-        can_change_settings = self.request.user.has_perm("orga.change_settings", event)
+        can_change_settings = self.request.user.has_perm(
+            "event.change_settings.event", event
+        )
         can_change_submissions = self.request.user.has_perm(
-            "orga.change_submissions", event
+            "submission.orga_update_submission", event
         )
         result["tiles"] = self.get_cfp_tiles(
             _now, can_change_submissions=can_change_submissions

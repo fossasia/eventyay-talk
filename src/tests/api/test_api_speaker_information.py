@@ -59,7 +59,7 @@ def test_orga_can_see_speaker_information(client, orga_user_token, event):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["count"] == 1
@@ -79,7 +79,7 @@ def test_orga_can_see_single_speaker_information(client, orga_user_token, event)
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["title"]["en"] == speaker_info.title
@@ -102,8 +102,8 @@ def test_no_legacy_speaker_information_api(client, orga_user_token, event):
             "Pretalx-Version": LEGACY,
         },
     )
-    assert response.status_code == 400, response.content.decode()
-    assert response.content.decode() == '{"detail": "API version not supported."}'
+    assert response.status_code == 400, response.text
+    assert "API version not supported." in response.text
 
 
 @pytest.mark.django_db
@@ -122,7 +122,7 @@ def test_orga_can_create_speaker_information(client, orga_user_write_token, even
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
     with scope(event=event):
         speaker_info = event.information.all().first()
         assert speaker_info.title == "New Test Info"
@@ -288,7 +288,7 @@ def test_orga_can_expand_related_fields(
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
 
     assert response.status_code == 200
     assert content["title"]["en"] == "Test Info"
@@ -309,7 +309,7 @@ def test_orga_can_create_speaker_information_with_resource(
             "Content-Type": "application/pdf",
         },
     )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
     file_id = response.data["id"]
     assert file_id.startswith("file:")
 
@@ -327,7 +327,7 @@ def test_orga_can_create_speaker_information_with_resource(
             "Authorization": f"Token {orga_user_write_token.token}",
         },
     )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
 
     with scope(event=event):
         speaker_info = event.information.get(title="Info with Resource")
@@ -341,7 +341,7 @@ def test_orga_can_create_speaker_information_with_resource(
                 "Authorization": f"Token {orga_user_write_token.token}",
             },
         )
-        content = json.loads(response.content.decode())
+        content = json.loads(response.text)
         assert response.status_code == 200
         assert content["resource"].startswith("http")
         assert content["resource"].endswith(".pdf")
@@ -369,8 +369,8 @@ def test_orga_cannot_assign_track_from_other_event(
         },
     )
 
-    assert response.status_code == 400, response.content.decode()
-    assert "limit_tracks" in json.loads(response.content.decode())
+    assert response.status_code == 400, response.text
+    assert "limit_tracks" in json.loads(response.text)
 
     with scope(event=event):
         assert not event.information.filter(title="New Test Info").exists()

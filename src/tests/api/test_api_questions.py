@@ -54,7 +54,7 @@ def test_questions_not_visible_by_default(client, question, schedule, is_public)
         question.is_public = is_public
         question.save()
     response = client.get(question.event.api_urls.questions, follow=True)
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert response.status_code == 200
     assert bool(len(content["results"])) is is_public
 
@@ -65,7 +65,7 @@ def test_public_questions_fewer_fields(client, question, schedule):
         question.is_public = True
         question.save()
     response = client.get(question.event.api_urls.questions, follow=True)
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert response.status_code == 200
     assert content["results"][0]["question"]["en"] == question.question
     assert "is_visible_to_reviewers" not in content["results"][0]
@@ -78,7 +78,7 @@ def test_organiser_can_see_question(client, orga_user_token, question):
         follow=True,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert response.status_code == 200
     assert len(content["results"]) == 1
     assert content["results"][0]["id"] == question.id
@@ -97,7 +97,7 @@ def test_questions_not_visible_by_default_to_reviewers(
         follow=True,
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert response.status_code == 200
     assert bool(len(content["results"])) is is_visible
 
@@ -119,7 +119,7 @@ def test_organiser_can_create_question(event, orga_user_write_token, client):
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
     with scope(event=event):
         assert event.questions.all().count() == count + 1
         question = event.questions.all().first()
@@ -153,7 +153,7 @@ def test_organiser_can_create_question_with_options(
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 201, response.content.decode()
+    assert response.status_code == 201, response.text
     with scope(event=event):
         assert event.questions.all().count() == count + 1
         question = event.questions.all().first()
@@ -183,7 +183,7 @@ def test_organiser_cannot_create_question_readonly_token(
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    assert response.status_code == 403, response.content.decode()
+    assert response.status_code == 403, response.text
     with scope(event=event):
         assert event.questions.all().count() == count
         assert (
@@ -206,11 +206,11 @@ def test_organiser_can_edit_question(client, event, orga_user_write_token, quest
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
+    assert response.status_code == 200, response.text
     with scope(event=event):
         question.refresh_from_db()
         assert question.target == "speaker"
-        assert question.help_text == "hellllp", response.content.decode()
+        assert question.help_text == "hellllp", response.text
 
 
 @pytest.mark.django_db
@@ -254,7 +254,7 @@ def test_reviewer_cannot_create_question(client, event, review_user_token):
         content_type="application/json",
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 403, response.content.decode()
+    assert response.status_code == 403, response.text
     with scope(event=event):
         assert event.questions.all().count() == count
 
@@ -272,7 +272,7 @@ def test_reviewer_cannot_edit_question(client, event, review_user_token, questio
         content_type="application/json",
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
-    assert response.status_code == 403, response.content.decode()
+    assert response.status_code == 403, response.text
     with scope(event=event):
         question.refresh_from_db()
         assert question.target != "speaker"
@@ -294,7 +294,7 @@ def test_field_question_required(
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
     assert response.data.get("question")[0] == "This field is required."
-    assert response.status_code == 400, response.content.decode()
+    assert response.status_code == 400, response.text
 
 
 @pytest.mark.django_db
@@ -322,7 +322,7 @@ def test_field_question_required_valid_choice(
         response.data.get("question_required")[0]
         == '"invalid_choice" is not a valid choice.'
     )
-    assert response.status_code == 400, response.content.decode()
+    assert response.status_code == 400, response.text
 
 
 @pytest.mark.django_db
@@ -347,7 +347,7 @@ def test_field_contains_personal_data_valid_boolean(
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
     assert response.data.get("contains_personal_data")[0] == "Must be a valid boolean."
-    assert response.status_code == 400, response.content.decode()
+    assert response.status_code == 400, response.text
 
 
 @pytest.mark.django_db
@@ -361,7 +361,7 @@ def test_organiser_can_delete_question(event, orga_user_write_token, client):
         event.api_urls.questions + f"{pk}/",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 204, response.content.decode()
+    assert response.status_code == 204, response.text
     with scope(event=event):
         assert not event.questions.filter(pk=pk).exists()
         assert (
@@ -384,7 +384,7 @@ def test_organiser_cannot_delete_question_readonly_token(
         event.api_urls.questions + f"{pk}/",
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    assert response.status_code == 403, response.content.decode()
+    assert response.status_code == 403, response.text
     with scope(event=event):
         assert event.questions.filter(pk=pk).exists()
         assert (
@@ -407,7 +407,7 @@ def test_organiser_cannot_delete_answered_question(
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
     assert response.status_code == 400
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert "answers" in content[0].lower()
 
     with scope(event=event):
@@ -436,8 +436,8 @@ def test_no_legacy_question_create(event, orga_user_write_token, client):
             "Pretalx-Version": LEGACY,
         },
     )
-    assert response.status_code == 400, response.content.decode()
-    assert "API version not supported." in response.content.decode()
+    assert response.status_code == 400, response.text
+    assert "API version not supported." in response.text
 
 
 @pytest.mark.django_db
@@ -455,8 +455,8 @@ def test_get_expanded_fields(
         + f"{choice_question.pk}/?expand=options,tracks,submission_types",
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
 
     assert "options" in content
     assert len(content["options"]) == option_count
@@ -478,8 +478,8 @@ def test_bulk_get_questions(event, orga_user_token, client):
         event.api_urls.questions,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
 
     assert content["count"] == 2
     questions = {q["question"]["en"] for q in content["results"]}
@@ -499,8 +499,8 @@ def test_filter_questions_by_target(event, orga_user_token, client):
         event.api_urls.questions + "?target=speaker",
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
 
     assert content["count"] == 1
     assert content["results"][0]["question"]["en"] == "Question 2"
@@ -521,8 +521,8 @@ def test_filter_questions_by_variant(event, orga_user_token, client):
         event.api_urls.questions + "?variant=boolean",
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
 
     assert content["count"] == 1
     assert content["results"][0]["question"]["en"] == "Question 2"
@@ -543,8 +543,8 @@ def test_search_questions(event, orga_user_token, client):
         event.api_urls.questions + "?q=special",
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
 
     assert content["count"] == 1
     assert content["results"][0]["question"]["en"] == "Special question"
@@ -566,7 +566,7 @@ def test_organiser_can_edit_question_options(
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
+    assert response.status_code == 200, response.text
 
     with scope(event=event):
         choice_question.refresh_from_db()
@@ -599,7 +599,7 @@ def test_cannot_create_question_with_track_from_other_event(
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
 
-    assert response.status_code == 400, response.content.decode()
+    assert response.status_code == 400, response.text
     assert "tracks" in response.data
     assert str(track_id) in str(response.data["tracks"][0])
 
@@ -619,8 +619,8 @@ def test_organiser_can_list_question_options(
         event.api_urls.question_options,
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
     assert content["count"] == option_count
 
 
@@ -644,8 +644,8 @@ def test_organiser_can_filter_question_options_by_question(
         event.api_urls.question_options + f"?question={choice_question.pk}",
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
     assert content["count"] == option_count
     assert all(opt["question"] == choice_question.pk for opt in content["results"])
 
@@ -663,8 +663,8 @@ def test_organiser_can_retrieve_question_option(
         event.api_urls.question_options + f"{option_id}/",
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
     assert content["id"] == option_id
     assert content["answer"]["en"] == option_answer
 
@@ -688,8 +688,8 @@ def test_organiser_can_create_question_option(
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 201, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 201, response.text
+    content = json.loads(response.text)
     assert content["answer"]["en"] == "New API Option"
     assert content["question"] == choice_question.pk
 
@@ -720,7 +720,7 @@ def test_organiser_cannot_create_option_for_wrong_question_type(
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 400, response.content.decode()
+    assert response.status_code == 400, response.text
     assert "question" in response.data
     assert "Invalid pk" in str(response.data["question"])
 
@@ -744,8 +744,8 @@ def test_organiser_can_update_question_option(
         content_type="application/json",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
     assert content["answer"]["en"] == new_answer
 
     with scope(event=event):
@@ -767,7 +767,7 @@ def test_organiser_can_delete_question_option(
         event.api_urls.question_options + f"{option_id}/",
         headers={"Authorization": f"Token {orga_user_write_token.token}"},
     )
-    assert response.status_code == 204, response.content.decode()
+    assert response.status_code == 204, response.text
 
     with scope(event=event):
         choice_question.refresh_from_db()
@@ -789,7 +789,7 @@ def test_reviewer_cannot_access_question_options(
         headers={"Authorization": f"Token {review_user_token.token}"},
     )
     assert response.status_code == 200
-    content = json.loads(response.content.decode())
+    content = json.loads(response.text)
     assert bool(len(content["results"])) is is_visible
 
 
@@ -812,8 +812,8 @@ def test_anonymous_cannot_access_question_options_nonpublic_question(
         choice_question.save()
 
     response = client.get(event.api_urls.question_options)
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
     assert content["count"] == 0
 
 
@@ -825,8 +825,8 @@ def test_anonymous_can_access_question_options_public(event, client, choice_ques
         count = choice_question.options.all().count()
 
     response = client.get(event.api_urls.question_options)
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
     assert content["count"] == count
 
 
@@ -843,8 +843,8 @@ def test_organiser_can_expand_question_option_fields(
         event.api_urls.question_options + "?expand=question",
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
     assert content["count"] == option_count
     assert isinstance(content["results"][0]["question"], dict)
     assert content["results"][0]["question"]["id"] == choice_question.pk
@@ -854,8 +854,8 @@ def test_organiser_can_expand_question_option_fields(
         event.api_urls.question_options + "?expand=question,question.tracks",
         headers={"Authorization": f"Token {orga_user_token.token}"},
     )
-    assert response.status_code == 200, response.content.decode()
-    content = json.loads(response.content.decode())
+    assert response.status_code == 200, response.text
+    content = json.loads(response.text)
     assert content["count"] == option_count
     question_data = content["results"][0]["question"]
     assert isinstance(question_data, dict)

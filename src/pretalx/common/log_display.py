@@ -125,6 +125,10 @@ LOG_NAMES = {
     "pretalx.speaker_information.update": _("A speaker information note was modified."),
     "pretalx.speaker_information.delete": _("A speaker information note was deleted."),
     "pretalx.user.token.reset": _("The API token was reset."),
+    "pretalx.user.token.revoke": _("The API token was revoked."),
+    "pretalx.user.token.upgrade": _(
+        "The API token was upgraded to the latest version."
+    ),
     "pretalx.user.password.reset": phrases.base.password_reset_success,
     "pretalx.user.password.update": _("The password was modified."),
     "pretalx.user.profile.update": _("The profile was modified."),

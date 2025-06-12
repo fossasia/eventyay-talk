@@ -1,38 +1,12 @@
 import rules
 
-from pretalx.submission.rules import is_speaker, orga_can_change_submissions
-
-
-@rules.predicate
-def has_agenda(user, event):
-    return bool(event.current_schedule)
-
-
-@rules.predicate
-def is_agenda_visible(user, event):
-    event = event.event
-    return bool(
-        event
-        and event.is_public
-        and event.get_feature_flag("show_schedule")
-        and event.current_schedule
-    )
-
-
-can_view_schedule = (has_agenda & is_agenda_visible) | orga_can_change_submissions
-
-
-@rules.predicate
-def are_featured_submissions_visible(user, event):
-    if (
-        not event
-        or not event.is_public
-        or event.get_feature_flag("show_featured") == "never"
-    ):
-        return False
-    if event.get_feature_flag("show_featured") == "always":
-        return True
-    return (not is_agenda_visible(user, event)) or (not has_agenda(user, event))
+from pretalx.orga.rules import can_view_speaker_names
+from pretalx.person.rules import is_reviewer
+from pretalx.submission.rules import (
+    are_featured_submissions_visible,
+    is_speaker,
+    orga_can_change_submissions,
+)
 
 
 def is_submission_visible_via_featured(user, submission):
@@ -54,6 +28,24 @@ def is_submission_visible_via_schedule(user, submission):
 
 
 @rules.predicate
+def is_agenda_visible(user, event):
+    event = event.event
+    return bool(
+        event
+        and event.is_public
+        and event.get_feature_flag("show_schedule")
+        and event.current_schedule
+    )
+
+
+can_view_schedule = (
+    is_agenda_visible
+    | orga_can_change_submissions
+    | (is_reviewer & can_view_speaker_names)
+)
+
+
+@rules.predicate
 def is_agenda_submission_visible(user, submission):
     submission = getattr(submission, "submission", submission)
     if not submission:
@@ -64,9 +56,22 @@ def is_agenda_submission_visible(user, submission):
 
 
 @rules.predicate
-def is_speaker_viewable(user, profile):
-    if not profile or not profile.event.current_schedule:
-        return False
-    return is_speaker(profile.user, profile.event) and can_view_schedule(
-        user, profile.event
-    )
+def is_viewable_profile(user, profile):
+    return is_speaker(profile.user, profile.event)
+
+
+is_speaker_viewable = is_viewable_profile & can_view_schedule
+
+
+@rules.predicate
+def is_widget_always_visible(user, event):
+    return event.get_feature_flag("show_widget_if_not_public")
+
+
+is_widget_visible = is_agenda_visible | is_widget_always_visible
+
+
+@rules.predicate
+def event_uses_feedback(user, event):
+    event = getattr(event, "event", event)
+    return event and event.get_feature_flag("use_feedback")

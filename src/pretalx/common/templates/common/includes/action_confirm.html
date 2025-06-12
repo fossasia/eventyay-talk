@@ -1,7 +1,7 @@
 {% load i18n %}
 <h2>{{ action_title|default:phrases.base.delete_confirm_heading }}</h2>
 <hr>
-<p><b>{{ action_object_name }}</b></p>
+<p><strong>{{ action_object_name }}</strong></p>
 <p>{{ action_text|default:phrases.base.delete_warning }}</p>
 <form method="post">
     {% csrf_token %}

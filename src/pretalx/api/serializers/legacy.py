@@ -12,7 +12,7 @@ from pretalx.api.mixins import PretalxSerializer
 from pretalx.api.serializers.question import AnswerSerializer
 from pretalx.api.serializers.room import AvailabilitySerializer
 from pretalx.api.serializers.submission import ResourceSerializer
-from pretalx.api.versions import register_serializer
+from pretalx.api.versions import LEGACY, register_serializer
 from pretalx.person.models import SpeakerProfile, User
 from pretalx.schedule.models import Availability, Room, Schedule, TalkSlot
 from pretalx.submission.models import (
@@ -239,7 +239,7 @@ class LegacySubmissionSerializer(I18nAwareModelSerializer):
         ]
 
 
-@register_serializer(versions="LEGACY", class_name="TagSerializer")
+@register_serializer(versions=[LEGACY], class_name="TagSerializer")
 class LegacyTagSerializer(PretalxSerializer):
     class Meta:
         model = Tag
@@ -285,7 +285,7 @@ class LegacySubmissionReviewerSerializer(LegacySubmissionOrgaSerializer):
         pass
 
 
-@register_serializer(versions=["LEGACY"], class_name="ScheduleSerializer")
+@register_serializer(versions=[LEGACY], class_name="ScheduleSerializer")
 class LegacyScheduleSerializer(ModelSerializer):
     slots = LegacySubmissionSerializer(
         Submission.objects.none().filter(state=SubmissionStates.CONFIRMED), many=True
@@ -301,7 +301,7 @@ class LegacyScheduleSerializer(ModelSerializer):
         fields = ("slots", "version", "breaks")
 
 
-@register_serializer(versions=["LEGACY"], class_name="RoomSerializer")
+@register_serializer(versions=[LEGACY], class_name="RoomSerializer")
 class LegacyRoomSerializer(PretalxSerializer):
     url = SerializerMethodField()
     guid = CharField(source="uuid")
@@ -322,7 +322,7 @@ class LegacyRoomSerializer(PretalxSerializer):
         )
 
 
-@register_serializer(versions=["LEGACY"], class_name="RoomOrgaSerializer")
+@register_serializer(versions=[LEGACY], class_name="RoomOrgaSerializer")
 class LegacyRoomOrgaSerializer(LegacyRoomSerializer):
     availabilities = AvailabilitySerializer(many=True)
 
@@ -337,7 +337,7 @@ class LegacyAnswerOptionSerializer(ModelSerializer):
         fields = ("id", "answer")
 
 
-@register_serializer(versions=["LEGACY"], class_name="QuestionSerializer")
+@register_serializer(versions=[LEGACY], class_name="QuestionSerializer")
 class LegacyQuestionSerializer(ModelSerializer):
     options = LegacyAnswerOptionSerializer(many=True, required=False)
 
@@ -364,7 +364,7 @@ class LegacyQuestionSerializer(ModelSerializer):
         )
 
 
-@register_serializer(versions=["LEGACY"], class_name="AnswerSerializer")
+@register_serializer(versions=[LEGACY], class_name="AnswerSerializer")
 class LegacyAnswerSerializer(ModelSerializer):
     submission = SlugRelatedField(
         queryset=Submission.objects.none(),
@@ -402,7 +402,7 @@ class LegacyAnswerSerializer(ModelSerializer):
         )
 
 
-@register_serializer(versions=["LEGACY"], class_name="ReviewSerializer")
+@register_serializer(versions=[LEGACY], class_name="ReviewSerializer")
 class LegacyReviewSerializer(ModelSerializer):
     submission = SlugRelatedField(slug_field="code", read_only=True)
     user = SlugRelatedField(slug_field="name", read_only=True)
