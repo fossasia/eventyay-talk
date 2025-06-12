@@ -83,14 +83,20 @@ class SpeakerViewSet(
 
     def get_legacy_queryset(self):  # pragma: no cover
         if self.request.user.has_perm("person.orga_list_speakerprofile", self.event):
-            return SpeakerProfile.objects.filter(event=self.event, user__isnull=False)
-        if self.event.current_schedule and self.event.get_feature_flag("show_schedule"):
             return SpeakerProfile.objects.filter(
-                event=self.event,
-                user__submissions__pk__in=self.event.current_schedule.talks.all().values_list(
-                    "submission_id", flat=True
-                ),
-            ).distinct()
+                event=self.event, user__isnull=False
+            ).order_by("user__code")
+        if self.event.current_schedule and self.event.get_feature_flag("show_schedule"):
+            return (
+                SpeakerProfile.objects.filter(
+                    event=self.event,
+                    user__submissions__pk__in=self.event.current_schedule.talks.all().values_list(
+                        "submission_id", flat=True
+                    ),
+                )
+                .distinct()
+                .order_by("user__code")
+            )
         return SpeakerProfile.objects.none()
 
     def get_serializer(self, *args, **kwargs):
@@ -144,7 +150,7 @@ class SpeakerViewSet(
             )
             .select_related("user", "event")
             .prefetch_related("user__submissions", "user__answers")
-            .order_by("pk")
+            .order_by("user__code")
         )
         if fields := self.check_expanded_fields(
             "answers.question",
