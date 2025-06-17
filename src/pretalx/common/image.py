@@ -19,7 +19,7 @@ gravatar_csp = partial(
     csp_update,
     {
         "img-src": "https://www.gravatar.com",
-        "connect-src": "https://www.gravatar.com",
+        "connect-src": ("'self'", "https://www.gravatar.com"),
     },
 )
 
