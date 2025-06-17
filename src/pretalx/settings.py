@@ -692,7 +692,7 @@ if DEBUG:
 
 if "--no-pretalx-information" in sys.argv:
     sys.argv.remove("--no-pretalx-information")
-else:
+elif not os.environ.get("PRETALX_NO_INITIAL_LOG"):
     log_initial()
 
 SILENCED_SYSTEM_CHECKS = [
