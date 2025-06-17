@@ -4,6 +4,17 @@ Release Notes
 =============
 
 - :feature:`orga,1346` Organisers can now completely disable speaker editing of proposals with a new toggle in the CfP settings. When disabled, speakers cannot edit their proposals once submitted (draft proposals remain editable while the CfP is open). This setting overrides review phase settings, and provides a long-requested way of preventing even accepted and confirmed speakers from editing their proposals.
+- :bug:`schedule` Fixed dates wrapping incorrectly in schedule session boxes.
+- :bug:`cfp` Fixed users being able to clear their profile picture when they shouldn’t be able to.
+- :bug:`schedule` Fixed speaker biography data not loading in session schedule modals.
+- :bug:`orga:email` Fixed broken footer links in emails.
+- :bug:`schedule` Fixed schedule HTML exporter to properly include lightbox images.
+- :bug:`api` Fixed speaker API in events without speaker avatar configuration.
+- :feature:`admin` Administrators can now access organiser dashboards.
+- :feature:`orga:email` Users now receive email notifications when they change their email address.
+- :feature:`orga` Improved lightbox accessibility and made lightboxes available on all pages.
+- :feature:`admin` User avatars are now displayed in the admin user list for better identification.
+- :release:`2025.1.0 <2025-05-28>`
 - :announcement:`admin` As PostgreSQL 13 is soon EOL, pretalx support has changed to PostgreSQL 14 or higher.
 - :announcement:`admin` The ``shell_scoped`` command was removed – please use the ``shell`` command instead, which now requires you to either specify an ``--event`` or run with ``--unsafe-disable-scopes`` (matching the previous ``shell_scoped --scopes-disabled``).
 - :announcement:`admin` Attention, plugin developers and administrators: In the course of the development of the new API, many permissions have changed names (most notably: ``orga.change_settings`` to ``event.update_event``, ``agenda.view_schedule`` to ``schedule.list_schedule``, and ``orga.view_submissions`` to ``submission.orga_list_submission``), and some import paths have changed. Take a look at the changes to the official pretalx plugins for reference. Administrators, please make sure that your plugins work with the new pretalx release before updating to the new release.
