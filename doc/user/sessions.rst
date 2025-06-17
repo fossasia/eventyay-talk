@@ -44,6 +44,11 @@ session can be edited, as the speakers otherwise could withdraw and re-submit
 their proposal. Once the CfP is closed, the setting of the active review phase
 applies, with the default being to prevent edits.
 
+Organisers can also completely disable speaker editing for all sessions (except drafts)
+using the "Allow speakers to edit their proposals" setting in the CfP configuration.
+When disabled, speakers cannot edit any of their proposals once submitted, regardless
+of CfP status or review phase settings. Draft proposals remain editable while the CfP is open.
+
 Accepted
 ^^^^^^^^
 

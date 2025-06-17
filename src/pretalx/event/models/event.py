@@ -91,6 +91,7 @@ def default_feature_flags():
         "use_submission_comments": True,
         "present_multiple_times": False,
         "submission_public_review": True,
+        "speakers_can_edit_submissions": True,
     }
 
 

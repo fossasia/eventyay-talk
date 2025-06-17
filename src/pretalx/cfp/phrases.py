@@ -29,7 +29,7 @@ class CfPPhrases(Phrases, app="cfp"):
     submission_not_confirmed = _(
         "This proposal cannot be confirmed at this time – please contact us if you think this is an error."
     )
-    submission_uneditable = _("This proposal cannot be edited anymore.")
+    submission_uneditable = _("This proposal cannot be edited at this time. Please contact the organisers if you need to make changes.")
 
     speaker_email = _("Speaker email")
     invite_subject = _("{speaker} invites you to join their session!")

@@ -390,13 +390,17 @@ class Submission(GenerateCode, PretalxModel):
 
     @cached_property
     def editable(self):
+        if self.state == SubmissionStates.DRAFT:
+            return self.cfp_open
+
+        if not self.event.get_feature_flag("speakers_can_edit_submissions"):
+            return False
+
         if self.state == SubmissionStates.SUBMITTED:
             return self.cfp_open or (
                 self.event.active_review_phase
                 and self.event.active_review_phase.speakers_can_change_submissions
             )
-        if self.state == SubmissionStates.DRAFT:
-            return self.cfp_open
         return self.state in SubmissionStates.accepted_states
 
     @property

@@ -21,7 +21,7 @@ from django_context_decorator import context
 from django_scopes import scope, scopes_disabled
 from formtools.wizard.views import SessionWizardView
 
-from pretalx.common.forms import I18nEventFormSet, I18nFormSet
+from pretalx.common.forms import I18nEventFormSet
 from pretalx.common.models import ActivityLog
 from pretalx.common.text.phrases import phrases
 from pretalx.common.views.mixins import (
@@ -301,7 +301,7 @@ class EventReviewSettings(EventSettingsPermission, ActionFromUrl, FormView):
             Event,
             ReviewPhase,
             form=ReviewPhaseForm,
-            formset=I18nFormSet,
+            formset=I18nEventFormSet,
             can_delete=True,
             extra=0,
         )

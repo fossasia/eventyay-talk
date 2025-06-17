@@ -627,6 +627,17 @@ class ReviewPhaseForm(I18nHelpText, I18nModelForm):
     def __init__(self, *args, event=None, **kwargs):
         super().__init__(*args, **kwargs)
 
+        if event and not event.get_feature_flag("speakers_can_edit_submissions"):
+            self.fields["speakers_can_change_submissions"].disabled = True
+            self.fields["speakers_can_change_submissions"].initial = False
+            link_tag = f'<a href="{event.cfp.urls.text}">{_("Change this in the CfP settings")}</a>'
+            help_text = _(
+                "Speaker editing is currently disabled at the event level. "
+                "{link_tag} to enable speaker editing."
+            ).format(link_tag=link_tag)
+            help_text = f'<span class="text-danger">{help_text}</span>'
+            self.fields["speakers_can_change_submissions"].help_text = help_text
+
     def clean(self):
         data = super().clean()
         if data.get("start") and data.get("end") and data["start"] > data["end"]:
