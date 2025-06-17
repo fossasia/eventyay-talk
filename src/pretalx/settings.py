@@ -6,6 +6,7 @@ from importlib.metadata import entry_points
 from pathlib import Path
 from urllib.parse import urlparse
 
+from csp import constants as csp_constants
 from django.contrib.messages import constants as messages
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
@@ -75,6 +76,7 @@ EXTERNAL_APPS = [
     "jquery",
     "rest_framework.authtoken",
     "rules",
+    "csp",
 ]
 LOCAL_APPS = [
     "pretalx.api",
@@ -142,14 +144,18 @@ def merge_csp(*options, config=None):
     return tuple(result)
 
 
-CSP_DEFAULT_SRC = merge_csp("'self'", config=config.get("site", "csp"))
-CSP_SCRIPT_SRC = merge_csp("'self'", config=config.get("site", "csp_script"))
-CSP_STYLE_SRC = merge_csp(
-    "'self'", "'unsafe-inline'", config=config.get("site", "csp_style")
-)
-CSP_IMG_SRC = merge_csp("'self'", "data:", config=config.get("site", "csp_img"))
-CSP_BASE_URI = ("'none'",)
-CSP_FORM_ACTION = merge_csp("'self'", config=config.get("site", "csp_form"))
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "default-src": merge_csp("'self'", config=config.get("site", "csp")),
+        "script-src": merge_csp("'self'", config=config.get("site", "csp_script")),
+        "style-src": merge_csp(
+            "'self'", "'unsafe-inline'", config=config.get("site", "csp_style")
+        ),
+        "img-src": merge_csp("'self'", "data:", config=config.get("site", "csp_img")),
+        "base-uri": csp_constants.NONE,
+        "form-action": merge_csp("'self'", config=config.get("site", "csp_form")),
+    }
+}
 
 CSRF_COOKIE_NAME = "pretalx_csrftoken"
 CSRF_TRUSTED_ORIGINS = [SITE_URL]
