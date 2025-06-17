@@ -307,7 +307,7 @@ SESSION_ENGINE = None
 
 HAS_REDIS = config.get("redis", "location") != "False"
 if HAS_REDIS:
-    CACHES["redis"] = {
+    CACHES["default"] = {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": config.get("redis", "location"),
     }
