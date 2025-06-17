@@ -10,6 +10,7 @@ Release Notes
 - :bug:`orga:email` Fixed broken footer links in emails.
 - :bug:`schedule` Fixed schedule HTML exporter to properly include lightbox images.
 - :bug:`api` Fixed speaker API in events without speaker avatar configuration.
+- :feature:`admin` Administrators can now disable the verbose pretalx startup message with an environment variable, ``PRETALX_NO_INITIAL_LOG=1``, in addition to the existing command-line flag.
 - :feature:`admin` Administrators can now access organiser dashboards.
 - :feature:`orga:email` Users now receive email notifications when they change their email address.
 - :feature:`orga` Improved lightbox accessibility and made lightboxes available on all pages.
