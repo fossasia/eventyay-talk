@@ -21,5 +21,10 @@ module.exports = {
 		'vue/no-v-html': 0,
 		'vue/require-v-for-key': ['warn'],
 		'vue/valid-v-for': ['warn'],
+		'vue/component-api-style': ['error', ['script-setup']],
+		'vue/no-undef-properties': 'error'
+	},
+	parserOptions: {
+		ecmaVersion: 2022
 	}
 }
