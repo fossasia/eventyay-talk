@@ -1,19 +1,19 @@
 <template lang="pug">
 .c-grid-schedule()
 	.grid(ref="grid", :style="gridStyle", :class="gridClasses", @pointermove="updateHoverSlice($event)", @pointerup="stopDragging($event)")
-		template(v-for="slice of visibleTimeslices")
+		template(v-for="slice of visibleTimeslices", :key="slice.name")
 			.timeslice(:ref="slice.name", :class="getSliceClasses(slice)", :data-slice="slice.date.format()", :style="getSliceStyle(slice)", @click="expandTimeslice(slice)") {{ getSliceLabel(slice) }}
 				svg(viewBox="0 0 10 10", v-if="isSliceExpandable(slice)").expand
 					path(d="M 0 4 L 5 0 L 10 4 z")
 					path(d="M 0 6 L 5 10 L 10 6 z")
 			.timeseparator(:class="getSliceClasses(slice)", :style="getSliceStyle(slice)")
 		.room(:style="{'grid-area': `1 / 1 / auto / auto`}")
-		.room(v-for="(room, index) of visibleRooms", :style="{'grid-area': `1 / ${index + 2 } / auto / auto`}")
+		.room(v-for="room of visibleRooms", :key="room.id", :style="{'grid-area': `1 / ${visibleRooms.indexOf(room) + 2 } / auto / auto`}")
 			span {{ getLocalizedString(room.name) }}
 			.hide-room.no-print(v-if="visibleRooms.length > 1", @click="hiddenRooms = rooms.filter(r => hiddenRooms.includes(r) || r === room)")
 				i.fa.fa-eye-slash
 		session(v-if="draggedSession && hoverSlice", :style="getHoverSliceStyle()", :session="draggedSession", :isDragClone="true", :overrideStart="hoverSlice.time")
-		template(v-for="session of visibleSessions")
+			template(v-for="session of visibleSessions", :key="session.id")
 			session(
 				:session="session",
 				:warnings="session.code ? warnings[session.code] : []",
@@ -22,17 +22,18 @@
 				:showRoom="false",
 				@startDragging="startDragging($event)",
 			)
-		.availability(v-for="availability of visibleAvailabilities", :style="getSessionStyle(availability)", :class="availability.active ? ['active'] : []")
+		.availability(v-for="(availability, index) of visibleAvailabilities", :key="index", :style="getSessionStyle(availability)", :class="availability.active ? ['active'] : []")
 	#hiddenRooms.no-print(v-if="hiddenRooms.length")
 		h4 {{ $t('Hidden rooms') }} ({{ hiddenRooms.length }})
 		.room-list
-			.room-entry(v-for="room of hiddenRooms", @click="hiddenRooms.splice(hiddenRooms.indexOf(room), 1)")
+			.room-entry(v-for="room of hiddenRooms", :key="room.id", @click="hiddenRooms.splice(hiddenRooms.indexOf(room), 1)")
 				.span {{ getLocalizedString(room.name) }}
 				.show-room(@click.stop="hiddenRooms.splice(hiddenRooms.indexOf(room), 1)")
 					i.fa.fa-eye
 
 </template>
 <script>
+import { defineComponent } from 'vue'
 import moment from 'moment-timezone'
 import Session from './Session'
 import { getLocalizedString } from '~/utils'
@@ -41,22 +42,53 @@ const getSliceName = function (date) {
 	return `slice-${date.format('MM-DD-HH-mm')}`
 }
 
-export default {
+export default defineComponent({
+	name: 'GridSchedule',
 	components: { Session },
 	props: {
-		sessions: Array,
-		availabilities: Object,
-		warnings: Object,
-		start: Object,
-		end: Object,
-		rooms: Array,
-		currentDay: Object,
-		draggedSession: Object
+		sessions: {
+			type: Array,
+			default: () => []
+		},
+		availabilities: {
+			type: Object,
+			default: () => ({})
+		},
+		warnings: {
+			type: Object,
+			default: () => ({})
+		},
+		start: {
+			type: Object,
+			required: true
+		},
+		end: {
+			type: Object,
+			required: true
+		},
+		rooms: {
+			type: Array,
+			default: () => []
+		},
+		currentDay: {
+			type: Object,
+			default: null
+		},
+		draggedSession: {
+			type: Object,
+			default: null
+		}
 	},
-	data () {
+	inject: {
+		eventUrl: { default: null },
+		generateSessionLinkUrl: {
+			default() {
+				return ({eventUrl, session}) => `${eventUrl}talk/${session.id}/`
+			}
+		}
+	},
+	data() {
 		return {
-			moment,
-			getLocalizedString,
 			scrolledDay: null,
 			hoverSlice: null,
 			expandedTimes: [],
@@ -280,11 +312,11 @@ export default {
 			return avails
 		},
 		staticOffsetTop () {
-			const rect = this.$parent.$el.getBoundingClientRect()
+			const rect = this.$el.parentElement.getBoundingClientRect()
 			return rect.top
 		},
 		scrollParent () {
-			return this.$refs.grid.parentElement.parentElement
+			return this.$el.parentElement
 		},
 		visibleRooms () {
 			return this.rooms.filter(room => !this.hiddenRooms.includes(room))
@@ -315,7 +347,7 @@ export default {
 	watch: {
 		currentDay: 'changeDay'
 	},
-	async mounted () {
+	async mounted() {
 		await this.$nextTick()
 		this.observer = new IntersectionObserver(this.onIntersect, {
 			root: this.scrollParent,
@@ -323,11 +355,12 @@ export default {
 		})
 		for (const [ref, el] of Object.entries(this.$refs)) {
 			if (!ref.startsWith('slice') || !ref.endsWith('00-00')) continue
-			this.observer.observe(el[0])
+			this.observer.observe(Array.isArray(el) ? el[0] : el)
 		}
 		this.gridOffset = this.$refs.grid.getBoundingClientRect().left
 	},
 	methods: {
+		getLocalizedString,
 		startDragging({session, event}) {
 			this.dragStart = {
 				x: event.clientX,
@@ -490,7 +523,7 @@ export default {
 			this.$emit('changeDay', this.scrolledDay)
 		}
 	}
-}
+})
 </script>
 <style lang="stylus">
 .c-grid-schedule

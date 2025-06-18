@@ -19,6 +19,7 @@
 			i.fa.fa-exclamation-triangle
 </template>
 <script>
+import { defineComponent } from 'vue'
 import moment from 'moment-timezone'
 import MarkdownIt from 'markdown-it'
 import { getLocalizedString } from '~/utils'
@@ -28,10 +29,17 @@ const markdownIt = MarkdownIt({
 	breaks: true
 })
 
-export default {
+export default defineComponent({
+	name: 'Session',
 	props: {
-		session: Object,
-		warnings: Array,
+		session: {
+			type: Object,
+			required: true
+		},
+		warnings: {
+			type: Array,
+			default: () => []
+		},
 		isDragged: Boolean,
 		isDragClone: {
 			type: Boolean,
@@ -50,13 +58,8 @@ export default {
 			}
 		}
 	},
-	data () {
-		return {
-			getLocalizedString
-		}
-	},
 	computed: {
-		link () {
+		link() {
 			return this.generateSessionLinkUrl({eventUrl: this.eventUrl, session: this.session})
 		},
 		isBreak () {
@@ -111,8 +114,11 @@ export default {
 			}
 			return `${hours}h`
 		}
+	},
+	methods: {
+		getLocalizedString
 	}
-}
+})
 </script>
 <style lang="stylus">
 .c-linear-schedule-session
