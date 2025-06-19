@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-12 14:01+0000\n"
-"PO-Revision-Date: 2024-06-13 06:39+0000\n"
-"Last-Translator: Francisco <francisco.joao.2003@outlook.com>\n"
+"PO-Revision-Date: 2025-06-19 09:33+0000\n"
+"Last-Translator: Tiago Carreira <tiago.g.carreira+git@gmail.com>\n"
 "Language-Team: none\n"
 "Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.18.2\n"
+"X-Generator: Weblate 5.9.2\n"
 
 #: pretalx/agenda/phrases.py:8
 msgid "Thank you for your feedback!"
@@ -218,10 +218,12 @@ msgid ""
 "You're currently not logged in, so your favourited talks will only be stored "
 "locally in your browser."
 msgstr ""
+"Você não está conectado, então as suas palestras favoritas serão armazenadas "
+"apenas localmente em seu navegador."
 
 #: pretalx/agenda/views/schedule.py:192
 msgid "Your favourites could only be saved locally in your browser."
-msgstr ""
+msgstr "Favoritas foram salvas apenas localmente no navegador."
 
 #: pretalx/agenda/views/talk.py:126
 #, python-brace-format
@@ -567,7 +569,7 @@ msgstr ""
 
 #: pretalx/cfp/templates/cfp/event/recover.html:25
 msgid "Set your password to access your profile and proposals"
-msgstr ""
+msgstr "Defina uma senha para aceder ao seu perfil e propostas"
 
 #: pretalx/cfp/templates/cfp/event/submission_base.html:10
 #: pretalx/orga/templates/orga/submission/content.html:27
@@ -1145,6 +1147,8 @@ msgid ""
 "The file you uploaded has a very large number of pixels, please upload a "
 "picture with smaller dimensions."
 msgstr ""
+"O arquivo enviado tem uma dimensão muito grande. Por favor, envie uma imagem "
+"com uma dimensão menor."
 
 #: pretalx/common/image.py:62
 msgid ""
@@ -1525,7 +1529,7 @@ msgstr "Correio personalizado"
 
 #: pretalx/common/log_display.py:196
 msgid "Response to custom field"
-msgstr ""
+msgstr "Resposta para campo personalizado"
 
 #: pretalx/common/log_display.py:199 pretalx/orga/templates/orga/base.html:247
 #: pretalx/orga/templates/orga/cfp/text.html:14
@@ -1846,19 +1850,19 @@ msgstr "Nenhum ficheiro fornecido"
 
 #: pretalx/common/templates/common/question_answer.html:16
 msgid "No response"
-msgstr ""
+msgstr "Sem resposta"
 
 #: pretalx/common/templates/common/redirect.html:7
 #: pretalx/common/templates/common/redirect.html:13
 msgid "Redirect"
-msgstr ""
+msgstr "Redirecionar"
 
 #: pretalx/common/templates/common/redirect.html:15
 #, python-format
 msgid ""
 "The link you clicked on wants to redirect you to a destination on the "
 "website %(host)s."
-msgstr ""
+msgstr "O link que você clicou quer te redirecionar para o site %(host)s."
 
 #: pretalx/common/templates/common/redirect.html:18
 msgid "Please only proceed if you trust this website to be safe."
