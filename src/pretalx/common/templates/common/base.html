@@ -63,7 +63,9 @@
         {% block custom_header %}{% endblock custom_header %}
     </head>
     <body data-datetimeformat="{{ js_datetime_format }}" data-dateformat="{{ js_date_format }}" data-datetimelocale="{{ js_locale }}">
-        {% include "common/includes/header.html" %}
+        <div id="top-bg" class="header {{ request.event.display_settings.header_pattern|default:"bg-primary" }}">
+            {% include "common/includes/header.html" %}
+        </div>
         {% if request.event and not request.event.is_public and not is_html_export %}
             <div id="event-nonpublic" class="d-print-none">
                 <i class="fa fa-user-secret"></i>

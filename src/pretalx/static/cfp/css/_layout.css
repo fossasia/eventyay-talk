@@ -17,6 +17,16 @@ body {
     width: 100%;
   }
 }
+#header-img{
+  padding: 10px;
+}
+#header-img img{
+  width: 100%;
+  height: 240px;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block; 
+  }
 
 h1 a {
   color: white;
