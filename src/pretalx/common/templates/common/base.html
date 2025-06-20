@@ -64,10 +64,7 @@
     </head>
     <body data-datetimeformat="{{ js_datetime_format }}" data-dateformat="{{ js_date_format }}" data-datetimelocale="{{ js_locale }}">
         <div id="top-bg" class="header {{ request.event.display_settings.header_pattern|default:"bg-primary" }}">
-            {% if request.event and request.event.header_image %}
-                {# we’re not lazy-loading the header image, even though it can be large, because it’s a bit jarring to see it flash in 100ms after the page load #}
-                <img src="{{ request.event.header_image.url }}" id="header-image" alt="{{ request.event.name }}">
-            {% endif %}
+            {% include "common/includes/header.html" %}
         </div>
         {% if request.event and not request.event.is_public and not is_html_export %}
             <div id="event-nonpublic" class="d-print-none">
