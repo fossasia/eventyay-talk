@@ -11,31 +11,31 @@
 </template>
 
 <script>
+import { defineComponent } from 'vue'
 import { getLocalizedString } from '../utils'
-export default {
+
+export default defineComponent({
 	name: 'Editor',
-	components: { },
 	props: {
-		session: null,
-	},
-	data () {
-		return {
-			getLocalizedString
+		session: {
+			type: Object,
+			default: null
 		}
 	},
 	computed: {
-		something () {
+		something() {
 			return true
-		},
+		}
 	},
-	created () { },
-	mounted () { },
+	created() {},
+	mounted() {},
 	methods: {
-		somethingMethod (foo) {
+		getLocalizedString,
+		somethingMethod(foo) {
 			return foo
-		},
+		}
 	}
-}
+})
 </script>
 
 <style lang="stylus">

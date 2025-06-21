@@ -13,10 +13,10 @@
 							i.fa.fa-sort-amount-asc(v-if="unassignedSort === method.name && unassignedSortDirection === 1")
 							i.fa.fa-sort-amount-desc(v-if="unassignedSort === method.name && unassignedSortDirection === -1")
 				session.new-break(:session="{title: '+ ' + translations.newBreak}", :isDragged="false", @startDragging="startNewBreak", @click="showNewBreakHint", v-tooltip.fixed="{text: newBreakTooltip, show: newBreakTooltip}", @pointerleave="removeNewBreakHint")
-				session(v-for="un in unscheduled", :session="un", @startDragging="startDragging", :isDragged="draggedSession && un.id === draggedSession.id")
+				session(v-for="un in unscheduled", :key="un.id", :session="un", @startDragging="startDragging", :isDragged="draggedSession && un.id === draggedSession.id")
 			#schedule-wrapper(v-scrollbar.x.y="")
 				bunt-tabs.days(v-if="days", :modelValue="currentDay.format()", ref="tabs" :class="['grid-tabs']")
-					bunt-tab(v-for="day of days", :id="day.format()", :header="day.format(dateFormat)", @selected="changeDay(day)")
+					bunt-tab(v-for="day of days", :key="day.format()", :id="day.format()", :header="day.format(dateFormat)", @selected="changeDay(day)")
 				grid-schedule(:sessions="sessions",
 					:rooms="schedule.rooms",
 					:availabilities="availabilities",
@@ -76,6 +76,7 @@
 	bunt-progress-circular(v-else, size="huge", :page="true")
 </template>
 <script>
+import { defineComponent } from 'vue'
 import moment from 'moment-timezone'
 import Editor from '~/components/Editor'
 import GridSchedule from '~/components/GridSchedule'
@@ -83,7 +84,7 @@ import Session from '~/components/Session'
 import api from '~/api'
 import { getLocalizedString } from '~/utils'
 
-export default {
+export default defineComponent({
 	name: 'PretalxSchedule',
 	components: { Editor, GridSchedule, Session },
 	props: {
@@ -95,7 +96,6 @@ export default {
 	},
 	data () {
 		return {
-			moment,
 			eventSlug: null,
 			scrollParentWidth: Infinity,
 			schedule: null,
@@ -112,10 +112,6 @@ export default {
 			unassignedSortDirection: 1,  // asc
 			showUnassignedSortMenu: false,
 			newBreakTooltip: '',
-			getLocalizedString,
-			// i18next-parser doesn't have a pug parser / fails to parse translated
-			// strings in attributes (though plain {{}} strings work!), so anything
-			// handled in attributes will be collected here instead
 			translations: {
 				filterSessions: this.$t('Filter sessions'),
 				newBreak: this.$t('New break'),
@@ -252,10 +248,11 @@ export default {
 		window.addEventListener('resize', this.onWindowResize)
 		this.onWindowResize()
 	},
-	destroyed () {
-		// TODO destroy observers
+	unmounted() {
+		// Cleanup if needed
 	},
 	methods: {
+		getLocalizedString,
 		changeDay (day) {
 			if (day.isSame(this.currentDay)) return
 			this.currentDay = moment(day, this.eventTimezone).startOf('day')
@@ -384,7 +381,7 @@ export default {
 			})
 		}
 	}
-}
+})
 </script>
 <style lang="stylus">
 #page-content
