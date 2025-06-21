@@ -11,7 +11,11 @@ const app = createApp(App, {
 app.use(Buntpapier)
 const lang = document.querySelector("#app").dataset.gettext;
 (async () => {
-    const i18nPlugin = await i18n(lang)
-    app.use(i18nPlugin)
-    app.mount('#app')
-})()
+    try {
+        const i18nPlugin = await i18n(lang);
+        app.use(i18nPlugin);
+        app.mount('#app');
+    } catch (error) {
+        console.error('Application initialization failed:', error);
+    }
+})();
