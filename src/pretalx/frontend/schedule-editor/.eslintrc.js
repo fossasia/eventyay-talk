@@ -25,6 +25,11 @@ module.exports = {
 		'vue/no-undef-properties': 'error'
 	},
 	parserOptions: {
-		ecmaVersion: 2022
+		ecmaVersion: 2022,
+		sourceType: 'module'
+	},
+	env: {
+		browser: true,
+		es2022: true
 	}
 }
