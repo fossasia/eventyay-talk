@@ -22,7 +22,7 @@
 				:showRoom="false",
 				@startDragging="startDragging($event)",
 			)
-		.availability(v-for="(availability, index) of visibleAvailabilities", :key="index", :style="getSessionStyle(availability)", :class="availability.active ? ['active'] : []")
+		.availability(v-for="availability of visibleAvailabilities" :key="`avail-${availability.room.id}-${availability.start.valueOf()}`" :style="getSessionStyle(availability)", :class="availability.active ? ['active'] : []")
 	#hiddenRooms.no-print(v-if="hiddenRooms.length")
 		h4 {{ $t('Hidden rooms') }} ({{ hiddenRooms.length }})
 		.room-list
@@ -33,7 +33,7 @@
 
 </template>
 <script setup>
-import { ref, computed, watch, onMounted, inject, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, inject, nextTick, onUnmounted } from 'vue'
 import moment from 'moment-timezone'
 import Session from './Session'
 import { getLocalizedString } from '~/utils'
@@ -346,6 +346,13 @@ onMounted(async () => {
   if (grid.value) {
     gridOffset.value = grid.value.getBoundingClientRect().left
   }
+})
+
+onUnmounted(() => {
+  if (observer.value) {
+    observer.value.disconnect()
+  }
+  clearInterval(dragScrollTimer.value)
 })
 
 function startDragging({session, event}) {

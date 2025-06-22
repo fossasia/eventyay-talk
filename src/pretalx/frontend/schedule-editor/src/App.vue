@@ -39,9 +39,9 @@
 						.data-row(v-if="editorSession.code && editorSession.speakers && editorSession.speakers.length > 0").form-group.row
 							label.data-label.col-form-label.col-md-3 {{ $t('Speakers') }}
 							.col-md-9.data-value
-								span(v-for="speaker, index of editorSession.speakers")
+								span(v-for="speaker in editorSession.speakers", :key="speaker.code")
 									a(:href="`/orga/event/${eventSlug}/speakers/${speaker.code}/`") {{speaker.name}}
-									span(v-if="index != editorSession.speakers.length - 1") {{', '}}
+									span(v-if="speaker !== editorSession.speakers[editorSession.speakers.length - 1]") {{', '}}
 						.data-row(v-else).form-group.row
 							label.data-label.col-form-label.col-md-3 {{ $t('Title') }}
 							.col-md-9
