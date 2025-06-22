@@ -18,8 +18,8 @@
 			span(v-if="warnings.length > 1") {{ warnings.length }}
 			i.fa.fa-exclamation-triangle
 </template>
-<script>
-import { defineComponent } from 'vue'
+<script setup>
+import { computed, inject } from 'vue'
 import moment from 'moment-timezone'
 import MarkdownIt from 'markdown-it'
 import { getLocalizedString } from '~/utils'
@@ -29,95 +29,91 @@ const markdownIt = MarkdownIt({
 	breaks: true
 })
 
-export default defineComponent({
-	name: 'Session',
-	props: {
-		session: {
-			type: Object,
-			required: true
-		},
-		warnings: {
-			type: Array,
-			default: () => []
-		},
-		isDragged: Boolean,
-		isDragClone: {
-			type: Boolean,
-			default: false
-		},
-		overrideStart: {
-			type: Object,
-			default: null
-		}
+const props = defineProps({
+	session: {
+		type: Object,
+		required: true
 	},
-	inject: {
-		eventUrl: { default: null },
-		generateSessionLinkUrl: {
-			default () {
-				return ({eventUrl, session}) => `${eventUrl}talk/${session.id}/`
-			}
-		}
+	warnings: {
+		type: Array,
+		default: () => []
 	},
-	computed: {
-		link() {
-			return this.generateSessionLinkUrl({eventUrl: this.eventUrl, session: this.session})
-		},
-		isBreak () {
-			return !this.session.code
-		},
-		classes () {
-			let classes = []
-			if (this.isBreak) classes.push('isbreak')
-			else {
-				classes.push('istalk')
-				if (this.session.state !== "confirmed" && this.session.state !== "accepted") classes.push('pending')
-				else if (this.session.state !== "confirmed") classes.push('unconfirmed')
-			}
-			if (this.isDragged) classes.push('dragging')
-			if (this.isDragClone) classes.push('clone')
-			return classes
-		},
-		style () {
-			return {
-				'--track-color': this.session.track?.color || 'var(--color-primary)'
-			}
-		},
-		startTime () {
-			// check if 12h or 24h locale
-			const time = this.overrideStart  || this.session.start
-			if (!time) return
-			if (moment.localeData().longDateFormat('LT').endsWith(' A')) {
-				return {
-					time: time.format('h:mm'),
-					ampm: time.format('A')
-				}
-			} else {
-				return {
-					time: moment(time).format('LT')
-				}
-			}
-		},
-		durationMinutes () {
-			if (!this.session.start) return this.session.duration
-			return moment(this.session.end).diff(this.session.start, 'minutes')
-		},
-		durationPretty () {
-			if (!this.durationMinutes) return
-			let minutes = this.durationMinutes
-			const hours = Math.floor(minutes / 60)
-			if (minutes <= 60) {
-				return `${minutes}min`
-			}
-			minutes = minutes % 60
-			if (minutes) {
-				return `${hours}h${minutes}min`
-			}
-			return `${hours}h`
-		}
+	isDragged: Boolean,
+	isDragClone: {
+		type: Boolean,
+		default: false
 	},
-	methods: {
-		getLocalizedString
+	overrideStart: {
+		type: Object,
+		default: null
 	}
+})
+
+const eventUrl = inject('eventUrl', null)
+const generateSessionLinkUrl = inject('generateSessionLinkUrl', {
+	default () {
+		return ({eventUrl, session}) => `${eventUrl}talk/${session.id}/`
+	}
+})
+
+const link = computed(() => {
+	return generateSessionLinkUrl({eventUrl: eventUrl.value, session: props.session})
+})
+
+const isBreak = computed(() => !props.session.code)
+
+const classes = computed(() => {
+	let classes = []
+	if (isBreak.value) classes.push('isbreak')
+	else {
+		classes.push('istalk')
+		if (props.session.state !== "confirmed" && props.session.state !== "accepted") classes.push('pending')
+		else if (props.session.state !== "confirmed") classes.push('unconfirmed')
+	}
+	if (props.isDragged) classes.push('dragging')
+	if (props.isDragClone) classes.push('clone')
+	return classes
+})
+
+const style = computed(() => {
+	return {
+		'--track-color': props.session.track?.color || 'var(--color-primary)'
+	}
+})
+
+const startTime = computed(() => {
+	// check if 12h or 24h locale
+	const time = props.overrideStart  || props.session.start
+	if (!time) return
+	if (moment.localeData().longDateFormat('LT').endsWith(' A')) {
+		return {
+			time: time.format('h:mm'),
+			ampm: time.format('A')
+		}
+	} else {
+		return {
+			time: moment(time).format('LT')
+		}
+	}
+})
+
+const durationMinutes = computed(() => {
+	if (!props.session.start) return props.session.duration
+	return moment(props.session.end).diff(props.session.start, 'minutes')
+})
+
+const durationPretty = computed(() => {
+	if (!durationMinutes.value) return
+	let minutes = durationMinutes.value
+	const hours = Math.floor(minutes / 60)
+	if (minutes <= 60) {
+		return `${minutes}min`
+	}
+	minutes = minutes % 60
+	if (minutes) {
+		return `${hours}h${minutes}min`
+	}
+	return `${hours}h`
 })
 </script>
 <style lang="stylus">

@@ -75,8 +75,8 @@
 						bunt-button#btn-save(@click="editorSave", :loading="editorSessionWaiting") {{ $t('Save') }}
 	bunt-progress-circular(v-else, size="huge", :page="true")
 </template>
-<script>
-import { defineComponent } from 'vue'
+<script setup>
+import { ref, computed, onMounted, onUnmounted, inject, nextTick } from 'vue'
 import moment from 'moment-timezone'
 import Editor from '~/components/Editor'
 import GridSchedule from '~/components/GridSchedule'
@@ -84,304 +84,355 @@ import Session from '~/components/Session'
 import api from '~/api'
 import { getLocalizedString } from '~/utils'
 
-export default defineComponent({
-	name: 'PretalxSchedule',
-	components: { Editor, GridSchedule, Session },
-	props: {
-		locale: String,
-		version: {
-			type: String,
-			default: ''
-		}
-	},
-	data () {
-		return {
-			eventSlug: null,
-			scrollParentWidth: Infinity,
-			schedule: null,
-			availabilities: {rooms: {}, talks: {}},
-			warnings: {},
-			currentDay: null,
-			draggedSession: null,
-			editorSession: null,
-			editorSessionWaiting: false,
-			isUnassigning: false,
-			locales: ["en"],
-			unassignedFilterString: '',
-			unassignedSort: 'title',
-			unassignedSortDirection: 1,  // asc
-			showUnassignedSortMenu: false,
-			newBreakTooltip: '',
-			translations: {
-				filterSessions: this.$t('Filter sessions'),
-				newBreak: this.$t('New break'),
-			}
-		}
-	},
-	computed: {
-		roomsLookup () {
-			if (!this.schedule) return {}
-			return this.schedule.rooms.reduce((acc, room) => { acc[room.id] = room; return acc }, {})
-		},
-		tracksLookup () {
-			if (!this.schedule) return {}
-			return this.schedule.tracks.reduce((acc, t) => { acc[t.id] = t; return acc }, {})
-		},
-		unassignedSortMethods () {
-			const sortMethods = [
-				{label: this.$t('Title'), name: 'title'},
-				{label: this.$t('Speakers'), name: 'speakers'},
-			]
-			if (this.schedule && this.schedule.tracks.length > 1) {
-				sortMethods.push({label: this.$t('Track'), name: 'track'})
-			}
-			sortMethods.push({label: this.$t('Duration'), name: 'duration' })
-			return sortMethods
-		},
-		speakersLookup () {
-			if (!this.schedule) return {}
-			return this.schedule.speakers.reduce((acc, s) => { acc[s.code] = s; return acc }, {})
-		},
-		unscheduled () {
-			if (!this.schedule) return
-			let sessions = []
-			for (const session of this.schedule.talks.filter(s => !s.start || !s.room)) {
-				sessions.push({
-					id: session.id,
-					code: session.code,
-					title: session.title,
-					abstract: session.abstract,
-					speakers: session.speakers?.map(s => this.speakersLookup[s]),
-					track: this.tracksLookup[session.track],
-					duration: session.duration,
-					state: session.state,
-				})
-			}
-			if (this.unassignedFilterString.length) {
-				sessions = sessions.filter(s => {
-					const title = getLocalizedString(s.title)
-					const speakers = s.speakers?.map(s => s.name).join(', ') || ''
-					return title.toLowerCase().includes(this.unassignedFilterString.toLowerCase()) || speakers.toLowerCase().includes(this.unassignedFilterString.toLowerCase())
-				})
-			}
-			// Sort by this.unassignedSort, this.unassignedSortDirection (1 or -1)
-			sessions = sessions.sort((a, b) => {
-				if (this.unassignedSort == 'title') {
-					return getLocalizedString(a.title).toUpperCase().localeCompare(getLocalizedString(b.title).toUpperCase()) * this.unassignedSortDirection
-				} else if (this.unassignedSort == 'speakers') {
-					const aSpeakers = a.speakers?.map(s => s.name).join(', ') || ''
-					const bSpeakers = b.speakers?.map(s => s.name).join(', ') || ''
-					return aSpeakers.toUpperCase().localeCompare(bSpeakers.toUpperCase()) * this.unassignedSortDirection
-				} else if (this.unassignedSort == 'track') {
-					return getLocalizedString(a.track ? a.track.name : '').toUpperCase().localeCompare(getLocalizedString(b.track? b.track.name : '').toUpperCase()) * this.unassignedSortDirection
-				} else if (this.unassignedSort == 'duration') {
-					return (a.duration - b.duration) * this.unassignedSortDirection
-				}
-			})
-			return sessions
-		},
-		sessions () {
-			if (!this.schedule) return
-			const sessions = []
-			for (const session of this.schedule.talks.filter(s => s.start && moment(s.start).isSameOrAfter(this.days[0]) && moment(s.start).isSameOrBefore(this.days.at(-1).clone().endOf('day')))) {
-				sessions.push({
-					id: session.id,
-					code: session.code,
-					title: session.title,
-					abstract: session.abstract,
-					start: moment(session.start),
-					end: moment(session.end),
-					duration: moment(session.end).diff(session.start, 'm'),
-					speakers: session.speakers?.map(s => this.speakersLookup[s]),
-					track: this.tracksLookup[session.track],
-					state: session.state,
-					room: this.roomsLookup[session.room]
-				})
-			}
-			sessions.sort((a, b) => a.start.diff(b.start))
-			return sessions
-		},
-		days () {
-			if (!this.schedule) return
-			const days = [moment(this.schedule.event_start).startOf('day')]
-			const lastDay = moment(this.schedule.event_end)
-			while (!days.at(-1).isSame(lastDay, 'day')) {
-				days.push(days.at(-1).clone().add(1, 'days'))
-			}
-			return days
-		},
-		inEventTimezone () {
-			if (!this.schedule || !this.schedule.talks) return false
-			const example = this.schedule.talks[0].start
-			return moment.tz(example, this.userTimezone).format('Z') === moment.tz(example, this.schedule.timezone).format('Z')
-		},
-		dateFormat () {
-			// Defaults to dddd DD. MMMM for: all grid schedules with more than two rooms, and all list schedules with less than five days
-			// After that, we start to shorten the date string, hoping to reduce unwanted scroll behaviour
-			if ((this.schedule && this.schedule.rooms.length > 2) || !this.days || !this.days.length) return 'dddd DD. MMMM'
-			if (this.days && this.days.length <= 5) return 'dddd DD. MMMM'
-			if (this.days && this.days.length <= 7) return 'dddd DD. MMM'
-			return 'ddd DD. MMM'
-		}
-	},
-	async created () {
-		const version = ''
-		this.schedule = await this.fetchSchedule()
-		// needs to be as early as possible
-		this.eventTimezone = this.schedule.timezone
-		moment.tz.setDefault(this.eventTimezone)
-		this.locales = this.schedule.locales
-		this.eventSlug = window.location.pathname.split("/")[3]
-		this.currentDay = this.days[0]
-		window.setTimeout(this.pollUpdates, 10 * 1000)
-		await this.fetchAdditionalScheduleData()
-		await new Promise((resolve) => {
-			const poll = () => {
-				if (this.$el.parentElement || this.$el.getRootNode().host) return resolve()
-				setTimeout(poll, 100)
-			}
-			poll()
-		})
-	},
-	async mounted () {
-		// We block until we have either a regular parent or a shadow DOM parent
-		window.addEventListener('resize', this.onWindowResize)
-		this.onWindowResize()
-	},
-	unmounted() {
-		// Cleanup if needed
-	},
-	methods: {
-		getLocalizedString,
-		changeDay (day) {
-			if (day.isSame(this.currentDay)) return
-			this.currentDay = moment(day, this.eventTimezone).startOf('day')
-			window.location.hash = day.format('YYYY-MM-DD')
-		},
-		saveTalk (session) {
-			api.saveTalk(session).then(response => {
-				this.warnings[session.code] = response.warnings
-				this.schedule.talks.find(s => s.id === session.id).updated = response.updated
-			})
-		},
-		rescheduleSession (e) {
-			const movedSession = this.schedule.talks.find(s => s.id === e.session.id)
-			this.stopDragging()
-			movedSession.start = e.start
-			movedSession.end = e.end
-			movedSession.room = e.room.id
-			this.saveTalk(movedSession)
-		},
-		createSession (e) {
-			api.createTalk(e.session).then(response => {
-				this.warnings[e.session.code] = response.warnings
-				const newSession = Object.assign({}, e.session)
-				newSession.id = response.id
-				this.schedule.talks.push(newSession)
-				this.editorStart(newSession)
-			})
-		},
-		editorStart (session) {
-			this.editorSession = session
-		},
-		editorSave () {
-			this.editorSessionWaiting = true
-			this.editorSession.end = moment(this.editorSession.start).clone().add(this.editorSession.duration, 'm')
-			this.saveTalk(this.editorSession)
-
-			const session = this.schedule.talks.find(s => s.id === this.editorSession.id)
-			session.end = this.editorSession.end
-			if (!session.submission) {
-				session.title = this.editorSession.title
-			}
-			this.editorSessionWaiting = false
-			this.editorSession = null
-		},
-		editorDelete () {
-			this.editorSessionWaiting = true
-			api.deleteTalk(this.editorSession)
-			this.schedule.talks = this.schedule.talks.filter(s => s.id !== this.editorSession.id)
-			this.editorSessionWaiting = false
-			this.editorSession = null
-		},
-		showNewBreakHint () {
-			// Users try to click the "+ New Break" box instead of dragging it to the schedule
-			// so we show a hint on-click
-			this.newBreakTooltip = this.$t('Drag the box to the schedule to create a new break')
-		},
-		removeNewBreakHint () {
-			this.newBreakTooltip = ''
-		},
-		startNewBreak({event}) {
-			const title = this.locales.reduce((obj, locale) => {
-				obj[locale] = this.$t("New break")
-				return obj
-			}, {})
-			this.startDragging({event, session: {title, duration: "5", uncreated: true}})
-		},
-		startDragging ({event, session}) {
-			if (this.availabilities && this.availabilities.talks[session.id] && this.availabilities.talks[session.id].length !== 0) {
-				session.availabilities = this.availabilities.talks[session.id]
-			}
-			// TODO: capture the pointer with setPointerCapture(event)
-			// This allows us to call stopDragging() even when the mouse is released
-			// outside the browser.
-			// https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture
-			this.draggedSession = session
-		},
-		stopDragging (session) {
-			try {
-				if (this.isUnassigning && this.draggedSession) {
-					if (this.draggedSession.code) {
-						const movedSession = this.schedule.talks.find(s => s.id === this.draggedSession.id)
-						movedSession.start = null
-						movedSession.end = null
-						movedSession.room = null
-						this.saveTalk(movedSession)
-					} else if (this.schedule.talks.find(s => s.id === this.draggedSession.id)) {
-						this.schedule.talks = this.schedule.talks.filter(s => s.id !== this.draggedSession.id)
-						api.deleteTalk(this.draggedSession)
-					}
-				}
-			} finally {
-				this.draggedSession = null
-				this.isUnassigning = false
-			}
-		},
-		onWindowResize () {
-			this.scrollParentWidth = document.body.offsetWidth
-		},
-		async fetchSchedule(options) {
-		  const schedule = await (api.fetchTalks(options))
-		  return schedule
-		},
-		async fetchAdditionalScheduleData() {
-			this.availabilities = await api.fetchAvailabilities()
-			this.warnings = await api.fetchWarnings()
-		},
-		async pollUpdates () {
-			this.fetchSchedule({since: this.since, warnings: true}).then(schedule => {
-				if (schedule.version !== this.schedule.version) {
-					// we need to reload if a new schedule version is available
-					window.location.reload()
-				}
-				// For each talk in the schedule, we check if it has changed and if our update date is newer than the last change
-				schedule.talks.forEach(talk => {
-					const oldTalk = this.schedule.talks.find(t => t.id === talk.id)
-					if (!oldTalk) {
-						this.schedule.talks.push(talk)
-					} else {
-						if (moment(talk.updated).isAfter(moment(oldTalk.updated))) {
-							Object.assign(oldTalk, talk)
-						}
-					}
-				})
-				this.since = schedule.now
-				window.setTimeout(this.pollUpdates, 10 * 1000)
-			})
-		}
-	}
+const props = defineProps({
+  locale: String,
+  version: {
+    type: String,
+    default: ''
+  }
 })
+
+const eventSlug = ref(null)
+const scrollParentWidth = ref(Infinity)
+const schedule = ref(null)
+const availabilities = ref({rooms: {}, talks: {}})
+const warnings = ref({})
+const currentDay = ref(null)
+const draggedSession = ref(null)
+const editorSession = ref(null)
+const editorSessionWaiting = ref(false)
+const isUnassigning = ref(false)
+const locales = ref(["en"])
+const unassignedFilterString = ref('')
+const unassignedSort = ref('title')
+const unassignedSortDirection = ref(1)  // asc
+const showUnassignedSortMenu = ref(false)
+const newBreakTooltip = ref('')
+const translations = ref({
+  filterSessions: inject('$t')('Filter sessions'),
+  newBreak: inject('$t')('New break'),
+})
+
+const $t = inject('$t')
+
+const roomsLookup = computed(() => {
+  if (!schedule.value) return {}
+  return schedule.value.rooms.reduce((acc, room) => { 
+    acc[room.id] = room
+    return acc 
+  }, {})
+})
+
+const tracksLookup = computed(() => {
+  if (!schedule.value) return {}
+  return schedule.value.tracks.reduce((acc, t) => { 
+    acc[t.id] = t
+    return acc 
+  }, {})
+})
+
+const unassignedSortMethods = computed(() => {
+  const sortMethods = [
+    {label: $t('Title'), name: 'title'},
+    {label: $t('Speakers'), name: 'speakers'},
+  ]
+  if (schedule.value && schedule.value.tracks.length > 1) {
+    sortMethods.push({label: $t('Track'), name: 'track'})
+  }
+  sortMethods.push({label: $t('Duration'), name: 'duration' })
+  return sortMethods
+})
+
+const speakersLookup = computed(() => {
+  if (!schedule.value) return {}
+  return schedule.value.speakers.reduce((acc, s) => { 
+    acc[s.code] = s
+    return acc 
+  }, {})
+})
+
+const unscheduled = computed(() => {
+  if (!schedule.value) return []
+  let sessions = []
+  for (const session of schedule.value.talks.filter(s => !s.start || !s.room)) {
+    sessions.push({
+      id: session.id,
+      code: session.code,
+      title: session.title,
+      abstract: session.abstract,
+      speakers: session.speakers?.map(s => speakersLookup.value[s]),
+      track: tracksLookup.value[session.track],
+      duration: session.duration,
+      state: session.state,
+    })
+  }
+  if (unassignedFilterString.value.length) {
+    sessions = sessions.filter(s => {
+      const title = getLocalizedString(s.title)
+      const speakers = s.speakers?.map(s => s.name).join(', ') || ''
+      return title.toLowerCase().includes(unassignedFilterString.value.toLowerCase()) || 
+             speakers.toLowerCase().includes(unassignedFilterString.value.toLowerCase())
+    })
+  }
+  sessions = sessions.sort((a, b) => {
+    if (unassignedSort.value === 'title') {
+      return getLocalizedString(a.title).toUpperCase().localeCompare(
+        getLocalizedString(b.title).toUpperCase()
+      ) * unassignedSortDirection.value
+    } else if (unassignedSort.value === 'speakers') {
+      const aSpeakers = a.speakers?.map(s => s.name).join(', ') || ''
+      const bSpeakers = b.speakers?.map(s => s.name).join(', ') || ''
+      return aSpeakers.toUpperCase().localeCompare(bSpeakers.toUpperCase()) * unassignedSortDirection.value
+    } else if (unassignedSort.value === 'track') {
+      return getLocalizedString(a.track ? a.track.name : '').toUpperCase().localeCompare(
+        getLocalizedString(b.track ? b.track.name : '').toUpperCase()
+      ) * unassignedSortDirection.value
+    } else if (unassignedSort.value === 'duration') {
+      return (a.duration - b.duration) * unassignedSortDirection.value
+    }
+    return 0
+  })
+  return sessions
+})
+
+const sessions = computed(() => {
+  if (!schedule.value) return []
+  const sessions = []
+  for (const session of schedule.value.talks.filter(s => 
+        s.start && 
+        moment(s.start).isSameOrAfter(days.value[0]) && 
+        moment(s.start).isSameOrBefore(days.value.at(-1).clone().endOf('day')))) {
+    sessions.push({
+      id: session.id,
+      code: session.code,
+      title: session.title,
+      abstract: session.abstract,
+      start: moment(session.start),
+      end: moment(session.end),
+      duration: moment(session.end).diff(session.start, 'm'),
+      speakers: session.speakers?.map(s => speakersLookup.value[s]),
+      track: tracksLookup.value[session.track],
+      state: session.state,
+      room: roomsLookup.value[session.room]
+    })
+  }
+  sessions.sort((a, b) => a.start.diff(b.start))
+  return sessions
+})
+
+const days = computed(() => {
+  if (!schedule.value) return []
+  const days = [moment(schedule.value.event_start).startOf('day')]
+  const lastDay = moment(schedule.value.event_end)
+  while (!days.at(-1).isSame(lastDay, 'day')) {
+    days.push(days.at(-1).clone().add(1, 'days'))
+  }
+  return days
+})
+
+const dateFormat = computed(() => {
+  if ((schedule.value && schedule.value.rooms.length > 2) || !days.value || !days.value.length) return 'dddd DD. MMMM'
+  if (days.value && days.value.length <= 5) return 'dddd DD. MMMM'
+  if (days.value && days.value.length <= 7) return 'dddd DD. MMM'
+  return 'ddd DD. MMM'
+})
+
+let eventTimezone = null
+let since = null
+
+onMounted(() => {
+  window.addEventListener('resize', onWindowResize)
+  onWindowResize()
+  initApp()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', onWindowResize)
+})
+
+async function initApp() {
+  try {
+    schedule.value = await fetchSchedule()
+    eventTimezone = schedule.value.timezone
+    moment.tz.setDefault(eventTimezone)
+    locales.value = schedule.value.locales
+    eventSlug.value = window.location.pathname.split("/")[3]
+    
+    await nextTick()
+    if (days.value && days.value.length) {
+      currentDay.value = days.value[0]
+    }
+    
+    setTimeout(pollUpdates, 10 * 1000)
+    await fetchAdditionalScheduleData()
+  } catch (error) {
+    console.error('Failed to initialize app:', error)
+  }
+}
+
+function changeDay(day) {
+  if (day.isSame(currentDay.value)) return
+  currentDay.value = moment(day, eventTimezone).startOf('day')
+  window.location.hash = day.format('YYYY-MM-DD')
+}
+
+function saveTalk(session) {
+  api.saveTalk(session).then(response => {
+    warnings.value[session.code] = response.warnings
+    const foundSession = schedule.value.talks.find(s => s.id === session.id)
+    if (foundSession) foundSession.updated = response.updated
+  }).catch(error => {
+    console.error('Failed to save talk:', error)
+  })
+}
+
+function rescheduleSession(e) {
+  const movedSession = schedule.value.talks.find(s => s.id === e.session.id)
+  stopDragging()
+  movedSession.start = e.start
+  movedSession.end = e.end
+  movedSession.room = e.room.id
+  saveTalk(movedSession)
+}
+
+function createSession(e) {
+  api.createTalk(e.session).then(response => {
+    warnings.value[e.session.code] = response.warnings
+    const newSession = Object.assign({}, e.session)
+    newSession.id = response.id
+    schedule.value.talks.push(newSession)
+    editorStart(newSession)
+  }).catch(error => {
+    console.error('Failed to create session:', error)
+  })
+}
+
+function editorStart(session) {
+  editorSession.value = session
+}
+
+function editorSave() {
+  editorSessionWaiting.value = true
+  editorSession.value.end = moment(editorSession.value.start).clone().add(editorSession.value.duration, 'm')
+  saveTalk(editorSession.value)
+
+  const session = schedule.value.talks.find(s => s.id === editorSession.value.id)
+  if (session) {
+    session.end = editorSession.value.end
+    if (!session.submission) {
+      session.title = editorSession.value.title
+    }
+  }
+  editorSessionWaiting.value = false
+  editorSession.value = null
+}
+
+function editorDelete() {
+  editorSessionWaiting.value = true
+  api.deleteTalk(editorSession.value).then(() => {
+    schedule.value.talks = schedule.value.talks.filter(s => s.id !== editorSession.value.id)
+  }).catch(error => {
+    console.error('Failed to delete session:', error)
+  }).finally(() => {
+    editorSessionWaiting.value = false
+    editorSession.value = null
+  })
+}
+
+function showNewBreakHint() {
+  newBreakTooltip.value = $t('Drag the box to the schedule to create a new break')
+}
+
+function removeNewBreakHint() {
+  newBreakTooltip.value = ''
+}
+
+function startNewBreak({event}) {
+  const title = locales.value.reduce((obj, locale) => {
+    obj[locale] = $t("New break")
+    return obj
+  }, {})
+  startDragging({event, session: {title, duration: "5", uncreated: true}})
+}
+
+function startDragging({event, session}) {
+  if (availabilities.value && availabilities.value.talks[session.id] && availabilities.value.talks[session.id].length !== 0) {
+    session.availabilities = availabilities.value.talks[session.id]
+  }
+  draggedSession.value = session
+}
+
+function stopDragging() {
+  try {
+    if (isUnassigning.value && draggedSession.value) {
+      if (draggedSession.value.code) {
+        const movedSession = schedule.value.talks.find(s => s.id === draggedSession.value.id)
+        if (movedSession) {
+          movedSession.start = null
+          movedSession.end = null
+          movedSession.room = null
+          saveTalk(movedSession)
+        }
+      } else if (schedule.value.talks.find(s => s.id === draggedSession.value.id)) {
+        schedule.value.talks = schedule.value.talks.filter(s => s.id !== draggedSession.value.id)
+        api.deleteTalk(draggedSession.value)
+      }
+    }
+  } finally {
+    draggedSession.value = null
+    isUnassigning.value = false
+  }
+}
+
+function onWindowResize() {
+  scrollParentWidth.value = document.body.offsetWidth
+}
+
+async function fetchSchedule(options) {
+  try {
+    const scheduleData = await api.fetchTalks(options)
+    return scheduleData
+  } catch (error) {
+    console.error('Failed to fetch schedule:', error)
+    throw error
+  }
+}
+
+async function fetchAdditionalScheduleData() {
+  try {
+    availabilities.value = await api.fetchAvailabilities()
+    warnings.value = await api.fetchWarnings()
+  } catch (error) {
+    console.error('Failed to fetch additional data:', error)
+  }
+}
+
+async function pollUpdates() {
+  try {
+    const newSchedule = await fetchSchedule({since: since, warnings: true})
+    if (!schedule.value || newSchedule.version !== schedule.value.version) {
+      window.location.reload()
+      return
+    }
+    
+    newSchedule.talks.forEach(talk => {
+      const oldTalk = schedule.value.talks.find(t => t.id === talk.id)
+      if (!oldTalk) {
+        schedule.value.talks.push(talk)
+      } else {
+        if (moment(talk.updated).isAfter(moment(oldTalk.updated))) {
+          Object.assign(oldTalk, talk)
+        }
+      }
+    })
+    
+    since = newSchedule.now
+    setTimeout(pollUpdates, 10 * 1000)
+  } catch (error) {
+    console.error('Polling failed:', error)
+    setTimeout(pollUpdates, 30 * 1000) // Retry with longer delay
+  }
+}
 </script>
 <style lang="stylus">
 #page-content
