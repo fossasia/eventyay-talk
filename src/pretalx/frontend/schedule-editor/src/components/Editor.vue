@@ -10,32 +10,16 @@
 		.session {{ session }}
 </template>
 
-<script>
+<script setup>
+import { defineProps } from 'vue'
 import { getLocalizedString } from '../utils'
-export default {
-	name: 'Editor',
-	components: { },
-	props: {
-		session: null,
-	},
-	data () {
-		return {
-			getLocalizedString
-		}
-	},
-	computed: {
-		something () {
-			return true
-		},
-	},
-	created () { },
-	mounted () { },
-	methods: {
-		somethingMethod (foo) {
-			return foo
-		},
+
+defineProps({
+	session: {
+		type: Object,
+		default: null
 	}
-}
+})
 </script>
 
 <style lang="stylus">

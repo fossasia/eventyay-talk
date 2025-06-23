@@ -51,6 +51,9 @@ RUN wget -qO- https://deb.nodesource.com/setup_22.x | bash && \
     apt-get install -y nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
+    cd /pretalx/src/pretalx/frontend/schedule-editor && \
+    rm -rf node_modules package-lock.json && \
+    npm install && \
     uv run -m pretalx rebuild
 
 RUN chmod +x /usr/local/bin/pretalx && \

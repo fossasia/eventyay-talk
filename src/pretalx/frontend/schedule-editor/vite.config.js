@@ -29,6 +29,7 @@ export default {
 		extensions: ['.js', '.json', '.vue'],
 		alias: {
 			'~': path.resolve(__dirname, './src'),
+			'moment': path.resolve(__dirname, 'node_modules/moment'),
 			'moment-timezone': 'moment-timezone/builds/moment-timezone-with-data-10-year-range.js'
 		}
 	},
