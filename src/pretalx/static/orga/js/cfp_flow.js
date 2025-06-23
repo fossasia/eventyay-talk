@@ -1,3 +1,5 @@
+const { createApp, reactive } = Vue;
+
 var api = {
     submit(data) {
         var fullHeaders = {}
@@ -30,7 +32,7 @@ var api = {
 }
 
 let currentLanguage = "en"
-let currentModal = Vue.observable({
+let currentModal = reactive({
     type: null,
     data: null,
     show: false,
@@ -58,15 +60,17 @@ document.onclick = (event) => {
         currentModal.data = null
     }
 }
-document.onkeypress = (event) => {
-    if (!currentModal.data) return
-    let isEscape = false
-    if ("key" in evt) {
-        isEscape = evt.key === "Escape" || evt.key === "Esc"
+document.onkeydown = (event) => {
+    if (!currentModal.data) return;
+    let isEscape = false;
+    if ("key" in event) {
+        isEscape = event.key === "Escape" || event.key === "Esc";
     } else {
-        isEscape = evt.keyCode === 27
+        isEscape = event.keyCode === 27;
     }
-    currentModal.data = null
+    if (isEscape) {
+        currentModal.data = null;
+    }
 }
 
 function areEqual() {
@@ -127,7 +131,7 @@ function areEqual() {
     return true
 }
 
-Vue.component("field", {
+const FieldComponent = {
     template: `
     <div>
       <h2 v-if="isModal" class="mb-4">Change input field</h2>
@@ -231,7 +235,7 @@ Vue.component("field", {
         makeModal(event) {
             if (this.isModal) return
             if (!this.isModal && !this.editable) {
-                Vue.set(currentModal, "data", null)
+                currentModal.data = null
                 currentModal.type = null
                 currentModal.show = false
             } else {
@@ -247,9 +251,9 @@ Vue.component("field", {
             "",
         )
     },
-})
+}
 
-Vue.component("step", {
+const StepComponent = {
     template: `
     <div class="step" @click="editingTitle = false; editingText = false">
       <div :class="['step-header', 'header', eventConfiguration.header_pattern]" :style="headerStyle">
@@ -376,10 +380,9 @@ Vue.component("step", {
             return result
         },
     },
-})
+}
 
-var app = new Vue({
-    el: "#flow",
+const app = createApp({
     template: `
     <div :class="currentModal.data ? 'defocused' : 'focused'" :style="{'--color': eventConfiguration.primary_color || '#2185d0'}">
       <div id="flow-modal" v-if="currentModal.data">
@@ -488,3 +491,7 @@ var app = new Vue({
         },
     },
 })
+
+app.component('field', FieldComponent)
+app.component('step', StepComponent)
+app.mount('#flow')
