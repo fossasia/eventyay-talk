@@ -108,12 +108,12 @@ const unassignedSort = ref('title')
 const unassignedSortDirection = ref(1)  // asc
 const showUnassignedSortMenu = ref(false)
 const newBreakTooltip = ref('')
-const translations = ref({
-  filterSessions: inject('$t')('Filter sessions'),
-  newBreak: inject('$t')('New break'),
-})
 
 const $t = inject('$t')
+const translations = computed(() => ({
+  filterSessions: $t('Filter sessions'),
+  newBreak: $t('New break'),
+}))
 
 const roomsLookup = computed(() => {
   if (!schedule.value) return {}
@@ -231,9 +231,10 @@ const days = computed(() => {
 })
 
 const dateFormat = computed(() => {
-  if ((schedule.value && schedule.value.rooms.length > 2) || !days.value || !days.value.length) return 'dddd DD. MMMM'
-  if (days.value && days.value.length <= 5) return 'dddd DD. MMMM'
-  if (days.value && days.value.length <= 7) return 'dddd DD. MMM'
+  if (!days.value || !days.value.length) return 'dddd DD. MMMM'
+  if (schedule.value && schedule.value.rooms.length > 2) return 'dddd DD. MMMM'
+  if (days.value.length <= 5) return 'dddd DD. MMMM'
+  if (days.value.length <= 7) return 'dddd DD. MMM'
   return 'ddd DD. MMM'
 })
 
@@ -356,10 +357,13 @@ function startNewBreak({event}) {
 }
 
 function startDragging({event, session}) {
-  if (availabilities.value && availabilities.value.talks[session.id] && availabilities.value.talks[session.id].length !== 0) {
-    session.availabilities = availabilities.value.talks[session.id]
+  const sessionCopy = {...session}
+  
+  if (availabilities.value?.talks[session.id]?.length) {
+    sessionCopy.availabilities = [...availabilities.value.talks[session.id]]
   }
-  draggedSession.value = session
+  
+  draggedSession.value = sessionCopy
 }
 
 function stopDragging() {

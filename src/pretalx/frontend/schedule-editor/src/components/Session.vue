@@ -19,7 +19,7 @@
 			i.fa.fa-exclamation-triangle
 </template>
 <script setup>
-import { computed, inject } from 'vue'
+import { computed, inject, unref } from 'vue'
 import moment from 'moment-timezone'
 import MarkdownIt from 'markdown-it'
 import { getLocalizedString } from '~/utils'
@@ -57,7 +57,7 @@ const generateSessionLinkUrl = inject('generateSessionLinkUrl', {
 })
 
 const link = computed(() => {
-	return generateSessionLinkUrl({eventUrl: eventUrl.value, session: props.session})
+	return generateSessionLinkUrl({eventUrl: unref(eventUrl), session: props.session})
 })
 
 const isBreak = computed(() => !props.session.code)
