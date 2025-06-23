@@ -47,12 +47,12 @@
                 </span>
                 <div class="buttons d-flex justify-content-end" id="talk-buttons">
                     {% if submission.state == "confirmed" and request.event.current_schedule %}
-                        <a class="btn btn-outline-primary ml-2" href="{{ submission.urls.ical }}">
+                        <a class="btn btn-outline-primary" href="{{ submission.urls.ical }}">
                             <i class="fa fa-calendar"></i> .ical
                         </a>
                     {% endif %}
                     {% if submission.does_accept_feedback and request.event|get_feature_flag:"use_feedback" and not is_html_export %}
-                        <a href="{{ submission.urls.feedback }}" class="btn btn-success">
+                        <a href="{{ submission.urls.feedback }}" class="btn btn-success ml-1">
                             <i class="fa fa-comments"></i> {{ phrases.agenda.feedback }}
                         </a>
                     {% endif %}

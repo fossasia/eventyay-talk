@@ -111,6 +111,7 @@ summary.btn {
 
   &.outline,
   &.btn-outline-info,
+  &.btn-outline-primary,
   &.btn-outline-success,
   &.btn-outline-warning,
   &.btn-outline-danger {
@@ -263,6 +264,9 @@ a {
 
 .btn-outline-success {
   --highlight-color: var(--color-success);
+}
+.btn-outline-primary {
+  --highlight-color: var(--color-primary);
 }
 .btn-outline-info {
   --highlight-color: var(--color-info);
