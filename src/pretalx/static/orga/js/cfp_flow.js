@@ -1,5 +1,3 @@
-const { createApp, reactive } = Vue;
-
 var api = {
     submit(data) {
         var fullHeaders = {}
@@ -32,7 +30,7 @@ var api = {
 }
 
 let currentLanguage = "en"
-let currentModal = reactive({
+let currentModal = Vue.reactive({
     type: null,
     data: null,
     show: false,
@@ -60,17 +58,15 @@ document.onclick = (event) => {
         currentModal.data = null
     }
 }
-document.onkeydown = (event) => {
-    if (!currentModal.data) return;
-    let isEscape = false;
-    if ("key" in event) {
-        isEscape = event.key === "Escape" || event.key === "Esc";
+document.onkeypress = (event) => {
+    if (!currentModal.data) return
+    let isEscape = false
+    if ("key" in evt) {
+        isEscape = evt.key === "Escape" || evt.key === "Esc"
     } else {
-        isEscape = event.keyCode === 27;
+        isEscape = evt.keyCode === 27
     }
-    if (isEscape) {
-        currentModal.data = null;
-    }
+    currentModal.data = null
 }
 
 function areEqual() {
@@ -287,8 +283,12 @@ const StepComponent = {
           </span>
         </div>
         <form v-if="step.identifier != 'user'">
-          <field :field="field" v-for="field in step.fields" :key="field.key" :locales="locales" v-if="field.widget !== 'HiddenInput'">
-          </field>
+          <template v-for="field in step.fields" :key="field.key">
+            <field v-if="field && field.widget !== 'HiddenInput'" 
+                   :field="field" 
+                   :locales="locales">
+            </field>
+          </template>
         </form>
         <form v-else id="auth-form">
           <div class="auth-form-block">
@@ -382,7 +382,7 @@ const StepComponent = {
     },
 }
 
-const app = createApp({
+const app = Vue.createApp({
     template: `
     <div :class="currentModal.data ? 'defocused' : 'focused'" :style="{'--color': eventConfiguration.primary_color || '#2185d0'}">
       <div id="flow-modal" v-if="currentModal.data">
@@ -492,6 +492,6 @@ const app = createApp({
     },
 })
 
-app.component('field', FieldComponent)
-app.component('step', StepComponent)
-app.mount('#flow')
+app.component("field", FieldComponent)
+app.component("step", StepComponent)
+app.mount("#flow")
