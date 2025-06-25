@@ -3,6 +3,7 @@
 Release Notes
 =============
 
+- :feature:`lang` pretalx is now available in Korean!
 - :bug:`schedule,2063` The iCal button on a session’s detail page was hidden.
 - :feature:`api` The API now provides the ``pending_state`` filter in the submission list endpoint.
 - :feature:`orga,1346` Organisers can now completely disable speaker editing of proposals with a new toggle in the CfP settings. When disabled, speakers cannot edit their proposals once submitted (draft proposals remain editable while the CfP is open). This setting overrides review phase settings, and provides a long-requested way of preventing even accepted and confirmed speakers from editing their proposals.

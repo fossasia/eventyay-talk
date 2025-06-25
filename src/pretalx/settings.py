@@ -409,6 +409,12 @@ LANGUAGES_INFORMATION = {
         "percentage": 62,
         "public_code": "jp",
     },
+    "ko": {
+        "name": _("Korean"),
+        "natural_name": "한국어",
+        "official": False,
+        "percentage": 100,
+    },
     "nl": {
         "name": _("Dutch"),
         "natural_name": "Nederlands",
