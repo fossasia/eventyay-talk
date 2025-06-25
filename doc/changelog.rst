@@ -8,7 +8,7 @@ Release Notes
 - :feature:`api` The API now provides the ``pending_state`` filter in the submission list endpoint.
 - :feature:`orga,1346` Organisers can now completely disable speaker editing of proposals with a new toggle in the CfP settings. When disabled, speakers cannot edit their proposals once submitted (draft proposals remain editable while the CfP is open). This setting overrides review phase settings, and provides a long-requested way of preventing even accepted and confirmed speakers from editing their proposals.
 - :bug:`schedule` Fixed dates wrapping incorrectly in schedule session boxes.
-- :bug:`cfp` Fixed users being able to clear their profile picture when they shouldn’t be able to.
+- :bug:`cfp` Fixed users being able to clear their profile picture when they should not be able to.
 - :bug:`schedule` Fixed speaker biography data not loading in session schedule modals.
 - :bug:`orga:email` Fixed broken footer links in emails.
 - :bug:`schedule` Fixed schedule HTML exporter to properly include lightbox images.
@@ -16,7 +16,7 @@ Release Notes
 - :feature:`admin` Administrators can now disable the verbose pretalx startup message with an environment variable, ``PRETALX_NO_INITIAL_LOG=1``, in addition to the existing command-line flag.
 - :feature:`admin` Administrators can now access organiser dashboards.
 - :feature:`orga:email` Users now receive email notifications when they change their email address.
-- :feature:`orga` Improved lightbox accessibility and made lightboxes available on all pages.
+- :feature:`orga` Improved lightbox accessibility and made the feature available on all pages.
 - :feature:`admin` User avatars are now displayed in the admin user list for better identification.
 - :release:`2025.1.0 <2025-05-28>`
 - :announcement:`admin` As PostgreSQL 13 is soon EOL, pretalx support has changed to PostgreSQL 14 or higher.
