@@ -445,7 +445,7 @@ export default {
 		},
 		getSliceLabel (slice) {
 			if (slice.datebreak) return slice.date.format('ddd[\n]DD. MMM')
-			return slice.date.format('LT')
+			return slice.date.format('H:MM')
 		},
 		changeDay (day) {
 			if (this.scrolledDay === day) return
