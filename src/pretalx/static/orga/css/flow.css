@@ -4,6 +4,7 @@
   position: relative;
   user-select: none;
   margin-right: 270px;
+  width: 100%;
 
   #steps {
     display: flex;
