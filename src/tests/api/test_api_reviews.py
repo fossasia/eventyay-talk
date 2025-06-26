@@ -548,3 +548,208 @@ def test_anonymous_cannot_delete_review(client, event, review):
     url = event.api_urls.reviews + f"{review.pk}/"
     response = client.delete(url)
     assert response.status_code == 404, response.text
+
+
+@pytest.mark.django_db
+def test_anon_cannot_see_review_detail(client, event, review):
+    response = client.get(event.api_urls.reviews + f"{review.pk}/", follow=True)
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_orga_can_see_review_detail(client, orga_user_token, event, review):
+    response = client.get(
+        event.api_urls.reviews + f"{review.pk}/",
+        follow=True,
+        headers={"Authorization": f"Token {orga_user_token.token}"},
+    )
+    content = json.loads(response.text)
+
+    assert response.status_code == 200
+    assert content["id"] == review.pk
+    assert content["submission"] == review.submission.code
+    assert content["user"] == review.user.code
+
+
+@pytest.mark.django_db
+def test_orga_can_see_expanded_review_detail(
+    client,
+    orga_user_token,
+    event,
+    review,
+    track,
+    review_score_value_positive,
+    review_question,
+):
+    with scope(event=event):
+        review.submission.track = track
+        review.scores.add(review_score_value_positive)
+        review.submission.save()
+        speaker = review.submission.speakers.all().first()
+        submission_type = review.submission.submission_type
+        user = review.user
+        category = review_score_value_positive.category
+        Answer.objects.create(review=review, question=review_question, answer="text!")
+
+    params = ",".join(
+        [
+            "user",
+            "scores.category",
+            "submission.speakers",
+            "submission.track",
+            "submission.submission_type",
+            "answers",
+        ]
+    )
+    response = client.get(
+        f"{event.api_urls.reviews}{review.pk}/?expand={params}",
+        follow=True,
+        headers={"Authorization": f"Token {orga_user_token.token}"},
+    )
+    content = json.loads(response.text)
+
+    assert response.status_code == 200
+    assert content["id"] == review.pk
+    assert content["submission"]["code"] == review.submission.code
+    assert content["submission"]["speakers"][0]["code"] == speaker.code
+    assert content["submission"]["track"]["name"]["en"] == track.name
+    assert (
+        content["submission"]["submission_type"]["name"]["en"] == submission_type.name
+    )
+    assert content["user"]["code"] == user.code
+    assert content["scores"][0]["category"]["name"]["en"] == category.name
+    assert content["answers"][0]["answer"] == "text!"
+
+
+@pytest.mark.django_db
+def test_orga_cannot_see_review_detail_of_deleted_submission(
+    client, orga_user_token, event, review
+):
+    review.submission.state = "deleted"
+    review.submission.save()
+    response = client.get(
+        event.api_urls.reviews + f"{review.pk}/",
+        follow=True,
+        headers={"Authorization": f"Token {orga_user_token.token}"},
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_reviewer_can_see_own_review_detail(client, review_user_token, event, review):
+    response = client.get(
+        event.api_urls.reviews + f"{review.pk}/",
+        follow=True,
+        headers={"Authorization": f"Token {review_user_token.token}"},
+    )
+    content = json.loads(response.text)
+
+    assert response.status_code == 200
+    assert content["id"] == review.pk
+    assert content["submission"] == review.submission.code
+    assert content["user"] == review.user.code
+
+
+@pytest.mark.django_db
+def test_reviewer_can_see_other_review_detail_when_allowed(
+    client, review_user_token, event, other_review
+):
+    with scope(event=event):
+        event.active_review_phase.can_see_other_reviews = "always"
+        event.active_review_phase.save()
+
+    response = client.get(
+        event.api_urls.reviews + f"{other_review.pk}/",
+        follow=True,
+        headers={"Authorization": f"Token {review_user_token.token}"},
+    )
+    content = json.loads(response.text)
+
+    assert response.status_code == 200
+    assert content["id"] == other_review.pk
+
+
+@pytest.mark.django_db
+def test_reviewer_cannot_see_other_review_detail_when_not_allowed(
+    client, review_user_token, event, other_review
+):
+    with scope(event=event):
+        event.active_review_phase.can_see_other_reviews = "never"
+        event.active_review_phase.save()
+
+    response = client.get(
+        event.api_urls.reviews + f"{other_review.pk}/",
+        follow=True,
+        headers={"Authorization": f"Token {review_user_token.token}"},
+    )
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_reviewer_cannot_see_review_detail_for_own_talk(
+    client, review_user_token, review_user, event, other_review
+):
+    with scope(event=event):
+        event.active_review_phase.can_see_other_reviews = "always"
+        event.active_review_phase.save()
+        other_review.submission.speakers.add(review_user)
+
+    response = client.get(
+        event.api_urls.reviews + f"{other_review.pk}/",
+        follow=True,
+        headers={"Authorization": f"Token {review_user_token.token}"},
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_reviewer_can_see_review_detail_by_track(
+    client,
+    review_user_token,
+    review_user,
+    event,
+    other_review,
+    track,
+    other_track,
+):
+    with scope(event=event):
+        event.active_review_phase.can_see_other_reviews = "always"
+        event.active_review_phase.save()
+        other_review.submission.track = track
+        other_review.submission.save()
+        review_user.teams.filter(is_reviewer=True).first().limit_tracks.add(track)
+
+    response = client.get(
+        event.api_urls.reviews + f"{other_review.pk}/",
+        follow=True,
+        headers={"Authorization": f"Token {review_user_token.token}"},
+    )
+    content = json.loads(response.text)
+
+    assert response.status_code == 200
+    assert content["id"] == other_review.pk
+
+
+@pytest.mark.django_db
+def test_reviewer_cannot_see_review_detail_outside_track(
+    client,
+    review_user_token,
+    review_user,
+    event,
+    other_review,
+    track,
+    other_track,
+):
+    with scope(event=event):
+        event.active_review_phase.can_see_other_reviews = "always"
+        event.active_review_phase.save()
+        other_review.submission.track = other_track
+        other_review.submission.save()
+        review_user.teams.filter(is_reviewer=True).first().limit_tracks.add(track)
+
+    response = client.get(
+        event.api_urls.reviews + f"{other_review.pk}/",
+        follow=True,
+        headers={"Authorization": f"Token {review_user_token.token}"},
+    )
+    assert response.status_code == 404
