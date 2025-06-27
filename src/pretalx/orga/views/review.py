@@ -317,6 +317,7 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
                     else SubmissionStates.REJECTED
                 )
                 submission.save()
+                submission.update_talk_slots()
             else:
                 getattr(submission, value)(person=request.user)
             total[value] += 1
