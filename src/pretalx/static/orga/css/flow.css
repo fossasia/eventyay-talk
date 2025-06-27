@@ -104,7 +104,7 @@
   margin-bottom: 0;
   bottom: 1px;
   left: 250px;
-  right: 0;
+  right: 250px;
   box-shadow: var(--shadow-dialog);
   button {
     margin-left: auto;
