@@ -156,7 +156,7 @@ details.card {
 aside.sidebar {
   background-color: var(--color-grey-ultralight);
   box-shadow: var(--shadow-lighter);
-  width: 45px;
+  width: 45px;  /* Default: icons only */
   height: 100vh;
   display: flex;
   font-size: 14px;
@@ -169,11 +169,12 @@ aside.sidebar {
   margin-bottom: 0;
   overflow-y: auto;
 
+  /* Expand on hover or when uncollapsed */
   &.sidebar-uncollapsed,
   &:hover {
     width: 250px;
     a.nav-link i + span {
-      display: inline-block;
+      display: inline-block;  /* Show text labels */
     }
     .nav-fold div > a {
       display: block;
