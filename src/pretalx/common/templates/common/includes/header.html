@@ -1,0 +1,6 @@
+{# we’re not lazy-loading the header image, even though it can be large, because it’s a bit jarring to see it flash in 100ms after the page load #}
+{% if request.event and request.event.header_image %}
+    <img src="{{ request.event.header_image.url }}" 
+        id="header-image" 
+        alt="{{ request.event.name }}">
+{% endif %}
