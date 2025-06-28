@@ -142,7 +142,7 @@ button,
 summary.btn {
   &:not(.font-text) {
     font-family: var(--font-family-title);
-    font-weight: 600;
+    font-weight: 500;
   }
 }
 code,
