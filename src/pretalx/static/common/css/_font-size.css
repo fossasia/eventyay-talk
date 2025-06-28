@@ -1,0 +1,10 @@
+/* This file sets the base font size to match eventyay-tickets */
+
+html {
+  font-size: 10px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+body {
+  font-size: 1.4rem; /* 14px */
+}

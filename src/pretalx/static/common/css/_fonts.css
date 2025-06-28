@@ -1,4 +1,44 @@
 @font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("Open Sans Regular"),
+    local("OpenSans-Regular"),
+    url("/static/fonts/OpenSans-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src:
+    local("Open Sans Bold"),
+    local("OpenSans-Bold"),
+    url("/static/fonts/OpenSans-Bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Open Sans";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("Open Sans Italic"),
+    local("OpenSans-Italic"),
+    url("/static/fonts/OpenSans-Italic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Open Sans";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src:
+    local("Open Sans Bold Italic"),
+    local("OpenSans-BoldItalic"),
+    url("/static/fonts/OpenSans-BoldItalic.ttf") format("truetype");
+}
+@font-face {
   font-family: "Titillium Web";
   font-style: normal;
   font-weight: 600;
@@ -81,13 +121,10 @@
 }
 
 :root {
-  --font-fallback:
-    "Open Sans", "OpenSans", "Helvetica Neue", Helvetica, system-ui, sans-serif;
+  --font-fallback: "Open Sans", "OpenSans", "Helvetica Neue", Helvetica, system-ui, sans-serif;
   --font-family: "Muli", var(--font-fallback);
   --font-family-title: "Titillium Web", var(--font-fallback);
-  --font-family-monospace:
-    SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-    monospace;
+  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 body {
@@ -105,7 +142,7 @@ button,
 summary.btn {
   &:not(.font-text) {
     font-family: var(--font-family-title);
-    font-weight: 600;
+    font-weight: 500;
   }
 }
 code,
