@@ -170,6 +170,10 @@ export default {
 				if (!slice) return
 				// keep slices with sessions or when changing dates, or when sessions start or immediately after they end
 				if (slice.hasSession || slice.datebreak || slice.hasStart || slice.hasEnd || slice.isExpanded) return true
+				// keep slices that match explicit room availability times
+				for (const availTime of this.explicitAvailabilityTimes) {
+					if (slice.date.isSame(availTime)) return true
+				}
 				// keep slices between 9 and 18 o'clock
 				if (slice.date.hour() >= 9 && slice.date.hour() < 19) return true
 				const prevSlice = slices[index - 1]
@@ -186,7 +190,7 @@ export default {
 				// but drop slices inside breaks
 				if (prevSlice?.hasBreak && slice.hasBreak) return false
 				return false
-			}
+			}.bind(this)
 			slices.sort((a, b) => a.date.diff(b.date))
 			const compactedSlices = []
 			for (const [index, slice] of slices.entries()) {
@@ -207,7 +211,7 @@ export default {
 			// Inside normal conference hours, from 9am to 6pm, we show all half and full hour marks, plus all dates that were click-expanded, plus all start times of talks
 			// Outside, we only show the first slice, which can be expanded
 		  return this.timeslices.filter(slice => {
-			  return slice.date.minute() % 30 === 0 || this.expandedTimes.includes(slice.date) || this.oddTimeslices.includes(slice.date)
+			  return slice.date.minute() % 30 === 0 || this.expandedTimes.includes(slice.date) || this.oddTimeslices.includes(slice.date) || this.explicitAvailabilityTimes.some(availTime => slice.date.isSame(availTime))
 		  })
 		},
 		oddTimeslices () {
@@ -217,6 +221,44 @@ export default {
 				if (session.end.minute() % 30 !== 0) result.push(session.end)
 			})
 			return [...new Set(result)]
+		},
+		explicitAvailabilityTimes () {
+			const result = []
+			const seen = new Set()
+			for (const room of this.visibleRooms) {
+				if (this.availabilities.rooms[room.id] && this.availabilities.rooms[room.id].length) {
+					for (const avail of this.availabilities.rooms[room.id]) {
+						const startTime = moment(avail.start)
+						const endTime = moment(avail.end)
+
+						// Add boundary times
+						const startKey = startTime.format()
+						const endKey = endTime.format()
+						if (!seen.has(startKey)) {
+							seen.add(startKey)
+							result.push(startTime)
+						}
+						if (!seen.has(endKey)) {
+							seen.add(endKey)
+							result.push(endTime)
+						}
+
+						// Add 30-minute intervals within the availability range
+						const current = startTime.clone()
+						while (current.isBefore(endTime)) {
+							current.add(30, 'minutes')
+							if (current.isSameOrBefore(endTime)) {
+								const intervalKey = current.format()
+								if (!seen.has(intervalKey)) {
+									seen.add(intervalKey)
+									result.push(current.clone())
+								}
+							}
+						}
+					}
+				}
+			}
+			return result
 		},
 		gridStyle () {
 			let rows = '[header] 52px '
