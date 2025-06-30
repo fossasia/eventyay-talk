@@ -295,7 +295,7 @@ class QuestionForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
         new_options = []
         changed_options = []
         for index, option in enumerate(options):
-            if option not in existing_options:
+            if str(option) not in existing_options:
                 new_options.append(
                     AnswerOption(question=instance, answer=option, position=index + 1)
                 )
