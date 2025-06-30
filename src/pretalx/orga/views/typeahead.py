@@ -1,7 +1,7 @@
 import json
 from contextlib import suppress
 
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Count, Exists, OuterRef, Q
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext_lazy as _n
@@ -90,8 +90,12 @@ def nav_typeahead(request):
         or (request.user.name and query.lower() in request.user.name.lower())
     )
 
-    qs_orga = Organiser.objects.filter(
-        pk__in=request.user.teams.values_list("organiser", flat=True)
+    qs_orga = (
+        Organiser.objects.filter(
+            pk__in=request.user.teams.values_list("organiser", flat=True)
+        )
+        .annotate(n_events=Count("events"))
+        .order_by("-n_events")
     )
     if query:
         if organiser and show_user:
