@@ -133,16 +133,6 @@ class AdminUserDetail(PermissionRequired, DetailView):
         if action == "pw-reset":
             self.get_object().reset_password(event=None)
             messages.success(request, phrases.base.password_reset_success)
-        elif action == "deactivate":
-            user = self.get_object()
-            user.is_active = False
-            user.save()
-            messages.success(request, _("The user has been deactivated."))
-        elif action == "activate":
-            user = self.get_object()
-            user.is_active = True
-            user.save()
-            messages.success(request, _("The user has been activated."))
         return redirect(self.get_success_url())
 
     def get_success_url(self):
@@ -185,7 +175,11 @@ class AdminUserDelete(ActionConfirmMixin, AdminUserDetail):
             return super().dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        self.get_object().shred()
+        user = self.get_object()
+        try:
+            user.shred()
+        except Exception:
+            user.deactivate()
         messages.success(request, _("The user has been deleted."))
         return redirect(self.get_success_url())
 
