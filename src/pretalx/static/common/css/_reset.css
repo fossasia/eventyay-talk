@@ -12,16 +12,20 @@
   }
 }
 
+html {
+  font-size: 14px; /* Base font size to match eventyay-tickets */
+}
+
 body {
   margin: 0;
   color: var(--color-text);
   background-color: white;
-
   font-size: 1rem;
   font-weight: normal;
   -webkit-font-smoothing: antialiased;
   line-height: 1.5;
   text-size-adjust: none;
+  -webkit-text-size-adjust: none;
   text-decoration-skip-ink: auto;
   font-optical-sizing: auto;
 }
