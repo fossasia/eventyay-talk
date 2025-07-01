@@ -1,25 +1,32 @@
-from rest_framework import exceptions
-from rest_framework.authentication import TokenAuthentication
+from contextlib import suppress
 
-from pretalx.person.models import UserApiToken
+from django.contrib.auth import authenticate
+from django.core.exceptions import MultipleObjectsReturned
+
+from pretalx.person.models import User
 
 
-class UserTokenAuthentication(TokenAuthentication):
-    model = UserApiToken
+class AuthenticationTokenBackend:
+    def authenticate(self, *args, token=None, **kwargs):
+        if token:
+            with suppress(User.DoesNotExist, MultipleObjectsReturned):
+                return User.objects.get(auth_token__key__iexact=token)
+        return None
 
-    def authenticate_credentials(self, key):
-        model = self.get_model()
-        try:
-            token = (
-                model.objects.active()
-                .select_related("user")
-                .prefetch_related("events")
-                .get(token=key)
+
+class AuthenticationTokenMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if not request.user.is_authenticated and "Authorization" in request.headers:
+            token = request.headers["Authorization"].lower()
+            token = token[len("token ") :] if token.startswith("token ") else token
+            user = authenticate(
+                request,
+                token=token,
+                backend="pretalx.common.auth.AuthenticationTokenBackend",
             )
-        except model.DoesNotExist:
-            raise exceptions.AuthenticationFailed("Invalid token.")
-
-        if not token.is_active:
-            raise exceptions.AuthenticationFailed("Token inactive or deleted.")
-
-        return token.user, token
+            if user:
+                request.user = user
+        return self.get_response(request)

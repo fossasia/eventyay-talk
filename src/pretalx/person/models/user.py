@@ -1,4 +1,3 @@
-import html
 import json
 import random
 import uuid
@@ -14,7 +13,6 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
@@ -23,16 +21,12 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
 from django_scopes import scopes_disabled
 from rest_framework.authtoken.models import Token
-from rules.contrib.models import RulesModelBase, RulesModelMixin
 
 from pretalx.common.image import create_thumbnail
 from pretalx.common.models import TIMEZONE_CHOICES
 from pretalx.common.models.mixins import FileCleanupMixin, GenerateCode
 from pretalx.common.text.path import path_with_hash
 from pretalx.common.urls import EventUrls, build_absolute_uri
-from pretalx.person.rules import is_administrator
-
-from ..signals import delete_user as delete_user_signal
 
 
 def avatar_path(instance, filename):
@@ -40,23 +34,6 @@ def avatar_path(instance, filename):
         extension = Path(filename).suffix
         filename = f"{instance.code}{extension}"
     return path_with_hash(filename, base_path="avatars")
-
-
-class UserQuerySet(models.QuerySet):
-    def with_profiles(self, event):
-        from django.db.models import Prefetch
-
-        from pretalx.person.models.profile import SpeakerProfile
-
-        return self.prefetch_related(
-            Prefetch(
-                "profiles",
-                queryset=SpeakerProfile.objects.filter(event=event).select_related(
-                    "event"
-                ),
-                to_attr="_event_profiles",
-            ),
-        ).distinct()
 
 
 class UserManager(BaseUserManager):
@@ -77,23 +54,7 @@ class UserManager(BaseUserManager):
         return user
 
 
-def validate_username(value):
-    from pretalx.common.templatetags.rich_text import render_markdown
-
-    result = render_markdown(value)[3:-4]  # strip <p> tags
-    result = html.unescape(result)  # permit single <, > etc
-    if result != value:
-        raise ValidationError(_("Your username must not contain HTML or other markup."))
-
-
-class User(
-    PermissionsMixin,
-    RulesModelMixin,
-    GenerateCode,
-    FileCleanupMixin,
-    AbstractBaseUser,
-    metaclass=RulesModelBase,
-):
+class User(PermissionsMixin, GenerateCode, FileCleanupMixin, AbstractBaseUser):
     """The pretalx user model.
 
     Users describe all kinds of persons who interact with pretalx: Organisers, reviewers, submitters, speakers.
@@ -114,7 +75,7 @@ class User(
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
 
-    objects = UserManager().from_queryset(UserQuerySet)()
+    objects = UserManager()
 
     code = models.CharField(max_length=16, unique=True, null=True)
     nick = models.CharField(max_length=60, null=True, blank=True)
@@ -124,7 +85,6 @@ class User(
         help_text=_(
             "Please enter the name you wish to be displayed publicly. This name will be used for all events you are participating in on this server."
         ),
-        validators=[validate_username],
     )
     email = models.EmailField(
         unique=True,
@@ -200,11 +160,6 @@ class User(
     )
     pw_reset_time = models.DateTimeField(null=True, verbose_name="Password reset time")
 
-    class Meta:
-        rules_permissions = {
-            "administrator": is_administrator,
-        }
-
     def __str__(self) -> str:
         """For public consumption as it is used for Select widgets, e.g. on the
         feedback form."""
@@ -214,7 +169,7 @@ class User(
         super().__init__(*args, **kwargs)
         self.permission_cache = {}
         self.event_profile_cache = {}
-        self.event_permission_cache = {}
+        self.team_permissions = {}
 
     def has_perm(self, perm, obj, *args, **kwargs):
         cached_result = None
@@ -252,14 +207,8 @@ class User(
         :type event: :class:`pretalx.event.models.event.Event`
         :retval: :class:`pretalx.person.models.profile.EventProfile`
         """
-        if profile := self.event_profile_cache.get(event.pk):
+        if event.pk and (profile := self.event_profile_cache.get(event.pk)):
             return profile
-
-        if hasattr(self, "_event_profiles") and len(self._event_profiles) == 1:
-            profile = self._event_profiles[0]
-            if profile.event_id == event.pk:
-                self.event_profile_cache[event.pk] = profile
-                return profile
 
         try:
             profile = self.profiles.select_related("event").get(event=event)
@@ -270,7 +219,8 @@ class User(
             if self.pk:
                 profile.save()
 
-        self.event_profile_cache[event.pk] = profile
+        if event.pk:
+            self.event_profile_cache[event.pk] = profile
         return profile
 
     def get_locale_for_event(self, event):
@@ -345,7 +295,6 @@ class User(
             answer.delete()  # Iterate to delete answer files, too
         for team in self.teams.all():
             team.members.remove(self)
-        delete_user_signal.send(None, user=self, db_delete=True)
 
     deactivate.alters_data = True
 
@@ -366,7 +315,6 @@ class User(
             self.logged_actions().delete()
             self.own_actions().update(person=None)
             self._delete_files()
-            delete_user_signal.send(None, user=self, db_delete=True)
             self.delete()
 
     shred.alters_data = True
@@ -381,7 +329,7 @@ class User(
 
     @cached_property
     def has_avatar(self) -> bool:
-        return bool(self.avatar) and self.avatar != "False"
+        return self.avatar and self.avatar != "False"
 
     @cached_property
     def avatar_url(self) -> str:
@@ -454,8 +402,6 @@ class User(
 
         :type event: :class:`~pretalx.event.models.event.Event`
         """
-        if permissions := self.event_permission_cache.get(event.pk):
-            return permissions
         if self.is_administrator:
             return {
                 "can_create_events",
@@ -465,12 +411,10 @@ class User(
                 "can_change_submissions",
                 "is_reviewer",
             }
-        permissions = set()
         teams = event.teams.filter(members__in=[self])
-        if teams:
-            permissions = set().union(*[team.permission_set for team in teams])
-        self.event_permission_cache[event.pk] = permissions
-        return permissions
+        if not teams:
+            return set()
+        return set().union(*[team.permission_set for team in teams])
 
     def regenerate_token(self) -> Token:
         """Generates a new API access token, deleting the old one."""

@@ -2,12 +2,11 @@ import json
 from contextlib import suppress
 
 from django.contrib.contenttypes.models import ContentType
-from django.db import IntegrityError, models
+from django.db import models
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from django_scopes import ScopedManager, scopes_disabled
 from i18nfield.utils import I18nJSONEncoder
-from rules.contrib.models import RulesModelBase, RulesModelMixin
 
 SENSITIVE_KEYS = ["password", "secret", "api_key"]
 
@@ -21,20 +20,11 @@ class TimestampedModel(models.Model):
 
 
 class LogMixin:
-    log_prefix = None
-    log_parent = None
-
-    def log_action(
-        self, action, data=None, person=None, orga=False, content_object=None
-    ):
+    def log_action(self, action, data=None, person=None, orga=False):
         if not self.pk:
             return
 
-        if action.startswith("."):
-            if self.log_prefix:
-                action = f"{self.log_prefix}{action}"
-            else:
-                return
+        from pretalx.common.models import ActivityLog
 
         if data and isinstance(data, dict):
             for key, value in data.items():
@@ -47,12 +37,10 @@ class LogMixin:
                 f"Logged data should always be a dictionary, not {type(data)}."
             )
 
-        from pretalx.common.models import ActivityLog
-
         return ActivityLog.objects.create(
             event=getattr(self, "event", None),
             person=person,
-            content_object=content_object or self,
+            content_object=self,
             action_type=action,
             data=data,
             is_orga_action=orga,
@@ -69,14 +57,6 @@ class LogMixin:
             .select_related("event", "person")
             .prefetch_related("content_object")
         )
-
-    def delete(self, *args, log_kwargs=None, **kwargs):
-        parent = self.log_parent
-        result = super().delete(*args, **kwargs)
-        if parent and getattr(parent, "log_action", None):
-            log_kwargs = log_kwargs or {}
-            parent.log_action(f"{self.log_prefix}.delete", **log_kwargs)
-        return result
 
 
 class FileCleanupMixin:
@@ -149,14 +129,7 @@ class FileCleanupMixin:
         )
 
 
-class PretalxModel(
-    LogMixin,
-    TimestampedModel,
-    FileCleanupMixin,
-    RulesModelMixin,
-    models.Model,
-    metaclass=RulesModelBase,
-):
+class PretalxModel(LogMixin, TimestampedModel, FileCleanupMixin, models.Model):
     """
     Base model for most pretalx models. Suitable for plugins.
     """
@@ -195,15 +168,9 @@ class GenerateCode:
                     return
 
     def save(self, *args, **kwargs):
-        # It’s super duper unlikely for this to fail, but let’s add a short
-        # stupid retry loop regardless
-        for _ in range(3):
-            if not getattr(self, self._code_property, None):
-                self.assign_code()
-            try:
-                return super().save(*args, **kwargs)
-            except IntegrityError:
-                setattr(self, self._code_property, None)
+        if not getattr(self, self._code_property, None):
+            self.assign_code()
+        return super().save(*args, **kwargs)
 
 
 class OrderedModel:

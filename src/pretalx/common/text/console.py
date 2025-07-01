@@ -5,12 +5,8 @@ from itertools import repeat
 from pathlib import Path
 from sys import executable
 
-from django.conf import settings
-
-ESCAPE = "\033"
-BOLD = f"{ESCAPE}[1m"
-RESET = f"{ESCAPE}[0m"
-RED = f"{ESCAPE}[1;31m"
+BOLD = "\033[1m"
+RESET = "\033[0m"
 UD = "│"
 LR = "─"
 SEPARATORS = {
@@ -71,33 +67,27 @@ def print_line(string, box=False, bold=False, color=None, size=None):
             print("unprintable setting")
 
 
-def log_initial():
+def log_initial(*, debug, config_files, db_name, db_backend, log_dir, plugins):
     from pretalx import __version__
 
     with suppress(Exception):  # geteuid is not available on all OS
         if os.geteuid() == 0:
             print_line("You are running pretalx as root, why?", bold=True)
 
-    if not getattr(settings, "CONFIG_FILES", None):
-        # We are running with weird/test settings, skip output
-        return
-
-    db_settings = settings.DATABASES.get("default") or {}
-    db_backend = db_settings.get("ENGINE", "").rsplit(".")[-1]
-    # Lines is a list of (text, bold)
+    # text, bold
     lines = [
         (f"pretalx v{__version__}", True),
-        (f'Settings:  {", ".join(settings.CONFIG_FILES)}', False),
-        (f"Database:  {db_settings.get('NAME')} ({db_backend})", False),
-        (f"Logging:   {settings.LOG_DIR}", False),
+        (f'Settings:  {", ".join(config_files)}', False),
+        (f"Database:  {db_name} ({db_backend})", False),
+        (f"Logging:   {log_dir}", False),
         (f"Python:    {executable}", False),
         (f"Source:    {Path(__file__).parent.parent.parent}", False),
     ]
-    if settings.PLUGINS:
-        plugin_lines = textwrap.wrap(", ".join(settings.PLUGINS), width=92)
+    if plugins:
+        plugin_lines = textwrap.wrap(", ".join(plugins), width=92)
         lines.append((f"Plugins:   {plugin_lines[0]}", False))
         lines += [(" " * 11 + line, False) for line in plugin_lines[1:]]
-    if settings.DEBUG:
+    if debug:
         lines += [("DEVELOPMENT MODE, DO NOT USE IN PRODUCTION!", True)]
     image = """
 ┏━━━━━━━━━━┓

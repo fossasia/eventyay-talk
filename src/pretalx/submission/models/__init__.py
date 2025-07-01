@@ -1,6 +1,5 @@
 from .access_code import SubmitterAccessCode
 from .cfp import CfP
-from .comment import SubmissionComment
 from .feedback import Feedback
 from .question import Answer, AnswerOption, Question, QuestionTarget, QuestionVariant
 from .resource import Resource
@@ -24,7 +23,6 @@ __all__ = [
     "ReviewScore",
     "ReviewScoreCategory",
     "Submission",
-    "SubmissionComment",
     "SubmissionStates",
     "SubmissionType",
     "SubmitterAccessCode",

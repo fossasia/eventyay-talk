@@ -29,10 +29,9 @@ These commands update pretalx first, then the database, then the static files.
 Once you have executed these steps without seeing any errors, do not forget to
 restart your service(s)::
 
-    (env)$ pip3 install --upgrade-strategy eager -U pretalx
-    (env)$ python -m pretalx check --deploy
-    (env)$ python -m pretalx migrate
-    (env)$ python -m pretalx rebuild --npm-install
+    $ pip3 install --user --upgrade-strategy eager -U pretalx
+    $ python -m pretalx migrate
+    $ python -m pretalx rebuild --npm-install
     # systemctl restart pretalx-web
     # systemctl restart pretalx-worker  # If you’re running celery
 
@@ -43,7 +42,7 @@ If you want to upgrade pretalx to a specific release, you can pin the version
 in the pip command. Substitute ``pretalx`` with ``pretalx==1.2.3`` in the pip
 install line above like this::
 
-    (env)$ pip3 install --user --upgrade-strategy eager pretalx==1.2.3
+    $ pip3 install --user --upgrade-strategy eager pretalx==1.2.3
 
 .. _installing-a-commit:
 
@@ -54,7 +53,7 @@ If you’re sure that you know what you’re doing, you can also install a speci
 commit or branch of pretalx. You can replace ``main`` with a short or long
 commit ID for a specific commit::
 
-    (env)$ pip3 install --user --upgrade-strategy eager -U "git+https://github.com/pretalx/pretalx.git@main#egg=pretalx"
+    $ pip3 install --user --upgrade-strategy eager -U "git+https://github.com/pretalx/pretalx.git@main#egg=pretalx"
 
 
 Backups

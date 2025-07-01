@@ -4,6 +4,12 @@
 {% load i18n %}
 {% load static %}
 
+{% block stylesheets %}
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "common/css/dialog.css" %}">
+    {% endcompress %}
+{% endblock stylesheets %}
+
 {% block scripts %}
     {% compress js %}
         <script defer src="{% static "orga/js/mailSettings.js" %}"></script>
@@ -19,7 +25,7 @@
         <div id="main-title" class="d-md-flex justify-content-between">
             <h2>
             {% translate "Email settings" %}
-            <span data-dialog-target="#info-dialog" data-toggle="dialog">
+            <span class="dialog-anchor" data-target="#info-dialog" data-toggle="dialog">
                 <i class="fa fa-question-circle-o text-info"></i>
             </span>
             </h2>

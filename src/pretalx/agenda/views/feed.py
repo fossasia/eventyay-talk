@@ -16,7 +16,9 @@ XML_REPLACE = str.maketrans(
 
 
 def sanitize_xml(text):
-    return str(text or "").translate(XML_REPLACE)
+    if not text:
+        return ""
+    return str(text).translate(XML_REPLACE)
 
 
 class ScheduleFeed(Feed):
@@ -24,7 +26,7 @@ class ScheduleFeed(Feed):
     description_template = "agenda/feed/description.html"
 
     def get_object(self, request, *args, **kwargs):
-        if not request.user.has_perm("schedule.list_schedule", request.event):
+        if not request.user.has_perm("agenda.view_schedule", request.event):
             raise Http404()
         return request.event
 

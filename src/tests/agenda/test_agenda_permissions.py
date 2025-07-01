@@ -1,7 +1,11 @@
 import pytest
 from django_scopes import scope
 
-from pretalx.agenda.rules import is_agenda_visible, is_speaker_viewable
+from pretalx.agenda.permissions import (
+    is_agenda_visible,
+    is_feedback_ready,
+    is_speaker_viewable,
+)
 
 
 @pytest.mark.django_db
@@ -29,6 +33,29 @@ def test_agenda_permission_is_agenda_visible(
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
+    "slot_visible,accept_feedback,result",
+    (
+        (True, True, True),
+        (True, False, False),
+        (False, True, False),
+        (False, False, False),
+    ),
+)
+def test_agenda_permission_is_feedback_ready(
+    slot_visible, accept_feedback, result, slot, monkeypatch
+):
+    monkeypatch.setattr(
+        "pretalx.agenda.permissions.is_submission_visible", lambda x, y: slot_visible
+    )
+    monkeypatch.setattr(
+        "pretalx.submission.models.submission.Submission.does_accept_feedback",
+        accept_feedback,
+    )
+    assert is_feedback_ready(None, slot.submission) is result
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
     "agenda_visible,result",
     (
         (True, True),
@@ -36,11 +63,14 @@ def test_agenda_permission_is_agenda_visible(
     ),
 )
 def test_agenda_permission_is_speaker_viewable(
-    agenda_visible, result, speaker, slot, event
+    agenda_visible, result, speaker, slot, schedule, monkeypatch
 ):
-    with scope(event=event):
-        assert slot.schedule == event.current_schedule
-        slot.is_visible = agenda_visible
-        slot.save()
-    with scope(event=event):
+    monkeypatch.setattr(
+        "pretalx.agenda.permissions.is_agenda_visible", lambda x, y: agenda_visible
+    )
+    with scope(event=schedule.event):
         assert is_speaker_viewable(None, speaker.profiles.first()) is result
+
+
+def test_agenda_permission_is_speaker_viewable_with_wrong_params():
+    assert is_speaker_viewable("user", False) is False

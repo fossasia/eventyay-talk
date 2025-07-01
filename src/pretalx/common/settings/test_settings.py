@@ -51,7 +51,8 @@ DEBUG_PROPAGATE_EXCEPTIONS = True
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 # Disable celery
-CELERY_TASK_ALWAYS_EAGER = True
+CELERY_ALWAYS_EAGER = True
+HAS_CELERY = False
 
 # Don't use redis
 SESSION_ENGINE = "django.contrib.sessions.backends.db"

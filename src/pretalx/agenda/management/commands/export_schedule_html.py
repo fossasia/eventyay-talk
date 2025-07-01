@@ -49,20 +49,11 @@ def find_assets(html):
     """Find URLs of images, style sheets and scripts included in `html`."""
     soup = BeautifulSoup(html, "lxml")
 
-    for asset in soup.select("script, img"):
-        if "src" in asset.attrs:
-            yield asset.attrs["src"]
-    for asset in soup.select("link[rel=icon], link[rel=stylesheet]"):
+    for asset in soup.find_all(["script", "img"]):
+        yield asset.attrs["src"]
+    for asset in soup.find_all(["link"]):
         if asset.attrs["rel"][0] in ("icon", "stylesheet"):
             yield asset.attrs["href"]
-    for asset in soup.select("[data-lightbox]"):
-        url = (
-            asset.attrs.get("data-lightbox")
-            or asset.attrs.get("href")
-            or asset.attrs.get("src")
-        )
-        if url:
-            yield url
 
 
 def find_urls(css):
@@ -140,7 +131,7 @@ def dump_content(destination, path, getter):
     if file_path.endswith("/"):
         file_path += "index.html"
     file_path = (destination / file_path.lstrip("/")).resolve()
-    if destination not in file_path.parents:  # pragma: no cover
+    if destination not in file_path.parents:
         raise CommandError("Path traversal detected, aborting.")
     file_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -167,7 +158,7 @@ def get_mediastatic_content(url):
         path in local_path.parents
         for path in (settings.MEDIA_ROOT, settings.STATIC_ROOT)
     ):
-        raise FileNotFoundError()  # pragma: no cover
+        raise FileNotFoundError()
 
     with open(local_path, "rb") as media_file:
         return media_file.read()

@@ -133,7 +133,7 @@
     {% endif %}
 
     <h3 class="mt-4">Celery</h3>
-    {% if settings.CELERY_TASK_ALWAYS_EAGER %}
+    {% if not settings.HAS_CELERY %}
         {% translate "No celery workers have been configured." %}
     {% else %}
         <ul>

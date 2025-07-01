@@ -1,4 +1,6 @@
+import hashlib
 import json
+import logging
 import textwrap
 from contextlib import suppress
 from urllib.parse import unquote
@@ -7,25 +9,27 @@ from django.contrib import messages
 from django.http import (
     Http404,
     HttpResponse,
+    HttpResponseNotModified,
     HttpResponsePermanentRedirect,
     HttpResponseRedirect,
 )
 from django.urls import resolve, reverse
 from django.utils.functional import cached_property
+from django.utils.translation import activate
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
 from django_context_decorator import context
 
-from pretalx.agenda.views.utils import (
-    get_schedule_exporter_content,
-    get_schedule_exporters,
-)
+from pretalx.agenda.views.utils import find_schedule_exporter, get_schedule_exporters
 from pretalx.common.signals import register_my_data_exporters
-from pretalx.common.views.mixins import EventPermissionRequired, PermissionRequired
+from pretalx.common.text.path import safe_filename
+from pretalx.common.views.mixins import EventPermissionRequired
 from pretalx.schedule.ascii import draw_ascii_schedule
 from pretalx.schedule.exporters import ScheduleData
 from pretalx.submission.models.submission import SubmissionFavouriteDeprecated
+
+logger = logging.getLogger(__name__)
 
 
 class ScheduleMixin:
@@ -36,28 +40,17 @@ class ScheduleMixin:
         return None
 
     def get_object(self):
-        schedule = None
         if self.version:
             with suppress(Exception):
-                schedule = (
-                    self.request.event.schedules.filter(version__iexact=self.version)
-                    .select_related("event")
-                    .first()
-                )
-        schedule = schedule or self.request.event.current_schedule
-        if schedule:
-            # make use of existing caches and prefetches
-            schedule.event = self.request.event
-        return schedule
-
-    @cached_property
-    def object(self):
-        return self.get_object()
+                return self.request.event.schedules.filter(
+                    version__iexact=self.version
+                ).first()
+        return self.request.event.current_schedule
 
     @context
     @cached_property
     def schedule(self):
-        return self.object
+        return self.get_object()
 
     def dispatch(self, request, *args, **kwargs):
         if version := request.GET.get("version"):
@@ -73,26 +66,95 @@ class ScheduleMixin:
 
 
 class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
-    permission_required = "schedule.list_schedule"
+    permission_required = "agenda.view_schedule"
+
+    def get_context_data(self, **kwargs):
+        result = super().get_context_data(**kwargs)
+        schedule = self.schedule
+
+        if not schedule and self.version:
+            result["version"] = self.version
+            result["error"] = f'Schedule "{self.version}" not found.'
+            return result
+        if not schedule:
+            result["error"] = "Schedule not found."
+            return result
+        result["schedules"] = self.request.event.schedules.filter(
+            published__isnull=False
+        ).values_list("version")
+        return result
+
+    def get_exporter(self, public=True):
+        url = resolve(self.request.path_info)
+
+        if url.url_name == "export":
+            exporter = url.kwargs.get("name") or unquote(
+                self.request.GET.get("exporter")
+            )
+        else:
+            exporter = url.url_name
+
+        exporter = (
+            exporter[len("export.") :] if exporter.startswith("export.") else exporter
+        )
+        return find_schedule_exporter(self.request, exporter, public=public)
 
     def get(self, request, *args, **kwargs):
-        url = resolve(self.request.path_info)
-        if url.url_name == "export":
-            name = url.kwargs.get("name") or unquote(self.request.GET.get("exporter"))
-        else:
-            name = url.url_name
-
-        if name.startswith("export."):
-            name = name[len("export.") :]
-        response = get_schedule_exporter_content(request, name, self.schedule)
-        if not response:
+        is_organiser = self.request.user.has_perm(
+            "orga.view_schedule", self.request.event
+        )
+        exporter = self.get_exporter(public=not is_organiser)
+        if not exporter:
             raise Http404()
-        return response
+        exporter.schedule = self.schedule
+        exporter.is_orga = is_organiser
+        lang_code = request.GET.get("lang")
+        if lang_code and lang_code in request.event.locales:
+            activate(lang_code)
+        elif "lang" in request.GET:
+            activate(request.event.locale)
+
+        exporter.schedule = self.schedule
+        if "-my" in exporter.identifier and self.request.user.id is None:
+            if request.GET.get("talks"):
+                exporter.talk_ids = request.GET.get("talks").split(",")
+            else:
+                return HttpResponseRedirect(self.request.event.urls.login)
+        favs_talks = SubmissionFavouriteDeprecated.objects.filter(
+            user=self.request.user.id
+        )
+        if favs_talks.exists():
+            exporter.talk_ids = favs_talks[0].talk_list
+
+        exporter.is_orga = getattr(self.request, "is_orga", False)
+
+        try:
+            file_name, file_type, data = exporter.render(request=request)
+            etag = hashlib.sha1(str(data).encode()).hexdigest()
+        except Exception:
+            logger.exception(
+                f"Failed to use {exporter.identifier} for {self.request.event.slug}"
+            )
+            raise Http404()
+        if request.headers.get("If-None-Match") == etag:
+            return HttpResponseNotModified()
+        headers = {"ETag": f'"{etag}"'}
+        if file_type not in ("application/json", "text/xml"):
+            headers["Content-Disposition"] = (
+                f'attachment; filename="{safe_filename(file_name)}"'
+            )
+        if exporter.cors:
+            headers["Access-Control-Allow-Origin"] = exporter.cors
+        return HttpResponse(data, content_type=file_type, headers=headers)
 
 
-class ScheduleView(PermissionRequired, ScheduleMixin, TemplateView):
+class ScheduleView(EventPermissionRequired, ScheduleMixin, TemplateView):
     template_name = "agenda/schedule.html"
-    permission_required = "schedule.view_schedule"
+
+    def get_permission_required(self):
+        if self.version == "wip":
+            return ["orga.view_schedule"]
+        return ["agenda.view_schedule"]
 
     def get_text(self, request, **kwargs):
         data = ScheduleData(
@@ -116,7 +178,7 @@ class ScheduleView(PermissionRequired, ScheduleMixin, TemplateView):
             output_format = "table"
         try:
             result = draw_ascii_schedule(data, output_format=output_format)
-        except StopIteration:  # pragma: no cover
+        except StopIteration:
             result = draw_ascii_schedule(data, output_format="list")
         result += "\n\n  📆 powered by pretalx"
         return HttpResponse(
@@ -125,20 +187,18 @@ class ScheduleView(PermissionRequired, ScheduleMixin, TemplateView):
 
     def dispatch(self, request, **kwargs):
         if not self.has_permission() and self.request.user.has_perm(
-            "submission.list_featured_submission", self.request.event
+            "agenda.view_featured_submissions", self.request.event
         ):
             messages.success(request, _("Our schedule is not live yet."))
             return HttpResponseRedirect(self.request.event.urls.featured)
         return super().dispatch(request, **kwargs)
 
     def get(self, request, **kwargs):
-        accept_header = request.headers.get("Accept") or ""
-        if getattr(self, "is_html_export", False) or (
-            accept_header and request.accepts("text/html")
-        ):
+        accept_header = request.headers.get("Accept", "")
+        if getattr(self, "is_html_export", False) or "text/html" in accept_header:
             return super().get(request, **kwargs)
 
-        if not accept_header or request.accepts("text/plain"):
+        if not accept_header or accept_header in ("plain", "text/plain"):
             return self.get_text(request, **kwargs)
 
         export_headers = {
@@ -146,7 +206,7 @@ class ScheduleView(PermissionRequired, ScheduleMixin, TemplateView):
             "frab_json": ["application/json"],
         }
         for url_name, headers in export_headers.items():
-            if any(request.accepts(header) for header in headers):
+            if any(header in accept_header for header in headers):
                 target_url = getattr(self.request.event.urls, url_name).full()
                 response = HttpResponseRedirect(target_url)
                 response.status_code = 303
@@ -164,14 +224,11 @@ class ScheduleView(PermissionRequired, ScheduleMixin, TemplateView):
             raise Http404()
         return schedule
 
-    def get_permission_object(self):
-        return self.object
-
     @context
     def exporters(self):
         return [
             exporter
-            for exporter in get_schedule_exporters(self.request, public=True)
+            for exporter in get_schedule_exporters(self.request)
             if exporter.show_public
         ]
 
@@ -216,11 +273,10 @@ class ScheduleNoJsView(ScheduleView):
     template_name = "agenda/schedule_nojs.html"
 
     def get_schedule_data(self):
-        schedule = self.get_object()
         data = ScheduleData(
             event=self.request.event,
-            schedule=schedule,
-            with_accepted=schedule and not schedule.version,
+            schedule=self.schedule,
+            with_accepted=self.schedule and not self.schedule.version,
             with_breaks=True,
         ).data
         for date in data:
@@ -232,19 +288,14 @@ class ScheduleNoJsView(ScheduleView):
 
     def get_context_data(self, **kwargs):
         result = super().get_context_data(**kwargs)
+        if "schedule" not in result:
+            return result
+
         result.update(**self.get_schedule_data())
-        result["day_count"] = len(result.get("data", []))
+        result["day_count"] = len(result["data"])
         return result
 
 
 class ChangelogView(EventPermissionRequired, TemplateView):
     template_name = "agenda/changelog.html"
-    permission_required = "schedule.list_schedule"
-
-    @context
-    def schedules(self):
-        return (
-            self.request.event.schedules.all()
-            .filter(version__isnull=False)
-            .select_related("event")
-        )
+    permission_required = "agenda.view_schedule"

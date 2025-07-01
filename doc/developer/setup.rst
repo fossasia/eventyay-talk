@@ -185,21 +185,13 @@ starting Python’s debugging SMTP server in a separate shell::
 You can use this server by specifying host ``localhost`` and port ``1025`` in
 the event email settings.
 
-.. _`developer-translations`:
-
 Working with translations
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-If you want to translate new strings that are not yet known to the translation system, you will
-first include them in the ``.po`` files. As we share translations between both the JavaScript
-frontend and the Python backend, you’ll need to install the frontend dependencies first::
+If you want to translate new strings that are not yet known to the translation system, you can use
+the following command to scan the source code for strings we want to translate and update the
+``*.po`` files accordingly::
 
-    (.venv)$ cd src/pretalx/frontend/schedule-editor
-    (.venv)$ npm ci
-
-Then, use the following command to scan the source code for strings we want to
-translate and update the ``*.po`` files accordingly::
-
-    (.venv)$ python manage.py makemessages --keep-pot --all
+    (.venv)$ python manage.py makemessages
 
 To actually see pretalx in your language, you have to compile the ``*.po`` files to their optimised
 binary ``*.mo`` counterparts::
@@ -220,7 +212,7 @@ directory of your git repository, and then run::
 
     (.venv)$ pip install --upgrade-strategy eager -Ur doc/requirements.txt
 
-Then, go to the ``doc`` directory and run ``make html`` to build the documentation::
+Then, to build the documentation, run the following command::
 
     (.venv)$ make html
 

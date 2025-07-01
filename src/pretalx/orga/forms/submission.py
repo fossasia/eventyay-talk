@@ -16,7 +16,7 @@ from pretalx.common.forms.widgets import (
 )
 from pretalx.common.text.phrases import phrases
 from pretalx.schedule.models import TalkSlot
-from pretalx.submission.models import Submission, SubmissionStates
+from pretalx.submission.models import Submission, SubmissionStates, SubmissionType
 
 
 class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
@@ -64,7 +64,9 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
         kwargs["initial"].update(initial_slot)
         super().__init__(**kwargs)
         if "submission_type" in self.fields:
-            self.fields["submission_type"].queryset = self.event.submission_types.all()
+            self.fields["submission_type"].queryset = SubmissionType.objects.filter(
+                event=event
+            )
         if not self.event.tags.all().exists():
             self.fields.pop("tags", None)
         elif "tags" in self.fields:
@@ -156,9 +158,9 @@ class SubmissionForm(ReadOnlyFlag, RequestRequire, forms.ModelForm):
         if self.is_creating:
             instance._set_state(self.cleaned_data["state"], force=True)
         else:
-            if "duration" in self.changed_data:
+            if instance.pk and "duration" in self.changed_data:
                 instance.update_duration()
-            if "track" in self.changed_data:
+            if instance.pk and "track" in self.changed_data:
                 instance.update_review_scores()
             if "slot_count" in self.changed_data and "slot_count" in self.initial:
                 instance.update_talk_slots()
@@ -300,11 +302,8 @@ class AddSpeakerForm(forms.Form):
 
     def __init__(self, *args, event=None, form_renderer=None, **kwargs):
         super().__init__(*args, **kwargs)
-        if not event.named_locales or len(event.named_locales) < 2:
-            self.fields.pop("locale")
-        else:
-            self.fields["locale"].choices = event.named_locales
-            self.fields["locale"].initial = event.locale
+        self.fields["locale"].choices = event.named_locales
+        self.fields["locale"].initial = event.locale
 
     def clean(self):
         data = super().clean()

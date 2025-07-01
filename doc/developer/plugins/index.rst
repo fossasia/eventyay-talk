@@ -1,4 +1,4 @@
-.. _plugin-index:
+.. _plugin-inde:
 
 Plugin development
 ==================
@@ -19,7 +19,6 @@ a plugin, please add it to our `plugin list`_!
    customview
    recording
    exporter
-   authentication
 
 .. _plugin idea collection: https://github.com/pretalx/pretalx/wiki/Plugin-ideas
 .. _plugin list: https://github.com/pretalx/pretalx/wiki/Plugins

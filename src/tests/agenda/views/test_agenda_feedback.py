@@ -33,7 +33,7 @@ def test_can_create_feedback_for_multiple_speakers(
         past_slot.submission.speakers.add(other_speaker)
         past_slot.submission.speakers.add(speaker)
         assert past_slot.submission.speakers.count() == 2
-    with django_assert_num_queries(41):
+    with django_assert_num_queries(43):
         response = client.post(
             past_slot.submission.urls.feedback, {"review": "cool!"}, follow=True
         )
@@ -67,21 +67,21 @@ def test_cannot_create_feedback_before_talk(
 @pytest.mark.django_db()
 def test_can_see_feedback(django_assert_num_queries, feedback, client):
     client.force_login(feedback.talk.speakers.first())
-    with django_assert_num_queries(17):
+    with django_assert_num_queries(20):
         response = client.get(feedback.talk.urls.feedback)
     assert response.status_code == 200
-    assert feedback.review in response.text
+    assert feedback.review in response.content.decode()
 
 
 @pytest.mark.django_db()
 def test_can_see_feedback_form(django_assert_num_queries, past_slot, client):
-    with django_assert_num_queries(13):
+    with django_assert_num_queries(14):
         response = client.get(past_slot.submission.urls.feedback, follow=True)
     assert response.status_code == 200
 
 
 @pytest.mark.django_db()
 def test_cannot_see_feedback_form_before_talk(django_assert_num_queries, slot, client):
-    with django_assert_num_queries(15):
+    with django_assert_num_queries(16):
         response = client.get(slot.submission.urls.feedback, follow=True)
     assert response.status_code == 200

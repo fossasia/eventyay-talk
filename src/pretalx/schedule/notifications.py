@@ -11,7 +11,7 @@ def get_notification_date_format():
     return get_day_month_date_format() + ", " + get_format("TIME_FORMAT")
 
 
-def render_notifications(data, event, speaker=None, locale=None):
+def render_notifications(data, event, speaker=None):
     """Renders the schedule notifications sent to speakers, in the form of a
     Markdown list.
 
@@ -19,9 +19,7 @@ def render_notifications(data, event, speaker=None, locale=None):
     each containing a list of TalkSlot objects, as returned by the values of the
     Schedule.speakers.concerned return value."""
     template = get_template("schedule/speaker_notification.txt")
-    locale = locale or (
-        speaker.get_locale_for_event(event) if speaker else event.locale
-    )
+    locale = speaker.get_locale_for_event(event) if speaker else event.locale
     with override(locale), tzoverride(event.tz):
         date_format = get_notification_date_format()
         return template.render({"START_DATE_FORMAT": date_format, **data})

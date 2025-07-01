@@ -15,8 +15,7 @@ from pretalx.common.text.phrases import phrases
 from pretalx.common.views.mixins import EventPermissionRequired, PermissionRequired
 from pretalx.event.models import Event, Organiser
 from pretalx.event.stages import get_stages
-from pretalx.submission.models import Submission, SubmissionStates
-from pretalx.submission.rules import get_missing_reviews
+from pretalx.submission.models import Review, Submission, SubmissionStates
 
 
 def start_redirect_view(request):
@@ -79,10 +78,7 @@ class DashboardEventListView(TemplateView):
 
 
 class DashboardOrganiserEventListView(PermissionRequired, DashboardEventListView):
-    permission_required = "event.view_organiser"
-
-    def get_permission_object(self):
-        return self.request.organiser
+    permission_required = "orga.view_organisers"
 
     @property
     def base_queryset(self):
@@ -95,7 +91,7 @@ class DashboardOrganiserEventListView(PermissionRequired, DashboardEventListView
 
 class DashboardOrganiserListView(PermissionRequired, TemplateView):
     template_name = "orga/organiser/list.html"
-    permission_required = "event.list_organiser"
+    permission_required = "orga.view_organisers"
 
     def filter_organiser(self, organiser, query):
         name = (
@@ -132,9 +128,9 @@ class DashboardOrganiserListView(PermissionRequired, TemplateView):
 
 class EventDashboardView(EventPermissionRequired, TemplateView):
     template_name = "orga/event/dashboard.html"
-    permission_required = "event.orga_access_event"
+    permission_required = "orga.view_orga_area"
 
-    def get_cfp_tiles(self, _now, can_change_submissions=False):
+    def get_cfp_tiles(self, _now):
         result = []
         if self.request.event.cfp.is_open:
             result.append(
@@ -156,7 +152,7 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
             draft_proposals = Submission.all_objects.filter(
                 state=SubmissionStates.DRAFT, event=self.request.event
             ).count()
-            if draft_proposals and can_change_submissions:
+            if draft_proposals:
                 result.append(
                     {
                         "large": draft_proposals,
@@ -176,9 +172,12 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
                 )
         return result
 
-    def get_review_tiles(self, can_change_settings):
+    def get_review_tiles(self):
         result = []
         review_count = self.request.event.reviews.count()
+        can_change_settings = self.request.user.has_perm(
+            "orga.change_settings", self.request.event
+        )
         if review_count:
             active_reviewers = (
                 self.request.event.reviewers.filter(reviews__isnull=False)
@@ -205,7 +204,7 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
             members__in=[self.request.user], is_reviewer=True
         ).exists()
         if is_reviewer:
-            reviews_missing = get_missing_reviews(
+            reviews_missing = Review.find_missing_reviews(
                 self.request.event, self.request.user
             ).count()
             if reviews_missing:
@@ -245,15 +244,7 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
         )
         _now = now()
         today = _now.date()
-        can_change_settings = self.request.user.has_perm(
-            "event.change_settings.event", event
-        )
-        can_change_submissions = self.request.user.has_perm(
-            "submission.orga_update_submission", event
-        )
-        result["tiles"] = self.get_cfp_tiles(
-            _now, can_change_submissions=can_change_submissions
-        )
+        result["tiles"] = self.get_cfp_tiles(_now)
         if today < event.date_from:
             days = (event.date_from - today).days
             result["tiles"].append(
@@ -299,22 +290,14 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
             )
 
         talk_count = event.talks.count()
-        accepted_count = event.submissions.filter(
-            state=SubmissionStates.ACCEPTED
-        ).count()
         submission_count = event.submissions.count()
-        pending_state_submissions = event.submissions.filter(
-            pending_state__isnull=False
-        ).count()
-        if talk_count or accepted_count:
-            confirmed_count = event.submissions.filter(
-                state=SubmissionStates.CONFIRMED
+        if talk_count:
+            accepted_count = event.submissions.filter(
+                state=SubmissionStates.ACCEPTED
             ).count()
             result["tiles"].append(
                 {
-                    # Don’t show 0 here for events that do not use the scheduling
-                    # component, instead show accepted + confirmed
-                    "large": talk_count or (accepted_count + confirmed_count),
+                    "large": talk_count,
                     "small": ngettext_lazy("session", "sessions", talk_count),
                     "url": event.orga_urls.submissions
                     + f"?state={SubmissionStates.ACCEPTED}&state={SubmissionStates.CONFIRMED}",
@@ -326,7 +309,8 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
                         "color": "error" if accepted_count else "info",
                     },
                     "left": {
-                        "text": str(_("confirmed")) + f": {confirmed_count}",
+                        "text": str(phrases.submission.submitted)
+                        + f": {submission_count}",
                         "url": event.orga_urls.submissions,
                         "color": "success",
                     },
@@ -340,26 +324,6 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
                     "small": ngettext_lazy("proposal", "proposals", count),
                     "url": event.orga_urls.submissions,
                     "priority": 60,
-                }
-            )
-        if pending_state_submissions and pending_state_submissions > 0:
-            states = "&".join(
-                [
-                    f"state=pending_state__{state}"
-                    for state, __ in SubmissionStates.get_choices()
-                    if state not in (SubmissionStates.DRAFT, SubmissionStates.DELETED)
-                ]
-            )
-            result["tiles"].append(
-                {
-                    "large": pending_state_submissions,
-                    "small": ngettext_lazy(
-                        "submission with pending changes",
-                        "submissions with pending changes",
-                        pending_state_submissions,
-                    ),
-                    "url": event.orga_urls.submissions + f"?{states}",
-                    "priority": 56,
                 }
             )
         submitter_count = event.submitters.count()
@@ -406,8 +370,6 @@ class EventDashboardView(EventPermissionRequired, TemplateView):
                 "priority": 80,
             }
         )
-        result["tiles"] += self.get_review_tiles(
-            can_change_settings=can_change_settings
-        )
+        result["tiles"] += self.get_review_tiles()
         result["tiles"].sort(key=lambda tile: tile.get("priority") or 100)
         return result

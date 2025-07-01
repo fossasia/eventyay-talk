@@ -1,18 +1,22 @@
 const performCopy = (element) => {
-    navigator.clipboard.writeText(element.dataset.destination).then(() => {
-        const wasTooltip = element.getAttribute('data-toggle') === 'tooltip'
-        const oldTitle = element.title || ''
-        element.title = 'Copied!'
+    const input = document.createElement('input')
+    input.value = element.dataset.destination
+    document.body.appendChild(input)
+    input.select()
+    document.execCommand('copy')
+    document.body.removeChild(input)
+    const wasTooltip = element.getAttribute('data-toggle') === 'tooltip'
+    const oldTitle = element.title || ''
+    element.title = 'Copied!'
+    if (!wasTooltip) {
+        element.setAttribute('data-toggle', 'tooltip')
+    }
+    setTimeout(() => {
+        element.title = oldTitle
         if (!wasTooltip) {
-            element.setAttribute('data-toggle', 'tooltip')
+            element.removeAttribute('data-toggle')
         }
-        setTimeout(() => {
-            element.title = oldTitle
-            if (!wasTooltip) {
-                element.removeAttribute('data-toggle')
-            }
-        }, 1000)
-    })
+    }, 1000)
 }
 
 onReady(() => {

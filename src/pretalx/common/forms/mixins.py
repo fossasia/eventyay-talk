@@ -403,6 +403,7 @@ class QuestionFieldsMixin:
                 field.answer.delete()
             else:
                 self._save_to_answer(field, field.answer, value)
+                field.answer.save()
         elif value != "" and value is not None and value is not False:
             answer = Answer(
                 review=(
@@ -423,6 +424,7 @@ class QuestionFieldsMixin:
                 question=field.question,
             )
             self._save_to_answer(field, answer, value)
+            answer.save()
 
     def _save_to_answer(self, field, answer, value):
         if isinstance(field, forms.ModelMultipleChoiceField):
@@ -446,12 +448,11 @@ class QuestionFieldsMixin:
                 answer.answer = ""
         elif isinstance(field, forms.FileField):
             if isinstance(value, UploadedFile):
-                answer.answer_file.save(value.name, value, save=False)
+                answer.answer_file.save(value.name, value)
                 answer.answer = "file://" + value.name
             value = answer.answer
         else:
             answer.answer = value
-        answer.save()
 
 
 class I18nHelpText:

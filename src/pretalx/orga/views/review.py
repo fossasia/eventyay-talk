@@ -29,19 +29,15 @@ from pretalx.orga.forms.review import (
     TagsForm,
 )
 from pretalx.orga.forms.submission import SubmissionStateChangeForm
+from pretalx.orga.permissions import reviews_are_open
 from pretalx.orga.views.submission import BaseSubmissionList
 from pretalx.submission.forms import QuestionsForm, SubmissionFilterForm
 from pretalx.submission.models import Review, Submission, SubmissionStates
-from pretalx.submission.rules import (
-    get_missing_reviews,
-    get_reviewable_submissions,
-    reviews_are_open,
-)
 
 
 class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
     template_name = "orga/review/dashboard.html"
-    permission_required = "submission.list_review"
+    permission_required = "orga.view_review_dashboard"
     paginate_by = 100
     max_page_size = 100_000
     usable_states = (
@@ -123,6 +119,18 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
                     for category in self.independent_categories:
                         result.append(mapping.get(category.pk))
                     submission.independent_scores = result
+                if self.short_questions:
+                    answers = {
+                        answer.question_id: answer
+                        for answer in submission.answers.all()
+                    }
+                    submission.short_answers = [
+                        answers.get(
+                            question.id,
+                            {"question_id": question.id, "answer_string": ""},
+                        )
+                        for question in self.short_questions
+                    ]
             else:
                 reviews = [
                     review
@@ -146,17 +154,6 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
                     submission.independent_scores = [
                         None for _ in range(len(self.independent_categories))
                     ]
-            if self.short_questions:
-                answers = {
-                    answer.question_id: answer for answer in submission.answers.all()
-                }
-                submission.short_answers = [
-                    answers.get(
-                        question.id,
-                        {"question_id": question.id, "answer_string": ""},
-                    )
-                    for question in self.short_questions
-                ]
 
         return self.sort_queryset(queryset)
 
@@ -192,26 +189,17 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
 
     @context
     @cached_property
-    def can_change_submissions(self):
-        return self.request.user.has_perm(
-            "submission.orga_update_submission", self.request.event
-        )
-
-    @context
-    @cached_property
     def can_accept_submissions(self):
         return self.request.event.submissions.filter(
             state=SubmissionStates.SUBMITTED
         ).exists() and self.request.user.has_perm(
-            "submission.accept_or_reject_submission", self.request.event
+            "submission.accept_or_reject_submissions", self.request.event
         )
 
     @context
     @cached_property
     def can_see_all_reviews(self):
-        return self.request.user.has_perm(
-            "submission.list_all_review", self.request.event
-        )
+        return self.request.user.has_perm("orga.view_all_reviews", self.request.event)
 
     @context
     @cached_property
@@ -240,7 +228,7 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
     def short_questions(self):
         from pretalx.submission.models import QuestionVariant
 
-        queryset = self.request.event.questions.filter(
+        return self.request.event.questions.filter(
             target="submission",
             variant__in=[
                 QuestionVariant.BOOLEAN,
@@ -252,9 +240,6 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
                 QuestionVariant.NUMBER,
             ],
         )
-        if not self.can_change_submissions:
-            queryset = queryset.filter(is_visible_to_reviewers=True)
-        return queryset
 
     @context
     @cached_property
@@ -278,7 +263,9 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
 
     def get_context_data(self, **kwargs):
         result = super().get_context_data(**kwargs)
-        missing_reviews = get_missing_reviews(self.request.event, self.request.user)
+        missing_reviews = Review.find_missing_reviews(
+            self.request.event, self.request.user
+        )
         # Do NOT use len() here! It yields a different result.
         result["missing_reviews"] = missing_reviews.count()
         result["next_submission"] = missing_reviews[0] if missing_reviews else None
@@ -343,7 +330,7 @@ class ReviewDashboard(EventPermissionRequired, BaseSubmissionList):
 
 class BulkReview(EventPermissionRequired, TemplateView):
     template_name = "orga/review/bulk.html"
-    permission_required = "submission.create_review"
+    permission_required = "orga.perform_reviews"
     paginate_by = None
 
     @context
@@ -358,7 +345,7 @@ class BulkReview(EventPermissionRequired, TemplateView):
     @context
     @cached_property
     def submissions(self):
-        submissions = get_reviewable_submissions(
+        submissions = Review.find_reviewable_submissions(
             event=self.request.event, user=self.request.user
         ).prefetch_related("speakers")
         if self.filter_form.is_valid():
@@ -375,7 +362,9 @@ class BulkReview(EventPermissionRequired, TemplateView):
 
     def get_context_data(self, **kwargs):
         result = super().get_context_data(**kwargs)
-        missing_reviews = get_missing_reviews(self.request.event, self.request.user)
+        missing_reviews = Review.find_missing_reviews(
+            self.request.event, self.request.user
+        )
         # Do NOT use len() here! It yields a different result.
         result["missing_reviews"] = missing_reviews.count()
         result["next_submission"] = missing_reviews[0] if missing_reviews else None
@@ -483,7 +472,7 @@ class ReviewViewMixin:
             return True
         if self.object and self.object.pk:
             return not self.request.user.has_perm(
-                "submission.update_review", self.get_object()
+                "submission.edit_review", self.get_object()
             )
         return not self.request.user.has_perm(
             "submission.review_submission", self.get_object() or self.submission
@@ -494,7 +483,7 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
     form_class = ReviewForm
     model = Review
     template_name = "orga/submission/review.html"
-    permission_required = "submission.view_reviews_submission"
+    permission_required = "submission.view_reviews"
     write_permission_required = "submission.review_submission"
 
     @context
@@ -516,11 +505,15 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
     @context
     @cached_property
     def has_anonymised_review(self):
-        return (
-            self.request.event.review_phases.filter(
-                can_see_speaker_names=False
-            ).exists()
-            or self.request.event.teams.filter(force_hide_speaker_names=True).exists()
+        return self.request.event.review_phases.filter(
+            can_see_speaker_names=False
+        ).exists()
+
+    @context
+    @cached_property
+    def anonymise_review(self):
+        return not getattr(
+            self.request.event.active_review_phase, "can_see_speaker_names", True
         )
 
     @context
@@ -598,7 +591,7 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
             submission__event=self.request.event
         ).count()
         result["total_reviews"] = (
-            get_missing_reviews(self.request.event, self.request.user).count()
+            Review.find_missing_reviews(self.request.event, self.request.user).count()
             + result["done"]
         )
         if result["total_reviews"]:
@@ -621,9 +614,7 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
         if self.tags_form and not self.tags_form.is_valid():
             messages.error(self.request, phrases.base.error_saving_changes)
             return super().form_invalid(form)
-        action = ".create" if not form.instance else ".update"
         form.save()
-        form.instance.log_action(action, person=self.request.user, orga=True)
         self.qform.review = form.instance
         self.qform.save()
         if self.tags_form:
@@ -653,7 +644,7 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
 
         key = f"{self.request.event.slug}_ignored_reviews"
         ignored_submissions = self.request.session.get(key) or []
-        next_submission = get_missing_reviews(
+        next_submission = Review.find_missing_reviews(
             self.request.event,
             self.request.user,
             ignore=ignored_submissions,
@@ -662,7 +653,7 @@ class ReviewSubmission(ReviewViewMixin, PermissionRequired, CreateOrUpdateView):
             ignored_submissions = (
                 [self.submission.pk] if action == "skip_for_now" else []
             )
-            next_submission = get_missing_reviews(
+            next_submission = Review.find_missing_reviews(
                 self.request.event,
                 self.request.user,
                 ignore=ignored_submissions,
@@ -678,7 +669,7 @@ class ReviewSubmissionDelete(
     EventPermissionRequired, ReviewViewMixin, ActionConfirmMixin, TemplateView
 ):
     template_name = "orga/submission/review_delete.html"
-    permission_required = "submission.delete_review"
+    permission_required = "orga.remove_review"
 
     def get_permission_object(self):
         return self.object
@@ -692,7 +683,7 @@ class ReviewSubmissionDelete(
 
     def post(self, request, *args, **kwargs):
         self.object.answers.all().delete()
-        self.object.delete(log_kwargs={"person": self.request.user, "orga": True})
+        self.object.delete()
         messages.success(request, _("The review has been deleted."))
         return redirect(self.submission.orga_urls.reviews)
 
@@ -700,7 +691,7 @@ class ReviewSubmissionDelete(
 class RegenerateDecisionMails(
     EventPermissionRequired, ActionConfirmMixin, TemplateView
 ):
-    permission_required = "submission.accept_or_reject_submission"
+    permission_required = "orga.change_submissions"
     action_title = _("Regenerate decision emails")
     action_confirm_label = _("Regenerate decision emails")
     action_confirm_color = "success"
@@ -746,7 +737,7 @@ class RegenerateDecisionMails(
 
 class ReviewAssignment(EventPermissionRequired, FormView):
     template_name = "orga/review/assignment.html"
-    permission_required = "event.update_event"
+    permission_required = "orga.change_settings"
 
     @cached_property
     def form_type(self):
@@ -792,7 +783,7 @@ class ReviewAssignment(EventPermissionRequired, FormView):
 
 class ReviewAssignmentImport(EventPermissionRequired, FormView):
     template_name = "orga/review/assignment-import.html"
-    permission_required = "event.update_event"
+    permission_required = "orga.change_settings"
     form_class = ReviewAssignImportForm
 
     def get_form_kwargs(self):
@@ -808,7 +799,7 @@ class ReviewAssignmentImport(EventPermissionRequired, FormView):
 
 
 class ReviewExport(EventPermissionRequired, FormView):
-    permission_required = "event.update_event"
+    permission_required = "orga.change_settings"
     template_name = "orga/review/export.html"
     form_class = ReviewExportForm
 

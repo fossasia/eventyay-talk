@@ -13,17 +13,17 @@ class TagForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
         super().__init__(*args, **kwargs)
 
     def clean_tag(self):
-        tag = self.cleaned_data["tag"].strip()
+        tag = self.cleaned_data["tag"]
         qs = self.event.tags.all()
         if self.instance and self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)
-        if any(tag_obj.tag == tag for tag_obj in qs):
+        if any(str(tag_obj.tag) == str(tag) for tag_obj in qs):
             raise forms.ValidationError(_("You already have a tag by this name!"))
         return tag
 
     class Meta:
         model = Tag
-        fields = ("tag", "description", "color", "is_public")
+        fields = ("tag", "description", "color", "public")
         field_classes = {
             "color": ColorField,
         }

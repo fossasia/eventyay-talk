@@ -31,11 +31,10 @@ def test_schedule_xsd_is_up_to_date():
         "GET",
         "https://raw.githubusercontent.com/voc/schedule/master/validator/xsd/schedule.xml.xsd",
     )
-    if response.status == 429:  # don’t fail tests on rate limits
-        return
     assert response.status == 200
     path = Path(__file__).parent / "../fixtures/schedule.xsd"
-    schema_content = path.read_text()
+    with open(path) as schema:
+        schema_content = schema.read()
     assert response.data.decode() == schema_content
 
 
@@ -53,18 +52,20 @@ def test_schedule_json_schema_is_up_to_date():
         "GET",
         "https://raw.githubusercontent.com/voc/schedule/master/validator/json/schema.json",
     )
-    if response.status == 429:  # don’t fail tests on rate limits
-        return
     assert response.status == 200
     path = Path(__file__).parent / "../fixtures/schedule.json"
-    schema_content = path.read_text()
+    with open(path) as schema:
+        schema_content = schema.read()
     assert response.data.decode() == schema_content
 
 
 @pytest.mark.django_db
-@pytest.mark.usefixtures("break_slot")
 def test_schedule_frab_xml_export(
-    slot, client, django_assert_max_num_queries, schedule_schema_xml
+    slot,
+    client,
+    django_assert_max_num_queries,
+    schedule_schema_xml,
+    break_slot,
 ):
     with django_assert_max_num_queries(16):
         response = client.get(
@@ -74,10 +75,10 @@ def test_schedule_frab_xml_export(
             ),
             follow=True,
         )
-    assert response.status_code == 200, str(response.text)
+    assert response.status_code == 200, str(response.content.decode())
     assert "ETag" in response
 
-    content = response.text
+    content = response.content.decode()
     assert slot.submission.title in content
     assert slot.submission.urls.public.full() in content
 
@@ -118,9 +119,11 @@ def test_schedule_frab_xml_export_control_char(
 
 
 @pytest.mark.django_db
-@pytest.mark.usefixtures("break_slot")
 def test_schedule_frab_json_export(
     slot,
+    break_slot,
+    answered_choice_question,
+    personal_answer,
     client,
     django_assert_max_num_queries,
     orga_user,
@@ -146,8 +149,8 @@ def test_schedule_frab_json_export(
     assert regular_response.status_code == 200
     assert orga_response.status_code == 200
 
-    regular_content = regular_response.text
-    orga_content = orga_response.text
+    regular_content = regular_response.content.decode()
+    orga_content = orga_response.content.decode()
 
     assert slot.submission.title in regular_content
     assert slot.submission.title in orga_content
@@ -167,9 +170,10 @@ def test_schedule_frab_json_export(
 
 
 @pytest.mark.django_db
-@pytest.mark.usefixtures("break_slot")
-def test_schedule_frab_xcal_export(slot, client, django_assert_max_num_queries):
-    with django_assert_max_num_queries(11):
+def test_schedule_frab_xcal_export(
+    slot, client, django_assert_max_num_queries, break_slot
+):
+    with django_assert_max_num_queries(12):
         response = client.get(
             reverse(
                 "agenda:export.schedule.xcal",
@@ -179,7 +183,7 @@ def test_schedule_frab_xcal_export(slot, client, django_assert_max_num_queries):
         )
     assert response.status_code == 200
 
-    content = response.text
+    content = response.content.decode()
     assert slot.submission.title in content
 
 
@@ -195,7 +199,7 @@ def test_schedule_ical_export(slot, orga_client, django_assert_max_num_queries):
         )
         assert response.status_code == 200
 
-    content = response.text
+    content = response.content.decode()
     assert slot.submission.title in content
 
 
@@ -205,7 +209,7 @@ def test_schedule_single_ical_export(slot, client, django_assert_max_num_queries
         response = client.get(slot.submission.urls.ical, follow=True)
     assert response.status_code == 200
 
-    content = response.text
+    content = response.content.decode()
     assert slot.submission.title in content
 
 
@@ -256,7 +260,7 @@ def test_schedule_speaker_ical_export(
         response = client.get(profile.urls.talks_ical, follow=True)
     assert response.status_code == 200
 
-    content = response.text
+    content = response.content.decode()
     assert slot.submission.title in content
     assert other_slot.submission.title not in content
 
@@ -266,7 +270,7 @@ def test_feed_view(slot, client, django_assert_max_num_queries, schedule):
     with django_assert_max_num_queries(11):
         response = client.get(slot.submission.event.urls.feed)
     assert response.status_code == 200
-    assert schedule.version in response.text
+    assert schedule.version in response.content.decode()
 
 
 @pytest.mark.django_db
@@ -303,7 +307,7 @@ def test_html_export_event_unknown(event):
         }
     }
 )
-def test_html_export_release_without_celery(event):
+def test_html_export_release_without_celery(mocker, event):
     with scope(event=event):
         event.cache.delete("rebuild_schedule_export")
         assert not event.cache.get("rebuild_schedule_export")
@@ -321,10 +325,14 @@ def test_html_export_release_without_celery(event):
             "LOCATION": "lalala",
         }
     },
-    CELERY_TASK_ALWAYS_EAGER=False,
+    HAS_CELERY=True,
 )
 def test_html_export_release_with_celery(mocker, event):
-    mocker.patch("pretalx.agenda.tasks.export_schedule_html.apply_async")
+    mocker.patch("django.core.management.call_command")
+
+    from django.core.management import (  # Import here to avoid overriding mocks
+        call_command,
+    )
 
     with scope(event=event):
         event.cache.delete("rebuild_schedule_export")
@@ -333,10 +341,7 @@ def test_html_export_release_with_celery(mocker, event):
         event.wip_schedule.freeze(name="ohaio means hello")
         assert not event.cache.get("rebuild_schedule_export")
 
-    export_schedule_html.apply_async.assert_called_once_with(
-        kwargs={"event_id": event.id},
-        ignore_result=True,
-    )
+    call_command.assert_called_with("export_schedule_html", event.slug, "--zip")
 
 
 @pytest.mark.django_db
@@ -356,8 +361,7 @@ def test_html_export_release_disabled(mocker, event):
 
 
 @pytest.mark.django_db
-@pytest.mark.usefixtures("slot")
-def test_html_export_language(event):
+def test_html_export_language(event, slot):
     from django.core.management import (  # Import here to avoid overriding mocks
         call_command,
     )
@@ -369,15 +373,15 @@ def test_html_export_language(event):
         call_command("rebuild")
         call_command("export_schedule_html", event.slug)
 
-    export_path = settings.HTMLEXPORT_ROOT / "test" / "test/schedule/index.html"
-    schedule_html = export_path.read_text()
+    schedule_html = open(
+        settings.HTMLEXPORT_ROOT / "test" / "test/schedule/index.html"
+    ).read()
     assert "Kontakt" in schedule_html
     assert "locale/set" not in schedule_html  # bug #494
 
 
 @pytest.mark.django_db
-@pytest.mark.usefixtures("slot")
-def test_schedule_export_schedule_html_task(mocker, event):
+def test_schedule_export_schedule_html_task(mocker, event, slot):
     mocker.patch("django.core.management.call_command")
     from django.core.management import (  # Import here to avoid overriding mocks
         call_command,
@@ -389,8 +393,7 @@ def test_schedule_export_schedule_html_task(mocker, event):
 
 
 @pytest.mark.django_db
-@pytest.mark.usefixtures("slot")
-def test_schedule_export_schedule_html_task_nozip(mocker, event):
+def test_schedule_export_schedule_html_task_nozip(mocker, event, slot):
     mocker.patch("django.core.management.call_command")
     from django.core.management import (  # Import here to avoid overriding mocks
         call_command,
@@ -426,7 +429,7 @@ def test_schedule_orga_trigger_export_without_celery(
 
 
 @pytest.mark.django_db
-@override_settings(CELERY_TASK_ALWAYS_EAGER=False)
+@override_settings(HAS_CELERY=True)
 def test_schedule_orga_trigger_export_with_celery(
     mocker, orga_client, django_assert_max_num_queries, event
 ):
@@ -522,17 +525,21 @@ def test_html_export_full(
         assert other_event.slug not in path
 
     # views and templates are the same for export and online viewing, so a naive test is enough here
-    html_path = (
-        settings.HTMLEXPORT_ROOT
-        / "test"
-        / f"test/talk/{slot.submission.code}/index.html"
+    talk_html = (
+        (
+            settings.HTMLEXPORT_ROOT
+            / "test"
+            / f"test/talk/{slot.submission.code}/index.html"
+        )
+        .open()
+        .read()
     )
-    talk_html = html_path.read_text()
     assert talk_html.count(slot.submission.title) >= 2
 
     speaker = slot.submission.speakers.all()[0]
-    html_path = settings.HTMLEXPORT_ROOT / "test" / "test/schedule/index.html"
-    schedule_html = html_path.read_text()
+    schedule_html = (
+        (settings.HTMLEXPORT_ROOT / "test" / "test/schedule/index.html").open().read()
+    )
     assert "Contact us" in schedule_html  # locale
     assert canceled_talk.submission.title not in schedule_html
 
@@ -541,20 +548,29 @@ def test_html_export_full(
     )
     assert schedule_json["schedule"]["conference"]["title"] == event.name
 
-    xcal_path = settings.HTMLEXPORT_ROOT / "test/test/schedule/export/schedule.xcal"
-    schedule_xcal = xcal_path.read_text()
+    schedule_xcal = (
+        (settings.HTMLEXPORT_ROOT / "test/test/schedule/export/schedule.xcal")
+        .open()
+        .read()
+    )
     assert event.slug in schedule_xcal
     assert speaker.name in schedule_xcal
 
-    xml_path = settings.HTMLEXPORT_ROOT / "test/test/schedule/export/schedule.xml"
-    schedule_xml = xml_path.read_text()
+    schedule_xml = (
+        (settings.HTMLEXPORT_ROOT / "test/test/schedule/export/schedule.xml")
+        .open()
+        .read()
+    )
     with scope(event=slot.submission.event):
         assert slot.submission.title in schedule_xml
         assert canceled_talk.frab_slug not in schedule_xml
         assert str(canceled_talk.uuid) not in schedule_xml
 
-    ics_path = settings.HTMLEXPORT_ROOT / f"test/test/talk/{slot.submission.code}.ics"
-    talk_ics = ics_path.read_text()
+    talk_ics = (
+        (settings.HTMLEXPORT_ROOT / f"test/test/talk/{slot.submission.code}.ics")
+        .open()
+        .read()
+    )
     assert slot.submission.title in talk_ics
     assert event.is_public is False
 
@@ -578,8 +594,8 @@ def test_speaker_csv_export(slot, orga_client, django_assert_max_num_queries):
             ),
             follow=True,
         )
-    assert response.status_code == 200, str(response.text)
-    assert slot.submission.speakers.first().name in response.text
+    assert response.status_code == 200, str(response.content.decode())
+    assert slot.submission.speakers.first().name in response.content.decode()
 
 
 @pytest.mark.django_db
@@ -592,15 +608,19 @@ def test_empty_speaker_csv_export(orga_client, django_assert_max_num_queries, ev
             ),
             follow=True,
         )
-    assert response.status_code == 200, str(response.text)
-    assert len(response.text) < 100
+    assert response.status_code == 200, str(response.content.decode())
+    assert len(response.content.decode()) < 100
 
 
 @pytest.mark.django_db
-@pytest.mark.usefixtures(
-    "answer", "answered_choice_question", "impersonal_answer", "personal_answer"
-)
-def test_submission_question_csv_export(slot, orga_client):
+def test_submission_question_csv_export(
+    slot,
+    orga_client,
+    answer,
+    answered_choice_question,
+    impersonal_answer,
+    personal_answer,
+):
     response = orga_client.get(
         reverse(
             "agenda:export",
@@ -611,15 +631,19 @@ def test_submission_question_csv_export(slot, orga_client):
         ),
         follow=True,
     )
-    assert response.status_code == 200, str(response.text)
-    assert slot.submission.title in response.text
+    assert response.status_code == 200, str(response.content.decode())
+    assert slot.submission.title in response.content.decode()
 
 
 @pytest.mark.django_db
-@pytest.mark.usefixtures(
-    "answer", "answered_choice_question", "impersonal_answer", "personal_answer"
-)
-def test_speaker_question_csv_export(slot, orga_client):
+def test_speaker_question_csv_export(
+    slot,
+    orga_client,
+    answer,
+    answered_choice_question,
+    impersonal_answer,
+    personal_answer,
+):
     response = orga_client.get(
         reverse(
             "agenda:export",
@@ -630,8 +654,8 @@ def test_speaker_question_csv_export(slot, orga_client):
         ),
         follow=True,
     )
-    assert response.status_code == 200, str(response.text)
-    assert slot.submission.speakers.first().name in response.text
+    assert response.status_code == 200, str(response.content.decode())
+    assert slot.submission.speakers.first().name in response.content.decode()
 
 
 @pytest.mark.django_db

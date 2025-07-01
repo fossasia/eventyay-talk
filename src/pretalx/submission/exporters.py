@@ -15,7 +15,7 @@ class SpeakerQuestionData(CSVExporterMixin, BaseExporter):
 
     @property
     def verbose_name(self):
-        return _("Custom fields data") + " (" + _("speakers") + ")"
+        return _("Answered speaker questions")
 
     @property
     def filename(self):
@@ -60,7 +60,7 @@ class SubmissionQuestionData(CSVExporterMixin, BaseExporter):
 
     @property
     def verbose_name(self):
-        return _("Custom fields data") + " (" + _("submissions") + ")"
+        return _("Answered session questions")
 
     @property
     def filename(self):

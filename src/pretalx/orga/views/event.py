@@ -20,10 +20,12 @@ from django.views.generic import FormView, ListView, TemplateView, UpdateView, V
 from django_context_decorator import context
 from django_scopes import scope, scopes_disabled
 from formtools.wizard.views import SessionWizardView
+from rest_framework.authtoken.models import Token
 
 from pretalx.common.forms import I18nEventFormSet, I18nFormSet
 from pretalx.common.models import ActivityLog
 from pretalx.common.text.phrases import phrases
+from pretalx.common.views import is_form_bound
 from pretalx.common.views.mixins import (
     ActionConfirmMixin,
     ActionFromUrl,
@@ -51,15 +53,15 @@ from pretalx.orga.forms.event import (
     WidgetSettingsForm,
 )
 from pretalx.orga.signals import activate_event
-from pretalx.person.forms import UserForm
+from pretalx.person.forms import LoginInfoForm, OrgaProfileForm, UserForm
 from pretalx.person.models import User
 from pretalx.submission.models import ReviewPhase, ReviewScoreCategory
 from pretalx.submission.tasks import recalculate_all_review_scores
 
 
 class EventSettingsPermission(EventPermissionRequired):
-    permission_required = "event.update_event"
-    write_permission_required = "event.update_event"
+    permission_required = "orga.change_settings"
+    write_permission_required = "orga.change_settings"
 
     @property
     def permission_object(self):
@@ -69,6 +71,7 @@ class EventSettingsPermission(EventPermissionRequired):
 class EventDetail(EventSettingsPermission, ActionFromUrl, UpdateView):
     model = Event
     form_class = EventForm
+    permission_required = "orga.change_settings"
     template_name = "orga/settings/form.html"
 
     def get_object(self, queryset=None):
@@ -137,6 +140,7 @@ class EventDetail(EventSettingsPermission, ActionFromUrl, UpdateView):
 
 class EventLive(EventSettingsPermission, TemplateView):
     template_name = "orga/event/live.html"
+    permission_required = "orga.change_settings"
 
     def get_context_data(self, **kwargs):
         result = super().get_context_data(**kwargs)
@@ -187,7 +191,7 @@ class EventLive(EventSettingsPermission, TemplateView):
         if not self.request.event.questions.exists():
             suggestions.append(
                 {
-                    "text": _("You have configured no custom fields yet."),
+                    "text": _("You have configured no questions yet."),
                     "url": self.request.event.cfp.urls.new_question,
                 }
             )
@@ -257,6 +261,7 @@ class EventHistory(EventSettingsPermission, ListView):
 class EventReviewSettings(EventSettingsPermission, ActionFromUrl, FormView):
     form_class = ReviewSettingsForm
     template_name = "orga/settings/review.html"
+    write_permission_required = "orga.change_settings"
 
     def get_success_url(self) -> str:
         return self.request.event.orga_urls.review_settings
@@ -350,12 +355,6 @@ class EventReviewSettings(EventSettingsPermission, ActionFromUrl, FormView):
                     raise ValidationError(
                         _("Only the last review phase may be open-ended.")
                     )
-                if not next_phase.start:
-                    raise ValidationError(
-                        _(
-                            "All review phases except for the first one need a start date."
-                        )
-                    )
                 if phase.end > next_phase.start:
                     raise ValidationError(
                         _(
@@ -409,16 +408,16 @@ class EventReviewSettings(EventSettingsPermission, ActionFromUrl, FormView):
         for form in self.scores_formset.deleted_forms:
             if not form.instance.is_independent:
                 weights_changed = True
-            if form.instance.pk:
-                form.instance.scores.all().delete()
-                form.instance.delete()
+            form.instance.scores.all().delete()
+            form.instance.delete()
 
         if weights_changed:
             ReviewScoreCategory.recalculate_scores(self.request.event)
         return True
 
 
-class PhaseActivate(EventSettingsPermission, View):
+class PhaseActivate(PermissionRequired, View):
+    permission_required = "orga.change_settings"
 
     def get_object(self):
         return get_object_or_404(
@@ -435,6 +434,7 @@ class PhaseActivate(EventSettingsPermission, View):
 class EventMailSettings(EventSettingsPermission, ActionFromUrl, FormView):
     form_class = MailSettingsForm
     template_name = "orga/settings/mail.html"
+    write_permission_required = "orga.change_settings"
 
     def get_success_url(self) -> str:
         return self.request.event.orga_urls.mail_settings
@@ -529,12 +529,59 @@ class InvitationView(FormView):
         invite.delete()
 
 
+class UserSettings(TemplateView):
+    form_class = LoginInfoForm
+    template_name = "orga/user.html"
+
+    def get_success_url(self) -> str:
+        return reverse("orga:user.view")
+
+    @context
+    @cached_property
+    def login_form(self):
+        return LoginInfoForm(
+            user=self.request.user,
+            data=self.request.POST if is_form_bound(self.request, "login") else None,
+        )
+
+    @context
+    @cached_property
+    def profile_form(self):
+        return OrgaProfileForm(
+            instance=self.request.user,
+            data=self.request.POST if is_form_bound(self.request, "profile") else None,
+        )
+
+    @context
+    def token(self):
+        return Token.objects.filter(
+            user=self.request.user
+        ).first() or Token.objects.create(user=self.request.user)
+
+    def post(self, request, *args, **kwargs):
+        if self.login_form.is_bound and self.login_form.is_valid():
+            self.login_form.save()
+            messages.success(request, phrases.base.saved)
+            request.user.log_action("pretalx.user.password.update")
+        elif self.profile_form.is_bound and self.profile_form.is_valid():
+            self.profile_form.save()
+            messages.success(request, phrases.base.saved)
+            request.user.log_action("pretalx.user.profile.update")
+        elif request.POST.get("form") == "token":
+            request.user.regenerate_token()
+            messages.success(request, phrases.cfp.token_regenerated)
+        else:
+            messages.error(self.request, phrases.base.error_saving_changes)
+            return self.get(request, *args, **kwargs)
+        return redirect(self.get_success_url())
+
+
 def condition_copy(wizard):
     return EventWizardCopyForm.copy_from_queryset(wizard.request.user).exists()
 
 
 class EventWizard(PermissionRequired, SensibleBackWizardMixin, SessionWizardView):
-    permission_required = "event.create_event"
+    permission_required = "orga.create_events"
     file_storage = FileSystemStorage(location=Path(settings.MEDIA_ROOT) / "new_event")
     form_list = [
         ("initial", EventWizardInitialForm),
@@ -547,6 +594,13 @@ class EventWizard(PermissionRequired, SensibleBackWizardMixin, SessionWizardView
 
     def get_template_names(self):
         return [f"orga/event/wizard/{self.steps.current}.html"]
+
+    @context
+    def has_organiser(self):
+        return (
+            self.request.user.teams.filter(can_create_events=True).exists()
+            or self.request.user.is_administrator
+        )
 
     @context
     def organiser(self):
@@ -674,7 +728,7 @@ class EventWizard(PermissionRequired, SensibleBackWizardMixin, SessionWizardView
 
 
 class EventDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
-    permission_required = "person.administrator_user"
+    permission_required = "person.is_administrator"
     model = Event
     action_text = (
         _(
@@ -701,8 +755,9 @@ class EventDelete(PermissionRequired, ActionConfirmMixin, TemplateView):
 
 
 @method_decorator(csp_update(SCRIPT_SRC="'self' 'unsafe-eval'"), name="dispatch")
-class WidgetSettings(EventSettingsPermission, FormView):
+class WidgetSettings(EventPermissionRequired, FormView):
     form_class = WidgetSettingsForm
+    permission_required = "orga.change_settings"
     template_name = "orga/settings/widget.html"
 
     def form_valid(self, form):

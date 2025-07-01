@@ -8,19 +8,12 @@ from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
-from django_scopes import scope, scopes_disabled
+from django_scopes import scope
 from i18nfield.fields import I18nCharField
 
 from pretalx.common.models.mixins import PretalxModel
 from pretalx.common.urls import EventUrls, build_absolute_uri
 from pretalx.event.models.event import FULL_SLUG_REGEX
-from pretalx.event.rules import (
-    can_change_any_organiser_settings,
-    can_change_organiser_settings,
-    can_change_teams,
-    has_any_organiser_permissions,
-    is_any_organiser,
-)
 from pretalx.person.models import User
 
 
@@ -60,9 +53,11 @@ def check_access_permissions(organiser):
         )
 
     for event in organiser.events.all():
-        event_teams = teams.filter(
-            models.Q(limit_events=event) | models.Q(all_events=True)
-        ).distinct()
+        event_teams = (
+            event.teams.all()
+            .annotate(member_count=models.Count("members"))
+            .filter(member_count__gt=0)
+        )
         if not event_teams:
             raise Exception(
                 str(
@@ -74,7 +69,7 @@ def check_access_permissions(organiser):
         if not [t for t in event_teams if t.can_change_event_settings]:
             warnings.append(
                 (
-                    "no_can_change_event_settings",
+                    "no_can_cange_event_settings",
                     str(
                         _(
                             "Nobody on your teams has the permissions to change settings for the event {event_name}"
@@ -112,14 +107,6 @@ class Organiser(PretalxModel):
 
     objects = models.Manager()
 
-    class Meta:
-        rules_permissions = {
-            "view": has_any_organiser_permissions,
-            "update": can_change_organiser_settings,
-            "list": can_change_any_organiser_settings,
-            "view_any": is_any_organiser,
-        }
-
     def __str__(self) -> str:
         """Used in generated forms."""
         return str(self.name)
@@ -127,15 +114,11 @@ class Organiser(PretalxModel):
     class orga_urls(EventUrls):
         base_path = settings.BASE_PATH
         base = "{base_path}/orga/organiser/{self.slug}/"
-        settings = "{base}settings/"
-        delete = "{settings}delete/"
+        settings = "{base_path}/orga/organiser/{self.slug}/settings/"
+        delete = "{settings}delete"
         teams = "{base}teams/"
-        new_team = "{teams}new/"
-        user_search = "{base}api/users/"
-
-    @cached_property
-    def organiser(self):
-        return self
+        new_team = "{teams}new"
+        user_search = "{base}api/users"
 
     @transaction.atomic
     def shred(self, person=None):
@@ -162,18 +145,6 @@ class Organiser(PretalxModel):
         self.delete()
 
     shred.alters_data = True
-
-
-TEAM_PERMISSIONS = {
-    "list": can_change_teams,
-    "view": can_change_teams,
-    "create": can_change_teams,
-    "update": can_change_teams,
-    "delete": can_change_teams,
-    "invite": can_change_teams,
-    "delete_invite": can_change_teams,
-    "remove_member": can_change_teams,
-}
 
 
 class Team(PretalxModel):
@@ -224,15 +195,12 @@ class Team(PretalxModel):
         verbose_name=_("Always hide speaker names"),
         help_text=_(
             "Normally, anonymisation is configured in the event review settings. "
-            "This setting will <strong>override the event settings</strong> and always hide speaker names for this team."
+            "This setting will <b>override the event settings</b> and always hide speaker names for this team."
         ),
         default=False,
     )
 
     objects = models.Manager()
-
-    class Meta:
-        rules_permissions = TEAM_PERMISSIONS
 
     def __str__(self) -> str:
         """Help with debugging."""
@@ -265,17 +233,9 @@ class Team(PretalxModel):
             return self.organiser.events.all()
         return self.limit_events.all()
 
-    def remove_member(self, member):
-        self.members.remove(member)
-        with scopes_disabled():
-            for token in member.api_tokens.active().filter(events__in=self.events):
-                token.update_events()
-
-    remove_member.alters_data = True
-
     class orga_urls(EventUrls):
         base = "{self.organiser.orga_urls.teams}{self.pk}/"
-        delete = "{base}delete/"
+        delete = "{base}delete"
 
 
 def generate_invite_token():
@@ -291,17 +251,10 @@ class TeamInvite(PretalxModel):
     team = models.ForeignKey(to=Team, related_name="invites", on_delete=models.CASCADE)
     email = models.EmailField(null=True, blank=True, verbose_name=_("Email"))
     token = models.CharField(
-        default=generate_invite_token,
-        max_length=64,
-        null=True,
-        blank=True,
-        unique=True,
+        default=generate_invite_token, max_length=64, null=True, blank=True
     )
 
     objects = models.Manager()
-
-    class Meta:
-        rules_permissions = TEAM_PERMISSIONS
 
     def __str__(self) -> str:
         """Help with debugging."""
@@ -309,18 +262,15 @@ class TeamInvite(PretalxModel):
             team=str(self.team), email=self.email
         )
 
-    @cached_property
-    def organiser(self):
-        return self.team.organiser
-
-    @cached_property
-    def invitation_url(self):
-        return build_absolute_uri("orga:invitation.view", kwargs={"code": self.token})
+    class urls(EventUrls):
+        invitation = "/orga/invitation/{self.token}"
 
     def send(self):
         from pretalx.mail.models import QueuedMail
 
-        invitation_link = self.invitation_url
+        invitation_link = build_absolute_uri(
+            "orga:invitation.view", kwargs={"code": self.token}
+        )
         invitation_text = _(
             """Hi!
 You have been invited to the {name} event organiser team - Please click here to accept:

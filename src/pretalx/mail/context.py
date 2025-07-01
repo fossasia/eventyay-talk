@@ -1,5 +1,3 @@
-import string
-
 from django.dispatch import receiver
 from django.template.defaultfilters import date as _date
 from django.utils.timezone import now
@@ -41,25 +39,6 @@ def get_available_placeholders(event, kwargs):
             if all(required in kwargs for required in placeholder.required_context):
                 params[placeholder.identifier] = placeholder
     return params
-
-
-def get_used_placeholders(text):
-    if not text:
-        return set()
-    if isinstance(text, str):
-        return {element[1] for element in string.Formatter().parse(text) if element[1]}
-    if getattr(text, "data", None):
-        return get_used_placeholders(text.data)
-    if isinstance(text, dict):
-        placeholders = set()
-        for lang in text.values():
-            placeholders |= get_used_placeholders(lang)
-        return placeholders
-    return set()
-
-
-def get_invalid_placeholders(text, valid_placeholders):
-    return get_used_placeholders(text) - set(valid_placeholders)
 
 
 def get_all_reviews(submission):
@@ -216,13 +195,6 @@ def base_placeholders(sender, **kwargs):
             lambda submission: str(submission.track.name) if submission.track else "",
             _("Track A"),
             _("The track the proposal belongs to"),
-        ),
-        SimpleFunctionalMailTextPlaceholder(
-            "session_duration_minutes",
-            ["submission"],
-            lambda submission: submission.get_duration(),
-            "30",
-            _("The session’s duration in minutes"),
         ),
         SimpleFunctionalMailTextPlaceholder(
             "all_reviews",

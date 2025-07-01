@@ -228,9 +228,7 @@
         "start": {
           "type": "string",
           "pattern": "^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
-          "examples": ["09:00"],
-          "deprecated": true,
-          "$comment": "use date instead"
+          "examples": ["09:00"]
         },
         "duration": {
           "$ref": "#/definitions/Duration"
@@ -448,9 +446,8 @@
           "type": ["string", "null"]
         },
         "description": {
-          "type": ["string", "null", "object"],
-          "description": "might also be an object { en: '…', de: '…' } etc.",
-          "$todo": "define translation object as TranslationDict"
+          "type": ["string", "null"],
+          "description": "might also be set as description_de, description_en etc."
         },
         "capacity": {
           "type": ["number", "null"]
@@ -468,9 +465,7 @@
       },
       "patternProperties": {
         "description_.+": {
-          "type": ["string", "null"],
-          "deprecated": true,
-          "$comment": "use translation object"
+          "type": ["string", "null"]
         }
       },
       "required": ["name", "guid"]
