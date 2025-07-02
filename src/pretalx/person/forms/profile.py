@@ -235,7 +235,8 @@ class LoginInfoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
     def save(self):
-        super().save()
+        if "email" in self.changed_data:
+            self.user.change_email(self.cleaned_data.get("email"))
         password = self.cleaned_data.get("password")
         if password:
             self.user.change_password(password)

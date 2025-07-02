@@ -59,7 +59,7 @@ def version_prefix(request, event, version=None):
         "Access-Control-Allow-Origin": "*",
     },
 )
-@csp_exempt
+@csp_exempt()
 def widget_data(request, event, version=None):
     # Caching this page is tricky: We need the user to occasionally
     # ask for new data, and we definitely need to give them new data on schedule
@@ -106,7 +106,7 @@ def widget_data(request, event, version=None):
 
 
 @condition(etag_func=widget_js_etag)
-@csp_exempt
+@csp_exempt()
 def widget_script(request, event):
     # This page basically just serves a static file under a known path (ideally, the
     # administrators could and should even turn on gzip compression for the
@@ -125,7 +125,7 @@ def widget_script(request, event):
 
 @condition(etag_func=color_etag)
 @cache_page(5 * 60)
-@csp_exempt
+@csp_exempt()
 def event_css(request, event):
     # If this event has custom colours, we send back a simple CSS file that sets the
     # root colours for the event.

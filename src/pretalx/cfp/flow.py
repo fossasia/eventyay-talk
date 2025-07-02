@@ -573,7 +573,7 @@ class ProfileStep(GenericFlowStep, FormFlowStep):
     def get_csp_update(self, request):
         return {
             "img-src": "https://www.gravatar.com",
-            "connect-src": "https://www.gravatar.com",
+            "connect-src": "'self' https://www.gravatar.com",
         }
 
 

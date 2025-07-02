@@ -81,10 +81,19 @@ with scopes_disabled():
 
     class SubmissionFilter(filters.FilterSet):
         state = filters.MultipleChoiceFilter(choices=SubmissionStates.get_choices())
+        pending_state = filters.MultipleChoiceFilter(
+            choices=SubmissionStates.get_choices()
+        )
 
         class Meta:
             model = Submission
-            fields = ("state", "content_locale", "submission_type", "is_featured")
+            fields = (
+                "state",
+                "pending_state",
+                "content_locale",
+                "submission_type",
+                "is_featured",
+            )
 
 
 @extend_schema_view(

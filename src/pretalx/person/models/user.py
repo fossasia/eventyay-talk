@@ -250,7 +250,7 @@ class User(
         :class:`~pretalx.person.models.profile.SpeakerProfile` for this user.
 
         :type event: :class:`pretalx.event.models.event.Event`
-        :retval: :class:`pretalx.person.models.profile.EventProfile`
+        :retval: :class:`~pretalx.person.models.profile.EventProfile`
         """
         if profile := self.event_profile_cache.get(event.pk):
             return profile
@@ -570,3 +570,44 @@ the pretalx team"""
         self.log_action(action="pretalx.user.password.changed", person=self)
 
     change_password.alters_data = True
+
+    @transaction.atomic
+    def change_email(self, new_email):
+        from pretalx.mail.models import QueuedMail
+
+        old_email = self.email
+        self.email = new_email.lower().strip()
+        self.save(update_fields=["email"])
+
+        context = {
+            "name": self.name or "",
+            "old_email": old_email,
+            "new_email": self.email,
+        }
+        mail_text = _(
+            """Hi {name},
+
+This is a confirmation that the email address for your pretalx account has been changed from {old_email} to {new_email}.
+
+If you did not perform this change, please contact an administrator immediately.
+
+All the best,
+the pretalx team"""
+        )
+
+        with override(self.locale):
+            QueuedMail(
+                subject=_("[pretalx] Email address changed"),
+                text=str(mail_text).format(**context),
+                to=old_email,
+                locale=self.locale,
+            ).send()
+
+        self.log_action(
+            action="pretalx.user.email.update",
+            person=self,
+            orga=False,
+            data={"old_email": old_email, "new_email": self.email},
+        )
+
+    change_email.alters_data = True
