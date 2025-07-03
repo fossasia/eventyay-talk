@@ -132,6 +132,7 @@ LOG_NAMES = {
     "pretalx.user.password.reset": phrases.base.password_reset_success,
     "pretalx.user.password.update": _("The password was modified."),
     "pretalx.user.profile.update": _("The profile was modified."),
+    "pretalx.user.email.update": _("The user changed their email address."),
 }
 
 

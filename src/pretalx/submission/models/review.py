@@ -12,6 +12,7 @@ from pretalx.submission.rules import (
     can_be_reviewed,
     can_view_all_reviews,
     can_view_reviewer_names,
+    can_view_reviews,
     has_reviewer_access,
     is_review_author,
     orga_can_change_submissions,
@@ -159,6 +160,9 @@ class Review(PretalxModel):
             | (is_reviewer & can_view_all_reviews),
             "list_reviewers": orga_can_change_submissions
             | (is_reviewer & can_view_reviewer_names),
+            "view": is_review_author
+            | (is_reviewer & can_view_reviews)
+            | orga_can_change_submissions,
             # Needs to be coupled with a check on has_reviewer_access & can_be_reviewed
             # on the proposal – but we don’t have that at create time yet.
             "create": is_reviewer & reviews_are_open,

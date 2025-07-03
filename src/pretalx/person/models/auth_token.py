@@ -20,12 +20,12 @@ def generate_api_token():
 READ_PERMISSIONS = ("list", "retrieve")
 WRITE_PERMISSIONS = READ_PERMISSIONS + ("create", "update", "destroy", "actions")
 PERMISSION_CHOICES = (
-    ("list", _p("Read list", "API endpoint permissions")),
-    ("retrieve", _p("Read details", "API endpoint permissions")),
-    ("create", _p("Create", "API endpoint permissions")),
-    ("update", _p("Update", "API endpoint permissions")),
-    ("destroy", _p("Delete", "API endpoint permissions")),
-    ("actions", _p("Additional actions", "API endpoint permissions")),
+    ("list", _p("API endpoint permissions", "Read list")),
+    ("retrieve", _p("API endpoint permissions", "Read details")),
+    ("create", _p("API endpoint permissions", "Create")),
+    ("update", _p("API endpoint permissions", "Update")),
+    ("destroy", _p("API endpoint permissions", "Delete")),
+    ("actions", _p("API endpoint permissions", "Additional actions")),
 )
 ENDPOINTS = (
     "teams",

@@ -303,6 +303,98 @@ def test_cannot_edit_submission_type_after_acceptance(
 
 
 @pytest.mark.django_db
+def test_cannot_edit_accepted_submission_when_feature_disabled(
+    speaker_client, accepted_submission
+):
+    """Test that accepted submissions cannot be edited when speakers_can_edit_submissions is disabled"""
+    with scope(event=accepted_submission.event):
+        # First verify the submission is normally editable when accepted
+        assert accepted_submission.editable is True
+
+        # Disable the feature flag
+        accepted_submission.event.feature_flags["speakers_can_edit_submissions"] = False
+        accepted_submission.event.save()
+
+        # Now it should not be editable (need to clear the cached property)
+        accepted_submission.refresh_from_db()
+        # Clear the cached property - Django's cached_property uses the property name as the cache key
+        try:
+            del accepted_submission.editable
+        except AttributeError:
+            pass  # Property wasn't cached yet
+        assert accepted_submission.editable is False
+
+        # Try to edit via POST request
+        data = {
+            "title": "Should not change",
+            "submission_type": accepted_submission.submission_type.pk,
+            "content_locale": accepted_submission.content_locale,
+            "description": accepted_submission.description,
+            "abstract": accepted_submission.abstract,
+            "notes": accepted_submission.notes,
+            "resource-TOTAL_FORMS": 0,
+            "resource-INITIAL_FORMS": 0,
+            "resource-MIN_NUM_FORMS": 0,
+            "resource-MAX_NUM_FORMS": 1000,
+        }
+        original_title = accepted_submission.title
+        response = speaker_client.post(
+            accepted_submission.urls.user_base, follow=True, data=data
+        )
+        assert response.status_code == 200
+
+        # Verify the submission was not changed
+        accepted_submission.refresh_from_db()
+        assert accepted_submission.title == original_title
+
+
+@pytest.mark.django_db
+def test_draft_submission_still_editable_when_feature_disabled(
+    speaker_client, submission
+):
+    """Test that draft submissions remain editable even when speakers_can_edit_submissions is disabled"""
+    with scope(event=submission.event):
+        # Make it a draft
+        submission.state = SubmissionStates.DRAFT
+        submission.save()
+
+        # Disable the feature flag
+        submission.event.feature_flags["speakers_can_edit_submissions"] = False
+        submission.event.save()
+
+        # Draft should still be editable (need to clear the cached property)
+        submission.refresh_from_db()
+        # Clear the cached property - Django's cached_property uses the property name as the cache key
+        try:
+            del submission.editable
+        except AttributeError:
+            pass  # Property wasn't cached yet
+        assert submission.editable is True
+
+        # Try to edit via POST request should still work
+        data = {
+            "title": "Changed draft title",
+            "submission_type": submission.submission_type.pk,
+            "content_locale": submission.content_locale,
+            "description": submission.description,
+            "abstract": submission.abstract,
+            "notes": submission.notes,
+            "resource-TOTAL_FORMS": 0,
+            "resource-INITIAL_FORMS": 0,
+            "resource-MIN_NUM_FORMS": 0,
+            "resource-MAX_NUM_FORMS": 1000,
+        }
+        response = speaker_client.post(
+            submission.urls.user_base, follow=True, data=data
+        )
+        assert response.status_code == 200
+
+        # Verify the submission was changed
+        submission.refresh_from_db()
+        assert submission.title == "Changed draft title"
+
+
+@pytest.mark.django_db
 def test_can_edit_profile(speaker, event, speaker_client):
     response = speaker_client.post(
         event.urls.user,

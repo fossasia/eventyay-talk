@@ -26,7 +26,7 @@ dependencies = [
     "beautifulsoup4[lxml]~=4.13.0",
     "bleach~=6.2.0",
     "celery~=5.5.0",
-    "css_inline~=0.14.0",
+    "css_inline~=0.15.0",
     "csscompressor~=0.9.0",
     "cssutils~=2.11.0",
     "defusedcsv~=2.0.0",
@@ -35,7 +35,7 @@ dependencies = [
     "django-compressor~=4.5.0",
     "django-context-decorator",
     "django-countries~=7.0",
-    "django-csp~=3.8.0",
+    "django-csp~=4.0.0",
     "django-filter==25.1",
     "django-formset-js-improved==0.5.0.3",
     "django-formtools~=2.5.1",
@@ -61,8 +61,8 @@ dependencies = [
     "vobject~=0.9.0",
     "whitenoise~=6.9.0",
     "zxcvbn~=4.5.0",
-    "pretalx_pages @ git+https://github.com/hongquan/eventyay-talk-pages.git@2956f13",
-    "pretalx_venueless @ git+https://github.com/fossasia/eventyay-talk-video.git@main",
+    "pretalx_pages @ git+https://github.com/hongquan/eventyay-talk-pages.git@f43cc9a",
+    "pretalx_venueless @ git+https://github.com/hongquan/eventyay-talk-video.git@a8bbec8",
     "pretalx-downstream @ git+https://github.com/fossasia/eventyay-talk-downstream.git@main",
     "django-allauth~=0.63.3",
     "PyJWT~=2.8.0",
@@ -76,15 +76,6 @@ dependencies = [
 [project.optional-dependencies]
 postgres = ["psycopg2-binary~=2.9.0"]
 redis = ["redis~=5.2.0"]
-memcached = ["pylibmc"]
-
-[project.urls]
-Homepage = "https://eventyay.com"
-Documentation = "https://docs.eventyay.org"
-Repository = "https://github.com/fossasia/eventyay-talk"
-Changelog = "https://docs.eventyay.org/changelog/"
-Issues = "https://github.com/fossasia/eventyay-talk/issues"
-
 [dependency-groups]
 lint = ["djhtml>=3.0.7", "ruff>=0.9.10"]
 test = [
@@ -120,6 +111,14 @@ doc = [
 build-backend = "setuptools.build_meta"
 requires = ["setuptools", "wheel"]
 
+[project.urls]
+Homepage = "https://eventyay.com"
+Documentation = "https://docs.eventyay.org"
+Repository = "https://github.com/fossasia/eventyay-talk"
+Changelog = "https://docs.eventyay.org/changelog/"
+Issues = "https://github.com/fossasia/eventyay-talk/issues"
+
+
 [tool.setuptools]
 include-package-data = true
 
@@ -146,15 +145,6 @@ ignore = [
     "SECURITY.md",
     "justfile",
 ]
-
-[tool.djlint]
-blank_line_after_tag = "load,extends,include"
-blank_line_before_tag = "load,extends,include"
-close_void_tags = false
-extend_exclude = "static,docs"
-max_blank_lines = 1
-preserve_blank_lines = 1
-profile = "django"
 
 [tool.uv]
 default-groups = ["dev", "test"]

@@ -14,7 +14,8 @@ All commands are run with the ``python -m pretalx`` prefix::
   python -m pretalx <command> [<flags>] [<options>]
 
 You can add the ``--no-pretalx-information`` flag to any of these commands
-to suppress the printing of the pretalx debug startup header.
+to suppress the printing of the pretalx debug startup header, or set
+``PRETALX_NO_INITIAL_LOG=1`` (or any other non-empty).
 
 Database commands
 -----------------

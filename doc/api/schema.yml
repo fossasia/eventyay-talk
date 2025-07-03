@@ -1519,8 +1519,8 @@ paths:
           items:
             type: string
             enum:
-            - room
             - slots
+            - slots.room
             - slots.submission
             - slots.submission.speakers
             - slots.submission.submission_type
@@ -2411,6 +2411,34 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
+      - in: query
+        name: pending_state
+        schema:
+          type: array
+          items:
+            type: string
+            nullable: true
+            title: Pending proposal state
+            enum:
+            - accepted
+            - canceled
+            - confirmed
+            - deleted
+            - draft
+            - rejected
+            - submitted
+            - withdrawn
+        description: |-
+          * `submitted` - submitted
+          * `accepted` - accepted
+          * `confirmed` - confirmed
+          * `rejected` - rejected
+          * `canceled` - canceled
+          * `withdrawn` - withdrawn
+          * `deleted` - deleted
+          * `draft` - draft
+        explode: true
+        style: form
       - in: query
         name: q
         schema:
@@ -6234,8 +6262,8 @@ components:
           type: boolean
           title: Always hide speaker names
           description: Normally, anonymisation is configured in the event review settings.
-            This setting will <b>override the event settings</b> and always hide speaker
-            names for this team.
+            This setting will <strong>override the event settings</strong> and always
+            hide speaker names for this team.
       required:
       - id
       - name
@@ -6313,8 +6341,8 @@ components:
           type: boolean
           title: Always hide speaker names
           description: Normally, anonymisation is configured in the event review settings.
-            This setting will <b>override the event settings</b> and always hide speaker
-            names for this team.
+            This setting will <strong>override the event settings</strong> and always
+            hide speaker names for this team.
       required:
       - name
     TimezoneEnum:
