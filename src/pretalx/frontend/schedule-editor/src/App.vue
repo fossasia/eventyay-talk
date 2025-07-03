@@ -249,7 +249,7 @@ export default defineComponent({
 		this.onWindowResize()
 	},
 	unmounted() {
-		// Cleanup if needed
+		window.removeEventListener('resize', this.onWindowResize);
 	},
 	methods: {
 		getLocalizedString,

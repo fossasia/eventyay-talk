@@ -31,6 +31,14 @@ const markdownIt = MarkdownIt({
 
 export default defineComponent({
 	name: 'Session',
+	inject: {
+		eventUrl: { default: null },
+		generateSessionLinkUrl: {
+			default () {
+				return ({eventUrl, session}) => `${eventUrl}talk/${session.id}/`
+			}
+		}
+	},
 	props: {
 		session: {
 			type: Object,
@@ -48,14 +56,6 @@ export default defineComponent({
 		overrideStart: {
 			type: Object,
 			default: null
-		}
-	},
-	inject: {
-		eventUrl: { default: null },
-		generateSessionLinkUrl: {
-			default () {
-				return ({eventUrl, session}) => `${eventUrl}talk/${session.id}/`
-			}
 		}
 	},
 	computed: {
