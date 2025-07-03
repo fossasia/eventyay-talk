@@ -8,7 +8,7 @@
 					path(d="M 0 6 L 5 10 L 10 6 z")
 			.timeseparator(:class="getSliceClasses(slice)", :style="getSliceStyle(slice)")
 		.room(:style="{'grid-area': `1 / 1 / auto / auto`}")
-		.room(v-for="room of visibleRooms", :key="room.id", :style="{'grid-area': `1 / ${visibleRooms.indexOf(room) + 2 } / auto / auto`}")
+		.room(v-for="(room, i) of visibleRooms", :key="room.id", :style="{'grid-area': `1 / ${i + 2} / auto / auto`}")
 			span {{ getLocalizedString(room.name) }}
 			.hide-room.no-print(v-if="visibleRooms.length > 1", @click="hiddenRooms = rooms.filter(r => hiddenRooms.includes(r) || r === room)")
 				i.fa.fa-eye-slash
@@ -30,7 +30,6 @@
 				.span {{ getLocalizedString(room.name) }}
 				.show-room(@click.stop="hiddenRooms.splice(hiddenRooms.indexOf(room), 1)")
 					i.fa.fa-eye
-
 </template>
 <script>
 import { defineComponent } from 'vue'
@@ -45,6 +44,14 @@ const getSliceName = function (date) {
 export default defineComponent({
 	name: 'GridSchedule',
 	components: { Session },
+	inject: {
+		eventUrl: { default: null },
+		generateSessionLinkUrl: {
+			default() {
+				return ({eventUrl, session}) => `${eventUrl}talk/${session.id}/`
+			}
+		}
+	},
 	props: {
 		sessions: {
 			type: Array,
@@ -77,14 +84,6 @@ export default defineComponent({
 		draggedSession: {
 			type: Object,
 			default: null
-		}
-	},
-	inject: {
-		eventUrl: { default: null },
-		generateSessionLinkUrl: {
-			default() {
-				return ({eventUrl, session}) => `${eventUrl}talk/${session.id}/`
-			}
 		}
 	},
 	data() {
@@ -358,6 +357,12 @@ export default defineComponent({
 			this.observer.observe(Array.isArray(el) ? el[0] : el)
 		}
 		this.gridOffset = this.$refs.grid.getBoundingClientRect().left
+	},
+	unmounted() {
+		if (this.observer) {
+			this.observer.disconnect();
+			this.observer = null;
+		}
 	},
 	methods: {
 		getLocalizedString,

@@ -9,7 +9,7 @@ export default [
   // Vue 3 recommended configuration
   ...vue.configs['flat/recommended'],
   
-  // Vue Pug configuration (manual setup since flat config may not be available)
+  // Vue Pug configuration
   {
     plugins: {
       'vue-pug': vuePug
@@ -28,6 +28,7 @@ export default [
         window: 'readonly',
         document: 'readonly',
         console: 'readonly',
+        process: 'readonly',
         // Add other browser globals as needed
       }
     },
@@ -52,8 +53,13 @@ export default [
       'vue/no-v-html': 'off',
       'vue/require-v-for-key': 'warn',
       'vue/valid-v-for': 'warn',
-      'vue/component-api-style': ['error', ['script-setup']],
-      'vue/no-undef-properties': 'error'
+      'vue/component-api-style': ['error', ['composition', 'options', 'script-setup']],
+      'vue/no-undef-properties': 'off',
+      'vue/require-explicit-emits': 'off',
+      'vue/no-mutating-props': 'error',
+      
+      // JavaScript rules
+      'no-unused-vars': 'warn',
     }
   }
 ]
