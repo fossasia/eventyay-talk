@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django_scopes.forms import SafeModelChoiceField
 
 from pretalx.cfp.forms.cfp import CfPFormMixin
-from pretalx.common.forms.fields import ImageField
+from pretalx.common.forms.fields import ImageField, SubmissionTypeField
 from pretalx.common.forms.mixins import PublicContent, RequestRequire
 from pretalx.common.forms.renderers import InlineFormRenderer
 from pretalx.common.forms.widgets import (
@@ -219,7 +219,7 @@ class InfoForm(CfPFormMixin, RequestRequire, PublicContent, forms.ModelForm):
             ),
         }
         field_classes = {
-            "submission_type": SafeModelChoiceField,
+            "submission_type": SubmissionTypeField,
             "track": SafeModelChoiceField,
         }
 
