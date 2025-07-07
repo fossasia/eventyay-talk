@@ -389,6 +389,10 @@ class Event(PretalxModel):
         tickets_home_common = "{common}event/{self.organiser.slug}/{self.slug}/"
         tickets_dashboard_url = "{base}event/{self.organiser.slug}/{self.slug}/"
 
+    class video_urls(EventUrls):
+        _full_base_path = settings.EVENTYAY_VIDEO_BASE_PATH
+        base_path = urlparse(_full_base_path).path.rstrip('/')
+        
     class Meta:
         ordering = ("date_from",)
 
