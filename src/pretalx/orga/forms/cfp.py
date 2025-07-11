@@ -59,13 +59,22 @@ class CfPSettingsForm(
         ),
         required=False,
     )
+    speakers_can_edit_submissions = forms.BooleanField(
+        label=_("Allow speakers to edit their proposals"),
+        required=False,
+    )
 
     def __init__(self, *args, obj, **kwargs):
-        kwargs.pop(
-            "read_only"
-        )  # added in ActionFromUrl view mixin, but not needed here.
+        # added in ActionFromUrl view mixin, but not needed here.
+        kwargs.pop("read_only")
         self.instance = obj
         super().__init__(*args, **kwargs)
+
+        review_phase_link = f'<a href="{obj.orga_urls.review_settings}#tab-phases">{_("Review settings")}</a>'
+        self.fields["speakers_can_edit_submissions"].help_text = _(
+            "If disabled, speakers cannot edit their proposals regardless of the proposal state. "
+            "This setting overrides the {review_phase_link} for speaker editing."
+        ).format(review_phase_link=review_phase_link)
         if getattr(obj, "email", None):
             self.fields[
                 "mail_on_new_submission"
@@ -152,6 +161,7 @@ class CfPSettingsForm(
             "use_tracks": "feature_flags",
             "submission_public_review": "feature_flags",
             "present_multiple_times": "feature_flags",
+            "speakers_can_edit_submissions": "feature_flags",
             "mail_on_new_submission": "mail_settings",
         }
 
@@ -183,7 +193,7 @@ class QuestionForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
     options = forms.FileField(
         label=_("Upload options"),
         help_text=_(
-            "You can upload question options here, one option per line. "
+            "You can upload options here, one option per line. "
             "To use multiple languages, please upload a JSON file with a list of "
             "options:"
         )
@@ -194,7 +204,7 @@ class QuestionForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
         label=_("Replace existing options"),
         help_text=_(
             "If you upload new options, do you want to replace the existing ones? "
-            "Please note that this will DELETE all existing answers to this question! "
+            "Please note that this will DELETE all existing responses to this custom field! "
             "If you do not check this, the uploaded options will be added to the "
             "existing ones, without adding duplicates."
         ),
@@ -253,7 +263,7 @@ class QuestionForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
                 "deadline",
                 forms.ValidationError(
                     _(
-                        "Please select a deadline after which the question should become mandatory."
+                        "Please select a deadline after which the field should become mandatory."
                     )
                 ),
             )
@@ -265,7 +275,7 @@ class QuestionForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
             self.add_error(
                 "options_replace",
                 forms.ValidationError(
-                    _("You cannot replace answer options without uploading new ones.")
+                    _("You cannot replace options without uploading new ones.")
                 ),
             )
 
@@ -298,7 +308,7 @@ class QuestionForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
         new_options = []
         changed_options = []
         for index, option in enumerate(options):
-            if option not in existing_options:
+            if str(option) not in existing_options:
                 new_options.append(
                     AnswerOption(question=instance, answer=option, position=index + 1)
                 )
@@ -378,6 +388,7 @@ class SubmissionTypeForm(ReadOnlyFlag, I18nHelpText, I18nModelForm):
         instance = super().save(*args, **kwargs)
         if instance.pk and "duration" in self.changed_data:
             instance.update_duration()
+        return instance
 
     class Meta:
         model = SubmissionType
@@ -606,8 +617,8 @@ class ReminderFilterForm(QuestionFilterForm):
     questions = SafeModelMultipleChoiceField(
         Question.objects.none(),
         required=False,
-        help_text=_("If you select no question, all questions will be used."),
-        label=phrases.cfp.questions,
+        help_text=_("If you select no custom field, all will be used."),
+        label=phrases.cfp.custom_fields,
         widget=EnhancedSelectMultiple,
     )
 
