@@ -6,11 +6,15 @@ from zoneinfo import ZoneInfo
 
 import vobject
 from django.conf import settings
+from django.http import HttpResponseRedirect
 from django.template.loader import get_template
 from django.utils.functional import cached_property
+from django.utils.http import urlencode
 from django.utils.safestring import SafeString
 from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
 from i18nfield.utils import I18nJSONEncoder
+from pretalx.common.signals import register_data_exporters
 
 from pretalx import __version__
 from pretalx.common.exporter import BaseExporter
@@ -55,7 +59,7 @@ class ScheduleData(BaseExporter):
                 "submission__track",
                 "room",
             )
-            .prefetch_related("submission__speakers", "submission__resources")
+            .prefetch_related("submission__speakers")
             .order_by("start")
             .exclude(submission__state="deleted")
         )
@@ -382,16 +386,16 @@ class MyICalExporter(ICalExporter):
 class FavedICalExporter(BaseExporter):
     identifier = "faved.ics"
     verbose_name = _("iCal (your starred sessions)")
-    public = False
     show_qrcode = False
     icon = "fa-calendar"
+    show_public = True
     cors = "*"
 
     def is_public(self, request, **kwargs):
         return (
             "agenda" in request.resolver_match.namespaces
             and request.user.is_authenticated
-            and request.user.has_perm("agenda.view_schedule", request.event)
+            and request.user.has_perm("schedule.list_schedule", request.event)
         )
 
     def render(self, request, **kwargs):
@@ -399,16 +403,60 @@ class FavedICalExporter(BaseExporter):
             return None
 
         netloc = urlparse(settings.SITE_URL).netloc
-        submissions = request.event.submissions.filter(
-            favourites__user__in=[request.user]
-        ).prefetch_related("speakers", "slots", "slots__room")
+        slots = request.event.current_schedule.scheduled_talks.filter(
+            submission__favourites__user__in=[request.user]
+        )
 
         cal = vobject.iCalendar()
         cal.add("prodid").value = f"-//pretalx//{netloc}//{request.event.slug}//faved"
 
-        for submission in submissions:
-            for slot in submission.slots.filter(
-                schedule=request.event.current_schedule
-            ):
-                slot.build_ical(cal)
+        for slot in slots:
+            slot.build_ical(cal)
         return f"{self.event.slug}-favs.ics", "text/calendar", cal.serialize()
+
+
+class GoogleCalendarExporter(BaseExporter):
+    identifier = "google-calendar"
+    verbose_name = "Add to Google Calendar"
+    public = True
+    icon = "fa-google"
+    show_qrcode = False
+    cors = "*"
+
+    def render(self, request, **kwargs):
+        ics_url = request.build_absolute_uri(
+            reverse('agenda:export', kwargs={
+                'event': self.event.slug,
+                'name': 'schedule.ics'
+            })
+        )
+        google_url = f"https://calendar.google.com/calendar/render?{urlencode({'cid': ics_url})}"
+        return HttpResponseRedirect(google_url)
+
+
+class MyGoogleCalendarExporter(BaseExporter):
+    identifier = "my-google-calendar"
+    verbose_name = "Add My ⭐ Sessions to Google Calendar"
+    public = True
+    icon = "fa-google"
+    show_qrcode = False
+    cors = "*"
+
+    def is_public(self, request, **kwargs):
+        return request.user.is_authenticated
+
+    def render(self, request, **kwargs):
+        ics_url = request.build_absolute_uri(
+            reverse('agenda:export', kwargs={
+                'event': self.event.slug,
+                'name': 'faved.ics'
+            })
+        )
+        google_url = f"https://calendar.google.com/calendar/render?{urlencode({'cid': ics_url})}"
+        return HttpResponseRedirect(google_url)
+
+
+# Register the new Google Calendar exporters
+@register_data_exporters.connect
+def register_google_calendar_exporters(sender, **kwargs):
+    return [GoogleCalendarExporter, MyGoogleCalendarExporter]

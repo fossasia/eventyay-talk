@@ -31,8 +31,10 @@
     you can reach me at sales@pretalx.com.
 
 {% endcomment %}
-{% safelink "https://eventyay.com" as redir %}
-{% with 'href="'|add:redir|add:'" target="_blank" rel="noopener"'|safe as a_attr %}
+{% if not secure_link %}
+    {% safelink "https://eventyay.com" as secure_link %}
+{% endif %}
+{% with 'href="'|add:secure_link|add:'" target="_blank" rel="noopener"'|safe as a_attr %}
     {% blocktranslate trimmed %}
         powered by <a {{ a_attr }}>eventyay</a>
     {% endblocktranslate %}

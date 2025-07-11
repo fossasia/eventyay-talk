@@ -5,6 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.files.uploadedfile import UploadedFile
 from django.forms import CharField, FileField, RegexField, ValidationError
 from django.utils.translation import gettext_lazy as _
+from django_scopes.forms import SafeModelChoiceField
 
 from pretalx.common.forms.widgets import (
     ClearableBasenameFileInput,
@@ -133,3 +134,23 @@ class ColorField(RegexField):
         widget_class = self.widget.attrs.get("class", "")
         self.widget.attrs["class"] = f"{widget_class} colorpicker".strip()
         self.widget.attrs["pattern"] = self.color_regex[1:-1]
+
+
+class SubmissionTypeField(SafeModelChoiceField):
+    """Only include duration in a submission type’s representation
+    if the duration is not a required CfP field (in which case, showing
+    the default duration would be misleading, as it’s never used)."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # All shown submission types in a form should belong to one event,
+        # particularly in the non-organizer area where this field is used,
+        # so we can just cache the rendering decision between instances.
+        self.show_duration = None
+
+    def label_from_instance(self, obj):
+        if self.show_duration is None:
+            self.show_duration = not bool(obj.event.cfp.require_duration)
+        if self.show_duration:
+            return str(obj)
+        return str(obj.name)
