@@ -15,10 +15,6 @@ class CfPPhrases(Phrases, app="cfp"):
         "email and that the email is no more than 24 hours old."
     )
     auth_reset_success = _("Awesome! You can now log in using your new password.")
-    token_regenerated = _(
-        "Your API token has been regenerated. The previous token will not be usable "
-        "any longer."
-    )
 
     submission_withdrawn = _("Your proposal has been withdrawn.")
     submission_not_withdrawn = _(
@@ -33,7 +29,9 @@ class CfPPhrases(Phrases, app="cfp"):
     submission_not_confirmed = _(
         "This proposal cannot be confirmed at this time – please contact us if you think this is an error."
     )
-    submission_uneditable = _("This proposal cannot be edited anymore.")
+    submission_uneditable = _(
+        "This proposal cannot be edited at this time. Please contact the organisers if you need to make changes."
+    )
 
     speaker_email = _("Speaker email")
     invite_subject = _("{speaker} invites you to join their session!")
@@ -76,4 +74,4 @@ at {event}. Please follow this link to join:
 I’m looking forward to it!
 {speaker}"""
     )
-    questions = _("Questions")
+    custom_fields = _("Custom fields")
