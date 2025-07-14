@@ -11,30 +11,30 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
 import { getLocalizedString } from '../utils'
 
 export default defineComponent({
-	name: 'Editor',
-	props: {
-		session: {
-			type: Object,
-			default: null
-		}
-	},
-	computed: {
-		something() {
-			return true
-		}
-	},
-	created() {},
-	mounted() {},
-	methods: {
-		getLocalizedString,
-		somethingMethod(foo) {
-			return foo
-		}
-	}
+  name: 'Editor',
+  props: {
+    session: {
+      type: Object,
+      default: null
+    }
+  },
+  setup(props) {
+    // Convert computed property
+    const something = computed(() => true)
+    
+    // Maintain method functionality
+    const somethingMethod = (foo) => foo
+
+    return {
+      getLocalizedString,
+      something,
+      somethingMethod
+    }
+  }
 })
 </script>
 

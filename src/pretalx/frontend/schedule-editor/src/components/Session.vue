@@ -19,26 +19,12 @@
 			i.fa.fa-exclamation-triangle
 </template>
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, computed, inject } from 'vue'
 import moment from 'moment-timezone'
-import MarkdownIt from 'markdown-it'
-import { getLocalizedString } from '~/utils'
-
-const markdownIt = MarkdownIt({
-	linkify: true,
-	breaks: true
-})
+import { getLocalizedString as importedGetLocalizedString } from '~/utils'
 
 export default defineComponent({
 	name: 'Session',
-	inject: {
-		eventUrl: { default: null },
-		generateSessionLinkUrl: {
-			default () {
-				return ({eventUrl, session}) => `${eventUrl}talk/${session.id}/`
-			}
-		}
-	},
 	props: {
 		session: {
 			type: Object,
@@ -58,65 +44,75 @@ export default defineComponent({
 			default: null
 		}
 	},
-	computed: {
-		link() {
-			return this.generateSessionLinkUrl({eventUrl: this.eventUrl, session: this.session})
-		},
-		isBreak () {
-			return !this.session.code
-		},
-		classes () {
+	emits: ['startDragging'],
+	setup(props) {
+		// Injections
+		const eventUrl = inject('eventUrl', null)
+		const generateSessionLinkUrl = inject('generateSessionLinkUrl', ({eventUrl, session}) => `${eventUrl}talk/${session.id}/`)
+
+		// Computed properties
+		const link = computed(() => {
+			return generateSessionLinkUrl({eventUrl: eventUrl, session: props.session})
+		})
+
+		const isBreak = computed(() => !props.session.code)
+
+		const classes = computed(() => {
 			let classes = []
-			if (this.isBreak) classes.push('isbreak')
+			if (isBreak.value) classes.push('isbreak')
 			else {
 				classes.push('istalk')
-				if (this.session.state !== "confirmed" && this.session.state !== "accepted") classes.push('pending')
-				else if (this.session.state !== "confirmed") classes.push('unconfirmed')
+				if (props.session.state !== "confirmed" && props.session.state !== "accepted") classes.push('pending')
+				else if (props.session.state !== "confirmed") classes.push('unconfirmed')
 			}
-			if (this.isDragged) classes.push('dragging')
-			if (this.isDragClone) classes.push('clone')
+			if (props.isDragged) classes.push('dragging')
+			if (props.isDragClone) classes.push('clone')
 			return classes
-		},
-		style () {
-			return {
-				'--track-color': this.session.track?.color || 'var(--color-primary)'
-			}
-		},
-		startTime () {
-			// check if 12h or 24h locale
-			const time = this.overrideStart  || this.session.start
+		})
+
+		const style = computed(() => ({
+			'--track-color': props.session.track?.color || 'var(--color-primary)'
+		}))
+
+		const startTime = computed(() => {
+			const time = props.overrideStart  || props.session.start
 			if (!time) return
 			if (moment.localeData().longDateFormat('LT').endsWith(' A')) {
 				return {
 					time: time.format('h:mm'),
 					ampm: time.format('A')
 				}
-			} else {
-				return {
-					time: moment(time).format('LT')
-				}
 			}
-		},
-		durationMinutes () {
-			if (!this.session.start) return this.session.duration
-			return moment(this.session.end).diff(this.session.start, 'minutes')
-		},
-		durationPretty () {
-			if (!this.durationMinutes) return
-			let minutes = this.durationMinutes
+			return {
+				time: moment(time).format('LT')
+			}
+		})
+
+		const durationMinutes = computed(() => {
+			if (!props.session.start) return props.session.duration
+			return moment(props.session.end).diff(props.session.start, 'minutes')
+		})
+
+		const durationPretty = computed(() => {
+			if (!durationMinutes.value) return
+			let minutes = durationMinutes.value
 			const hours = Math.floor(minutes / 60)
-			if (minutes <= 60) {
-				return `${minutes}min`
-			}
+			if (minutes <= 60) return `${minutes}min`
+			
 			minutes = minutes % 60
-			if (minutes) {
-				return `${hours}h${minutes}min`
-			}
-			return `${hours}h`
+			return minutes ? `${hours}h${minutes}min` : `${hours}h`
+		})
+
+		return {
+			link,
+			isBreak,
+			classes,
+			style,
+			startTime,
+			durationMinutes,
+			durationPretty,
+			getLocalizedString: importedGetLocalizedString
 		}
-	},
-	methods: {
-		getLocalizedString
 	}
 })
 </script>
