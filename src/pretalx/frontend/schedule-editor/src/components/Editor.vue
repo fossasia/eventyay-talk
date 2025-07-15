@@ -10,31 +10,25 @@
 		.session {{ session }}
 </template>
 
-<script>
+<script setup>
 import { defineComponent, computed } from 'vue'
 import { getLocalizedString } from '../utils'
 
-export default defineComponent({
-  name: 'Editor',
-  props: {
-    session: {
-      type: Object,
-      default: null
-    }
-  },
-  setup(props) {
-    // Convert computed property
-    const something = computed(() => true)
-    
-    // Maintain method functionality
-    const somethingMethod = (foo) => foo
+const props = defineProps({
+	session: {
+		type: Object,
+		default: null
+	}
+})
 
-    return {
-      getLocalizedString,
-      something,
-      somethingMethod
-    }
-  }
+const something = computed(() => true)
+
+function somethingMethod(foo) {
+	return foo
+}
+
+defineOptions({
+	name: 'Editor'
 })
 </script>
 
