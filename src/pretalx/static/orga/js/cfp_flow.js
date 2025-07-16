@@ -30,7 +30,7 @@ var api = {
 }
 
 let currentLanguage = "en"
-let currentModal = Vue.observable({
+let currentModal = Vue.reactive({
     type: null,
     data: null,
     show: false,
@@ -127,7 +127,7 @@ function areEqual() {
     return true
 }
 
-Vue.component("field", {
+const FieldComponent = {
     template: `
     <div>
       <h2 v-if="isModal" class="mb-4">Change input field</h2>
@@ -231,7 +231,7 @@ Vue.component("field", {
         makeModal(event) {
             if (this.isModal) return
             if (!this.isModal && !this.editable) {
-                Vue.set(currentModal, "data", null)
+                currentModal.data = null
                 currentModal.type = null
                 currentModal.show = false
             } else {
@@ -247,9 +247,9 @@ Vue.component("field", {
             "",
         )
     },
-})
+}
 
-Vue.component("step", {
+const StepComponent = {
     template: `
     <div class="step" @click="editingTitle = false; editingText = false">
       <div :class="['step-header', 'header', eventConfiguration.header_pattern]" :style="headerStyle">
@@ -283,8 +283,12 @@ Vue.component("step", {
           </span>
         </div>
         <form v-if="step.identifier != 'user'">
-          <field :field="field" v-for="field in step.fields" :key="field.key" :locales="locales" v-if="field.widget !== 'HiddenInput'">
-          </field>
+          <template v-for="field in step.fields" :key="field.key">
+            <field v-if="field && field.widget !== 'HiddenInput'" 
+                   :field="field" 
+                   :locales="locales">
+            </field>
+          </template>
         </form>
         <form v-else id="auth-form">
           <div class="auth-form-block">
@@ -376,10 +380,9 @@ Vue.component("step", {
             return result
         },
     },
-})
+}
 
-var app = new Vue({
-    el: "#flow",
+const app = Vue.createApp({
     template: `
     <div :class="currentModal.data ? 'defocused' : 'focused'" :style="{'--color': eventConfiguration.primary_color || '#2185d0'}">
       <div id="flow-modal" v-if="currentModal.data">
@@ -488,3 +491,7 @@ var app = new Vue({
         },
     },
 })
+
+app.component("field", FieldComponent)
+app.component("step", StepComponent)
+app.mount("#flow")
