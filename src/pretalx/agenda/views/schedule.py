@@ -15,6 +15,7 @@ from django.http import (
 )
 from django.urls import resolve, reverse
 from django.utils.functional import cached_property
+from django.utils.http import urlencode
 from django.utils.translation import activate
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page
@@ -91,6 +92,9 @@ class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
             exporter = url.kwargs.get("name") or unquote(
                 self.request.GET.get("exporter")
             )
+        elif url.url_name in ["export.google-calendar", "export.my-google-calendar"]:
+            # Handle our explicit Google Calendar URL patterns
+            exporter = url.url_name.replace("export.", "")
         else:
             exporter = url.url_name
 
@@ -104,8 +108,18 @@ class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
             "orga.view_schedule", self.request.event
         )
         exporter = self.get_exporter(public=not is_organiser)
+        
+        # Handle Google Calendar exporters directly if not found through normal registration
+        if not exporter and 'google-calendar' in self.request.path:
+            from pretalx.schedule.exporters import GoogleCalendarExporter, MyGoogleCalendarExporter
+            if 'my-google-calendar' in self.request.path:
+                exporter = MyGoogleCalendarExporter(self.request.event)
+            else:
+                exporter = GoogleCalendarExporter(self.request.event)
+        
         if not exporter:
             raise Http404()
+            
         exporter.schedule = self.schedule
         exporter.is_orga = is_organiser
         lang_code = request.GET.get("lang")
@@ -299,3 +313,29 @@ class ScheduleNoJsView(ScheduleView):
 class ChangelogView(EventPermissionRequired, TemplateView):
     template_name = "agenda/changelog.html"
     permission_required = "agenda.view_schedule"
+
+
+class GoogleCalendarRedirectView(EventPermissionRequired, ScheduleMixin, TemplateView):
+    permission_required = "agenda.view_schedule"
+
+    def get(self, request, *args, **kwargs):
+        # Determine which exporter to use based on URL
+        if 'my-google-calendar' in request.path:
+            if not request.user.is_authenticated:
+                return HttpResponseRedirect(request.event.urls.login)
+            ics_name = 'faved.ics'
+        else:
+            ics_name = 'schedule.ics'
+        
+        # Build the iCal URL
+        ics_url = request.build_absolute_uri(
+            reverse('agenda:export', kwargs={
+                'event': self.request.event.slug,
+                'name': ics_name
+            })
+        )
+        
+        # Create Google Calendar URL
+        google_url = f"https://calendar.google.com/calendar/render?{urlencode({'cid': ics_url})}"
+        
+        return HttpResponseRedirect(google_url)

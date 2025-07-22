@@ -346,7 +346,7 @@ class ICalExporter(BaseExporter):
     identifier = "schedule.ics"
     verbose_name = _("iCal (full event)")
     public = True
-    show_public = False
+    show_public = True
     show_qrcode = True
     favs_retrieve = False
     talk_ids = []
@@ -422,6 +422,7 @@ class GoogleCalendarExporter(BaseExporter):
     identifier = "google-calendar"
     verbose_name = "Add to Google Calendar"
     public = True
+    show_public = True
     icon = "fa-google"
     show_qrcode = False
     cors = "*"
@@ -440,7 +441,7 @@ class GoogleCalendarExporter(BaseExporter):
 class MyGoogleCalendarExporter(BaseExporter):
     identifier = "my-google-calendar"
     verbose_name = "Add My ⭐ Sessions to Google Calendar"
-    public = True
+    public = False
     icon = "fa-google"
     show_qrcode = False
     cors = "*"
@@ -457,9 +458,3 @@ class MyGoogleCalendarExporter(BaseExporter):
         )
         google_url = f"https://calendar.google.com/calendar/render?{urlencode({'cid': ics_url})}"
         return HttpResponseRedirect(google_url)
-
-
-# Register the new Google Calendar exporters
-@register_data_exporters.connect
-def register_google_calendar_exporters(sender, **kwargs):
-    return [GoogleCalendarExporter, MyGoogleCalendarExporter]
