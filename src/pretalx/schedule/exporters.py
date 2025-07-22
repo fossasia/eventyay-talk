@@ -346,7 +346,7 @@ class ICalExporter(BaseExporter):
     identifier = "schedule.ics"
     verbose_name = _("iCal (full event)")
     public = True
-    show_public = True
+    show_public = False
     show_qrcode = True
     favs_retrieve = False
     talk_ids = []
@@ -422,7 +422,7 @@ class GoogleCalendarExporter(BaseExporter):
     identifier = "google-calendar"
     verbose_name = "Add to Google Calendar"
     public = True
-    show_public = True
+    show_public = False
     icon = "fa-google"
     show_qrcode = False
     cors = "*"
