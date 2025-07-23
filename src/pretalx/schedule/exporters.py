@@ -346,7 +346,7 @@ class ICalExporter(BaseExporter):
     identifier = "schedule.ics"
     verbose_name = _("iCal (full event)")
     public = True
-    show_public = False
+    show_public = True
     show_qrcode = True
     favs_retrieve = False
     talk_ids = []
@@ -417,40 +417,21 @@ class FavedICalExporter(BaseExporter):
                 slot.build_ical(cal)
         return f"{self.event.slug}-favs.ics", "text/calendar", cal.serialize()
 
-class GoogleCalendarExporter(BaseExporter):
+
+class BaseGoogleCalendarExporter(BaseExporter):
+    public = True
+    show_qrcode = False
+    icon = "fa-google"
+    @property
+    def show_public(self):
+        return self.ical_exporter_cls(self.event).show_public
+
+class GoogleCalendarExporter(BaseGoogleCalendarExporter):
     identifier = "google-calendar"
     verbose_name = "Add to Google Calendar"
-    public = True
-    #match ICalExporter visibility
-    @property
-    def show_public(self):
-        return ICalExporter(self.event).show_public
-    show_qrcode = False
-    icon = "fa-google"
+    ical_exporter_cls = ICalExporter
 
-    def render(self, request, **kwargs):
-        return HttpResponseRedirect(
-            reverse(
-                "agenda:export.google-calendar",
-                kwargs={"event": self.event.slug},
-            )
-        )
-
-class MyGoogleCalendarExporter(BaseExporter):
+class MyGoogleCalendarExporter(BaseGoogleCalendarExporter):
     identifier = "my-google-calendar"
     verbose_name = "Add My ⭐ Sessions to Google Calendar"
-    public = True
-    #match MyICalExporter visibility
-    @property
-    def show_public(self):
-        return MyICalExporter(self.event).show_public
-    show_qrcode = False
-    icon = "fa-google"
-
-    def render(self, request, **kwargs):
-        return HttpResponseRedirect(
-            reverse(
-                "agenda:export.my-google-calendar",
-                kwargs={"event": self.event.slug},
-            )
-        )
+    ical_exporter_cls = MyICalExporter

@@ -309,14 +309,13 @@ class GoogleCalendarRedirectView(EventPermissionRequired, ScheduleMixin, Templat
     permission_required = "agenda.view_schedule"
 
     def get(self, request, *args, **kwargs):
-        # Determine which exporter to use based on URL
-        if 'my-google-calendar' in request.path:
-            if not request.user.is_authenticated:
-                return HttpResponseRedirect(request.event.urls.login)
+        # Use resolver_match.url_name for robust route detection
+        url_name = request.resolver_match.url_name if request.resolver_match else None
+        if url_name == 'export.my-google-calendar':
             ics_name = 'schedule-my.ics'
         else:
             ics_name = 'schedule.ics'
-        
+
         # Build the iCal URL
         ics_url = request.build_absolute_uri(
             reverse('agenda:export', kwargs={
@@ -324,8 +323,8 @@ class GoogleCalendarRedirectView(EventPermissionRequired, ScheduleMixin, Templat
                 'name': ics_name
             })
         )
-        
+
         # Create Google Calendar URL
         google_url = f"https://calendar.google.com/calendar/render?{urlencode({'cid': ics_url})}"
-        
+
         return HttpResponseRedirect(google_url)
