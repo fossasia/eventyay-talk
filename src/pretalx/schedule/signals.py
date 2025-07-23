@@ -81,16 +81,12 @@ def register_my_json_exporter(sender, **kwargs):
 
     return MyFrabJsonExporter
 
-
 @receiver(register_data_exporters, dispatch_uid="exporter_builtin_google_calendar")
 def register_google_calendar_exporter(sender, **kwargs):
-    from pretalx.schedule.exporters import GoogleCalendarExporter
-
+    from .exporters import GoogleCalendarExporter
     return GoogleCalendarExporter
-
 
 @receiver(register_my_data_exporters, dispatch_uid="exporter_builtin_my_google_calendar")
 def register_my_google_calendar_exporter(sender, **kwargs):
     from .exporters import MyGoogleCalendarExporter
-
     return MyGoogleCalendarExporter

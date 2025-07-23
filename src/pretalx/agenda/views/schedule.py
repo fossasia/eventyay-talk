@@ -108,18 +108,8 @@ class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
             "orga.view_schedule", self.request.event
         )
         exporter = self.get_exporter(public=not is_organiser)
-        
-        # Handle Google Calendar exporters directly if not found through normal registration
-        if not exporter and 'google-calendar' in self.request.path:
-            from pretalx.schedule.exporters import GoogleCalendarExporter, MyGoogleCalendarExporter
-            if 'my-google-calendar' in self.request.path:
-                exporter = MyGoogleCalendarExporter(self.request.event)
-            else:
-                exporter = GoogleCalendarExporter(self.request.event)
-        
         if not exporter:
             raise Http404()
-            
         exporter.schedule = self.schedule
         exporter.is_orga = is_organiser
         lang_code = request.GET.get("lang")
@@ -323,7 +313,7 @@ class GoogleCalendarRedirectView(EventPermissionRequired, ScheduleMixin, Templat
         if 'my-google-calendar' in request.path:
             if not request.user.is_authenticated:
                 return HttpResponseRedirect(request.event.urls.login)
-            ics_name = 'faved.ics'
+            ics_name = 'schedule-my.ics'
         else:
             ics_name = 'schedule.ics'
         

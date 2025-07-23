@@ -417,44 +417,40 @@ class FavedICalExporter(BaseExporter):
                 slot.build_ical(cal)
         return f"{self.event.slug}-favs.ics", "text/calendar", cal.serialize()
 
-
 class GoogleCalendarExporter(BaseExporter):
     identifier = "google-calendar"
     verbose_name = "Add to Google Calendar"
     public = True
-    show_public = False
-    icon = "fa-google"
+    #match ICalExporter visibility
+    @property
+    def show_public(self):
+        return ICalExporter(self.event).show_public
     show_qrcode = False
-    cors = "*"
+    icon = "fa-google"
 
     def render(self, request, **kwargs):
-        ics_url = request.build_absolute_uri(
-            reverse('agenda:export', kwargs={
-                'event': self.event.slug,
-                'name': 'schedule.ics'
-            })
+        return HttpResponseRedirect(
+            reverse(
+                "agenda:export.google-calendar",
+                kwargs={"event": self.event.slug},
+            )
         )
-        google_url = f"https://calendar.google.com/calendar/render?{urlencode({'cid': ics_url})}"
-        return HttpResponseRedirect(google_url)
-
 
 class MyGoogleCalendarExporter(BaseExporter):
     identifier = "my-google-calendar"
     verbose_name = "Add My ⭐ Sessions to Google Calendar"
-    public = False
-    icon = "fa-google"
+    public = True
+    #match MyICalExporter visibility
+    @property
+    def show_public(self):
+        return MyICalExporter(self.event).show_public
     show_qrcode = False
-    cors = "*"
-
-    def is_public(self, request, **kwargs):
-        return request.user.is_authenticated
+    icon = "fa-google"
 
     def render(self, request, **kwargs):
-        ics_url = request.build_absolute_uri(
-            reverse('agenda:export', kwargs={
-                'event': self.event.slug,
-                'name': 'faved.ics'
-            })
+        return HttpResponseRedirect(
+            reverse(
+                "agenda:export.my-google-calendar",
+                kwargs={"event": self.event.slug},
+            )
         )
-        google_url = f"https://calendar.google.com/calendar/render?{urlencode({'cid': ics_url})}"
-        return HttpResponseRedirect(google_url)
