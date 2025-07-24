@@ -8,7 +8,7 @@ from pretalx.common.signals import register_data_exporters, register_my_data_exp
 
 def is_visible(exporter, request, public=False):
     if not public:
-        return request.user.has_perm("orga.view_schedule", request.event)
+        return request.user.is_authenticated
     if not request.user.has_perm("agenda.view_schedule", request.event):
         return False
     if hasattr(exporter, "is_public"):
