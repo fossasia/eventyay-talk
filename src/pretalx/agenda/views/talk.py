@@ -354,12 +354,11 @@ class OnlineVideoJoin(EventPermissionRequired, View):
         token = jwt.encode(
             payload, venueless_settings.secret, algorithm="HS256"
         )
-
+        redirect_url = urljoin(venueless_settings.join_url, f'#token={token}')
+        logger.info('Redirect URL to Video: %s', redirect_url)
         return JsonResponse(
             {
-                "redirect_url": "{}/#token={}".format(
-                    venueless_settings.join_url, token
-                ).replace("//#", "/#")
+                'redirect_url': redirect_url
             },
             status=HTTPStatus.OK,
         )
