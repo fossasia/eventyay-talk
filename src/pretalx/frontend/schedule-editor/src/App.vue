@@ -76,8 +76,8 @@
 	bunt-progress-circular(v-else, size="huge", :page="true")
 </template>
 
-<script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted, onBeforeMount, watch, nextTick } from 'vue'
+<script lang="ts" setup>
+import { ref, reactive, computed, onMounted, onUnmounted, onBeforeMount, nextTick, Ref } from 'vue'
 import moment, { Moment } from 'moment-timezone'
 import Editor from '~/components/Editor'
 import GridSchedule from '~/components/GridSchedule'
@@ -86,126 +86,139 @@ import api from '~/api'
 import { getLocalizedString } from '~/utils'
 
 interface Speaker {
-  code: string;
-  name: string;
+  code: string
+  name: string
 }
 
 interface Track {
-  id: string;
-  name: Record<string, string> | string;
+  id: string
+  name: Record<string, string> // localized names
 }
 
 interface Room {
-  id: string;
-  name: Record<string, string> | string;
-}
-
-interface Session {
-  id?: string;
-  code?: string;
-  title: Record<string, string> | string;
-  abstract?: string;
-  speakers?: Speaker[] | string[];
-  track?: string | Track;
-  duration: number;
-  state?: string;
-  room?: string | Room;
-  start?: string | Moment;
-  end?: string | Moment;
-  uncreated?: boolean;
-  updated?: string;
-  availabilities?: any;
-}
-
-interface Schedule {
-  event_start: string;
-  event_end: string;
-  timezone: string;
-  locales: string[];
-  rooms: Room[];
-  tracks: Track[];
-  speakers: Speaker[];
-  talks: Session[];
-  version: string;
-  now?: string; // Added now property
-}
-
-interface Availability {
-  start: string;
-  end: string;
+  id: string
+  name: Record<string, string>
 }
 
 interface Warning {
-  message: string;
+  message: string
 }
 
-interface Availabilities {
-  rooms: Record<string, Availability[]>;
-  talks: Record<string, Availability[]>;
+interface Talk {
+  id: number
+  code: string
+  title: Record<string, string>
+  abstract?: string
+  speakers?: string[] // array of speaker codes
+  track?: string
+  room?: string
+  duration: number
+  start?: string | null
+  end?: string | null
+  state?: string
+  updated?: string
+  submission?: unknown
+  uncreated?: boolean
+  availabilities?: unknown[]
 }
 
-const props = defineProps({
-  locale: String,
-  version: {
-    type: String,
-    default: ''
-  }
-})
+interface SessionData {
+  id: number
+  code: string
+  title: Record<string, string> | string
+  abstract?: string
+  speakers?: Speaker[]
+  track?: Track
+  duration?: number
+  start?: Moment
+  end?: Moment
+  state?: string
+  room?: Room
+  uncreated?: boolean
+  availabilities?: unknown[]
+}
+
+interface SortMethod {
+  label: string
+  name: string
+}
+
+interface Schedule {
+  version: string
+  event_start: string
+  event_end: string
+  timezone: string
+  locales: string[]
+  rooms: Room[]
+  tracks: Track[]
+  speakers: Speaker[]
+  talks: Talk[]
+}
+
+const props = defineProps<{
+  locale: string
+  version?: string
+}>()
 
 const eventSlug = ref<string | null>(null)
 const scrollParentWidth = ref<number>(Infinity)
 const schedule = ref<Schedule | null>(null)
-const availabilities = reactive<Availabilities>({ rooms: {}, talks: {} })
+const availabilities = reactive<{ rooms: Record<string, unknown>; talks: Record<string, unknown[]> }>({
+  rooms: {},
+  talks: {},
+})
 const warnings = reactive<Record<string, Warning[]>>({})
 const currentDay = ref<Moment | null>(null)
-const draggedSession = ref<Session | null>(null)
-const editorSession = ref<Session | null>(null)
+const draggedSession = ref<SessionData | null>(null)
+const editorSession = ref<SessionData | null>(null)
 const editorSessionWaiting = ref<boolean>(false)
 const isUnassigning = ref<boolean>(false)
-const locales = ref<string[]>(["en"])
+const locales = ref<string[]>(['en'])
 const unassignedFilterString = ref<string>('')
 const unassignedSort = ref<string>('title')
 const unassignedSortDirection = ref<number>(1)
 const showUnassignedSortMenu = ref<boolean>(false)
 const newBreakTooltip = ref<string>('')
+const eventTimezone = ref<string | null>(null)
+const since = ref<string | undefined>(undefined)
+
+function $t(key: string): string {
+  return typeof window !== 'undefined' && (window as any).$t ? (window as any).$t(key) : key
+}
+
 const translations = reactive({
   filterSessions: $t('Filter sessions'),
   newBreak: $t('New break'),
 })
-const eventTimezone = ref<string | null>(null)
-const since = ref<string | undefined>()
 
-function $t(key: string): string {
-  return (typeof window !== 'undefined' && (window as any).$t) ? 
-    (window as any).$t(key) : key;
-}
-
-const roomsLookup = computed(() => {
+// Lookups
+const roomsLookup = computed<Record<string, Room>>(() => {
   if (!schedule.value) return {}
-  return schedule.value.rooms.reduce((acc: Record<string, Room>, room) => {
+  return schedule.value.rooms.reduce((acc, room) => {
     acc[room.id] = room
     return acc
-  }, {})
+  }, {} as Record<string, Room>)
 })
 
-const tracksLookup = computed(() => {
+const tracksLookup = computed<Record<string, Track>>(() => {
   if (!schedule.value) return {}
-  return schedule.value.tracks.reduce((acc: Record<string, Track>, t) => {
-    acc[t.id] = t
+  return schedule.value.tracks.reduce((acc, track) => {
+    acc[track.id] = track
     return acc
-  }, {})
+  }, {} as Record<string, Track>)
 })
 
-const speakersLookup = computed(() => {
+const speakersLookup = computed<Record<string, Speaker>>(() => {
   if (!schedule.value) return {}
-  return schedule.value.speakers.reduce((acc: Record<string, Speaker>, s) => {
-    acc[s.code] = s
+  return schedule.value.speakers.reduce((acc, speaker) => {
+    acc[speaker.code] = speaker
     return acc
-  }, {})
+  }, {} as Record<string, Speaker>)
 })
 
-const unassignedSortMethods = computed(() => {
-  const sortMethods = [
+// Sort methods for unassigned sessions
+const unassignedSortMethods = computed<SortMethod[]>(() => {
+  const sortMethods: SortMethod[] = [
     { label: $t('Title'), name: 'title' },
     { label: $t('Speakers'), name: 'speakers' },
   ]
@@ -216,86 +229,112 @@ const unassignedSortMethods = computed(() => {
   return sortMethods
 })
 
-const unscheduled = computed(() => {
+// Sessions without start or room (unassigned)
+const unscheduled = computed<SessionData[]>(() => {
   if (!schedule.value) return []
-  let sessions: Session[] = []
-  for (const session of schedule.value.talks.filter(s => !s.start || !s.room)) {
+  let sessions: SessionData[] = []
+  for (const session of schedule.value.talks.filter((s) => !s.start || !s.room)) {
     sessions.push({
       id: session.id,
       code: session.code,
       title: session.title,
       abstract: session.abstract,
-      speakers: session.speakers?.map(s => speakersLookup.value[s as string]),
-      track: tracksLookup.value[session.track as string],
+      speakers: session.speakers?.map((s) => speakersLookup.value[s]) ?? [],
+      track: tracksLookup.value[session.track ?? ''],
       duration: session.duration,
       state: session.state,
-    })
+    } as SessionData)
   }
   if (unassignedFilterString.value.length) {
-    sessions = sessions.filter(s => {
-      const title = getLocalizedString(s.title)
-      const speakers = (s.speakers as Speaker[])?.map(s => s.name).join(', ') || ''
-      return title.toLowerCase().includes(unassignedFilterString.value.toLowerCase()) || 
-             speakers.toLowerCase().includes(unassignedFilterString.value.toLowerCase())
+    sessions = sessions.filter((s) => {
+      const title = typeof s.title === 'string' ? s.title : getLocalizedString(s.title)
+      const speakers = s.speakers?.map((sp) => sp.name).join(', ') || ''
+      const filterLower = unassignedFilterString.value.toLowerCase()
+      return title.toLowerCase().includes(filterLower) || speakers.toLowerCase().includes(filterLower)
     })
   }
   sessions = sessions.sort((a, b) => {
     if (unassignedSort.value == 'title') {
-      return getLocalizedString(a.title).toUpperCase().localeCompare(
-        getLocalizedString(b.title).toUpperCase()
-      ) * unassignedSortDirection.value
+      return (
+        getLocalizedString(typeof a.title === 'string' ? { en: a.title } : a.title)
+          .toUpperCase()
+          .localeCompare(
+            getLocalizedString(typeof b.title === 'string' ? { en: b.title } : b.title).toUpperCase(),
+          ) * unassignedSortDirection.value
+      )
     } else if (unassignedSort.value == 'speakers') {
-      const aSpeakers = (a.speakers as Speaker[])?.map(s => s.name).join(', ') || ''
-      const bSpeakers = (b.speakers as Speaker[])?.map(s => s.name).join(', ') || ''
+      const aSpeakers = a.speakers?.map((s) => s.name).join(', ') || ''
+      const bSpeakers = b.speakers?.map((s) => s.name).join(', ') || ''
       return aSpeakers.toUpperCase().localeCompare(bSpeakers.toUpperCase()) * unassignedSortDirection.value
     } else if (unassignedSort.value == 'track') {
-      return getLocalizedString((a.track as Track)?.name || '').toUpperCase().localeCompare(
-        getLocalizedString((b.track as Track)?.name || '').toUpperCase()
-      ) * unassignedSortDirection.value
+      const aTrack = a.track ? getLocalizedString(a.track.name) : ''
+      const bTrack = b.track ? getLocalizedString(b.track.name) : ''
+      return aTrack.toUpperCase().localeCompare(bTrack.toUpperCase()) * unassignedSortDirection.value
     } else if (unassignedSort.value == 'duration') {
-      return (a.duration - b.duration) * unassignedSortDirection.value
+      return ((a.duration ?? 0) - (b.duration ?? 0)) * unassignedSortDirection.value
     }
     return 0
   })
   return sessions
 })
 
-const sessions = computed(() => {
+const sessions = computed<SessionData[]>(() => {
   if (!schedule.value) return []
-  const sessions: Session[] = []
-  for (const session of schedule.value.talks.filter(
-    s => s.start && moment(s.start).isSameOrAfter(days.value[0]) && 
-    moment(s.start).isSameOrBefore(days.value.at(-1)!.clone().endOf('day')))) {
-    sessions.push({
-      id: session.id,
-      code: session.code,
-      title: session.title,
-      abstract: session.abstract,
-      start: moment(session.start as string),
-      end: moment(session.end as string),
-      duration: moment(session.end as string).diff(session.start, 'm'),
-      speakers: session.speakers?.map(s => speakersLookup.value[s as string]),
-      track: tracksLookup.value[session.track as string],
-      state: session.state,
-      room: roomsLookup.value[session.room as string]
-    })
-  }
-  sessions.sort((a, b) => (a.start as Moment).diff(b.start as Moment))
-  return sessions
+  const dayStart = days.value[0]
+  const dayEnd = days.value.at(-1)?.clone().endOf('day')
+  if (!dayStart || !dayEnd) return []
+
+  const filteredSessions = schedule.value.talks.filter(
+    (s) =>
+      s.start &&
+      moment(s.start).isSameOrAfter(dayStart) &&
+      moment(s.start).isSameOrBefore(dayEnd),
+  )
+
+  const sessionList: SessionData[] = filteredSessions.map((session) => ({
+    id: session.id,
+    code: session.code,
+    title: session.title,
+    abstract: session.abstract,
+    start: moment(session.start),
+    end: moment(session.end),
+    duration: moment(session.end).diff(moment(session.start), 'minutes'),
+    speakers: session.speakers?.map((s) => speakersLookup.value[s]) ?? [],
+    track: tracksLookup.value[session.track ?? ''],
+    state: session.state,
+    room: roomsLookup.value[session.room ?? ''],
+  }))
+
+  sessionList.sort((a, b) => a.start!.diff(b.start!))
+  return sessionList
 })
 
-const days = computed((): Moment[] => {
+const days = computed<Moment[]>(() => {
   if (!schedule.value) return []
-  const days = [moment(schedule.value.event_start).startOf('day')]
+  const daysArray: Moment[] = [moment(schedule.value.event_start).startOf('day')]
   const lastDay = moment(schedule.value.event_end)
-  while (!days.at(-1)!.isSame(lastDay, 'day')) {
-    days.push(days.at(-1)!.clone().add(1, 'days'))
+  while (!daysArray.at(-1)!.isSame(lastDay, 'day')) {
+    daysArray.push(daysArray.at(-1)!.clone().add(1, 'days'))
   }
-  return days
+  return daysArray
 })
 
-const dateFormat = computed(() => {
-  if ((schedule.value && schedule.value.rooms.length > 2) || !days.value || !days.value.length) return 'dddd DD. MMMM'
+const inEventTimezone = computed<boolean>(() => {
+  if (!schedule.value || !schedule.value.talks.length) return false
+  const example = schedule.value.talks[0].start
+  if (!example) return false
+  return (
+    moment.tz(example, userTimezone.value).format('Z') === moment.tz(example, schedule.value.timezone).format('Z')
+  )
+})
+
+const dateFormat = computed<string>(() => {
+  if (
+    (schedule.value && schedule.value.rooms.length > 2) ||
+    !days.value ||
+    !days.value.length
+  )
+    return 'dddd DD. MMMM'
   if (days.value && days.value.length <= 5) return 'dddd DD. MMMM'
   if (days.value && days.value.length <= 7) return 'dddd DD. MMM'
   return 'ddd DD. MMM'
@@ -303,102 +342,80 @@ const dateFormat = computed(() => {
 
 const userTimezone = ref<string>(moment.tz.guess())
 
-async function fetchSchedule(options?: { since?: string; warnings?: boolean }): Promise<Schedule> {
+async function fetchSchedule(options?: Record<string, any>): Promise<Schedule> {
   const sched = await api.fetchTalks(options)
   return sched
 }
 
-async function fetchAdditionalScheduleData() {
+async function fetchAdditionalScheduleData(): Promise<void> {
   Object.assign(availabilities, await api.fetchAvailabilities())
   Object.assign(warnings, await api.fetchWarnings())
 }
 
-function changeDay(day: Moment) {
-  if (currentDay.value && day.isSame(currentDay.value)) return
-  currentDay.value = moment(day).startOf('day')
+function changeDay(day: Moment): void {
+  if (day.isSame(currentDay.value)) return
+  currentDay.value = day.clone().tz(eventTimezone.value ?? 'UTC').startOf('day')
   window.location.hash = day.format('YYYY-MM-DD')
 }
 
-function saveTalk(session: Session) {
-  // Convert to API-compatible format
-  const talkData = {
-    id: session.id,
-    code: session.code,
-    title: session.title,
-    description: session.abstract,
-    room: session.room,
-    start: typeof session.start === 'object' ? session.start.format() : session.start,
-    end: typeof session.end === 'object' ? session.end.format() : session.end,
-    duration: session.duration
-  }
-  
-  api.saveTalk(talkData).then((response: any) => {
-    if (session.code && response?.warnings) {
-      warnings[session.code] = response.warnings
-    }
-    const foundSession = schedule.value?.talks.find(s => s.id === session.id)
-    if (foundSession) {
-      foundSession.updated = response?.updated
-    }
+function saveTalk(session: Talk): void {
+  api.saveTalk(session).then((response) => {
+    warnings[session.code] = response.warnings
+    const talk = schedule.value?.talks.find((s) => s.id === session.id)
+    if (talk) talk.updated = response.updated
   })
 }
 
-function rescheduleSession(e: any) {
+interface RescheduleEvent {
+  session: SessionData
+  start: string | Moment
+  end: string | Moment
+  room: Room
+}
+
+function rescheduleSession(e: RescheduleEvent): void {
   if (!schedule.value) return
-  const movedSession = schedule.value.talks.find(s => s.id === e.session.id)
-  if (!movedSession) return
+  const movedSession = schedule.value.talks.find((s) => s.id === e.session.id)
   stopDragging()
-  
-  // Set to string values for API compatibility
-  movedSession.start = e.start
-  movedSession.end = e.end
+  if (!movedSession) return
+  movedSession.start = e.start as string
+  movedSession.end = e.end as string
   movedSession.room = e.room.id
-  
   saveTalk(movedSession)
 }
 
-function createSession(e: any) {
-  api.createTalk({
-    ...e.session,
-    start: e.session.start.format(),
-    end: e.session.end.format(),
-    room: e.room.id
-  }).then((response: any) => {
-    if (e.session.code && response?.warnings) {
-      warnings[e.session.code] = response.warnings
-    }
-    const newSession = { 
-      ...e.session,
-      id: response.id,
-      start: moment(e.session.start),
-      end: moment(e.session.end),
-      room: roomsLookup.value[e.room.id]
-    }
-    schedule.value?.talks.push(newSession)
-    editorStart(newSession)
-  })
+interface CreateSessionEvent {
+  session: Talk
 }
 
-function editorStart(session: Session) {
-  editorSession.value = session
+async function createSession(e: CreateSessionEvent): Promise<void> {
+  const response = await api.createTalk(e.session)
+  warnings[e.session.code] = response.warnings
+  const newSession = { ...e.session }
+  newSession.id = response.id
+  schedule.value?.talks.push(newSession)
+  editorStart(newSession)
 }
 
-function editorSave() {
+function editorStart(session: SessionData | Talk): void {
+  editorSession.value = { ...session }
+}
+
+function editorSave(): void {
   if (!editorSession.value) return
+
   editorSessionWaiting.value = true
-  
-  // Handle moment conversion
-  if (typeof editorSession.value.start === 'object') {
-    editorSession.value.end = moment(editorSession.value.start).clone()
-      .add(editorSession.value.duration, 'm')
+  if (editorSession.value.start) {
+    const startMoment = moment(editorSession.value.start)
+    editorSession.value.end = startMoment.clone().add(editorSession.value.duration ?? 0, 'minutes')
   }
-  
-  saveTalk(editorSession.value)
-  const session = schedule.value?.talks.find(s => s.id === editorSession.value?.id)
-  if (session) {
-    session.end = editorSession.value.end
-    if (!(session as any).submission) {
-      session.title = editorSession.value.title
+  saveTalk(editorSession.value as Talk)
+
+  const sessionInSchedule = schedule.value?.talks.find((s) => s.id === editorSession.value?.id)
+  if (sessionInSchedule && editorSession.value) {
+    sessionInSchedule.end = editorSession.value.end as string | undefined
+    if (!('submission' in sessionInSchedule)) {
+      sessionInSchedule.title = editorSession.value.title as Record<string, string>
     }
   }
   editorSessionWaiting.value = false
@@ -408,9 +425,9 @@ function editorSave() {
 function editorDelete() {
   if (!editorSession.value) return
   editorSessionWaiting.value = true
-  api.deleteTalk({ id: editorSession.value.id! })
+  api.deleteTalk(editorSession.value)
   if (schedule.value) {
-    schedule.value.talks = schedule.value.talks.filter(s => s.id !== editorSession.value?.id)
+    schedule.value.talks = schedule.value.talks.filter((s) => s.id !== editorSession.value?.id)
   }
   editorSessionWaiting.value = false
   editorSession.value = null
@@ -424,42 +441,40 @@ function removeNewBreakHint() {
   newBreakTooltip.value = ''
 }
 
-function startNewBreak({ event }: { event: Event }) {
-  const title = locales.value.reduce((obj, locale) => {
-    (obj as Record<string, string>)[locale] = $t('New break')
-    return obj
-  }, {})
-  startDragging({ event, session: { 
-    title, 
-    duration: 5, 
-    uncreated: true,
-    id: 'temp-' + Date.now()  // Temporary ID
-  } })
+interface DragStartEvent {
+  event: PointerEvent
+  session: Partial<SessionData & Talk>
 }
 
-function startDragging({ event, session }: { event: Event; session: Session }) {
-  if (session.id && availabilities.talks[session.id]) {
-    session.availabilities = availabilities.talks[session.id]
+function startNewBreak({ event }: DragStartEvent) {
+  const title = locales.value.reduce((obj: Record<string, string>, locale) => {
+    obj[locale] = $t('New break')
+    return obj
+  }, {})
+  startDragging({ event, session: { title, duration: 5, uncreated: true } })
+}
+
+function startDragging({ event, session }: DragStartEvent) {
+  if (availabilities && availabilities.talks[session.id! ?? 0] && availabilities.talks[session.id! ?? 0].length !== 0) {
+    session.availabilities = availabilities.talks[session.id! ?? 0]
   }
-  draggedSession.value = session
+  draggedSession.value = session as SessionData
 }
 
 function stopDragging() {
   try {
-    if (isUnassigning.value && draggedSession.value && schedule.value) {
+    if (isUnassigning.value && draggedSession.value) {
       if (draggedSession.value.code) {
-        const movedSession = schedule.value.talks.find(s => s.id === draggedSession.value?.id)
+        const movedSession = schedule.value?.talks.find((s) => s.id === draggedSession.value!.id)
         if (movedSession) {
-          movedSession.start = undefined
-          movedSession.end = undefined
-          movedSession.room = undefined
+          movedSession.start = null
+          movedSession.end = null
+          movedSession.room = null
           saveTalk(movedSession)
         }
-      } else if (draggedSession.value.id && schedule.value.talks.find(s => s.id === draggedSession.value?.id)) {
-        schedule.value.talks = schedule.value.talks.filter(s => s.id !== draggedSession.value?.id)
-        if (draggedSession.value.id) {
-          api.deleteTalk({ id: draggedSession.value.id })
-        }
+      } else if (schedule.value?.talks.find((s) => s.id === draggedSession.value!.id)) {
+        schedule.value.talks = schedule.value.talks.filter((s) => s.id !== draggedSession.value!.id)
+        api.deleteTalk(draggedSession.value)
       }
     }
   } finally {
@@ -474,46 +489,36 @@ function onWindowResize() {
 
 async function pollUpdates() {
   if (!schedule.value) return
-  
-  fetchSchedule({ since: since.value, warnings: true }).then(sched => {
-    if (sched.version !== schedule.value?.version) {
-      window.location.reload()
+  const sched = await fetchSchedule({ since: since.value, warnings: true })
+  if (sched.version !== schedule.value.version) {
+    window.location.reload()
+  }
+  sched.talks.forEach((talk) => {
+    const oldTalk = schedule.value!.talks.find((t) => t.id === talk.id)
+    if (!oldTalk) {
+      schedule.value!.talks.push(talk)
+    } else if (moment(talk.updated).isAfter(moment(oldTalk.updated))) {
+      Object.assign(oldTalk, talk)
     }
-    sched.talks.forEach((talk: Session) => {
-      const oldTalk = schedule.value?.talks.find(t => t.id === talk.id)
-      if (!oldTalk) {
-        schedule.value?.talks.push(talk)
-      } else if (talk.updated && oldTalk.updated) {
-        if (moment(talk.updated).isAfter(moment(oldTalk.updated))) {
-          Object.assign(oldTalk, talk)
-        }
-      }
-    })
-    // Handle 'now' property safely
-    if ('now' in sched) {
-      since.value = sched.now
-    }
-    window.setTimeout(pollUpdates, 10 * 1000)
   })
+  since.value = sched.now
+  window.setTimeout(pollUpdates, 10 * 1000)
 }
 
 onBeforeMount(async () => {
   schedule.value = await fetchSchedule()
-  if (schedule.value) {
-    eventTimezone.value = schedule.value.timezone
-    moment.tz.setDefault(eventTimezone.value)
-    locales.value = schedule.value.locales
-    if (days.value.length) {
-      currentDay.value = days.value[0]
-    }
-  }
-  eventSlug.value = window.location.pathname.split("/")[3]
+  eventTimezone.value = schedule.value.timezone
+  moment.tz.setDefault(eventTimezone.value)
+  locales.value = schedule.value.locales
+  eventSlug.value = window.location.pathname.split('/')[3] ?? null
+  currentDay.value = days.value[0]
   window.setTimeout(pollUpdates, 10 * 1000)
   await fetchAdditionalScheduleData()
   await new Promise<void>((resolve) => {
     const poll = () => {
       const el = document.querySelector('.pretalx-schedule')
-      if (el && (el.parentElement || (el as any).getRootNode().host)) return resolve()
+      // @ts-ignore
+      if (el && (el.parentElement || el.getRootNode().host)) return resolve()
       setTimeout(poll, 100)
     }
     poll()

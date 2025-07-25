@@ -19,135 +19,124 @@
 			i.fa.fa-exclamation-triangle
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, inject } from 'vue'
-import moment from 'moment-timezone'
+import moment, { Moment } from 'moment-timezone'
 import { getLocalizedString } from '~/utils'
 
 interface Speaker {
-  name: string;
-  code: string;
+  name: string
+  [key: string]: any
 }
 
 interface Track {
-  name: string | Record<string, string>;
-  color?: string;
+  name: Record<string, string>
+  color?: string
+  [key: string]: any
 }
 
 interface Session {
-  id: string;
-  code?: string;
-  title: string | Record<string, string>;
-  abstract?: string;
-  speakers?: Speaker[];
-  track?: Track;
-  start?: moment.Moment;
-  end?: moment.Moment;
-  duration?: number;
-  state?: string;
-  room?: any;
-  uncreated?: boolean;
+  id: number | string
+  title: string | Record<string, string>
+  speakers?: Speaker[]
+  state?: string
+  track?: Track
+  start?: Moment
+  end?: Moment
+  code?: string | null
+  duration: number
+  [key: string]: any
 }
 
-interface StartTime {
-  time: string;
-  ampm?: string;
+interface Warning {
+  message: string
+  [key: string]: any
 }
 
-const props = defineProps({
-  session: {
-    type: Object as () => Session,
-    required: true
-  },
-  warnings: {
-    type: Array as () => any[],
-    default: () => []
-  },
-  isDragged: Boolean,
-  isDragClone: {
-    type: Boolean,
-    default: false
-  },
-  overrideStart: {
-    type: Object as () => moment.Moment,
-    default: null
-  },
-  showRoom: {
-    type: Boolean,
-    default: true
-  }
-})
+const props = defineProps<{
+  session: Session
+  warnings?: Warning[]
+  isDragged?: boolean
+  isDragClone?: boolean
+  overrideStart?: Moment | null
+}>()
 
-const emit = defineEmits(['startDragging'])
+const emit = defineEmits<{
+  (e: 'startDragging', payload: { session: Session; event: PointerEvent }): void
+}>()
 
-const eventUrl = inject('eventUrl', null)
-const generateSessionLinkUrl = inject('generateSessionLinkUrl', 
-  ({eventUrl, session}: any) => `${eventUrl}talk/${session.id}/`
+// Inject helpers
+const eventUrl = inject<string | null>('eventUrl', null)
+const generateSessionLinkUrl = inject<
+  (opts: { eventUrl: string | null; session: Session }) => string
+>(
+  'generateSessionLinkUrl',
+  ({ eventUrl, session }) => `${eventUrl}talk/${session.id}/`
 )
+
+const link = computed(() => generateSessionLinkUrl({ eventUrl, session: props.session }))
 
 const isBreak = computed(() => !props.session.code)
 
 const classes = computed(() => {
-  const classes: string[] = []
+  const cls: string[] = []
   if (isBreak.value) {
-    classes.push('isbreak')
+    cls.push('isbreak')
   } else {
-    classes.push('istalk')
-    if (props.session.state && props.session.state !== "confirmed" && props.session.state !== "accepted") {
-      classes.push('pending')
-    } else if (props.session.state && props.session.state !== "confirmed") {
-      classes.push('unconfirmed')
+    cls.push('istalk')
+    if (
+      props.session.state !== 'confirmed' &&
+      props.session.state !== 'accepted'
+    ) {
+      cls.push('pending')
+    } else if (props.session.state !== 'confirmed') {
+      cls.push('unconfirmed')
     }
   }
-  if (props.isDragged) classes.push('dragging')
-  if (props.isDragClone) classes.push('clone')
-  return classes
+  if (props.isDragged) cls.push('dragging')
+  if (props.isDragClone) cls.push('clone')
+  return cls
 })
 
 const style = computed(() => ({
   '--track-color': props.session.track?.color || 'var(--color-primary)'
 }))
 
-const startTime = computed<StartTime | null>(() => {
-  const time = props.overrideStart || props.session.start
-  if (!time) return null
-  
-  if (moment.localeData().longDateFormat('LT').includes('A')) {
+const startTime = computed< { time: string; ampm?: string } | undefined>(() => {
+  const time: Moment | undefined = props.overrideStart || props.session.start
+  if (!time) return undefined
+
+  if (moment.localeData().longDateFormat('LT').endsWith(' A')) {
     return {
       time: time.format('h:mm'),
-      ampm: time.format('A')
+      ampm: time.format('A'),
     }
   } else {
-    return {
-      time: time.format('LT')
-    }
+    return { time: time.format('LT') }
   }
 })
 
-const durationMinutes = computed(() => {
-  if (!props.session.start || !props.session.end) return props.session.duration || 0
+const durationMinutes = computed<number>(() => {
+  if (!props.session.start || !props.session.end) return props.session.duration
   return moment(props.session.end).diff(props.session.start, 'minutes')
 })
 
-const durationPretty = computed(() => {
+const durationPretty = computed<string | undefined>(() => {
   const minutes = durationMinutes.value
-  if (!minutes) return ''
-  
-  const hours = Math.floor(minutes / 60)
-  const remainingMinutes = minutes % 60
-  
+  if (!minutes) return undefined
+
   if (minutes <= 60) {
     return `${minutes}min`
   }
-  
-  if (remainingMinutes) {
-    return `${hours}h${remainingMinutes}min`
+  const hours = Math.floor(minutes / 60)
+  const leftoverMinutes = minutes % 60
+  if (leftoverMinutes) {
+    return `${hours}h${leftoverMinutes}min`
   }
-  
   return `${hours}h`
 })
 
-function onPointerDown(event: PointerEvent) {
+function onPointerDown(event: PointerEvent): void {
   emit('startDragging', { session: props.session, event })
 }
 </script>

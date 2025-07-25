@@ -10,30 +10,36 @@
 		.session {{ session }}
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue'
+<script lang="ts" setup>
+import { computed, defineProps, PropType } from 'vue'
 import { getLocalizedString } from '../utils'
 
 interface Speaker {
-  name: string;
-  code?: string;
+  name: string
+  code?: string
 }
 
 interface Track {
-  name: string | Record<string, string>;
+  name: Record<string, string>;
 }
 
 interface Session {
-  title: string | Record<string, string>;
-  abstract?: string;
-  speakers?: Speaker[];
-  track?: Track;
-  [key: string]: any;
+  title: string | Record<string, string>
+  speakers?: Speaker[]
+  abstract?: string
+  track?: Track
+  [key: string]: any
 }
 
-defineProps<{
-  session?: Session
+const props = defineProps<{
+  session: Session | null
 }>()
+
+const something = computed(() => true)
+
+function somethingMethod(foo: any): any {
+  return foo
+}
 
 defineOptions({
   name: 'Editor'

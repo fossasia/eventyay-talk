@@ -49,9 +49,18 @@ const api = {
     },
 
     fetchTalks(options?: { since?: string; warnings?: boolean }): Promise<any> {
-        let url = `${basePath}/orga/event/${this.eventSlug}/schedule/api/talks/?`
-        if (options?.since) url += `since=${encodeURIComponent(options.since)}&`
-        if (options?.warnings) url += 'warnings=true'
+        let url = `${basePath}/orga/event/${this.eventSlug}/schedule/api/talks/`
+        if (window.location.search) {
+            url += window.location.search + '&'
+        } else {
+            url += '?'
+        }
+        if (options?.since) {
+            url += `since=${encodeURIComponent(options.since)}&`
+        }
+        if (options?.warnings) {
+            url += 'warnings=true'
+        }
         return this.http('GET', url, null)
     },
 
