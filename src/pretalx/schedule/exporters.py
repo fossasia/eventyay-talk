@@ -6,11 +6,15 @@ from zoneinfo import ZoneInfo
 
 import vobject
 from django.conf import settings
+from django.http import HttpResponseRedirect
 from django.template.loader import get_template
 from django.utils.functional import cached_property
+from django.utils.http import urlencode
 from django.utils.safestring import SafeString
 from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
 from i18nfield.utils import I18nJSONEncoder
+from pretalx.common.signals import register_data_exporters
 
 from pretalx import __version__
 from pretalx.common.exporter import BaseExporter
@@ -412,3 +416,33 @@ class FavedICalExporter(BaseExporter):
             ):
                 slot.build_ical(cal)
         return f"{self.event.slug}-favs.ics", "text/calendar", cal.serialize()
+
+
+class BaseGoogleCalendarExporter(BaseExporter):
+    public = True
+    show_qrcode = False
+    icon = "fa-google"
+    @property
+    def show_public(self):
+        return self.ical_exporter_cls(self.event).show_public
+    def render(self, request, **kwargs):
+        # Use the identifier from the iCal exporter for the ICS filename
+        ics_name = self.ical_exporter_cls.identifier if hasattr(self.ical_exporter_cls, 'identifier') else self.ics_identifier
+        ics_url = request.build_absolute_uri(
+            reverse('agenda:export', kwargs={
+                'event': self.event.slug,
+                'name': ics_name
+            })
+        )
+        google_url = f"https://calendar.google.com/calendar/render?{urlencode({'cid': ics_url})}"
+        return HttpResponseRedirect(google_url)
+
+class GoogleCalendarExporter(BaseGoogleCalendarExporter):
+    identifier = "google-calendar"
+    verbose_name = "Add to Google Calendar"
+    ical_exporter_cls = ICalExporter
+
+class MyGoogleCalendarExporter(BaseGoogleCalendarExporter):
+    identifier = "my-google-calendar"
+    verbose_name = "Add My ⭐ Sessions to Google Calendar"
+    ical_exporter_cls = MyICalExporter

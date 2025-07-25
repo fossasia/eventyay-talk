@@ -23,6 +23,8 @@ def get_schedule_urls(regex_prefix, name_prefix=""):
             (".xcal", schedule.ExporterView.as_view(), "export.schedule.xcal"),
             (".json", schedule.ExporterView.as_view(), "export.schedule.json"),
             (".ics", schedule.ExporterView.as_view(), "export.schedule.ics"),
+            ("/export/google-calendar", schedule.GoogleCalendarRedirectView.as_view(), "export.google-calendar"),
+            ("/export/my-google-calendar", schedule.GoogleCalendarRedirectView.as_view(), "export.my-google-calendar"),
             ("/export/<name>", schedule.ExporterView.as_view(), "export"),
             ("/widgets/schedule.json", widget.widget_data, "widget.data"),
             # Legacy widget data URL, but expected in old widget code.
