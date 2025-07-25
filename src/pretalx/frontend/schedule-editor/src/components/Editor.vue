@@ -10,32 +10,40 @@
 		.session {{ session }}
 </template>
 
-<script>
+<script lang="ts" setup>
+import { computed, defineProps, PropType } from 'vue'
 import { getLocalizedString } from '../utils'
-export default {
-	name: 'Editor',
-	components: { },
-	props: {
-		session: null,
-	},
-	data () {
-		return {
-			getLocalizedString
-		}
-	},
-	computed: {
-		something () {
-			return true
-		},
-	},
-	created () { },
-	mounted () { },
-	methods: {
-		somethingMethod (foo) {
-			return foo
-		},
-	}
+
+interface Speaker {
+  name: string
+  code?: string
 }
+
+interface Track {
+  name: Record<string, string>;
+}
+
+interface Session {
+  title: string | Record<string, string>
+  speakers?: Speaker[]
+  abstract?: string
+  track?: Track
+  [key: string]: any
+}
+
+const props = defineProps<{
+  session: Session | null
+}>()
+
+const something = computed(() => true)
+
+function somethingMethod(foo: any): any {
+  return foo
+}
+
+defineOptions({
+  name: 'Editor'
+})
 </script>
 
 <style lang="stylus">
