@@ -15,6 +15,7 @@ from i18nfield.utils import I18nJSONEncoder
 from pretalx import __version__
 from pretalx.common.exporter import BaseExporter
 from pretalx.common.urls import get_base_url
+from pretalx.submission.models.submission import Submission
 
 
 class ScheduleData(BaseExporter):
@@ -135,12 +136,15 @@ class FrabXmlExporter(ScheduleData):
         }
         content = get_template("agenda/schedule.xml").render(context=context)
         if self.favs_retrieve:
+            talk_codes = list(
+                Submission.objects.filter(id__in=self.talk_ids).values_list("code", flat=True)
+            )
             root = ElementTree.fromstring(content)
             for day in root.findall("day"):
                 for room in day.findall("room"):
                     for event in room.findall("event"):
                         event_slug = event.find("url").text.split("/")[-2]
-                        if event_slug not in self.talk_ids:
+                        if event_slug not in talk_codes:
                             room.remove(event)
             filtered_xml_data = ElementTree.tostring(root, encoding="unicode")
             content = SafeString(filtered_xml_data)
@@ -167,11 +171,14 @@ class FrabXCalExporter(ScheduleData):
         context = {"data": self.data, "url": url, "domain": urlparse(url).netloc}
         content = get_template("agenda/schedule.xcal").render(context=context)
         if self.favs_retrieve:
+            talk_codes = list(
+                Submission.objects.filter(id__in=self.talk_ids).values_list("code", flat=True)
+            )
             root = ElementTree.fromstring(content)
             for vcalendar in root.findall("vcalendar"):
                 for vevent in vcalendar.findall("vevent"):
                     event_uid = vevent.find("uid").text.split("@@")[0]
-                    if event_uid not in self.talk_ids:
+                    if event_uid not in talk_codes:
                         vcalendar.remove(vevent)
             filtered_xcal_data = ElementTree.tostring(root, encoding="unicode")
             content = SafeString(filtered_xcal_data)
@@ -304,7 +311,7 @@ class FrabJsonExporter(ScheduleData):
                                 for talk in room["talks"]
                                 if (
                                     self.favs_retrieve is True
-                                    and talk.submission.code in self.talk_ids
+                                    and talk.submission.id in self.talk_ids
                                 )
                                 or not self.favs_retrieve
                             ]
@@ -342,7 +349,7 @@ class ICalExporter(BaseExporter):
     identifier = "schedule.ics"
     verbose_name = _("iCal (full event)")
     public = True
-    show_public = False
+    show_public = True
     show_qrcode = True
     favs_retrieve = False
     talk_ids = []
@@ -366,7 +373,11 @@ class ICalExporter(BaseExporter):
             .order_by("start")
         )
         for talk in talks:
-            if talk.submission and talk.submission.code not in self.talk_ids:
+            if (
+                self.favs_retrieve
+                and talk.submission
+                and talk.submission.id not in self.talk_ids
+            ):
                 continue
             talk.build_ical(cal, creation_time=creation_time, netloc=netloc)
 
