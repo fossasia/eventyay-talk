@@ -32,7 +32,7 @@
 					i.fa.fa-eye
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { 
   ref, 
   computed, 
@@ -48,21 +48,50 @@ import moment from 'moment-timezone'
 import Session from './Session'
 import { getLocalizedString } from '~/utils'
 
-const getSliceName = (date) => `slice-${date.format('MM-DD-HH-mm')}`
+interface Slice {
+  date: moment.Moment;
+  name: string;
+  hasSession?: boolean;
+  hasStart?: boolean;
+  hasEnd?: boolean;
+  isExpanded?: boolean;
+  datebreak?: boolean;
+  gap?: boolean;
+}
 
-// Props
+interface Availability {
+  room: any;
+  start: moment.Moment;
+  end: moment.Moment;
+  active?: boolean;
+}
+
+interface SessionData {
+  id: string;
+  code?: string;
+  title: any;
+  abstract?: string;
+  start?: moment.Moment;
+  end?: moment.Moment;
+  duration: number;
+  speakers?: any[];
+  track?: any;
+  state?: string;
+  room?: any;
+  event?: PointerEvent;
+}
+
 const props = defineProps({
-  sessions: { type: Array, default: () => [] },
-  availabilities: { type: Object, default: () => ({}) },
-  warnings: { type: Object, default: () => ({}) },
-  start: { type: Object, required: true },
-  end: { type: Object, required: true },
-  rooms: { type: Array, default: () => [] },
-  currentDay: { type: Object, default: null },
-  draggedSession: { type: Object, default: null }
+  sessions: { type: Array as () => SessionData[], default: () => [] },
+  availabilities: { type: Object as () => any, default: () => ({}) },
+  warnings: { type: Object as () => any, default: () => ({}) },
+  start: { type: Object as () => moment.Moment, required: true },
+  end: { type: Object as () => moment.Moment, required: true },
+  rooms: { type: Array as () => any[], default: () => [] },
+  currentDay: { type: Object as () => moment.Moment, default: null },
+  draggedSession: { type: Object as () => SessionData | null, default: null }
 })
 
-// Emits
 const emit = defineEmits([
   'startDragging',
   'editSession',
@@ -71,35 +100,30 @@ const emit = defineEmits([
   'changeDay'
 ])
 
-// Injections
 const eventUrl = inject('eventUrl', null)
-const generateSessionLinkUrl = inject('generateSessionLinkUrl', ({eventUrl, session}) => `${eventUrl}talk/${session.id}/`)
+const generateSessionLinkUrl = inject('generateSessionLinkUrl', ({eventUrl, session}: any) => `${eventUrl}talk/${session.id}/`)
 
-// Refs
-const rootEl = ref(null)
-const grid = ref(null)
-const scrolledDay = ref(null)
-const hoverSlice = ref(null)
-const expandedTimes = ref([])
+const rootEl = ref<HTMLElement | null>(null)
+const grid = ref<HTMLElement | null>(null)
+const scrolledDay = ref<moment.Moment | null>(null)
+const hoverSlice = ref<{ time: moment.Moment; roomIndex: number; room: any; duration: number } | null>(null)
+const expandedTimes = ref<moment.Moment[]>([])
 const gridOffset = ref(0)
-const dragScrollTimer = ref(null)
-const dragStart = ref(null)
-const hiddenRooms = ref([])
-const timesliceRefs = ref([])
+const dragScrollTimer = ref<number | null>(null)
+const hiddenRooms = ref<any[]>([])
+const timesliceRefs = ref<HTMLElement[]>([])
 
-// Set up Intersection Observer
-let observer = null
-
-// Computed properties
 const hoverSliceLegal = computed(() => {
-  if (!hoverSlice.value || !hoverSlice.value.room) return false
+  if (!hoverSlice.value || !hoverSlice.value.room || !props.draggedSession) return false
   const start = hoverSlice.value.time
   const end = hoverSlice.value.time.clone().add(props.draggedSession.duration, 'm')
   const sessionId = props.draggedSession.id
-  const roomId = hoverSlice.value.room.id
   
-  for (const session of props.sessions.filter(s => s.start)) {
-    if (session.room.id === roomId && session.id !== sessionId) {
+  for (const session of props.sessions) {
+    if (session.room?.id === hoverSlice.value.room.id && 
+        session.id !== sessionId && 
+        session.start && 
+        session.end) {
       if (
         session.start.isSame(start) || 
         session.end.isSame(end) ||
@@ -115,17 +139,17 @@ const hoverSliceLegal = computed(() => {
 
 const hoverEndSlice = computed(() => {
   if (props.draggedSession && hoverSlice.value) {
-    return hoverSlice.value.time.clone().add(hoverSlice.value.duration, 'm')
+    return hoverSlice.value.time.clone().add(props.draggedSession.duration, 'm')
   }
   return null
 })
 
 const timeslices = computed(() => {
   const minimumSliceMins = 30
-  const slices = []
-  const slicesLookup = {}
+  const slices: Slice[] = []
+  const slicesLookup: Record<string, Slice> = {}
   
-  const pushSlice = (date, {hasStart = false, hasEnd = false, hasSession = false, isExpanded = false} = {}) => {
+  const pushSlice = (date: moment.Moment, {hasStart = false, hasEnd = false, hasSession = false, isExpanded = false} = {}) => {
     const name = getSliceName(date)
     let slice = slicesLookup[name]
     if (slice) {
@@ -148,10 +172,10 @@ const timeslices = computed(() => {
     }
   }
   
-  const fillHalfHours = (start, end, {hasSession} = {}) => {
+  const fillHalfHours = (start: moment.Moment, end: moment.Moment, {hasSession}: any = {}) => {
     let mins = end.diff(start, 'minutes')
     const startingMins = minimumSliceMins - start.minute() % minimumSliceMins
-    const halfHourSlices = []
+    const halfHourSlices: moment.Moment[] = []
     
     if (startingMins) {
       halfHourSlices.push(start.clone().add(startingMins, 'minutes'))
@@ -169,21 +193,25 @@ const timeslices = computed(() => {
 
     const lastSlice = halfHourSlices.pop()
     halfHourSlices.forEach(slice => pushSlice(slice, {hasSession}))
-    pushSlice(lastSlice)
+    if (lastSlice) pushSlice(lastSlice)
   }
   
   for (const session of props.sessions) {
     const lastSlice = slices[slices.length - 1]
     
-    if (!lastSlice) {
-      pushSlice(session.start.clone().startOf('day'))
-    } else if (session.start.isAfter(lastSlice.date, 'minutes')) {
-      fillHalfHours(lastSlice.date, session.start)
-    }
+    if (session.start) {
+      if (!lastSlice) {
+        pushSlice(session.start.clone().startOf('day'))
+      } else if (session.start.isAfter(lastSlice.date, 'minutes')) {
+        fillHalfHours(lastSlice.date, session.start)
+      }
 
-    pushSlice(session.start, {hasStart: true, hasSession: true})
-    pushSlice(session.end, {hasEnd: true})
-    fillHalfHours(session.start, session.end, {hasSession: true})
+      pushSlice(session.start, {hasStart: true, hasSession: true})
+      if (session.end) {
+        pushSlice(session.end, {hasEnd: true})
+        fillHalfHours(session.start, session.end, {hasSession: true})
+      }
+    }
   }
   
   for (const slice of expandedTimes.value) {
@@ -194,13 +222,11 @@ const timeslices = computed(() => {
   
   if (hoverEndSlice.value) pushSlice(hoverEndSlice.value, {hasEnd: true})
   
-  const sliceIsFraction = (slice) => {
-    if (!slice) return
+  const sliceIsFraction = (slice: Slice) => {
     return slice.date.minutes() !== 0 && slice.date.minutes() !== minimumSliceMins
   }
   
-  const sliceShouldDisplay = (slice, index) => {
-    if (!slice) return
+  const sliceShouldDisplay = (slice: Slice, index: number) => {
     if (slice.hasSession || slice.datebreak || slice.hasStart || slice.hasEnd || slice.isExpanded) return true
     if (slice.date.hour() >= 9 && slice.date.hour() < 19) return true
     
@@ -209,16 +235,16 @@ const timeslices = computed(() => {
 
     if (sliceIsFraction(slice)) return true
     if (
-      ((prevSlice?.hasSession || prevSlice?.hasBreak || prevSlice?.hasEnd) && sliceIsFraction(prevSlice)) ||
-      ((nextSlice?.hasSession || nextSlice?.hasBreak) && sliceIsFraction(nextSlice)) ||
-      ((!nextSlice?.hasSession || !nextSlice?.hasBreak) && (slice.hasSession || slice.hasBreak) && sliceIsFraction(nextSlice))
+      ((prevSlice?.hasSession || prevSlice?.hasEnd) && sliceIsFraction(prevSlice)) ||
+      ((nextSlice?.hasSession) && sliceIsFraction(nextSlice)) ||
+      ((!nextSlice?.hasSession) && (slice.hasSession) && sliceIsFraction(nextSlice))
     ) return true
-    if (prevSlice?.hasBreak && slice.hasBreak) return false
+    if (prevSlice?.hasStart && slice.hasStart) return false
     return false
   }
   
   slices.sort((a, b) => a.date.diff(b.date))
-  const compactedSlices = []
+  const compactedSlices: Slice[] = []
   
   for (const [index, slice] of slices.entries()) {
     if (sliceShouldDisplay(slice, index)) {
@@ -227,7 +253,7 @@ const timeslices = computed(() => {
     }
     
     const prevSlice = slices[index - 1]
-    if (sliceShouldDisplay(prevSlice, index - 1) && !prevSlice.datebreak) {
+    if (prevSlice && sliceShouldDisplay(prevSlice, index - 1) && !prevSlice.datebreak) {
       prevSlice.gap = true
     }
   }
@@ -236,10 +262,10 @@ const timeslices = computed(() => {
 })
 
 const oddTimeslices = computed(() => {
-  const result = []
+  const result: moment.Moment[] = []
   props.sessions.forEach(session => {
-    if (session.start.minute() % 30 !== 0) result.push(session.start)
-    if (session.end.minute() % 30 !== 0) result.push(session.end)
+    if (session.start && session.start.minute() % 30 !== 0) result.push(session.start)
+    if (session.end && session.end.minute() % 30 !== 0) result.push(session.end)
   })
   return [...new Set(result)]
 })
@@ -247,8 +273,8 @@ const oddTimeslices = computed(() => {
 const visibleTimeslices = computed(() => {
   return timeslices.value.filter(slice => {
     return slice.date.minute() % 30 === 0 || 
-           expandedTimes.value.includes(slice.date) || 
-           oddTimeslices.value.includes(slice.date)
+           expandedTimes.value.some(t => t.isSame(slice.date)) || 
+           oddTimeslices.value.some(t => t.isSame(slice.date))
   })
 })
 
@@ -274,18 +300,18 @@ const gridStyle = computed(() => {
 })
 
 const gridClasses = computed(() => {
-  const result = []
+  const result: string[] = []
   if (props.draggedSession) result.push('is-dragging')
   if (hoverSlice.value && props.draggedSession && !hoverSliceLegal.value) result.push('illegal-hover')
   return result
 })
 
-const availabilitySlices = computed(() => {
-  const avails = []
+const availabilitySlices = computed<Availability[]>(() => {
+  const avails: Availability[] = []
   if (!visibleTimeslices.value?.length) return avails
   const earliestStart = visibleTimeslices.value[0].date
-  const latestEnd = visibleTimeslices.value.at(-1).date
-  const draggedAvails = []
+  const latestEnd = visibleTimeslices.value.at(-1)?.date || earliestStart
+  const draggedAvails: {start: moment.Moment; end: moment.Moment}[] = []
   
   if (props.draggedSession && props.availabilities.talks?.[props.draggedSession.id]?.length) {
     for (const avail of props.availabilities.talks[props.draggedSession.id]) {
@@ -326,8 +352,8 @@ const scrollParent = computed(() => rootEl.value?.parentElement)
 
 const staticOffsetTop = computed(() => {
   if (!rootEl.value) return 0
-  const rect = rootEl.value.parentElement.getBoundingClientRect()
-  return rect.top
+  const rect = rootEl.value.parentElement?.getBoundingClientRect()
+  return rect?.top || 0
 })
 
 const visibleRooms = computed(() => {
@@ -339,7 +365,7 @@ const visibleSessions = computed(() => {
 })
 
 const visibleAvailabilities = computed(() => {
-  const result = []
+  const result: Availability[] = []
   for (const avail of availabilitySlices.value) {
     if (hiddenRooms.value.includes(avail.room)) continue
     const start = visibleTimeslices.value.find(slice => slice.date.isSameOrAfter(avail.start))
@@ -355,34 +381,16 @@ const visibleAvailabilities = computed(() => {
   return result
 })
 
-// Methods
-const setTimesliceRef = (el) => {
+const setTimesliceRef = (el: HTMLElement | null) => {
   if (el) timesliceRefs.value.push(el)
 }
 
-const startDragging = ({session, event}) => {
-  dragStart.value = {
-    x: event.clientX,
-    y: event.clientY,
-    session: session,
-    now: moment(),
-  }
-  emit('startDragging', {event, session})
+const startDragging = ({session, event}: {session: SessionData; event: PointerEvent}) => {
+  const sessionWithEvent = { ...session, event }
+  emit('startDragging', {event, session: sessionWithEvent})
 }
 
-const stopDragging = (event) => {
-  if (dragStart.value && props.draggedSession) {
-    const distance = dragStart.value.x - event.clientX + dragStart.value.y - event.clientY
-    const timeDiff = moment().diff(dragStart.value.now, 'ms')
-    const session = dragStart.value.session
-    dragStart.value = null
-    
-    if (Math.abs(distance) < 5 && timeDiff < 500) {
-      emit('editSession', session)
-      return
-    }
-  }
-  
+const stopDragging = (event: PointerEvent) => {
   if (!props.draggedSession || !hoverSlice.value || !hoverSliceLegal.value) return
   const start = hoverSlice.value.time
   const end = hoverSlice.value.time.clone().add(props.draggedSession.duration, 'm')
@@ -406,7 +414,7 @@ const stopDragging = (event) => {
   }
 }
 
-const expandTimeslice = (slice) => {
+const expandTimeslice = (slice: Slice) => {
   const index = visibleTimeslices.value.indexOf(slice)
   if (index + 1 >= visibleTimeslices.value.length) {
     expandedTimes.value.push(slice.date.clone().add(5, 'm'))
@@ -422,19 +430,19 @@ const expandTimeslice = (slice) => {
   expandedTimes.value = [...new Set(expandedTimes.value)]
 }
 
-const updateHoverSlice = (e) => {
+const updateHoverSlice = (e: PointerEvent) => {
   if (!props.draggedSession) { 
     hoverSlice.value = null
     return 
   }
   
   if (!dragScrollTimer.value) {
-    dragScrollTimer.value = setInterval(dragOnScroll, 100)
+    dragScrollTimer.value = window.setInterval(dragOnScroll, 100)
   }
   
-  let hoverSliceEl = null
-  for (const element of document.elementsFromPoint(gridOffset.value, e.clientY)) {
-    if (element?.dataset?.slice && element.classList.contains('timeslice')) {
+  let hoverSliceEl: HTMLElement | null = null
+  for (const element of document.elementsFromPoint(e.clientX, e.clientY)) {
+    if (element instanceof HTMLElement && element.dataset?.slice && element.classList.contains('timeslice')) {
       hoverSliceEl = element
       break
     }
@@ -454,14 +462,14 @@ const updateHoverSlice = (e) => {
 }
 
 const getHoverSliceStyle = () => {
-  if (!hoverSlice.value || !props.draggedSession) return
+  if (!hoverSlice.value || !props.draggedSession) return {}
   return { 
     'grid-area': `${getSliceName(hoverSlice.value.time)} / ${hoverSlice.value.roomIndex + 2} / ${getSliceName(hoverSlice.value.time.clone().add(hoverSlice.value.duration, 'm'))}` 
   }
 }
 
-const getSessionStyle = (session) => {
-  if (!session.room || !session.start) return {}
+const getSessionStyle = (session: SessionData) => {
+  if (!session.room || !session.start || !session.end) return {}
   const roomIndex = visibleRooms.value.indexOf(session.room)
   return {
     'grid-row': `${getSliceName(session.start)} / ${getSliceName(session.end)}`,
@@ -469,22 +477,24 @@ const getSessionStyle = (session) => {
   }
 }
 
+const getSliceName = (date: moment.Moment) => `slice-${date.format('MM-DD-HH-mm')}`
+
 const getOffsetTop = () => staticOffsetTop.value + window.scrollY
 
-const getSliceClasses = (slice) => ({
+const getSliceClasses = (slice: Slice) => ({
   datebreak: slice.datebreak,
   gap: slice.gap,
   expandable: isSliceExpandable(slice)
 })
 
-const isSliceExpandable = (slice) => {
+const isSliceExpandable = (slice: Slice) => {
   const index = visibleTimeslices.value.indexOf(slice)
   if (index + 1 === visibleTimeslices.value.length) return false
   const nextSlice = visibleTimeslices.value[index + 1]
   return nextSlice.date.diff(slice.date, 'm') > 5
 }
 
-const getSliceStyle = (slice) => {
+const getSliceStyle = (slice: Slice) => {
   if (slice.datebreak) {
     let index = timeslices.value.findIndex(s => s.date.isAfter(slice.date, 'day'))
     if (index < 0) index = timeslices.value.length - 1
@@ -493,43 +503,42 @@ const getSliceStyle = (slice) => {
   return {'grid-area': `${slice.name} / 1 / auto / auto`}
 }
 
-const getSliceLabel = (slice) => {
+const getSliceLabel = (slice: Slice) => {
   if (slice.datebreak) return slice.date.format('ddd[\n]DD. MMM')
   return slice.date.format('LT')
 }
 
-const changeDay = (day) => {
-  if (scrolledDay.value === day) return
+const changeDay = (day: moment.Moment) => {
+  if (scrolledDay.value && scrolledDay.value.isSame(day)) return
   const sliceName = getSliceName(day)
-  const el = timesliceRefs.value.find(el => el.$el?.dataset?.slice === day.format())
+  const el = timesliceRefs.value.find(el => el.dataset?.slice === day.format())
   if (!el) return
   const offset = el.offsetTop + getOffsetTop()
   scrollTo(offset)
 }
 
-const scrollTo = (offset) => {
+const scrollTo = (offset: number) => {
   if (scrollParent.value) {
     scrollParent.value.scroll({top: offset, behavior: "smooth"})
   }
 }
 
-const scrollBy = (offset) => {
+const scrollBy = (offset: number) => {
   if (scrollParent.value) {
     scrollParent.value.scrollBy({top: offset, behavior: "smooth"})
   }
 }
 
 const dragOnScroll = () => {
-  if (!props.draggedSession) {
-    clearInterval(dragScrollTimer.value)
-    dragScrollTimer.value = null
+  if (!props.draggedSession || !props.draggedSession.event) {
+    if (dragScrollTimer.value) {
+      clearInterval(dragScrollTimer.value)
+      dragScrollTimer.value = null
+    }
     return
   }
   
-  const event = props.draggedSession.event
-  if (!event) return
-  
-  const yPos = event.clientY - staticOffsetTop.value
+  const yPos = props.draggedSession.event.clientY - staticOffsetTop.value
   const parentHeight = scrollParent.value?.clientHeight || 0
   
   if (yPos < 160) {
@@ -539,18 +548,16 @@ const dragOnScroll = () => {
   }
 }
 
-const onIntersect = (entries) => {
-  const entry = entries.sort((a, b) => b.time - a.time).find(entry => entry.isIntersecting)
-  if (!entry) return
+const onIntersect = (entries: IntersectionObserverEntry[]) => {
+  const entry = entries.sort((a, b) => (b.time || 0) - (a.time || 0)).find(entry => entry.isIntersecting)
+  if (!entry || !(entry.target instanceof HTMLElement)) return
   const day = moment.parseZone(entry.target.dataset.slice).startOf('day')
   scrolledDay.value = day
   emit('changeDay', scrolledDay.value)
 }
 
-// Watchers
 watch(() => props.currentDay, changeDay)
 
-// Lifecycle hooks
 onMounted(async () => {
   await nextTick()
   
@@ -558,23 +565,18 @@ onMounted(async () => {
     gridOffset.value = grid.value.getBoundingClientRect().left
   }
   
-  observer = new IntersectionObserver(onIntersect, {
+  let observer: IntersectionObserver | null = new IntersectionObserver(onIntersect, {
     root: scrollParent.value,
     rootMargin: '-45% 0px'
   })
   
   timesliceRefs.value.forEach(el => {
     if (!el.dataset?.slice || !el.dataset.slice.endsWith('00-00')) return
-    observer.observe(el)
+    observer?.observe(el)
   })
 })
 
 onUnmounted(() => {
-  if (observer) {
-    observer.disconnect()
-    observer = null
-  }
-  
   if (dragScrollTimer.value) {
     clearInterval(dragScrollTimer.value)
     dragScrollTimer.value = null
