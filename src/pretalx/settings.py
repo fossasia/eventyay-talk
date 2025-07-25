@@ -274,6 +274,13 @@ LOGGING = {
             "level": "INFO",  # Do not output all the queries
             "propagate": True,
         },
+        "pretalx": {
+            "handlers": ["file", "console"],
+            # We deliberately want to collect DEBUG logs for our app from production,
+            # because some bugs are only exposed in production environment.
+            "level": "DEBUG",
+            "propagate": True,
+        },
     },
 }
 logging.getLogger("MARKDOWN").setLevel(logging.WARNING)
