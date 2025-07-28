@@ -79,9 +79,9 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, onMounted, onUnmounted, onBeforeMount, nextTick, Ref } from 'vue'
 import moment, { Moment } from 'moment-timezone'
-import Editor from '~/components/Editor'
-import GridSchedule from '~/components/GridSchedule'
-import Session from '~/components/Session'
+import Editor from '~/components/Editor.vue'
+import GridSchedule from '~/components/GridSchedule.vue'
+import Session from '~/components/Session.vue'
 import api from '~/api'
 import { getLocalizedString } from '~/utils'
 
@@ -153,6 +153,7 @@ interface Schedule {
   tracks: Track[]
   speakers: Speaker[]
   talks: Talk[]
+  now?: string
 }
 
 const props = defineProps<{
@@ -343,13 +344,13 @@ const dateFormat = computed<string>(() => {
 const userTimezone = ref<string>(moment.tz.guess())
 
 async function fetchSchedule(options?: Record<string, any>): Promise<Schedule> {
-  const sched = await api.fetchTalks(options)
+  const sched = await api.fetchTalks(options) as unknown as Schedule
   return sched
 }
 
 async function fetchAdditionalScheduleData(): Promise<void> {
-  Object.assign(availabilities, await api.fetchAvailabilities())
-  Object.assign(warnings, await api.fetchWarnings())
+  Object.assign(availabilities, await api.fetchAvailabilities() as any)
+  Object.assign(warnings, await api.fetchWarnings() as any)
 }
 
 function changeDay(day: Moment): void {
@@ -359,10 +360,12 @@ function changeDay(day: Moment): void {
 }
 
 function saveTalk(session: Talk): void {
-  api.saveTalk(session).then((response) => {
-    warnings[session.code] = response.warnings
-    const talk = schedule.value?.talks.find((s) => s.id === session.id)
-    if (talk) talk.updated = response.updated
+  api.saveTalk(session as any).then((response: any) => {
+    if (response) {
+      warnings[session.code] = response.warnings
+      const talk = schedule.value?.talks.find((s) => s.id === session.id)
+      if (talk) talk.updated = response.updated
+    }
   })
 }
 
@@ -389,16 +392,18 @@ interface CreateSessionEvent {
 }
 
 async function createSession(e: CreateSessionEvent): Promise<void> {
-  const response = await api.createTalk(e.session)
+  const response: any = await api.createTalk(e.session as any)
   warnings[e.session.code] = response.warnings
-  const newSession = { ...e.session }
-  newSession.id = response.id
-  schedule.value?.talks.push(newSession)
+  const newSession = { ...e.session, id: response.id }
+  if (schedule.value) {
+    schedule.value.talks = [...schedule.value.talks, newSession]
+  }
+  
   editorStart(newSession)
 }
 
 function editorStart(session: SessionData | Talk): void {
-  editorSession.value = { ...session }
+  editorSession.value = { ...session } as SessionData
 }
 
 function editorSave(): void {
@@ -409,11 +414,28 @@ function editorSave(): void {
     const startMoment = moment(editorSession.value.start)
     editorSession.value.end = startMoment.clone().add(editorSession.value.duration ?? 0, 'minutes')
   }
-  saveTalk(editorSession.value as Talk)
+  
+  const talk: Talk = {
+    id: editorSession.value.id,
+    code: editorSession.value.code,
+    title: typeof editorSession.value.title === 'string' 
+      ? { en: editorSession.value.title } 
+      : editorSession.value.title,
+    duration: editorSession.value.duration ?? 0,
+    start: editorSession.value.start?.toISOString(),
+    end: editorSession.value.end?.toISOString(),
+    room: editorSession.value.room?.id,
+    speakers: editorSession.value.speakers?.map(s => s.code),
+    track: editorSession.value.track?.id,
+    abstract: editorSession.value.abstract,
+    state: editorSession.value.state
+  }
+  
+  saveTalk(talk)
 
   const sessionInSchedule = schedule.value?.talks.find((s) => s.id === editorSession.value?.id)
   if (sessionInSchedule && editorSession.value) {
-    sessionInSchedule.end = editorSession.value.end as string | undefined
+    sessionInSchedule.end = editorSession.value.end?.toISOString()
     if (!('submission' in sessionInSchedule)) {
       sessionInSchedule.title = editorSession.value.title as Record<string, string>
     }
@@ -425,7 +447,7 @@ function editorSave(): void {
 function editorDelete() {
   if (!editorSession.value) return
   editorSessionWaiting.value = true
-  api.deleteTalk(editorSession.value)
+  api.deleteTalk({ id: String(editorSession.value.id) } as any)
   if (schedule.value) {
     schedule.value.talks = schedule.value.talks.filter((s) => s.id !== editorSession.value?.id)
   }
@@ -469,12 +491,12 @@ function stopDragging() {
         if (movedSession) {
           movedSession.start = null
           movedSession.end = null
-          movedSession.room = null
+          movedSession.room = undefined
           saveTalk(movedSession)
         }
       } else if (schedule.value?.talks.find((s) => s.id === draggedSession.value!.id)) {
         schedule.value.talks = schedule.value.talks.filter((s) => s.id !== draggedSession.value!.id)
-        api.deleteTalk(draggedSession.value)
+        api.deleteTalk({ id: String(draggedSession.value.id) } as any)
       }
     }
   } finally {
@@ -492,17 +514,25 @@ async function pollUpdates() {
   const sched = await fetchSchedule({ since: since.value, warnings: true })
   if (sched.version !== schedule.value.version) {
     window.location.reload()
+    return
   }
+  const updatedTalks = [...schedule.value.talks]
+  let hasUpdates = false
   sched.talks.forEach((talk) => {
-    const oldTalk = schedule.value!.talks.find((t) => t.id === talk.id)
+    const oldTalk = updatedTalks.find((t) => t.id === talk.id)
     if (!oldTalk) {
-      schedule.value!.talks.push(talk)
+      updatedTalks.push(talk)
+      hasUpdates = true
     } else if (moment(talk.updated).isAfter(moment(oldTalk.updated))) {
       Object.assign(oldTalk, talk)
+      hasUpdates = true
     }
   })
-  since.value = sched.now
-  window.setTimeout(pollUpdates, 10 * 1000)
+  if (hasUpdates) {
+    schedule.value.talks = updatedTalks
+  }
+  since.value = (sched as any).now || schedule.value.now
+  window.setTimeout(pollUpdates, 10 * 50)
 }
 
 onBeforeMount(async () => {
@@ -512,7 +542,7 @@ onBeforeMount(async () => {
   locales.value = schedule.value.locales
   eventSlug.value = window.location.pathname.split('/')[3] ?? null
   currentDay.value = days.value[0]
-  window.setTimeout(pollUpdates, 10 * 1000)
+  window.setTimeout(pollUpdates, 10 * 50)
   await fetchAdditionalScheduleData()
   await new Promise<void>((resolve) => {
     const poll = () => {

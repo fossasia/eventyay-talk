@@ -33,14 +33,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch, onMounted, onUnmounted, defineProps, defineEmits, inject, nextTick, Ref } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, defineProps, defineEmits, inject, nextTick } from 'vue'
 import moment, { Moment } from 'moment-timezone'
-import Session from './Session'
+import Session from './Session.vue'
 import { getLocalizedString } from '~/utils'
 
 interface Room {
   id: string
-  name: Record<string, string>
+  name: string | Record<string, string>
 }
 
 interface SessionDatum {
@@ -106,13 +106,13 @@ const props = defineProps<{
   draggedSession: SessionDatum | null
 }>()
 
-const emit = defineEmits<{
-  (e: 'startDragging', payload: { event: PointerEvent; session: SessionDatum }): void
-  (e: 'editSession', session: SessionDatum): void
-  (e: 'createSession', payload: { session: SessionDatum }): void
-  (e: 'rescheduleSession', payload: { session: SessionDatum; start: string; end: string; room: Room }): void
-  (e: 'changeDay', day: Moment): void
-}>()
+const emit = defineEmits([
+  'startDragging',
+  'editSession',
+  'createSession',
+  'rescheduleSession',
+  'changeDay'
+])
 
 const eventUrl = inject<string | null>('eventUrl', null)
 const generateSessionLinkUrl = inject<(opts: { eventUrl: string | null; session: SessionDatum }) => string>(
@@ -159,7 +159,7 @@ const hoverSliceLegal = computed(() => {
 
 const hoverEndSlice = computed((): Moment | null => {
   if (props.draggedSession && hoverSlice.value) {
-    return hoverSlice.value.time.clone().add(hoverSlice.value.duration, 'm')
+    return hoverSlice.value.time.clone().add(props.draggedSession.duration, 'm')
   }
   return null
 })
@@ -336,8 +336,8 @@ const availabilitySlices = computed<Availability[]>(() => {
   const latestEnd = visibleTimeslices.value[visibleTimeslices.value.length - 1].date
   const draggedAvails: Array<{ start: Moment; end: Moment }> = []
 
-  if (props.draggedSession && props.availabilities.talks?.[props.draggedSession.id]) {
-    for (const avail of props.availabilities.talks[props.draggedSession.id]) {
+  if (props.draggedSession && props.availabilities.talks?.[props.draggedSession.id as any]) {
+    for (const avail of props.availabilities.talks[props.draggedSession.id as any]) {
       draggedAvails.push({
         start: moment(avail.start),
         end: moment(avail.end),
@@ -436,14 +436,18 @@ const stopDragging = (event: PointerEvent) => {
   const end = hoverSlice.value.time.clone().add(props.draggedSession.duration, 'm')
 
   if (!props.draggedSession.id) {
-    emit('createSession', {
-      session: {
-        ...props.draggedSession,
-        start: start.format(),
-        end: end.format(),
-        room: hoverSlice.value.room.id,
-      },
-    })
+    // Create a new session object with the correct room format
+    const newSessionData: SessionDatum = {
+      ...props.draggedSession,
+      start: moment(start.format()),
+      end: moment(end.format()),
+      room: { 
+        id: hoverSlice.value.room.id,
+        name: hoverSlice.value.room.name
+      }
+    }
+    
+    emit('createSession', { session: newSessionData })
   } else {
     emit('rescheduleSession', {
       session: props.draggedSession,
@@ -520,7 +524,7 @@ const getSessionStyle = (session: SessionDatum | Availability): Record<string, s
   const roomIndex = visibleRooms.value.indexOf(session.room)
   return {
     'grid-row': `${getSliceName(session.start)} / ${getSliceName(session.end)}`,
-    'grid-column': roomIndex > -1 ? roomIndex + 2 : '',
+    'grid-column': roomIndex > -1 ? (roomIndex + 2).toString() : '',
   }
 }
 
@@ -553,8 +557,8 @@ const getSliceLabel = (slice: Timeslice): string => {
   return slice.date.format('LT')
 }
 
-const changeDay = (day: Moment) => {
-  if (scrolledDay.value?.isSame(day)) return
+const changeDay = (day: Moment | null) => {
+  if (!day || scrolledDay.value?.isSame(day)) return
 
   const el = timesliceRefs.value.find(el => el.dataset?.slice === day.format())
   if (!el) return
@@ -602,15 +606,19 @@ const onIntersect = (entries: IntersectionObserverEntry[]) => {
   // Find the last visible entry by time, which is intersecting
   const entry = entries
     .slice()
-    .sort((a, b) => (new Date(b.target.dataset.slice!).getTime() - new Date(a.target.dataset.slice!).getTime()))
+    .sort((a, b) => {
+      const aDate = (a.target as HTMLElement).dataset.slice
+      const bDate = (b.target as HTMLElement).dataset.slice
+      return new Date(bDate!).getTime() - new Date(aDate!).getTime()
+    })
     .find((e) => e.isIntersecting)
   if (!entry) return
-  const day = moment.parseZone(entry.target.dataset.slice!).startOf('day')
+  const day = moment.parseZone((entry.target as HTMLElement).dataset.slice!).startOf('day')
   scrolledDay.value = day
   emit('changeDay', day)
 }
 
-watch(() => props.currentDay, changeDay)
+watch(() => props.currentDay, (day) => changeDay(day))
 
 onMounted(async () => {
   await nextTick()

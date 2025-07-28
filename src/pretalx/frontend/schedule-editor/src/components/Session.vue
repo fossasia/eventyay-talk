@@ -30,7 +30,7 @@ interface Speaker {
 }
 
 interface Track {
-  name: Record<string, string>
+  name: string | Record<string, string>
   color?: string
   [key: string]: any
 }

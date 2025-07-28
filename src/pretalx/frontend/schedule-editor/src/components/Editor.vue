@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps, PropType } from 'vue'
+import { computed, defineProps } from 'vue'
 import { getLocalizedString } from '../utils'
 
 interface Speaker {
@@ -20,7 +20,7 @@ interface Speaker {
 }
 
 interface Track {
-  name: Record<string, string>;
+  name: string | Record<string, string>
 }
 
 interface Session {
