@@ -3,7 +3,7 @@ import json
 import logging
 import textwrap
 from contextlib import suppress
-from urllib.parse import unquote
+from urllib.parse import unquote, urlencode, urlparse, urlunparse 
 
 from django.contrib import messages
 from django.http import (
@@ -15,6 +15,7 @@ from django.http import (
 )
 from django.urls import resolve, reverse
 from django.utils.functional import cached_property
+from django.utils.http import urlencode
 from django.utils.translation import activate
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page
@@ -91,6 +92,9 @@ class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
             exporter = url.kwargs.get("name") or unquote(
                 self.request.GET.get("exporter")
             )
+        elif url.url_name in ["export.google-calendar", "export.my-google-calendar"]:
+            # Handle our explicit Google Calendar URL patterns
+            exporter = url.url_name.replace("export.", "")
         else:
             exporter = url.url_name
 
@@ -300,3 +304,32 @@ class ScheduleNoJsView(ScheduleView):
 class ChangelogView(EventPermissionRequired, TemplateView):
     template_name = "agenda/changelog.html"
     permission_required = "agenda.view_schedule"
+
+
+class GoogleCalendarRedirectView(EventPermissionRequired, ScheduleMixin, TemplateView):
+    permission_required = "agenda.view_schedule"
+
+    def get(self, request, *args, **kwargs):
+        # Use resolver_match.url_name for robust route detection
+        url_name = request.resolver_match.url_name if request.resolver_match else None
+        if url_name == 'export.my-google-calendar':
+            ics_name = 'schedule-my.ics'
+        else:
+            ics_name = 'schedule.ics'
+
+        # Build the iCal URL
+        ics_url = request.build_absolute_uri(
+            reverse('agenda:export', kwargs={
+                'event': self.request.event.slug,
+                'name': ics_name
+            })
+        )
+        
+        # Change scheme to webcal
+        parsed = urlparse(ics_url)
+        ics_url = urlunparse(('webcal',) + parsed[1:])
+
+        # Create Google Calendar URL
+        google_url = f"https://calendar.google.com/calendar/render?{urlencode({'cid': ics_url})}"
+
+        return HttpResponseRedirect(google_url)
