@@ -77,9 +77,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed, onMounted, onUnmounted, onBeforeMount, nextTick, Ref } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, onBeforeMount, nextTick } from 'vue'
 import moment, { Moment } from 'moment-timezone'
-import Editor from '~/components/Editor.vue'
 import GridSchedule from '~/components/GridSchedule.vue'
 import Session from '~/components/Session.vue'
 import api from '~/api'
@@ -158,7 +157,6 @@ interface Schedule {
 
 const props = defineProps<{
   locale: string
-  version?: string
 }>()
 
 const eventSlug = ref<string | null>(null)
@@ -320,15 +318,6 @@ const days = computed<Moment[]>(() => {
   return daysArray
 })
 
-const inEventTimezone = computed<boolean>(() => {
-  if (!schedule.value || !schedule.value.talks.length) return false
-  const example = schedule.value.talks[0].start
-  if (!example) return false
-  return (
-    moment.tz(example, userTimezone.value).format('Z') === moment.tz(example, schedule.value.timezone).format('Z')
-  )
-})
-
 const dateFormat = computed<string>(() => {
   if (
     (schedule.value && schedule.value.rooms.length > 2) ||
@@ -340,8 +329,6 @@ const dateFormat = computed<string>(() => {
   if (days.value && days.value.length <= 7) return 'dddd DD. MMM'
   return 'ddd DD. MMM'
 })
-
-const userTimezone = ref<string>(moment.tz.guess())
 
 async function fetchSchedule(options?: Record<string, any>): Promise<Schedule> {
   const sched = await api.fetchTalks(options) as unknown as Schedule

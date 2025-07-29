@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch, onMounted, onUnmounted, defineProps, defineEmits, inject, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, defineProps, defineEmits, nextTick } from 'vue'
 import moment, { Moment } from 'moment-timezone'
 import Session from './Session.vue'
 import { getLocalizedString } from '~/utils'
@@ -114,12 +114,6 @@ const emit = defineEmits([
   'rescheduleSession',
   'changeDay'
 ])
-
-const eventUrl = inject<string | null>('eventUrl', null)
-const generateSessionLinkUrl = inject<(opts: { eventUrl: string | null; session: SessionDatum }) => string>(
-  'generateSessionLinkUrl',
-  ({ eventUrl, session }) => `${eventUrl}talk/${session.id}/`
-)
 
 const rootEl = ref<HTMLElement | null>(null)
 const grid = ref<HTMLElement | null>(null)

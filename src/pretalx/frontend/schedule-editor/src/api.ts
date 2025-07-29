@@ -92,12 +92,6 @@ const WarningSchema = z.object({
 });
 
 const WarningsSchema = z.record(z.string(), z.array(WarningSchema)).optional();
-interface ApiResponse<T> {
-  results?: T[];
-  next?: string;
-  [key: string]: unknown;
-}
-
 interface TalkPayload {
   id?: number;
   code?: string;
@@ -151,17 +145,6 @@ const api = {
     }
     
     return json as T;
-  },
-
-  async getList<T>(url: string): Promise<T[]> {
-    const response = await this.http<ApiResponse<T>>('GET', url, null);
-    if (!response) return [];
-    
-    if (response.next) {
-      const nextPage = await this.getList<T>(response.next);
-      return [...(response.results || []), ...nextPage];
-    }
-    return response.results || [];
   },
 
   async fetchTalks(options?: { since?: string; warnings?: boolean }): Promise<z.infer<typeof ScheduleSchema>> {

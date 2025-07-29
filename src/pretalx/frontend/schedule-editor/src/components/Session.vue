@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject } from 'vue'
+import { computed } from 'vue'
 import moment, { Moment } from 'moment-timezone'
 import { getLocalizedString } from '~/utils'
 
@@ -64,17 +64,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'startDragging', payload: { session: Session; event: PointerEvent }): void
 }>()
-
-// Inject helpers
-const eventUrl = inject<string | null>('eventUrl', null)
-const generateSessionLinkUrl = inject<
-  (opts: { eventUrl: string | null; session: Session }) => string
->(
-  'generateSessionLinkUrl',
-  ({ eventUrl, session }) => `${eventUrl}talk/${session.id}/`
-)
-
-const link = computed(() => generateSessionLinkUrl({ eventUrl, session: props.session }))
 
 const isBreak = computed(() => !props.session.code)
 
