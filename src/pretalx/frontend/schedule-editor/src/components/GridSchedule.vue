@@ -52,7 +52,7 @@ interface SessionDatum {
   start: Moment
   end: Moment
   duration: number
-  [key: string]: any
+  [key: string]: unknown
 }
 
 interface Availability {
@@ -60,6 +60,7 @@ interface Availability {
   start: Moment
   end: Moment
   active?: boolean
+  [key: string]: unknown
 }
 
 interface Timeslice {

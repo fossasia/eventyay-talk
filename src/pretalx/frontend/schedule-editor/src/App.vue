@@ -184,7 +184,7 @@ const eventTimezone = ref<string | null>(null)
 const since = ref<string | undefined>(undefined)
 
 function $t(key: string): string {
-  return typeof window !== 'undefined' && (window as any).$t ? (window as any).$t(key) : key
+  return typeof window !== 'undefined' && (window as { $t?: (key: string) => string }).$t?.(key) || key;
 }
 
 const translations = reactive({
@@ -349,8 +349,8 @@ async function fetchSchedule(options?: Record<string, any>): Promise<Schedule> {
 }
 
 async function fetchAdditionalScheduleData(): Promise<void> {
-  Object.assign(availabilities, await api.fetchAvailabilities() as any)
-  Object.assign(warnings, await api.fetchWarnings() as any)
+  Object.assign(availabilities, await api.fetchAvailabilities() as unknown)
+  Object.assign(warnings, await api.fetchWarnings() as unknown)
 }
 
 function changeDay(day: Moment): void {
@@ -531,8 +531,8 @@ async function pollUpdates() {
   if (hasUpdates) {
     schedule.value.talks = updatedTalks
   }
-  since.value = (sched as any).now || schedule.value.now
-  window.setTimeout(pollUpdates, 10 * 50)
+  since.value = sched.now || schedule.value.now
+  window.setTimeout(pollUpdates, 10 * 30)
 }
 
 onBeforeMount(async () => {
@@ -542,14 +542,14 @@ onBeforeMount(async () => {
   locales.value = schedule.value.locales
   eventSlug.value = window.location.pathname.split('/')[3] ?? null
   currentDay.value = days.value[0]
-  window.setTimeout(pollUpdates, 10 * 50)
+  window.setTimeout(pollUpdates, 10 * 30)
   await fetchAdditionalScheduleData()
   await new Promise<void>((resolve) => {
     const poll = () => {
       const el = document.querySelector('.pretalx-schedule')
       // @ts-ignore
       if (el && (el.parentElement || el.getRootNode().host)) return resolve()
-      setTimeout(poll, 100)
+      setTimeout(poll, 80)
     }
     poll()
   })

@@ -26,13 +26,13 @@ import { getLocalizedString } from '~/utils'
 
 interface Speaker {
   name: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 interface Track {
   name: string | Record<string, string>
   color?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 interface Session {
@@ -45,12 +45,12 @@ interface Session {
   end?: Moment
   code?: string | null
   duration: number
-  [key: string]: any
+  [key: string]: unknown
 }
 
 interface Warning {
   message: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 const props = defineProps<{

@@ -28,7 +28,7 @@ interface Session {
   speakers?: Speaker[]
   abstract?: string
   track?: Track
-  [key: string]: any
+  [key: string]: unknown
 }
 
 const props = defineProps<{
