@@ -28,7 +28,7 @@ from pretalx.common.text.path import safe_filename
 from pretalx.common.views.mixins import EventPermissionRequired
 from pretalx.schedule.ascii import draw_ascii_schedule
 from pretalx.schedule.exporters import ScheduleData
-from pretalx.submission.models.submission import SubmissionFavouriteDeprecated
+from pretalx.submission.models.submission import SubmissionFavourite, SubmissionFavouriteDeprecated
 
 logger = logging.getLogger(__name__)
 
@@ -124,12 +124,13 @@ class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
                 exporter.talk_ids = request.GET.get("talks").split(",")
             else:
                 return HttpResponseRedirect(self.request.event.urls.login)
-        favs_talks = SubmissionFavouriteDeprecated.objects.filter(
+        favs_talks = SubmissionFavourite.objects.filter(
             user=self.request.user.id
         )
         if favs_talks.exists():
-            exporter.talk_ids = favs_talks[0].talk_list
-
+            exporter.talk_ids = list(
+                favs_talks.values_list("submission_id", flat=True)
+            )
         exporter.is_orga = getattr(self.request, "is_orga", False)
 
         try:
