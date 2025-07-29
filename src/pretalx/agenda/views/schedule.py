@@ -6,6 +6,9 @@ from contextlib import suppress
 from urllib.parse import unquote, urlencode, urlparse, urlunparse 
 
 from django.contrib import messages
+from django.core import signing
+from django.utils import timezone
+from datetime import timedelta
 from django.http import (
     Http404,
     HttpResponse,
@@ -65,6 +68,44 @@ class ScheduleMixin:
             )
         return super().dispatch(request, *args, **kwargs)
 
+    @staticmethod
+    def generate_ics_token(user_id):
+        """Generate a signed token with user ID and 15-day expiry"""
+        expiry = timezone.now() + timedelta(days=15)
+        value = {"user_id": user_id, "exp": int(expiry.timestamp())}
+        return signing.dumps(value, salt="my-starred-ics")
+
+    @staticmethod
+    def parse_ics_token(token):
+        """Parse and validate the token, return user_id if valid"""
+        try:
+            value = signing.loads(token, salt="my-starred-ics", max_age=15*24*60*60)
+            if value["exp"] < int(timezone.now().timestamp()):
+                raise Exception("Token expired")
+            return value["user_id"]
+        except Exception:
+            return None
+    
+    @staticmethod
+    def check_token_expiry(token):
+        """Check if a token exists and has more than 4 days until expiry
+        
+        Returns:
+        - None if token is invalid
+        - False if token is valid but expiring soon (< 4 days)
+        - True if token is valid and not expiring soon (>= 4 days)
+        """
+        try:
+            value = signing.loads(token, salt="my-starred-ics")
+            expiry_date = timezone.datetime.fromtimestamp(value["exp"], tz=timezone.utc)
+            days_until_expiry = (expiry_date - timezone.now()).days
+            
+            # Token is valid but check if it's expiring soon
+            if days_until_expiry < 4:
+                return False  # Valid but expiring soon
+            return True  # Valid and not expiring soon
+        except Exception:
+            return None  # Invalid token
 
 class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
     permission_required = "agenda.view_schedule"
@@ -88,7 +129,8 @@ class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
     def get_exporter(self, public=True):
         url = resolve(self.request.path_info)
 
-        if url.url_name == "export":
+        # Handle both export and export-tokenized URLs
+        if url.url_name in ["export", "export-tokenized"]:
             exporter = url.kwargs.get("name") or unquote(
                 self.request.GET.get("exporter")
             )
@@ -118,19 +160,33 @@ class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
         elif "lang" in request.GET:
             activate(request.event.locale)
 
-        exporter.schedule = self.schedule
-        if "-my" in exporter.identifier and self.request.user.id is None:
+        # Handle tokenized access for Google Calendar integration
+        token = kwargs.get('token')
+        if token and "-my" in exporter.identifier:
+            user_id = ScheduleMixin.parse_ics_token(token)
+            if not user_id:
+                raise Http404()
+            
+            # Set up exporter for this user without requiring login
+            favs_talks = SubmissionFavourite.objects.filter(user=user_id)
+            if favs_talks.exists():
+                exporter.talk_ids = list(
+                    favs_talks.values_list("submission_id", flat=True)
+                )
+        elif "-my" in exporter.identifier and self.request.user.id is None:
             if request.GET.get("talks"):
                 exporter.talk_ids = request.GET.get("talks").split(",")
             else:
                 return HttpResponseRedirect(self.request.event.urls.login)
-        favs_talks = SubmissionFavourite.objects.filter(
-            user=self.request.user.id
-        )
-        if favs_talks.exists():
-            exporter.talk_ids = list(
-                favs_talks.values_list("submission_id", flat=True)
+        elif "-my" in exporter.identifier:
+            favs_talks = SubmissionFavourite.objects.filter(
+                user=self.request.user.id
             )
+            if favs_talks.exists():
+                exporter.talk_ids = list(
+                    favs_talks.values_list("submission_id", flat=True)
+                )
+
         exporter.is_orga = getattr(self.request, "is_orga", False)
 
         try:
@@ -313,18 +369,43 @@ class GoogleCalendarRedirectView(EventPermissionRequired, ScheduleMixin, Templat
         # Use resolver_match.url_name for robust route detection
         url_name = request.resolver_match.url_name if request.resolver_match else None
         if url_name == 'export.my-google-calendar':
-            ics_name = 'schedule-my.ics'
+            # Generate tokenized URL for my starred sessions
+            if not request.user.is_authenticated:
+                return HttpResponseRedirect(self.request.event.urls.login)
+            
+            # Get existing token from session if available
+            existing_token = request.session.get('my_starred_ics_token')
+            generate_new_token = True
+            
+            # If we have an existing token, check if it's still valid and not expiring soon
+            if existing_token:
+                token_status = self.check_token_expiry(existing_token)
+                if token_status is True:  # Token is valid and not expiring soon
+                    token = existing_token
+                    generate_new_token = False
+            
+            # Generate a new token if needed
+            if generate_new_token:
+                token = self.generate_ics_token(request.user.id)
+                # Store the token in the session for future use
+                request.session['my_starred_ics_token'] = token
+            
+            ics_url = request.build_absolute_uri(
+                reverse('agenda:export-tokenized', kwargs={
+                    'event': self.request.event.slug,
+                    'name': 'schedule-my.ics',
+                    'token': token
+                })
+            )
         else:
-            ics_name = 'schedule.ics'
+            # Regular public calendar
+            ics_url = request.build_absolute_uri(
+                reverse('agenda:export', kwargs={
+                    'event': self.request.event.slug,
+                    'name': 'schedule.ics'
+                })
+            )
 
-        # Build the iCal URL
-        ics_url = request.build_absolute_uri(
-            reverse('agenda:export', kwargs={
-                'event': self.request.event.slug,
-                'name': ics_name
-            })
-        )
-        
         # Change scheme to webcal
         parsed = urlparse(ics_url)
         ics_url = urlunparse(('webcal',) + parsed[1:])

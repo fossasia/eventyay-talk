@@ -45,6 +45,11 @@ urlpatterns = [
                     widget.widget_script,
                     name="widget.script",
                 ),
+                path(
+                    "export/<str:name>/<str:token>/",
+                    schedule.ExporterView.as_view(),
+                    name="export-tokenized",
+                ),
                 path("static/event.css", widget.event_css, name="event.css"),
                 path(
                     "schedule/changelog/",
