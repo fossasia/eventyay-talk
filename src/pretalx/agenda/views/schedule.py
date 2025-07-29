@@ -3,7 +3,7 @@ import json
 import logging
 import textwrap
 from contextlib import suppress
-from urllib.parse import unquote
+from urllib.parse import unquote, urlencode, urlparse, urlunparse 
 
 from django.contrib import messages
 from django.http import (
@@ -324,6 +324,10 @@ class GoogleCalendarRedirectView(EventPermissionRequired, ScheduleMixin, Templat
                 'name': ics_name
             })
         )
+        
+        # Change scheme to webcal
+        parsed = urlparse(ics_url)
+        ics_url = urlunparse(('webcal',) + parsed[1:])
 
         # Create Google Calendar URL
         google_url = f"https://calendar.google.com/calendar/render?{urlencode({'cid': ics_url})}"
