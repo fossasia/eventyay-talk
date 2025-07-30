@@ -81,9 +81,10 @@ class ScheduleMixin:
         try:
             value = signing.loads(token, salt="my-starred-ics", max_age=15*24*60*60)
             if value["exp"] < int(timezone.now().timestamp()):
-                raise Exception("Token expired")
+                raise ValueError("Token expired")
             return value["user_id"]
-        except Exception:
+        except (signing.BadSignature, signing.SignatureExpired, KeyError, ValueError) as e:
+            logger.warning(f"Failed to parse ICS token: {e}")
             return None
     
     @staticmethod
@@ -104,7 +105,8 @@ class ScheduleMixin:
             if days_until_expiry < 4:
                 return False  # Valid but expiring soon
             return True  # Valid and not expiring soon
-        except Exception:
+        except (signing.BadSignature, KeyError, ValueError) as e:
+            logger.warning(f"Failed to check token expiry: {e}")
             return None  # Invalid token
 
 class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
