@@ -4,11 +4,11 @@ import logging
 import textwrap
 from contextlib import suppress
 from urllib.parse import unquote, urlencode, urlparse, urlunparse 
+from datetime import timedelta
 
 from django.contrib import messages
 from django.core import signing
 from django.utils import timezone
-from datetime import timedelta
 from django.http import (
     Http404,
     HttpResponse,
@@ -84,7 +84,7 @@ class ScheduleMixin:
                 raise ValueError("Token expired")
             return value["user_id"]
         except (signing.BadSignature, signing.SignatureExpired, KeyError, ValueError) as e:
-            logger.warning(f"Failed to parse ICS token: {e}")
+            logger.warning('Failed to parse ICS token: %s', e)
             return None
     
     @staticmethod
@@ -99,14 +99,10 @@ class ScheduleMixin:
         try:
             value = signing.loads(token, salt="my-starred-ics")
             expiry_date = timezone.datetime.fromtimestamp(value["exp"], tz=timezone.utc)
-            days_until_expiry = (expiry_date - timezone.now()).days
-            
-            # Token is valid but check if it's expiring soon
-            if days_until_expiry < 4:
-                return False  # Valid but expiring soon
-            return True  # Valid and not expiring soon
-        except (signing.BadSignature, KeyError, ValueError) as e:
-            logger.warning(f"Failed to check token expiry: {e}")
+            time_until_expiry = expiry_date - timezone.now()
+            return time_until_expiry >= timedelta(days=4)
+        except Exception as e:
+            logger.warning('Failed to check token expiry: %s', e)
             return None  # Invalid token
 
 class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
@@ -365,6 +361,8 @@ class ChangelogView(EventPermissionRequired, TemplateView):
 
 
 class GoogleCalendarRedirectView(EventPermissionRequired, ScheduleMixin, TemplateView):
+    # Define constant for session key
+    MY_STARRED_ICS_TOKEN_SESSION_KEY = 'my_starred_ics_token'
     permission_required = "agenda.view_schedule"
 
     def get(self, request, *args, **kwargs):
@@ -375,22 +373,22 @@ class GoogleCalendarRedirectView(EventPermissionRequired, ScheduleMixin, Templat
             if not request.user.is_authenticated:
                 return HttpResponseRedirect(self.request.event.urls.login)
             
-            # Get existing token from session if available
-            existing_token = request.session.get('my_starred_ics_token')
+            # Use constant instead of hardcoded string
+            existing_token = request.session.get(self.MY_STARRED_ICS_TOKEN_SESSION_KEY)
             generate_new_token = True
             
             # If we have an existing token, check if it's still valid and not expiring soon
             if existing_token:
                 token_status = self.check_token_expiry(existing_token)
-                if token_status is True:  # Token is valid and not expiring soon
+                if token_status is True:
                     token = existing_token
                     generate_new_token = False
             
             # Generate a new token if needed
             if generate_new_token:
                 token = self.generate_ics_token(request.user.id)
-                # Store the token in the session for future use
-                request.session['my_starred_ics_token'] = token
+                # Use constant here too
+                request.session[self.MY_STARRED_ICS_TOKEN_SESSION_KEY] = token
             
             ics_url = request.build_absolute_uri(
                 reverse('agenda:export-tokenized', kwargs={
