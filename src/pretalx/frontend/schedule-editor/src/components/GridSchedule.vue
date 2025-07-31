@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch, onMounted, onUnmounted, defineProps, defineEmits, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import moment, { Moment } from 'moment-timezone'
 import Session from './Session.vue'
 import { getLocalizedString } from '~/utils'
@@ -634,6 +634,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  timesliceRefs.value = []
   if (observer) {
     observer.disconnect()
     observer = null

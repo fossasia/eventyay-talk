@@ -519,7 +519,7 @@ async function pollUpdates() {
     schedule.value.talks = updatedTalks
   }
   since.value = sched.now || schedule.value.now
-  window.setTimeout(pollUpdates, 10 * 30)
+  window.setTimeout(pollUpdates, 10 * 125)
 }
 
 onBeforeMount(async () => {
@@ -529,14 +529,14 @@ onBeforeMount(async () => {
   locales.value = schedule.value.locales
   eventSlug.value = window.location.pathname.split('/')[3] ?? null
   currentDay.value = days.value[0]
-  window.setTimeout(pollUpdates, 10 * 30)
+  window.setTimeout(pollUpdates, 10 * 100)
   await fetchAdditionalScheduleData()
   await new Promise<void>((resolve) => {
     const poll = () => {
       const el = document.querySelector('.pretalx-schedule')
       // @ts-ignore
       if (el && (el.parentElement || el.getRootNode().host)) return resolve()
-      setTimeout(poll, 80)
+      setTimeout(poll, 100)
     }
     poll()
   })
