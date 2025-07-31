@@ -229,7 +229,7 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "default": {
-            "format": "%(levelname)s %(asctime)s %(name)s %(module)s %(message)s"
+            "format": "%(levelname)s %(asctime)s %(module)s %(message)s"
         }
     },
     "handlers": {
@@ -279,7 +279,7 @@ LOGGING = {
             # We deliberately want to collect DEBUG logs for our app from production,
             # because some bugs are only exposed in production environment.
             "level": "DEBUG",
-            "propagate": True,
+            "propagate": False,
         },
     },
 }
