@@ -126,14 +126,10 @@ class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
 
     def get_exporter(self, public=True):
         url = resolve(self.request.path_info)
-
-        calendar_exports = ["export.google-calendar", "export.my-google-calendar", "export.other-calendar", "export.my-other-calendar"]
         if url.url_name in ["export", "export-tokenized"]:
             exporter = url.kwargs.get("name") or unquote(
                 self.request.GET.get("exporter")
             )
-        elif url.url_name in calendar_exports:
-            exporter = url.url_name.replace("export.", "")
         else:
             exporter = url.url_name
 
@@ -387,7 +383,7 @@ class CalendarRedirectView(EventPermissionRequired, ScheduleMixin, TemplateView)
                 if token_status is True:
                     token = existing_token
                     generate_new_token = False
-            
+                    
             # Generate new token if needed
             if generate_new_token:
                 token = self.generate_ics_token(request.user.id)
