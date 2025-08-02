@@ -127,13 +127,12 @@ class ExporterView(EventPermissionRequired, ScheduleMixin, TemplateView):
     def get_exporter(self, public=True):
         url = resolve(self.request.path_info)
 
-        # Handle both export and export-tokenized URLs
+        calendar_exports = ["export.google-calendar", "export.my-google-calendar", "export.other-calendar", "export.my-other-calendar"]
         if url.url_name in ["export", "export-tokenized"]:
             exporter = url.kwargs.get("name") or unquote(
                 self.request.GET.get("exporter")
             )
-        elif url.url_name in ["export.google-calendar", "export.my-google-calendar"]:
-            # Handle our explicit Google Calendar URL patterns
+        elif url.url_name in calendar_exports:
             exporter = url.url_name.replace("export.", "")
         else:
             exporter = url.url_name
@@ -360,20 +359,25 @@ class ChangelogView(EventPermissionRequired, TemplateView):
     permission_required = "agenda.view_schedule"
 
 
-class GoogleCalendarRedirectView(EventPermissionRequired, ScheduleMixin, TemplateView):
-    # Define constant for session key
+class CalendarRedirectView(EventPermissionRequired, ScheduleMixin, TemplateView):
+    """Handles redirects for both Google Calendar and other calendar applications"""
     MY_STARRED_ICS_TOKEN_SESSION_KEY = 'my_starred_ics_token'
     permission_required = "agenda.view_schedule"
 
     def get(self, request, *args, **kwargs):
-        # Use resolver_match.url_name for robust route detection
+        # Get URL name from resolver
         url_name = request.resolver_match.url_name if request.resolver_match else None
-        if url_name == 'export.my-google-calendar':
-            # Generate tokenized URL for my starred sessions
+        
+        # Determine calendar type and starred status from URL pattern
+        is_google = "google" in url_name
+        is_my = "my" in url_name
+        
+        if is_my:
+            # For starred sessions
             if not request.user.is_authenticated:
                 return HttpResponseRedirect(self.request.event.urls.login)
             
-            # Use constant instead of hardcoded string
+            # Check for existing valid token
             existing_token = request.session.get(self.MY_STARRED_ICS_TOKEN_SESSION_KEY)
             generate_new_token = True
             
@@ -384,12 +388,12 @@ class GoogleCalendarRedirectView(EventPermissionRequired, ScheduleMixin, Templat
                     token = existing_token
                     generate_new_token = False
             
-            # Generate a new token if needed
+            # Generate new token if needed
             if generate_new_token:
                 token = self.generate_ics_token(request.user.id)
-                # Use constant here too
                 request.session[self.MY_STARRED_ICS_TOKEN_SESSION_KEY] = token
             
+            # Build tokenized URL for starred sessions
             ics_url = request.build_absolute_uri(
                 reverse('agenda:export-tokenized', kwargs={
                     'event': self.request.event.slug,
@@ -398,7 +402,7 @@ class GoogleCalendarRedirectView(EventPermissionRequired, ScheduleMixin, Templat
                 })
             )
         else:
-            # Regular public calendar
+            # Build public calendar URL
             ics_url = request.build_absolute_uri(
                 reverse('agenda:export', kwargs={
                     'event': self.request.event.slug,
@@ -406,11 +410,24 @@ class GoogleCalendarRedirectView(EventPermissionRequired, ScheduleMixin, Templat
                 })
             )
 
-        # Change scheme to webcal
-        parsed = urlparse(ics_url)
-        ics_url = urlunparse(('webcal',) + parsed[1:])
-
-        # Create Google Calendar URL
-        google_url = f"https://calendar.google.com/calendar/render?{urlencode({'cid': ics_url})}"
-
-        return HttpResponseRedirect(google_url)
+        # Handle redirect based on calendar type
+        if is_google:
+            # Google Calendar requires special URL format
+            google_url = f"https://calendar.google.com/calendar/render?{urlencode({'cid': ics_url})}"
+            response = HttpResponse(
+                f'<html><head><meta http-equiv="refresh" content="0;url={google_url}"></head>'
+                f'<body><p style="text-align: center; padding:2vw; font-family: Roboto,Helvetica Neue,HelveticaNeue,Helvetica,Arial,sans-serif;">Redirecting to Google Calendar: {google_url}</p><script>window.location.href="{google_url}";</script></body></html>',
+                content_type='text/html'
+            )
+            return response
+        else:
+            # Other calendars use webcal protocol
+            parsed = urlparse(ics_url)
+            webcal_url = urlunparse(('webcal',) + parsed[1:])
+            # Create a simple HTML redirect with meta refresh
+            response = HttpResponse(
+                f'<html><head><meta http-equiv="refresh" content="0;url={webcal_url}"></head>'
+                f'<body><p style="text-align: center; padding:2vw; font-family: Roboto,Helvetica Neue,HelveticaNeue,Helvetica,Arial,sans-serif;">Redirecting to: {webcal_url}</p><script>window.location.href="{webcal_url}";</script></body></html>',
+                content_type='text/html'
+                )
+            return response

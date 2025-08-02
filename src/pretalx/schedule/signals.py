@@ -90,3 +90,13 @@ def register_google_calendar_exporter(sender, **kwargs):
 def register_my_google_calendar_exporter(sender, **kwargs):
     from .exporters import MyGoogleCalendarExporter
     return MyGoogleCalendarExporter
+
+@receiver(register_data_exporters, dispatch_uid="exporter_builtin_webcal")
+def register_webcal_exporter(sender, **kwargs):
+    from .exporters import WebcalExporter
+    return WebcalExporter
+
+@receiver(register_my_data_exporters, dispatch_uid="exporter_builtin_my_webcal")
+def register_my_webcal_exporter(sender, **kwargs):
+    from .exporters import MyWebcalExporter
+    return MyWebcalExporter
