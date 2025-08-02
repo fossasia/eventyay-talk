@@ -37,6 +37,8 @@ logger = logging.getLogger(__name__)
 
 
 class ScheduleMixin:
+    MY_STARRED_ICS_TOKEN_SESSION_KEY = 'my_starred_ics_token'
+    
     @cached_property
     def version(self):
         if version := self.kwargs.get("version"):
@@ -69,19 +71,27 @@ class ScheduleMixin:
         return super().dispatch(request, *args, **kwargs)
 
     @staticmethod
-    def generate_ics_token(user_id):
-        """Generate a signed token with user ID and 15-day expiry"""
+    def generate_ics_token(request, user_id):
+        """Generate a signed token with user ID and 15-day expiry, invalidating previous tokens"""
+        # Clear any existing token from the session
+        key = ScheduleMixin.MY_STARRED_ICS_TOKEN_SESSION_KEY
+        if key in request.session:
+            del request.session[key]
+        
+        # Generate new token
         expiry = timezone.now() + timedelta(days=15)
         value = {"user_id": user_id, "exp": int(expiry.timestamp())}
-        return signing.dumps(value, salt="my-starred-ics")
+        token = signing.dumps(value, salt="my-starred-ics")
+        
+        # Store new token in session
+        request.session[key] = token
+        return token
 
     @staticmethod
     def parse_ics_token(token):
         """Parse and validate the token, return user_id if valid"""
         try:
             value = signing.loads(token, salt="my-starred-ics", max_age=15*24*60*60)
-            if value["exp"] < int(timezone.now().timestamp()):
-                raise ValueError("Token expired")
             return value["user_id"]
         except (signing.BadSignature, signing.SignatureExpired, KeyError, ValueError) as e:
             logger.warning('Failed to parse ICS token: %s', e)
@@ -97,7 +107,7 @@ class ScheduleMixin:
         - True if token is valid and not expiring soon (>= 4 days)
         """
         try:
-            value = signing.loads(token, salt="my-starred-ics")
+            value = signing.loads(token, salt="my-starred-ics", max_age=15*24*60*60)
             expiry_date = timezone.datetime.fromtimestamp(value["exp"], tz=timezone.utc)
             time_until_expiry = expiry_date - timezone.now()
             return time_until_expiry >= timedelta(days=4)
@@ -357,7 +367,6 @@ class ChangelogView(EventPermissionRequired, TemplateView):
 
 class CalendarRedirectView(EventPermissionRequired, ScheduleMixin, TemplateView):
     """Handles redirects for both Google Calendar and other calendar applications"""
-    MY_STARRED_ICS_TOKEN_SESSION_KEY = 'my_starred_ics_token'
     permission_required = "agenda.view_schedule"
 
     def get(self, request, *args, **kwargs):
@@ -371,7 +380,8 @@ class CalendarRedirectView(EventPermissionRequired, ScheduleMixin, TemplateView)
         if is_my:
             # For starred sessions
             if not request.user.is_authenticated:
-                return HttpResponseRedirect(self.request.event.urls.login)
+                login_url = f"{self.request.event.urls.login}?next={request.get_full_path()}"
+                return HttpResponseRedirect(login_url)
             
             # Check for existing valid token
             existing_token = request.session.get(self.MY_STARRED_ICS_TOKEN_SESSION_KEY)
@@ -380,14 +390,13 @@ class CalendarRedirectView(EventPermissionRequired, ScheduleMixin, TemplateView)
             # If we have an existing token, check if it's still valid and not expiring soon
             if existing_token:
                 token_status = self.check_token_expiry(existing_token)
-                if token_status is True:
+                if token_status is True:  # Token is valid and has at least 4 days left
                     token = existing_token
                     generate_new_token = False
                     
-            # Generate new token if needed
+            # Generate new token if needed (this will invalidate any existing token)
             if generate_new_token:
-                token = self.generate_ics_token(request.user.id)
-                request.session[self.MY_STARRED_ICS_TOKEN_SESSION_KEY] = token
+                token = self.generate_ics_token(request, request.user.id)
             
             # Build tokenized URL for starred sessions
             ics_url = request.build_absolute_uri(
