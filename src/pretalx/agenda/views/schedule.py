@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 class ScheduleMixin:
     MY_STARRED_ICS_TOKEN_SESSION_KEY = 'my_starred_ics_token'
-    
+
     @cached_property
     def version(self):
         if version := self.kwargs.get("version"):
@@ -372,7 +372,6 @@ class CalendarRedirectView(EventPermissionRequired, ScheduleMixin, TemplateView)
     def get(self, request, *args, **kwargs):
         # Get URL name from resolver
         url_name = request.resolver_match.url_name if request.resolver_match else None
-        
         # Determine calendar type and starred status from URL pattern
         is_google = "google" in url_name
         is_my = "my" in url_name
@@ -380,20 +379,18 @@ class CalendarRedirectView(EventPermissionRequired, ScheduleMixin, TemplateView)
         if is_my:
             # For starred sessions
             if not request.user.is_authenticated:
-                login_url = f"{self.request.event.urls.login}?next={request.get_full_path()}"
+                login_url = f"{self.request.event.urls.login}?{urlencode({'next': request.get_full_path()})}"
                 return HttpResponseRedirect(login_url)
             
             # Check for existing valid token
             existing_token = request.session.get(self.MY_STARRED_ICS_TOKEN_SESSION_KEY)
             generate_new_token = True
-            
             # If we have an existing token, check if it's still valid and not expiring soon
             if existing_token:
                 token_status = self.check_token_expiry(existing_token)
                 if token_status is True:  # Token is valid and has at least 4 days left
                     token = existing_token
                     generate_new_token = False
-                    
             # Generate new token if needed (this will invalidate any existing token)
             if generate_new_token:
                 token = self.generate_ics_token(request, request.user.id)
@@ -419,20 +416,21 @@ class CalendarRedirectView(EventPermissionRequired, ScheduleMixin, TemplateView)
         if is_google:
             # Google Calendar requires special URL format
             google_url = f"https://calendar.google.com/calendar/render?{urlencode({'cid': ics_url})}"
+            # HTML-based redirection works more reliably across calendar clients like Outlook and Apple Calendar which often mishandle HTTP 302s. 
             response = HttpResponse(
                 f'<html><head><meta http-equiv="refresh" content="0;url={google_url}"></head>'
                 f'<body><p style="text-align: center; padding:2vw; font-family: Roboto,Helvetica Neue,HelveticaNeue,Helvetica,Arial,sans-serif;">Redirecting to Google Calendar: {google_url}</p><script>window.location.href="{google_url}";</script></body></html>',
                 content_type='text/html'
             )
             return response
-        else:
-            # Other calendars use webcal protocol
-            parsed = urlparse(ics_url)
-            webcal_url = urlunparse(('webcal',) + parsed[1:])
-            # Create a simple HTML redirect with meta refresh
-            response = HttpResponse(
-                f'<html><head><meta http-equiv="refresh" content="0;url={webcal_url}"></head>'
-                f'<body><p style="text-align: center; padding:2vw; font-family: Roboto,Helvetica Neue,HelveticaNeue,Helvetica,Arial,sans-serif;">Redirecting to: {webcal_url}</p><script>window.location.href="{webcal_url}";</script></body></html>',
-                content_type='text/html'
-                )
-            return response
+
+        # Other calendars use webcal protocol
+        parsed = urlparse(ics_url)
+        webcal_url = urlunparse(('webcal',) + parsed[1:])
+        # HTML-based redirection works more reliably across calendar clients like Outlook and Apple Calendar which often mishandle HTTP 302s. 
+        response = HttpResponse(
+            f'<html><head><meta http-equiv="refresh" content="0;url={webcal_url}"></head>'
+            f'<body><p style="text-align: center; padding:2vw; font-family: Roboto,Helvetica Neue,HelveticaNeue,Helvetica,Arial,sans-serif;">Redirecting to: {webcal_url}</p><script>window.location.href="{webcal_url}";</script></body></html>',
+            content_type='text/html'
+            )
+        return response
