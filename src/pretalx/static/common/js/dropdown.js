@@ -1,10 +1,10 @@
 (function() {
     'use strict';
     
-    function initDropdowns() {
+    var initDropdowns = function() {
         // Handle click outside to close dropdowns
         document.addEventListener('click', function(event) {
-            const openDropdowns = document.querySelectorAll('details.dropdown[open]');
+            var openDropdowns = document.querySelectorAll('details.dropdown[open]');
             
             openDropdowns.forEach(function(dropdown) {
                 if (!dropdown.contains(event.target)) {
@@ -12,7 +12,7 @@
                 }
             });
         });
-    }
+    };
     
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
