@@ -1,0 +1,94 @@
+import { z } from 'zod';
+
+// Helper function to transform title to a record
+const toTitleRecord = (val: unknown): Record<string, string> => {
+  if (val !== null && typeof val === 'object') {
+    return val as Record<string, string>;
+  }
+  if (typeof val === 'string') {
+    return { en: val };
+  }
+  return { en: '' };
+};
+
+export const SpeakerSchema = z.object({
+  code: z.string(),
+  name: z.string(),
+});
+
+export const RoomSchema = z.object({
+  id: z.number(),
+  name: z.record(z.string(), z.string()).default({}),
+  description: z.record(z.string(), z.string()).default({})
+});
+
+export const TrackSchema = z.object({
+  id: z.number(),
+  name: z.record(z.string(), z.string()).default({})
+});
+
+export const TalkSchema = z.object({
+  id: z.number(),
+  code: z.string().optional(),
+  title: z.union([
+    z.string(),
+    z.record(z.string(), z.string())
+  ]).transform(toTitleRecord),
+  abstract: z.string().optional(),
+  speakers: z.array(z.string()).optional().default([]),
+  room: z.union([
+    z.number(),
+    z.string().transform(val => parseInt(val, 10) || null)
+  ]).nullable().optional(),
+  track: z.union([
+    z.number(),
+    z.string().transform(val => parseInt(val, 10) || null)
+  ]).nullable().optional(),
+  start: z.string().nullable().optional(),
+  end: z.string().nullable().optional(),
+  state: z.string().optional(),
+  updated: z.string().optional(),
+  uncreated: z.boolean().optional(),
+  availabilities: z.array(z.unknown()).optional().default([]),
+  duration: z.number().optional()
+});
+
+export const ScheduleSchema = z.object({
+  version: z.nullable(z.string().nullable()),
+  event_start: z.string(),
+  event_end: z.string(),
+  timezone: z.string(),
+  locales: z.array(z.string()).default([]),
+  rooms: z.array(RoomSchema).default([]),
+  tracks: z.array(TrackSchema).default([]),
+  speakers: z.array(SpeakerSchema).default([]),
+  talks: z.array(TalkSchema).default([]),
+  now: z.string().optional(),
+  warnings: z.record(z.string(), z.any()).optional().default({})
+});
+
+export const AvailabilitySchema = z.object({
+  rooms: z.record(z.string(), z.array(z.object({ 
+    start: z.string(), 
+    end: z.string() 
+  }))).optional(),
+  talks: z.record(z.string(), z.array(z.object({ 
+    start: z.string(), 
+    end: z.string() 
+  }))).optional(),
+});
+
+export const WarningSchema = z.object({
+  message: z.string(),
+});
+
+export const WarningsSchema = z.record(z.string(), z.array(WarningSchema)).optional();
+
+// Inferred types
+export type Speaker = z.infer<typeof SpeakerSchema>;
+export type Room = z.infer<typeof RoomSchema>;
+export type Track = z.infer<typeof TrackSchema>;
+export type Talk = z.infer<typeof TalkSchema>;
+export type Schedule = z.infer<typeof ScheduleSchema>;
+export type Availability = z.infer<typeof AvailabilitySchema>;
+export type Warnings = z.infer<typeof WarningsSchema>;
