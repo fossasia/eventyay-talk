@@ -9,7 +9,7 @@ const app = createApp(App, {
 	locale: 'en-ie'
 })
 app.use(Buntpapier)
-const appElement = document.querySelector("#app") as HTMLElement | null;
-const lang = appElement?.dataset.gettext || 'en'
+const appElement = document.querySelector("#app") as HTMLElement;
+const lang = appElement.dataset.gettext || 'en'
 app.use(await i18n(lang))
 app.mount('#app')

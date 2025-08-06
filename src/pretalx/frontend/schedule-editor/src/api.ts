@@ -34,10 +34,13 @@ interface TalkPayload {
   duration?: number;
 }
 
+// Define specific types for HTTP request bodies
+type HttpRequestBody = Record<string, unknown> | string | null;
+
 const api = {
   eventSlug: basePath ? window.location.pathname.split("/")[4] : window.location.pathname.split("/")[3],
   
-  async http<T>(verb: string, url: string, body: unknown): Promise<T> {
+  async http<T>(verb: string, url: string, body: HttpRequestBody): Promise<T> {
     const headers: Record<string, string> = {};
     if (body) headers['Content-Type'] = 'application/json';
 
@@ -70,19 +73,19 @@ const api = {
     if (options?.warnings) params.append('warnings', 'true');
     url += `?${params.toString()}`;
     
-    const data = await this.http<unknown>('GET', url, null);
+    const data = await this.http<Schedule>('GET', url, null);
     return ScheduleSchema.parse(data);
   },
 
   async fetchAvailabilities(): Promise<Availability> {
     const url = `${basePath}/orga/event/${this.eventSlug}/schedule/api/availabilities/`;
-    const data = await this.http<unknown>('GET', url, null);
+    const data = await this.http<Availability>('GET', url, null);
     return AvailabilitySchema.parse(data);
   },
 
   async fetchWarnings(): Promise<Warnings> {
     const url = `${basePath}/orga/event/${this.eventSlug}/schedule/api/warnings/`;
-    const data = await this.http<unknown>('GET', url, null);
+    const data = await this.http<Warnings>('GET', url, null);
     return WarningsSchema.parse(data);
   },
 
@@ -91,7 +94,7 @@ const api = {
   url.pathname = `${url.pathname}api/talks/${talk.id ? `${talk.id}/` : ''}`;
   url.search = window.location.search;
 
-  let payload: unknown = undefined;
+  let payload: HttpRequestBody = null;
   if (action !== 'DELETE') {
     const roomId = typeof talk.room === 'object' ? talk.room.id : talk.room;
     const duration = talk.duration ?? calculateDuration(talk.start, talk.end);
@@ -114,7 +117,7 @@ const api = {
     };
   }
   
-  const response = await this.http<unknown>(action, url.toString(), payload);
+  const response = await this.http<Talk>(action, url.toString(), payload);
   
   if (action !== 'DELETE') {
     return TalkSchema.parse(response);

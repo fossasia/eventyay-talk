@@ -48,14 +48,10 @@ export default {
 					moment: ['moment-timezone', 'moment'],
 					// Separate i18next
 					i18n: ['i18next'],
-					// Separate large utility libraries
-					lodash: ['lodash'],
 					// Separate UI framework
 					buntpapier: ['buntpapier'],
 					// Separate schema validation
-					zod: ['zod'],
-					// Separate markdown processing
-					markdown: ['markdown-it']
+					zod: ['zod']
 				}
 			}
 		},

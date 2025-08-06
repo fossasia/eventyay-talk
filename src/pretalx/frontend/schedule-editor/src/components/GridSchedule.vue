@@ -41,18 +41,27 @@ import { getLocalizedString } from '~/utils'
 interface Room {
   id: string
   name: string | Record<string, string>
+  description?: Record<string, string>
+}
+
+interface Speaker {
+  name: string
+  code: string
 }
 
 interface SessionDatum {
   id: number | string
   code?: string
   title?: string | Record<string, string>
-  speakers?: any[]
+  speakers?: Speaker[]
   room: Room
   start: Moment
   end: Moment
   duration: number
-  [key: string]: unknown
+  state?: string
+  track?: { name: string | Record<string, string>; color?: string }
+  abstract?: string
+  [key: string]: string | number | boolean | Record<string, string> | Speaker[] | Room | Moment | { name: string | Record<string, string>; color?: string } | undefined
 }
 
 interface Availability {
@@ -60,7 +69,8 @@ interface Availability {
   start: Moment
   end: Moment
   active?: boolean
-  [key: string]: unknown
+  type?: string
+  [key: string]: string | boolean | Room | Moment | undefined
 }
 
 interface Timeslice {

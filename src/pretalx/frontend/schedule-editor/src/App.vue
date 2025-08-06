@@ -83,6 +83,7 @@ import GridSchedule from '~/components/GridSchedule.vue'
 import Session from '~/components/Session.vue'
 import api from '~/api'
 import { getLocalizedString } from '~/utils'
+import type { AvailabilityEntry } from '~/schemas';
 
 interface Speaker {
   code: string
@@ -116,9 +117,9 @@ interface Talk {
   end?: string | null
   state?: string
   updated?: string
-  submission?: unknown
+  submission?: Record<string, unknown>
   uncreated?: boolean
-  availabilities?: unknown[]
+  availabilities?: AvailabilityEntry[]
 }
 
 interface SessionData {
@@ -134,7 +135,7 @@ interface SessionData {
   state?: string
   room?: Room
   uncreated?: boolean
-  availabilities?: unknown[]
+  availabilities?: AvailabilityEntry[]
 }
 
 interface SortMethod {
@@ -162,7 +163,7 @@ const props = defineProps<{
 const eventSlug = ref<string | null>(null)
 const scrollParentWidth = ref<number>(Infinity)
 const schedule = ref<Schedule | null>(null)
-const availabilities = reactive<{ rooms: Record<string, unknown>; talks: Record<string, unknown[]> }>({
+const availabilities = reactive<{ rooms: Record<string, AvailabilityEntry[]>; talks: Record<string, AvailabilityEntry[]> }>({
   rooms: {},
   talks: {},
 })
