@@ -38,8 +38,27 @@ export default {
 		emptyOutDir: false,
 		manifest: 'pretalx-manifest.json',
 		assetsDir: '',
-		rollupOptions: { input: 'src/main.ts' },
-		output: {manualChunks: {moment: ['moment-timezone', 'moment']}},
+		rollupOptions: { 
+			input: 'src/main.ts',
+			output: {
+				manualChunks: {
+					// Separate Vue and its ecosystem
+					vue: ['vue'],
+					// Separate moment and moment-timezone
+					moment: ['moment-timezone', 'moment'],
+					// Separate i18next
+					i18n: ['i18next'],
+					// Separate large utility libraries
+					lodash: ['lodash'],
+					// Separate UI framework
+					buntpapier: ['buntpapier'],
+					// Separate schema validation
+					zod: ['zod'],
+					// Separate markdown processing
+					markdown: ['markdown-it']
+				}
+			}
+		},
 		target: 'es2022',
 	},
 	optimizeDeps: {
