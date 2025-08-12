@@ -2,12 +2,12 @@
     'use strict';
     
     var initDropdowns = function() {
-        // Handle click outside to close dropdowns
+        // Only handle actual dropdown elements
+        var dropdowns = document.querySelectorAll('details.dropdown');
+        
         document.addEventListener('click', function(event) {
-            var openDropdowns = document.querySelectorAll('details.dropdown[open]');
-            
-            openDropdowns.forEach(function(dropdown) {
-                if (!dropdown.contains(event.target)) {
+            dropdowns.forEach(function(dropdown) {
+                if (dropdown.hasAttribute('open') && !dropdown.contains(event.target)) {
                     dropdown.removeAttribute('open');
                 }
             });

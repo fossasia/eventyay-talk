@@ -45,7 +45,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    word-break: break-word;
+    word-break: keep-all;
     flex-wrap: nowrap;
   }
   #header-tabs {
@@ -76,6 +76,31 @@ header {
     display: flex;
     flex-wrap: nowrap;
     flex-shrink: 0;
+
+    /* Inline locale links */
+    .locales-inline {
+      display: inline-block;
+      margin-right: 0.8rem;
+    }
+
+    .locale-link {
+      color: white;
+      text-decoration: none;
+      font-size: 0.9rem;
+      opacity: 0.9;
+      transition: opacity 0.2s;
+      margin-left: 0.65rem;
+    }
+
+    .locale-link:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .locale-link.active {
+      font-weight: bold;
+      opacity: 1;
+    }
 
     .locales {
       margin-right: 20px;
