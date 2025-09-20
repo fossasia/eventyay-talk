@@ -429,20 +429,33 @@ class FavedICalExporter(BaseExporter):
         return f"{self.event.slug}-favs.ics", "text/calendar", cal.serialize()
 
 
-class BaseGoogleCalendarExporter(BaseExporter):
+class BaseCalendarExporter(BaseExporter):
     public = True
     show_qrcode = False
-    icon = "fa-google"
+    icon = "fa-calendar"
+    
     @property
     def show_public(self):
         return self.ical_exporter_cls(self.event).show_public
 
-class GoogleCalendarExporter(BaseGoogleCalendarExporter):
+class GoogleCalendarExporter(BaseCalendarExporter):
     identifier = "google-calendar"
     verbose_name = "Add to Google Calendar"
+    icon = "fa-google"
     ical_exporter_cls = ICalExporter
 
-class MyGoogleCalendarExporter(BaseGoogleCalendarExporter):
+class MyGoogleCalendarExporter(BaseCalendarExporter):
     identifier = "my-google-calendar"
+    icon = "fa-google"
     verbose_name = "Add My ⭐ Sessions to Google Calendar"
+    ical_exporter_cls = MyICalExporter
+
+class WebcalExporter(BaseCalendarExporter):
+    identifier = "webcal"
+    verbose_name = "Add to Other Calendar"
+    ical_exporter_cls = ICalExporter
+
+class MyWebcalExporter(BaseCalendarExporter):
+    identifier = "my-webcal"
+    verbose_name = "Add My ⭐ Sessions to Other Calendar"
     ical_exporter_cls = MyICalExporter
