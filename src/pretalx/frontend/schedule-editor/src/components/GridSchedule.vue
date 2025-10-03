@@ -15,6 +15,7 @@
 		session(v-if="draggedSession && hoverSlice", :style="getHoverSliceStyle()", :session="draggedSession", :isDragClone="true", :overrideStart="hoverSlice.time")
 		template(v-for="session of visibleSessions", :key="session.id")
 			session(
+				v-if="hasValidPosition(session)"
 				:session="session",
 				:warnings="session.code ? warnings[session.code] : []",
 				:isDragged="draggedSession && (session.id === draggedSession.id)",
@@ -137,6 +138,10 @@ const hiddenRooms = ref<Room[]>([])
 const timesliceRefs = ref<HTMLElement[]>([])
 
 let observer: IntersectionObserver | null = null
+
+const hasValidPosition = (session: SessionDatum): boolean => {
+  return !!(session.room && session.start && session.end)
+}
 
 const getSliceName = (date: Moment): string => `slice-${date.format('MM-DD-HH-mm')}`
 
