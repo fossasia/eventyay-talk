@@ -62,7 +62,7 @@ jobs:
           sudo apt update
           sudo apt install -y gettext
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
       - name: Install Python dependencies
         run: uv sync --group test --no-install-project
       - name: Install Postgres dependencies

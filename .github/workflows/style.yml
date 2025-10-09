@@ -30,7 +30,7 @@ jobs:
           python-version-file: ".github/workflows/python-version.txt"
           cache: "pip"
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
       - name: Run djhtml
         run: uv run --only-group lint djhtml pretalx/
         working-directory: ./src
