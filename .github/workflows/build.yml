@@ -39,7 +39,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v5
       - name: Set up node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 'latest'
       - name: Install frontend dependencies
