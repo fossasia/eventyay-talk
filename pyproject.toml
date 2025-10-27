@@ -68,7 +68,7 @@ dependencies = [
   "django-oauth-toolkit==2.4.*",
   "requests-oauthlib==2.*",
   "psycopg2-binary==2.9.10",
-  "oauthlib==3.2.*",
+  "oauthlib>=3.2,<3.4",
   "gunicorn>=23.0.0",
 ]
 
