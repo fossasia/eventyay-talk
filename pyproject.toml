@@ -33,7 +33,7 @@ dependencies = [
   "defusedcsv~=2.0.0",
   "defusedxml~=0.7.0",
   "Django[argon2]~=5.1.0",
-  "django-compressor~=4.5.0",
+  "django-compressor>=4.5,<4.7",
   "django-context-decorator",
   "django-countries~=7.0",
   "django-csp~=3.8.0",
